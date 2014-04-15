@@ -3,9 +3,6 @@
  * 
  * @repository 		https://github.com/signalk/nmea-signalk
  * @author 			Fabian Tollenaar <fabian@starting-point.nl>
- *
- * @todo			Add stuff when input is a single line. 
- *					Relates to the todo at the end of lib/index.js
  * 
  * 
  *
@@ -30,7 +27,9 @@
 var standalone;
 
 module.exports = standalone = function(argv, vessel, debug) {
-	var Parser = require('../lib').Parser;
+	var NMEA0183Parser = require('../lib');
+	var Parser = NMEA0183Parser.Parser;
+	var parse = NMEA0183Parser.parse;
 
 	var parser = new Parser({
 		// codecs: require('../codecs'),
@@ -90,7 +89,13 @@ module.exports = standalone = function(argv, vessel, debug) {
 	}
 
 	if(argv.line !== null) {
-		// Parse single line
-		return;
+		parse(argv.line, function(data) {
+			if(debug === true) {
+				console.log('SENTENCE', JSON.stringify(data, null, 4));
+				console.log('');
+			} else {
+				console.log(JSON.stringify(data));
+			}
+		});
 	}
 };
