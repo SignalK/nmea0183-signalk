@@ -7,7 +7,17 @@ NMEA0183 to Signal K (signalk.github.io) Parser. Vaguely inspired by jamesp/node
 USAGE EXAMPLE
 -------------
 
- *Only here for the time being, until proper documentation has been written.*
+*Only here for the time being, until proper documentation has been written.*
+
+
+**Single line mode**
+
+```
+$ nmea-signalk --line '$GPRMC,085411.000,A,5222.3215,N,00454.5778,E,0.58,251.34,030414,,,A*63'
+$
+// OUTPUT EXAMPLE:
+// {"courseOverGroundTrue":{"source":{"type":"NMEA0183","sentence":"RMC","device":"nmea-signalk"},"timestamp":"2014-05-03T08:54:11.000Z","value":251.34},"location":{"latitude":52.372025,"longitude":4.90963,"source":{"type":"NMEA0183","sentence":"RMC","device":"nmea-signalk"},"timestamp":"2014-05-03T08:54:11.000Z"},"magneticVariaton":{"source":{"type":"NMEA0183","sentence":"RMC","device":"nmea-signalk"},"timestamp":"2014-05-03T08:54:11.000Z","value":0},"speedOverGround":{"source":{"type":"NMEA0183","sentence":"RMC","device":"nmea-signalk"},"timestamp":"2014-05-03T08:54:11.000Z","value":0.58}}
+```
 
 
 **Usage in piped mode**
@@ -116,7 +126,7 @@ Capabilities
 	a. Supports data piped in from another process (e.g. `tail -n 100 | nmea-signalk`)
 	b. Supports file input (with an NMEA0183 sentence on each line)
 	c. Supports serial input
-	d. Supports single line input (TODO)
+	d. Supports single line input
 
 	When using the parser as a CLI program, it will output a JSON encoded Signal K object on each line on `stdout`.
 
@@ -132,7 +142,7 @@ Capabilities
 TODO
 ----
 - [ ] Add more codecs.
-- [ ] Fix various TODO's and FIXME's in the source files (most important: error in _transform of stream. See issue.)
+- [ ] Fix various TODO's and FIXME's in the source files
 - [ ] ADD BETTER ERROR HANDLING (!!)
 - [ ] Write tests using Tape (!!)
 - [ ] Write documentation
