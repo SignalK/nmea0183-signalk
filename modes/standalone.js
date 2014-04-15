@@ -52,9 +52,9 @@ module.exports = standalone = function(argv, vessel, debug) {
 		//*
 		stream.pipe(parser);
 
-		parser.on('sentence', function(data, no) {
+		parser.on('sentence', function(data, no, total) {
 			if(debug === true) {
-				console.log('SENTENCE #' + no + "\n", JSON.stringify(data, null, 4));
+				console.log('SENTENCE #' + no + " of #" + total + "\n", JSON.stringify(data, null, 4));
 				console.log('');
 			} else {
 				console.log(JSON.stringify(data));
@@ -69,13 +69,17 @@ module.exports = standalone = function(argv, vessel, debug) {
 		var fs = require('fs');
 		var path = require('path');
 
-		var stream = fs.createReadStream(path.normalize(__dirname + '/' + argv.file));
+		if(debug === true) {
+			console.log('Reading file', path.normalize(process.cwd() + '/' + argv.file));
+		}
+
+		var stream = fs.createReadStream(path.normalize(process.cwd() + '/' + argv.file));
 		
 		stream.pipe(parser);
 
-		parser.on('sentence', function(data, no) {
+		parser.on('sentence', function(data, no, total) {
 			if(debug === true) {
-				console.log('SENTENCE #' + no + "\n", JSON.stringify(data, null, 4));
+				console.log('SENTENCE #' + no + " of #" + total + "\n", JSON.stringify(data, null, 4));
 				console.log('');
 			} else {
 				console.log(JSON.stringify(data));
