@@ -131,12 +131,12 @@ Capabilities
 
 TODO
 ----
-- [ ] Fix various TODO's in the source files
-- [ ] Write tests
-- [ ] Write documentation
-- [ ] Publish to NPM when done
 - [ ] Add more codecs.
-
+- [ ] Fix various TODO's in the source files
+- [ ] ADD BETTER ERROR HANDLING (!!)
+- [ ] Write tests using Tape (!!)
+- [ ] Write documentation
+- [ ] Publish to NPM
 
 Acknowledgements 
 ---------------
