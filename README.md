@@ -1,28 +1,39 @@
-nmea-signalk
-============
+nmea0183-signalk
+================
 
-NMEA0183 to Signal K (signalk.github.io) Parser. Heavily inspired by jamesp/node-nmea.
+NMEA0183 to Signal K (signalk.github.io) Parser. Vaguely inspired by jamesp/node-nmea.
 
 
-goals
------
+Capabilities
+------------
 
-1. Used from CLI:
-	a. Support data piped in from another process
-	b. Support for file input (assume each line is a NMEA sentence)
-	c. Verbose mode (print output to console)
+1. Usage from CLI:
+	a. Supports data piped in from another process (e.g. `tail -n 100 | nmea-signalk`)
+	b. Supports file input (with an NMEA0183 sentence on each line)
+	c. Supports serial input
+	d. Supports single line input (TODO)
 
-2. Used as module
-	a. Should work as a writeable stream, allowing a serial stream of NMEA data or a file stream to go in. 
-	b. But it should also be able to parse indiviudual lines
+	When using the parser as a CLI program, it will output a JSON encoded Signal K object on each line on `stdout`.
 
-3. Output
-	a. Output is always a full spec-compatible Signal K JSON object
-	b. Merging of data into the K object with automatic conflict resolving based on timestamp
-	c. Output either through `process.send`, Stdout or stream.
+2. Used as `node.js` module
+	a. Forked mode: fork a parser in another process, and the parser will send parsed Signal K objects using `process.send()` (available in the parent process using `fork.on('message', function(data) {})`).
+	b. `require`'ed mode: parser is available as a Transform Stream, ready to accept any streamed input. 
+
+3. Notes
+	a. Parser output (via whatever method) is always a full spec-compatible Signal K JSON object
+	b. If the parser receives conflicting input (e.g. a new version of a GLL sentence) the conflict is automatically resolved using the timestamps.
+
+
+TODO
+----
+- [ ] Fix various TODO's in the source files
+- [ ] Write tests
+- [ ] Write documentation
+- [ ] Publish to NPM when done
+- [ ] Add more codecs.
 
 
 Acknowledgements 
 ---------------
 
-Special thanks to @jamesp for his hard work on node-nmea, which heavily inspired the parsing part of this module.
+Special thanks to @jamesp for his hard work on node-nmea, whose work somewhat inspired the codecs in this parser.
