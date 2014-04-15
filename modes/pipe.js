@@ -30,7 +30,7 @@ module.exports = pipe = function(argv, vessel, debug) {
 	var Parser = require('../lib').Parser;
 
 	var parser = new Parser({
-		codecs: require('../codecs'),
+		// codecs: require('../codecs'),
 		debug: debug,
 		vessel: vessel
 	});

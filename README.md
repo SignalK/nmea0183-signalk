@@ -60,6 +60,55 @@ parser.on('sentence', function(signalk, lineno) {
 ```
 
 
+**Usage with --debug specified**
+
+```
+$ tail -n 10000 gps.log | nmea-signalk --debug
+$
+/*
+ SENTENCE #5741
+ {
+    "courseOverGroundTrue": {
+        "source": {
+            "type": "NMEA0183",
+            "sentence": "RMC",
+            "device": "nmea-signalk"
+        },
+        "timestamp": "2014-05-03T09:14:11.000Z",
+        "value": 28.17
+    },
+    "location": {
+        "latitude": 52.371901666666666,
+        "longitude": 4.90974,
+        "source": {
+            "type": "NMEA0183",
+            "sentence": "RMC",
+            "device": "nmea-signalk"
+        },
+        "timestamp": "2014-05-03T09:14:11.000Z"
+    },
+    "magneticVariaton": {
+        "source": {
+            "type": "NMEA0183",
+            "sentence": "RMC",
+            "device": "nmea-signalk"
+        },
+        "timestamp": "2014-05-03T09:14:11.000Z",
+        "value": 0
+    },
+    "speedOverGround": {
+        "source": {
+            "type": "NMEA0183",
+            "sentence": "RMC",
+            "device": "nmea-signalk"
+        },
+        "timestamp": "2014-05-03T09:14:11.000Z",
+        "value": 0.18
+    }
+}
+*/
+```
+
 Capabilities
 ------------
 
