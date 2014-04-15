@@ -54,6 +54,7 @@ module.exports = standalone = function(argv, vessel, debug) {
 				console.log(JSON.stringify(data));
 			}
 		});
+		//*/
 
 		return;
 	}

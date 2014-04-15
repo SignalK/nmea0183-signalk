@@ -132,7 +132,7 @@ Capabilities
 TODO
 ----
 - [ ] Add more codecs.
-- [ ] Fix various TODO's in the source files
+- [ ] Fix various TODO's and FIXME's in the source files (most important: error in _transform of stream. See issue.)
 - [ ] ADD BETTER ERROR HANDLING (!!)
 - [ ] Write tests using Tape (!!)
 - [ ] Write documentation
