@@ -141,4 +141,4 @@ TODO
 Acknowledgements 
 ---------------
 
-Special thanks to @jamesp for his hard work on node-nmea, whose work somewhat inspired the codecs in this parser.
+Special thanks to @jamesp for his hard work on node-nmea, as his work somewhat inspired the codecs in this parser. Even if the codecs look quite different, we wouldn't have gotten to this point without him!
