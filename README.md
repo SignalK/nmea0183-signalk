@@ -1,3 +1,7 @@
+NOTE: SEE [ISSUE #4](https://github.com/SignalK/nmea0183-signalk/issues/4). This is not yet usable.
+===================================================================================================
+
+
 nmea0183-signalk
 ================
 
