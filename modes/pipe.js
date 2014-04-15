@@ -37,9 +37,9 @@ module.exports = pipe = function(argv, vessel, debug) {
 
 	process.stdin.pipe(parser);
 
-	parser.on('sentence', function(data, no) {
+	parser.on('sentence', function(data, no, total) {
 		if(debug === true) {
-			console.log('SENTENCE #' + no + "\n", JSON.stringify(data, null, 4));
+			console.log('SENTENCE #' + no + " of " + total + "\n", JSON.stringify(data, null, 4));
 			console.log('');
 		} else {
 			console.log(JSON.stringify(data));
