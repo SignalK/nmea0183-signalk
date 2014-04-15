@@ -4,8 +4,10 @@ nmea0183-signalk
 NMEA0183 to Signal K (signalk.github.io) Parser. Vaguely inspired by jamesp/node-nmea.
 
 
-USAGE EXAMPLED (for the time being, until proper documentation has been written)
---------------------------------------------------------------------------------
+USAGE EXAMPLE
+-------------
+
+ *Only here for the time being, until proper documentation has been written.*
 
 
 **Usage in piped mode**
