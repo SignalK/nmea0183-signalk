@@ -39,7 +39,7 @@ module.exports = standalone = function(argv, vessel, debug) {
 	});
 
 	if(argv.serial !== null && argv.baudrate !== null) {
-		var serialport = require('serialport');
+		var serialport = require('serialport').SerialPort;
 		var stream = new serialport(argv.serial, {
 			baudrate: argv.baudrate
 		});
