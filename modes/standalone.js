@@ -40,10 +40,16 @@ module.exports = standalone = function(argv, vessel, debug) {
 
 	if(argv.serial !== null && argv.baudrate !== null) {
 		var serialport = require('serialport').SerialPort;
+		
+		if(debug === true) {
+			console.log('Listening to', argv.serial, 'at baudrate:', argv.baudrate);
+		}
+
 		var stream = new serialport(argv.serial, {
 			baudrate: argv.baudrate
 		});
-
+		
+		//*
 		stream.pipe(parser);
 
 		parser.on('sentence', function(data, no) {
