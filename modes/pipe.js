@@ -24,6 +24,8 @@
 
 "use strict";
 
+var pipe;
+
 module.exports = pipe = function(argv, vessel, debug) {
 	var Parser = require('../lib').Parser;
 

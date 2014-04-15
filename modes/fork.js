@@ -27,6 +27,8 @@
 
 "use strict";
 
+var fork;
+
 module.exports = fork = function(argv, vessel, debug) {
 	var Parser = require('../lib').Parser;
 

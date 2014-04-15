@@ -27,6 +27,8 @@
 
 "use strict";
 
+var standalone;
+
 module.exports = standalone = function(argv, vessel, debug) {
 	var Parser = require('../lib').Parser;
 
@@ -80,4 +82,4 @@ module.exports = standalone = function(argv, vessel, debug) {
 		// Parse single line
 		return;
 	}
-}
+};
