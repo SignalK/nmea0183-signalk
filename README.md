@@ -1,17 +1,13 @@
-NOTE: SEE [ISSUE #4](https://github.com/SignalK/nmea0183-signalk/issues/4). This is not yet usable.
-===================================================================================================
-
-
 nmea0183-signalk
 ================
 
-NMEA0183 to Signal K (signalk.github.io) Parser. Vaguely inspired by jamesp/node-nmea.
+NMEA0183 to Signal K (signalk.github.io) Parser.
 
 
 USAGE EXAMPLE
 -------------
 
-*Only here for the time being, until proper documentation has been written.*
+*(Only here for the time being, until proper documentation has been written)*
 
 
 **Single line mode**
