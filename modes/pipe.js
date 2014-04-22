@@ -24,6 +24,7 @@
 
 "use strict";
 
+var error = require('./errors');
 var pipe;
 
 module.exports = pipe = function(argv, vessel, debug) {
@@ -43,6 +44,13 @@ module.exports = pipe = function(argv, vessel, debug) {
 			console.log('');
 		} else {
 			console.log(JSON.stringify(data));
+		}
+	});
+
+	parser.on('error', function(err) {
+		if(debug === true) {
+			console.log("PARSER ERROR", err);
+			console.log('');
 		}
 	});
 }

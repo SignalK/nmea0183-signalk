@@ -24,6 +24,7 @@
 
 "use strict";
 
+var error = require('./errors');
 var standalone;
 
 module.exports = standalone = function(argv, vessel, debug) {
@@ -32,7 +33,6 @@ module.exports = standalone = function(argv, vessel, debug) {
 	var parse = NMEA0183Parser.parse;
 
 	var parser = new Parser({
-		// codecs: require('../codecs'),
 		debug: debug,
 		vessel: vessel
 	});
@@ -40,28 +40,49 @@ module.exports = standalone = function(argv, vessel, debug) {
 	if(argv.serial !== null && argv.baudrate !== null) {
 		var serialport = require('serialport').SerialPort;
 		
-		if(debug === true) {
-			console.log('Listening to', argv.serial, 'at baudrate:', argv.baudrate);
-		}
-
 		var stream = new serialport(argv.serial, {
 			baudrate: argv.baudrate
-		});
-		
-		//*
-		stream.pipe(parser);
+		}, false);
 
-		parser.on('sentence', function(data, no, total) {
+		stream.on('error', function(err) {
 			if(debug === true) {
-				console.log('SENTENCE #' + no + " of #" + total + "\n", JSON.stringify(data, null, 4));
+				console.log("SERIALPORT ERROR", err);
 				console.log('');
-			} else {
-				console.log(JSON.stringify(data));
 			}
 		});
-		//*/
 
-		return;
+		return stream.open(function(err) {
+			if(err) {
+				if(debug === true) {
+					console.log("SERIALPORT ERROR", err);
+					console.log('');
+				}
+
+				return;
+			}
+
+			if(debug === true) {
+				console.log('Listening to', argv.serial, 'at baudrate:', argv.baudrate);
+			}
+
+			parser.on('error', function(err) {
+				if(debug === true) {
+					console.log("PARSER ERROR", err);
+					console.log('');
+				}
+			});
+
+			parser.on('sentence', function(data, no, total) {
+				if(debug === true) {
+					console.log('SENTENCE #' + no + " of " + total + "\n", JSON.stringify(data, null, 4));
+					console.log('');
+				} else {
+					console.log(JSON.stringify(data));
+				}
+			});
+
+			stream.pipe(parser);
+		});
 	}
 
 	if(argv.file !== null) {
@@ -74,7 +95,14 @@ module.exports = standalone = function(argv, vessel, debug) {
 
 		var stream = fs.createReadStream(path.normalize(process.cwd() + '/' + argv.file));
 		
-		stream.pipe(parser);
+		stream.on('error', function(err) {
+			if(debug === true) {
+				console.log("FILE READ ERROR", err);
+				console.log('');
+			}
+
+			return;
+		});
 
 		parser.on('sentence', function(data, no, total) {
 			if(debug === true) {
@@ -85,7 +113,7 @@ module.exports = standalone = function(argv, vessel, debug) {
 			}
 		});
 
-		return;
+		return stream.pipe(parser);
 	}
 
 	if(argv.line !== null) {
