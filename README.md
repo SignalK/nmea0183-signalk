@@ -188,7 +188,7 @@ Capabilities
 	
     a. Parser output (via whatever method) is always a full spec-compatible Signal K JSON object
 	
-    b. If the parser receives conflicting input (e.g. a new version of a GLL sentence) the conflict is automatically resolved using the timestamps.
+    b. If the parser receives conflicting input (e.g. a new version of a GLL sentence) the conflict is automatically resolved using the timestamps (see [SignalK/signalk-merge](https://github.com/signalk/signalk-merge) for more on merging).
 
 
 TODO
