@@ -24,7 +24,7 @@
 
 "use strict";
 
-var error = require('./errors');
+var error = require('../lib/errors');
 var pipe;
 
 module.exports = pipe = function(argv, vessel, debug) {

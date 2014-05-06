@@ -24,7 +24,7 @@
 
 "use strict";
 
-var error = require('./errors');
+var error = require('../lib/errors');
 var standalone;
 
 module.exports = standalone = function(argv, vessel, debug) {

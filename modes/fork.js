@@ -24,7 +24,7 @@
 
 "use strict";
 
-var error = require('./errors');
+var error = require('../lib/errors');
 var fork;
 
 module.exports = fork = function(argv, vessel, debug) {

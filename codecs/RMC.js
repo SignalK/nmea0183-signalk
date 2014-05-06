@@ -63,7 +63,7 @@ module.exports = new Codec('RMC', function(values) {
 	var ts 	 = this.timestamp(time, date);
 	var self = this;
 
-	var data = this.signal.navigation({
+	var data = {
 		courseOverGroundTrue: {
 			source:  self.source(),
 			timestamp: ts,
@@ -88,9 +88,9 @@ module.exports = new Codec('RMC', function(values) {
 			timestamp: ts,
 			value: self.float(values[6])
 		}
-	});
+	};
 
-	return data;
+	return this.signal.navigation(data);
 });
 
 
