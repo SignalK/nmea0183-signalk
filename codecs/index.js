@@ -25,7 +25,7 @@
 
 var codecs = {};
 
-require("fs").readdirSync("./codecs").forEach(function(codec) {
+require("fs").readdirSync(__dirname).forEach(function(codec) {
 	if(codec !== 'index.js' && codec.charAt(0) !== '.' && codec.charAt(0) !== '_') {
 		var module = require('./' + codec);
 
