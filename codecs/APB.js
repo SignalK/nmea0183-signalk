@@ -61,31 +61,35 @@ module.exports = new Codec('APB', function(values) {
 		return null;
 	}
 
-	var ts 	 = new Date().toISOString();
-	var self = this;
+	var ts 	 	= new Date().toISOString();
+	var self 	= this;
+	var xte 	= this.transform(values[2], (values[4].toUpperCase() === 'N' ? 'nm' : 'km'), 'nm'); // value, inputFormat, outputFormat
 
-	var xte = this.transform(values[2], (values[4].toUpperCase() === 'N' ? 'nm' : 'km'), 'nm'); // value, inputFormat, outputFormat
-
-	var data = this.signal.navigation({
+	var data 	= this.signal.navigation({
 		currentRoute: {
 			source: self.source(),
 			timestamp: ts,
 			steer: (values[3].toUpperCase() == 'R' ? 'right' : 'left'),
-			bearingActual: { value: this.float(values[10]), type: values[11].toUpperCase() },
-			bearingDirect: { value: this.float(values[7]), type: values[8].toUpperCase() },
-			courseRequired: { value: this.float(values[12]), type: values[13].toUpperCase() },
+			bearingActual: this.float(values[10]),
+			bearingDirect: this.float(values[7]),
+			courseRequired: this.float(values[12]),
+			
+			waypoint: {
+				next: values[9],
+				xte: xte
+			}/*,
 			arrivalAlarm: {
 				circleEntered: (values[5].toUpperCase() == 'A' ? true : false),
 				perpendicularPassedAtWaypoint: (values[5].toUpperCase() == 'A' ? true : false)
 			},
+			*/
+
 			// eta: ,
 			// route: ,
 			// startTime: ,
 			// waypointLastTime: ,
 			// waypointLast: ,
-			// waypointNextEta: ,
-			waypointNext: values[9],
-			xte: xte
+			// waypointNextEta: 
 		}
 	});
 

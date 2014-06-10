@@ -67,31 +67,13 @@ module.exports = new Codec('MWV', function(values, vessel) {
 	}
 
 	if(values[1].toUpperCase() == "R") {
-		data['windDirectionApparent'] = {
-			source: source,
-			timestamp: ts,
-			value: this.float(values[0])
-		};
-
-		data['windSpeedApparent'] = {
-			source: source,
-			timestamp: ts,
-			value: this.transform(values[2], wsu, 'ms')
-		};
+		data['directionApparent'] = this.float(values[0]);
+		data['speedApparent'] = this.transform(values[2], wsu, 'ms');
 	} else {
-		data['windDirectionTrue'] = {
-			source: source,
-			timestamp: ts,
-			value: this.float(values[0])
-		};
-
-		data['windSpeedTrue'] = {
-			source: source,
-			timestamp: ts,
-			value: this.transform(values[2], wsu, 'ms')
-		};
+		data['directionTrue'] = this.float(values[0]);
+		data['speedTrue'] = this.transform(values[2], wsu, 'ms');
 	}
 
-	return this.signal.environment(data);
+	return this.signal.environmental({ wind: data });
 
 });

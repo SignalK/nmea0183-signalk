@@ -191,11 +191,30 @@ Capabilities
     b. If the parser receives conflicting input (e.g. a new version of a GLL sentence) the conflict is automatically resolved using the timestamps (see [SignalK/signalk-merge](https://github.com/signalk/signalk-merge) for more on merging).
 
 
-TODO
-----
-- Add more codecs.
-- Fix various TODO's and FIXME's in the source files
-- Add better error handling (!!)
+TODO (codecs)
+-------------
+- GP GSA*
+- GP GSV*
+- GP VTG*
+- GP BWC (needs an update, but is included)
+- GP ZDA
+- GP AAM
+- GP BOD
+- GP RMB
+- GP XTE
+- SD DBT
+- SD DPT
+- SD MTW
+- SD VLW
+- SD VHW
+- SD HDG
+- WI MWD
+- WI MWV
+- II XDR
+- ais messages (!AI **)
+
+TODO (general)
+--------------
 - Write tests using Tape (!!)
 - Write documentation
 - Publish to NPM
@@ -203,4 +222,4 @@ TODO
 Acknowledgements 
 ---------------
 
-Special thanks to [@jamesp](https://github.com/jamesp) for his hard work on node-nmea, as his work somewhat inspired the codecs in this parser. Even if the codecs look quite different, we wouldn't have gotten to this point without him!
+Special thanks to [@jamesp](https://github.com/jamesp) for his hard work on node-nmea, as his work inspired the codecs in this parser. Even if the codecs look quite different, I wouldn't have come to this point without his work. 

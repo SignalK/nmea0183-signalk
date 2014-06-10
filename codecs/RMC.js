@@ -64,30 +64,17 @@ module.exports = new Codec('RMC', function(values) {
 	var self = this;
 
 	var data = {
-		courseOverGroundTrue: {
-			source:  self.source(),
-			timestamp: ts,
-			value: self.float(values[7])
-		},
-
-		location: {
-			latitude: self.coordinate(values[2], values[3]),
-			longitude: self.coordinate(values[4], values[5]),
+		position: {
+			latitude: self.coordinate(values[2], String(values[3]).toUpperCase()),
+			longitude: self.coordinate(values[4], String(values[5]).toUpperCase()),
+			altitude: 0.0,
 			source:  self.source(), 
 			timestamp: ts
 		}, 
 
-		magneticVariaton: {
-			source:  self.source(),
-			timestamp: ts,
-			value: this.magneticVariaton(values[9], values[10]),
-		},
-
-		speedOverGround: {
-			source:  self.source(),
-			timestamp: ts,
-			value: self.float(values[6])
-		}
+		magneticVariaton: this.magneticVariaton(values[9], values[10]),
+		courseOverGroundTrue: self.float(values[7]),
+		speedOverGround: self.transform(values[6], 'knots', 'ms')
 	};
 
 	return this.signal.navigation(data);

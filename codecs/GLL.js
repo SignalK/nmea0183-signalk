@@ -74,9 +74,10 @@ module.exports = new Codec('GLL', function(values) {
 	var self = this;
 
 	var data = this.signal.navigation({
-		location: {
+		position: {
 			latitude: self.coordinate(values[0], values[1]),
 			longitude: self.coordinate(values[2], values[3]),
+			altitude: 0.0,
 			source: self.source(), 
 			timestamp: ts
 		}
