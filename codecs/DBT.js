@@ -51,26 +51,30 @@ Needs a vessel object for input. Need to know:
 var Codec = require('../lib/NMEA0183');
 
 module.exports = new Codec('DBT', function(values, vessel) {
-	var ts = this.timestamp();
-	var data = this.signal.environmental({
+	var ts 	 = this.timestamp();
+	var data = {
 		depthBelowTransducer: {
 			source: this.source(),
 			timestamp: ts,
 			value: this.float(values[2])
-		},
+		}
+	};
 
-		depthBelowKeel: {
-			source: this.source(),
-			timestamp: ts,
-			value: (this.float(values[2]) - (vessel.dimensions.keel - vessel.dimensions.depthTransducer))
-		},
-
-		depth: {
+	if(typeof vessel === 'object' && vessel !== null && vessel.dimensions !== null && typeof vessel.dimensions === 'object' && typeof vessel.dimensions.depthTransducer === 'number') {
+		data.depth = {
 			source: this.source(),
 			timestamp: ts,
 			value: (this.float(values[2]) + vessel.dimensions.depthTransducer)
-		}
-	});
+		};
 
-	return data;
+		if(typeof vessel.dimensions.keel === 'number') {
+			data.depthBelowKeel = {
+				source: this.source(),
+				timestamp: ts,
+				value: (this.float(values[2]) - (vessel.dimensions.keel - vessel.dimensions.depthTransducer))
+			};
+		}
+	}
+
+	return this.signal.environmental(data);
 });
