@@ -88,8 +88,8 @@ module.exports = new Codec('GGA', function(values, vessel) {
 		position: {
 			source: this.source(),
 			timestamp: this.timestamp(values[0]),
-			longitude: this.coordinate(values[1], values[2]),
-			latitude: this.coordinate(values[3], values[4]),
+			latitude: this.coordinate(values[1], values[2]),
+			longitude: this.coordinate(values[3], values[4]),
 			altitude: 0.0
 		}
 	});
