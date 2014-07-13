@@ -52,21 +52,25 @@ var Codec = require('../lib/NMEA0183');
 module.exports = new Codec('VTG', function(values) {
 
     var speed = 0.0;
+    var note = "VTG - no notes";
 
     if(this.float(values[6]) > 0 && String(values[7]).toUpperCase() === 'K') {
         speed = this.transform(values[6], 'kph', 'ms');
+        note = "VTG - Transformed " + values[6] + " (" + String(values[7]).toUpperCase() + ") to " + speed + " m/s.";
     }
 
     if(this.float(values[4]) > 0 && String(values[5]).toUpperCase() === 'N') {
         speed = this.transform(values[6], 'knots', 'ms');
+        note = "VTG - Transformed " + values[4] + " (" + String(values[5]).toUpperCase() + ") to " + speed + " m/s.";
     }
 
     var data = {
         courseOverGroundMagnetic: this.float(values[2]),
-        courseOverGroundTrue: this.float(values[1]),
+        courseOverGroundTrue: this.float(values[0]),
         speedOverGround: speed,
         timestamp: this.timestamp(),
-        source: this.source()
+        source: this.source(),
+        notes: note
     };
 
     return this.signal.navigation(data);
