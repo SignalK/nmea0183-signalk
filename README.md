@@ -1,14 +1,11 @@
 nmea0183-signalk
 ================
 
-NMEA0183 to Signal K (signalk.github.io) Parser.
+NMEA0183 to [Signal K](http://signalk.github.io) Parser.
 
 
 USAGE EXAMPLE
 -------------
-
-*(I still need to write proper documentation, but this should be sufficient for now)*
-
 
 **Single line mode**
 
@@ -186,40 +183,44 @@ Capabilities
 
 3. Notes
 	
-    a. Parser output (via whatever method) is always a full spec-compatible Signal K JSON object
+    a. Parser output (via whatever method) is always a spec-compatible Signal K JSON object
 	
     b. If the parser receives conflicting input (e.g. a new version of a GLL sentence) the conflict is automatically resolved using the timestamps (see [SignalK/signalk-merge](https://github.com/signalk/signalk-merge) for more on merging).
 
 
 TODO (codecs)
 -------------
-- GP GSA*
-- GP GSV*
-- GP VTG*
-- GP BWC (needs an update, but is included)
-- GP ZDA
-- GP AAM
-- GP BOD
-- GP RMB
-- GP XTE
-- SD DBT
-- SD DPT
-- SD MTW
-- SD VLW
-- SD VHW
-- SD HDG
-- WI MWD
-- WI MWV
-- II XDR
-- ais messages (!AI **)
+- GSA*
+- GSV*
+- BWC* (Included, but needs an update)
+- ZDA
+- AAM
+- BOD
+- RMB
+- XTE
+- DPT
+- MTW
+- VLW
+- VHW
+- HDG
+- MWD
+- XDR
+- AIS messages
 
 TODO (general)
 --------------
 - Write tests using Tape (!!)
-- Write documentation
-- Publish to NPM
+- Improve documentation
 
 Acknowledgements 
 ---------------
 
-Special thanks to [@jamesp](https://github.com/jamesp) for his hard work on node-nmea, as his work inspired the codecs in this parser. Even if the codecs look quite different, I wouldn't have come to this point without his work. 
+Special thanks to my fellow collaborators on [Signal K](http://signalk.github.io). 
+
+Thanks to [@jamesp](https://github.com/jamesp) for his work on node-nmea (his codecs provided a starting point for the codecs included in this Parser). 
+
+
+
+
+
+

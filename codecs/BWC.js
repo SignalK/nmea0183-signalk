@@ -51,7 +51,7 @@ Field Number:
 Example 1: $GPBWC,081837,,,,,,T,,M,,N,*13
 Example 2: GPBWC,220516,5130.02,N,00046.34,W,213.8,T,218.0,M,0004.6,N,EGLM*11
 
-@TODO - Needs updating.
+@TODO - Needs updating.???
 
 */
 
