@@ -45,8 +45,9 @@ values:
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('RMC', function(values) {
-	
+module.exports = new Codec('RMC', function(input) {
+	var values = input.values;
+
 	if(values[1].toUpperCase() == 'V') {
 		// Don't parse this sentence as it's void, but report the exception to the main Codec.
 		this.reportError(this.errors.VOID, "Not parsing sentence for it's void."); 

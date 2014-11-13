@@ -45,8 +45,9 @@ Field Number:
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('MWV', function(values, vessel) {
-
+module.exports = new Codec('MWV', function(input) {
+  var values = input.values;
+  
 	if(values[4].toUpperCase() != 'A') {
 		// Don't parse this sentence as it's void, but report the exception to the main Codec.
 		this.reportError(this.errors.VOID, "Not parsing sentence for it's void."); 

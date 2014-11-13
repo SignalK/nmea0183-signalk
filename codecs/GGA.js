@@ -70,8 +70,10 @@ Field Number:
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('GGA', function(values, vessel) {
-	var ts = this.timestamp();
+module.exports = new Codec('GGA', function(input) {
+  var values = input.values;
+	var ts     = this.timestamp();
+  
 	var data = this.signal.navigation({
 		gnss: {
 			source: this.source(),

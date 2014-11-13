@@ -46,7 +46,8 @@ Field Number:
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('GLL', function(values) {
+module.exports = new Codec('GLL', function(input) {
+  var values = input.values;
 
 	if(values[5].toUpperCase() == 'V') {
 		// Don't parse this sentence as it's void, but report the exception to the main Codec.

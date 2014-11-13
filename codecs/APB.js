@@ -47,7 +47,8 @@ where:
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('APB', function(values) {
+module.exports = new Codec('APB', function(input) {
+  var values = input.values;
 
 	if(values[0].toUpperCase() == 'V') {
 		// Don't parse this sentence as it's void, but report the exception to the main Codec.
