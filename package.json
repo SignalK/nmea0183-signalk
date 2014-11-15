@@ -14,6 +14,7 @@
   "dependencies": {
     "aisdecoder": "0.0.1",
     "debug": "^2.1.0",
+    "ggencoder": "^0.1.5",
     "lodash": "~2.4.1",
     "node-uuid": "^1.4.1",
     "nomnom": "~1.6.2",

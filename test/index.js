@@ -3,7 +3,7 @@ var path    = require('path');
 var Parser  = require('../').Parser;
 var parser  = new Parser();
 
-fs.createReadStream(path.join(__dirname, './logs/plaka.nmea'), { encoding: 'utf8' }).pipe(parser);
+fs.createReadStream(path.join(__dirname, './logs/ais.nmea'), { encoding: 'utf8' }).pipe(parser);
 
 parser.on('sentence', function(signalk, lineno) {
   console.log(JSON.stringify(signalk, null, 2));
