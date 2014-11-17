@@ -49,25 +49,29 @@
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('VTG', function(values) {
+module.exports = new Codec('VTG', function(multiplexer, input) {
+  var values = input.values;
+  var speed = 0.0;
 
-    var speed = 0.0;
+  if(this.float(values[6]) > 0 && String(values[7]).toUpperCase() === 'K') {
+    speed = this.transform(values[6], 'kph', 'ms');
+  }
 
-    if(this.float(values[6]) > 0 && String(values[7]).toUpperCase() === 'K') {
-        speed = this.transform(values[6], 'kph', 'ms');
-    }
+  if(this.float(values[4]) > 0 && String(values[5]).toUpperCase() === 'N') {
+    speed = this.transform(values[4], 'knots', 'ms');
+  }
 
-    if(this.float(values[4]) > 0 && String(values[5]).toUpperCase() === 'N') {
-        speed = this.transform(values[4], 'knots', 'ms');
-    }
+  multiplexer
+    .self()
+    .group('navigation')
+    .timestamp(this.timestamp())
+    .source(this.source())
+    .values([
+      { path: 'courseOverGroundMagnetic', value: this.float(values[2]) },
+      { path: 'courseOverGroundTrue', value: this.float(values[0]) },
+      { path: 'speedOverGround', value: speed }
+    ]);
+  ;
 
-    var data = {
-        courseOverGroundMagnetic: this.float(values[2]),
-        courseOverGroundTrue: this.float(values[0]),
-        speedOverGround: speed,
-        timestamp: this.timestamp(),
-        source: this.source()
-    };
-
-    return this.signal.navigation(data);
+  return true;
 });

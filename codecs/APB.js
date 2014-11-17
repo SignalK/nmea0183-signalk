@@ -47,7 +47,8 @@ where:
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('APB', function(values) {
+module.exports = new Codec('APB', function(multiplexer, input) {
+  var values = input.values;
 
 	if(values[0].toUpperCase() == 'V') {
 		// Don't parse this sentence as it's void, but report the exception to the main Codec.
@@ -61,37 +62,24 @@ module.exports = new Codec('APB', function(values) {
 		return null;
 	}
 
-	var ts 	 	= new Date().toISOString();
-	var self 	= this;
-	var xte 	= this.transform(values[2], (values[4].toUpperCase() === 'N' ? 'nm' : 'km'), 'nm'); // value, inputFormat, outputFormat
+	var xte = this.transform(values[2], (values[4].toUpperCase() === 'N' ? 'nm' : 'km'), 'nm'); // value, inputFormat, outputFormat
 
-	var data 	= this.signal.navigation({
-		currentRoute: {
-			source: self.source(),
-			timestamp: ts,
-			steer: (values[3].toUpperCase() == 'R' ? 'right' : 'left'),
-			bearingActual: this.float(values[10]),
-			bearingDirect: this.float(values[7]),
-			courseRequired: this.float(values[12]),
-			
-			waypoint: {
-				next: values[9],
-				xte: xte
-			}/*,
-			arrivalAlarm: {
-				circleEntered: (values[5].toUpperCase() == 'A' ? true : false),
-				perpendicularPassedAtWaypoint: (values[5].toUpperCase() == 'A' ? true : false)
-			},
-			*/
+	multiplexer
+    .self()
+    .group('navigation')
+    .set('currentRoute', {
+      source: this.source(),
+      timestamp: this.timestamp(),
+      steer: (values[3].toUpperCase() == 'R' ? 'right' : 'left'),
+      bearingActual: this.float(values[10]),
+      bearingDirect: this.float(values[7]),
+      courseRequired: this.float(values[12]),
+      waypoint: {
+        next: values[9],
+        xte: xte
+      }
+    })
+  ;
 
-			// eta: ,
-			// route: ,
-			// startTime: ,
-			// waypointLastTime: ,
-			// waypointLast: ,
-			// waypointNextEta: 
-		}
-	});
-
-	return data;
+	return true;
 });
