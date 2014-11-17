@@ -70,31 +70,40 @@ Field Number:
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('GGA', function(input) {
+module.exports = new Codec('GGA', function(multiplexer, input) {
   var values = input.values;
-	var ts     = this.timestamp();
-  
-	var data = this.signal.navigation({
-		gnss: {
-			source: this.source(),
-			timestamp: this.timestamp(values[0]),
-			quality: this.int(values[5]),
-			satellites: this.int(values[6]),
-			antennaAltitude: this.int(values[8]),
-			horizontalDilution: this.int(values[7]),
-			geoidalSeparation: this.int(values[10]),
-			differentialAge: this.int(values[12]),
-			differentialReference: this.int(values[13])
-		},
+	var ts     = this.timestamp(values[0]);
+  var src    = this.source();
+  var self   = this;
 
-		position: {
-			source: this.source(),
-			timestamp: this.timestamp(values[0]),
-			latitude: this.coordinate(values[1], values[2]),
-			longitude: this.coordinate(values[3], values[4]),
-			altitude: 0.0
-		}
-	});
+  // Position
+  multiplexer
+    .self()
+    .group('navigation')
+    .set('position', {
+      source: this.source(),
+      timestamp: ts,
+      longitude: this.coordinate(values[3], values[4]),
+      latitude: this.coordinate(values[1], values[2])
+    })
+  ;
 
-	return data;
+  // GNSS
+  multiplexer
+    .self()
+    .group('navigation')
+    .set('gnss', {
+      source: this.source(),
+      timestamp: ts,
+      quality: this.int(values[5]),
+      satellites: this.int(values[6]),
+      antennaAltitude: this.int(values[8]),
+      horizontalDilution: this.int(values[7]),
+      geoidalSeparation: this.int(values[10]),
+      differentialAge: this.int(values[12]),
+      differentialReference: this.int(values[13])
+    })
+  ;
+
+	return true;
 });

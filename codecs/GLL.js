@@ -46,7 +46,7 @@ Field Number:
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('GLL', function(input) {
+module.exports = new Codec('GLL', function(multiplexer, input) {
   var values = input.values;
 
 	if(values[5].toUpperCase() == 'V') {
@@ -72,19 +72,21 @@ module.exports = new Codec('GLL', function(input) {
 	}
 
 	var ts 	 = this.timestamp(time);
-	var self = this;
+  var self = this;
 
-	var data = this.signal.navigation({
-		position: {
-			latitude: self.coordinate(values[0], values[1]),
-			longitude: self.coordinate(values[2], values[3]),
-			altitude: 0.0,
-			source: self.source(), 
-			timestamp: ts
-		}
-	});
+	// Position
+  multiplexer
+    .self()
+    .group('navigation')
+    .set('position', {
+      source: this.source(),
+      timestamp: ts,
+      longitude: self.coordinate(values[2], values[3]),
+      latitude: self.coordinate(values[0], values[1])
+    })
+  ;
 
-	return data;
+	return true;
 });
 
 

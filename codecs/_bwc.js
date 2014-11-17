@@ -57,13 +57,15 @@ Example 2: GPBWC,220516,5130.02,N,00046.34,W,213.8,T,218.0,M,0004.6,N,EGLM*11
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('BWC', function(input) {
+module.exports = new Codec('BWC', function(multiplexer, input) {
   var values     = input.values;
 	var ts  		   = this.timestamp(values[0]); // Timestamp is only time - no date. Date is assumed today.
 	var source 	   = this.source();
 	var nav 		   = {};
 	var rsrc		   = {};
 	var overwrite  = false;
+
+  // @TODO
 	
 	rsrc.waypoints = {};
 
@@ -102,6 +104,6 @@ module.exports = new Codec('BWC', function(input) {
 		}
 	};
 
-	return this.signal.multiple({ navigation: this.signal.navigation(nav) }, rsrc);
+	return true;
 
 });

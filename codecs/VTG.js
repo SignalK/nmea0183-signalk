@@ -49,7 +49,7 @@
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('VTG', function(input) {
+module.exports = new Codec('VTG', function(multiplexer, input) {
   var values = input.values;
   var speed = 0.0;
 
@@ -61,13 +61,17 @@ module.exports = new Codec('VTG', function(input) {
     speed = this.transform(values[4], 'knots', 'ms');
   }
 
-  var data = {
-    courseOverGroundMagnetic: this.float(values[2]),
-    courseOverGroundTrue: this.float(values[0]),
-    speedOverGround: speed,
-    timestamp: this.timestamp(),
-    source: this.source()
-  };
+  multiplexer
+    .self()
+    .group('navigation')
+    .timestamp(this.timestamp())
+    .source(this.source())
+    .values([
+      { path: 'courseOverGroundMagnetic', value: this.float(values[2]) },
+      { path: 'courseOverGroundTrue', value: this.float(values[0]) },
+      { path: 'speedOverGround', value: speed }
+    ]);
+  ;
 
-  return this.signal.navigation(data);
+  return true;
 });

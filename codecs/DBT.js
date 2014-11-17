@@ -46,17 +46,16 @@ Field Number:
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('DBT', function(input) {
+module.exports = new Codec('DBT', function(multiplexer, input) {
   var values = input.values;
-	var ts 	   = this.timestamp();
 
-	var data = {
-		depthBelowTransducer: {
-			source: this.source(),
-			timestamp: ts,
-			value: this.float(values[2])
-		}
-	};
+	multiplexer
+    .self()
+    .group('environment')
+    .timestamp(this.timestamp())
+    .source(this.source())
+    .value('depthBelowTransducer', this.float(values[2]))
+  ;
 
-	return this.signal.environmental(data);
+	return true;
 });

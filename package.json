@@ -1,6 +1,6 @@
 {
   "name": "nmea0183-signalk",
-  "version": "0.1.12",
+  "version": "0.2.0",
   "description": "NMEA0183 to Signal K parser",
   "main": "index.js",
   "preferGlobal": true,
@@ -12,14 +12,11 @@
     "test": "node ./test/index"
   },
   "dependencies": {
-    "aisdecoder": "0.0.1",
     "debug": "^2.1.0",
     "ggencoder": "^0.1.5",
     "lodash": "~2.4.1",
     "node-uuid": "^1.4.1",
-    "nomnom": "~1.6.2",
-    "serialport": "~1.3.1",
-    "signalk-merge": "^0.1.9"
+    "signalk-multiplexer": "^0.1.7"
   },
   "devDependencies": {},
   "repository": {
@@ -35,7 +32,7 @@
     "parser"
   ],
   "author": "Fabian Tollenaar <fabian@starting-point.nl>",
-  "license": "Apache 2",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/signalk/nmea0183-signalk/issues"
   },

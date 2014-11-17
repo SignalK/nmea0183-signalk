@@ -45,7 +45,7 @@ Field Number:
 
 var Codec = require('../lib/NMEA0183');
 
-module.exports = new Codec('MWV', function(input) {
+module.exports = new Codec('MWV', function(multiplexer, input) {
   var values = input.values;
   
 	if(values[4].toUpperCase() != 'A') {
@@ -54,10 +54,10 @@ module.exports = new Codec('MWV', function(input) {
 		return null;
 	}
 
-	var data 	= {};
-	var ts 		= this.timestamp();
+	var data 	  = {};
+	var ts 		  = this.timestamp();
 	var source 	= this.source();
-	var wsu 	= values[3].toUpperCase();
+	var wsu 	  = values[3].toUpperCase();
 
 	if(wsu == 'K') {
 		wsu = 'knots';
@@ -75,6 +75,24 @@ module.exports = new Codec('MWV', function(input) {
 		data['speedTrue'] = this.transform(values[2], wsu, 'ms');
 	}
 
-	return this.signal.environmental({ wind: data });
+  multiplexer
+    .self()
+    .group('environment')
+    .timestamp(ts)
+    .source(source)
+  ;
 
+  if(values[1].toUpperCase() == "R") {
+    multiplexer.values([
+      { path: 'directionApparent', value: this.float(values[0]) },
+      { path: 'speedApparent', value: this.transform(values[2], wsu, 'ms') }
+    ]);
+  } else {
+    multiplexer.values([
+      { path: 'directionTrue', value: this.float(values[0]) },
+      { path: 'speedTrue', value: this.transform(values[2], wsu, 'ms') }
+    ]);
+  }
+
+	return true;
 });
