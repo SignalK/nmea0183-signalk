@@ -8,6 +8,10 @@
 		"start": "node ./index",
 		"test": "node ./test/index"
 	},
+	"bin": {
+	  "nmea0183-signalk": "./bin/nmea0183-signalk",
+	  "nmea2signalk": "./bin/nmea0183-signalk"
+	},
 	"dependencies": {
 		"debug": "^2.1.0",
 		"ggencoder": "^0.1.5",
