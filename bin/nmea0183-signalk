@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+
+var parser = new (require('../index.js').Parser)();
+
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
+
+var Transform = require('stream').Transform;
+
+function ToJson() {
+  Transform.call(this, {
+    objectMode: true
+  });
+}
+
+require('util').inherits(ToJson, Transform);
+
+ToJson.prototype._transform = function(chunk, encoding, done) {
+  this.push(JSON.stringify(chunk, null, 2));
+  done();
+}
+
+
+process.stdin.pipe(parser).pipe(new ToJson()).pipe(process.stdout);
+//process.stdin.pipe(parser).pipe(process.stdout);
