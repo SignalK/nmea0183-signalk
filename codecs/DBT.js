@@ -52,9 +52,13 @@ module.exports = new Codec('DBT', function(multiplexer, input) {
 	multiplexer
     .self()
     .group('environment')
-    .timestamp(this.timestamp())
-    .source(this.source())
-    .value('depthBelowTransducer', this.float(values[2]))
+    .set('depth', {
+      belowTransducer: {
+        source: this.source(),
+        timestamp: this.timestamp(),
+        value: this.float(values[2])
+      }
+    })
   ;
 
 	return true;

@@ -78,20 +78,35 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
   multiplexer
     .self()
     .group('environment')
-    .timestamp(ts)
-    .source(source)
   ;
 
   if(values[1].toUpperCase() == "R") {
-    multiplexer.values([
-      { path: 'directionApparent', value: this.float(values[0]) },
-      { path: 'speedApparent', value: this.transform(values[2], wsu, 'ms') }
-    ]);
+    multiplexer.set('wind', {
+      directionApparent: {
+        timestamp: ts,
+        source: source,
+        value: this.float(values[0])
+      },
+
+      speedApparent: {
+        timestamp: ts,
+        source: source,
+        value: this.transform(values[2], wsu, 'ms')
+      }
+    });
   } else {
-    multiplexer.values([
-      { path: 'directionTrue', value: this.float(values[0]) },
-      { path: 'speedTrue', value: this.transform(values[2], wsu, 'ms') }
-    ]);
+    multiplexer.set('wind', {
+      directionTrue: {
+        timestamp: ts, 
+        source: source,
+        value: this.float(values[0])
+      },
+      speedTrue: {
+        timestamp: ts, 
+        source: source,
+        value: this.transform(values[2], wsu, 'ms')
+      }
+    });
   }
 
 	return true;
