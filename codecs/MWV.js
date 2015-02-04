@@ -38,7 +38,7 @@ Field Number:
 0. Wind Angle, 0 to 360 degrees
 1. Reference, R = Relative, T = True
 2. Wind Speed
-3. Wind Speed Units, K(nots)/M(iles/hour)/N(m/s)
+3. Wind Speed Units, K = km/h, M = m/s, N = knots
 4. Status, A = Data Valid
 5. Checksum
 */
@@ -60,10 +60,10 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
 	var wsu 	  = values[3].toUpperCase();
 
 	if(wsu == 'K') {
+		wsu = 'kph';
+	} else if(wsu == 'N') {
 		wsu = 'knots';
-	} else if(wsu == 'M') {
-		wsu = 'mph';
-	} else {
+	} else { // M
 		wsu = 'ms';
 	}
 

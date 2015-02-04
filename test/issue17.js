@@ -69,7 +69,7 @@ describe('MWV parser', function() {
                         "environment": {
                           "wind": {
                             "speedTrue": {
-                              "value": 7.61,
+                              "value": 3.91492321400277,
                               "source": {
                                 "device": "signalk-parser-nmea0183",
                                 "sentence": "MWV",
@@ -93,5 +93,38 @@ describe('MWV parser', function() {
                     "self": "1A77F355"
                   },
                   "incorrect result for MWV true wind");
+  });
+
+  it('MWV sentence with apparent wind data', function() {
+    verifyParsing('$IIMWV,336,R,13.41,N,A*22',
+                  { "self": "1A77F355",
+                    "version": 1,
+                    "vessels": {
+                      "1A77F355": {
+                        "uuid": "1A77F355",
+                        "environment": {
+                          "wind": {
+                            "directionApparent": {
+                              "source": {
+                                "type": "NMEA0183",
+                                "sentence": "MWV",
+                                "device": "signalk-parser-nmea0183"
+                              },
+                              "value": 336
+                            },
+                            "speedApparent": {
+                              "source": {
+                                "type": "NMEA0183",
+                                "sentence": "MWV",
+                                "device": "signalk-parser-nmea0183"
+                              },
+                              "value": 6.89870174767111
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Incorrect result for MWV apparent wind");
   });
 });
