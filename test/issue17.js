@@ -128,3 +128,69 @@ describe('MWV parser', function() {
                   "Incorrect result for MWV apparent wind");
   });
 });
+
+describe('VHW parser', function() {
+  it('VHW sentence with speed data', function() {
+    verifyParsing('$IIVHW,,T,,M,06.12,N,11.33,K*50',
+                  {
+                    "vessels": {
+                      "1A77F355": {
+                        "navigation": {
+                          "speedThroughWater": {
+                            "value": 3.147222222222222,
+                            "source": {
+                              "device": "signalk-parser-nmea0183",
+                              "sentence": "VHW",
+                              "type": "NMEA0183"
+                            }
+                          }
+                        },
+                        "uuid": "1A77F355"
+                      }
+                    },
+                    "version": 1,
+                    "self": "1A77F355"
+                  },
+                  "Incorrect value for VHW speed");
+  });
+
+  it('VHW sentence with direction and speed data', function() {
+    verifyParsing('$SDVHW,182.5,T,181.8,M,0.0,N,0.0,K*4C',
+                  {
+                    "vessels": {
+                      "1A77F355": {
+                        "navigation": {
+                          "headingTrue": {
+                            "value": "182.5",
+                            "source": {
+                              "device": "signalk-parser-nmea0183",
+                              "sentence": "VHW",
+                              "type": "NMEA0183"
+                            }
+                          },
+                          "headingMagnetic": {
+                            "value": "181.8",
+                            "source": {
+                              "device": "signalk-parser-nmea0183",
+                              "sentence": "VHW",
+                              "type": "NMEA0183"
+                            }
+                          },
+                          "speedThroughWater": {
+                            "value": 0,
+                            "source": {
+                              "device": "signalk-parser-nmea0183",
+                              "sentence": "VHW",
+                              "type": "NMEA0183"
+                            }
+                          }
+                        },
+                        "uuid": "1A77F355"
+                      }
+                    },
+                    "version": 1,
+                    "self": "1A77F355"
+                  },
+                  "Incorrect value for VHW direction and speed");
+  });
+});
