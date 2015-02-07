@@ -19,20 +19,79 @@ function clearTimestampFromObj(obj) {
   return out;
 }
 
-Parser('$IIDBT,034.28,f,010.45,M,005.64,F*2B', function(_, sk) {
-  try {
-    assert.strictEqual(JSON.stringify(clearTimestampFromObj(sk)), '{"self":"1A77F355","version":1,"vessels":{"1A77F355":{"uuid":"1A77F355","environment":{"depth":{"belowTransducer":{"source":{"type":"NMEA0183","sentence":"DBT","device":"signalk-parser-nmea0183"},"value":10.45}}}}}}', "DBT");
-    console.log("DBT test passed.");
-  } catch(err) {
-    console.log("DBT test failed.");
-  } 
-}, { selfType: 'uuid', selfId: '1A77F355' });
+function verifyParsing(sentence, expected, errorMessage) {
+  var cbPassed = false;
+  Parser(sentence,
+         function(_, sk) {
+           assert.deepEqual(clearTimestampFromObj(sk),
+                            expected,
+                            errorMessage);
+           cbPassed = true;
+         },
+         { selfType: 'uuid', selfId: '1A77F355' });
+  assert(cbPassed, errorMessage + ": statement was not parsed");
+}
 
-Parser('$IIMWV,318,T,07.61,N,A*2F', function(_, sk) {
-  try {
-    assert.strictEqual(JSON.stringify(clearTimestampFromObj(sk)), '{"self":"1A77F355","version":1,"vessels":{"1A77F355":{"uuid":"1A77F355","environment":{"wind":{"directionTrue":{"source":{"type":"NMEA0183","sentence":"MWV","device":"signalk-parser-nmea0183"},"value":318},"speedTrue":{"source":{"type":"NMEA0183","sentence":"MWV","device":"signalk-parser-nmea0183"},"value":7.61}}}}}}', "MWV");
-    console.log("WMV test passed.");
-  } catch(err) {
-    console.log("WMV test failed.");
-  }
-}, { selfType: 'uuid', selfId: '1A77F355' });
+describe('DBT parser', function() {
+  it('DBT sentence', function() {
+    verifyParsing('$IIDBT,034.28,f,010.45,M,005.64,F*2B',
+                  {
+                    "vessels": {
+                      "1A77F355": {
+                        "environment": {
+                          "depth": {
+                            "belowTransducer": {
+                              "value": 10.45,
+                              "source": {
+                                "device": "signalk-parser-nmea0183",
+                                "sentence": "DBT",
+                                "type": "NMEA0183"
+                              }
+                            }
+                          }
+                        },
+                        "uuid": "1A77F355"
+                      }
+                    },
+                    "version": 1,
+                    "self": "1A77F355"
+                  },
+                  "incorrect result for DBT");
+  });
+});
+
+describe('MWV parser', function() {
+  it('MWV sentence with true wind data', function() {
+    verifyParsing('$IIMWV,318,T,07.61,N,A*2F',
+                  {
+                    "vessels": {
+                      "1A77F355": {
+                        "environment": {
+                          "wind": {
+                            "speedTrue": {
+                              "value": 7.61,
+                              "source": {
+                                "device": "signalk-parser-nmea0183",
+                                "sentence": "MWV",
+                                "type": "NMEA0183"
+                              }
+                            },
+                            "directionTrue": {
+                              "value": 318,
+                              "source": {
+                                "device": "signalk-parser-nmea0183",
+                                "sentence": "MWV",
+                                "type": "NMEA0183"
+                              }
+                            }
+                          }
+                        },
+                        "uuid": "1A77F355"
+                      }
+                    },
+                    "version": 1,
+                    "self": "1A77F355"
+                  },
+                  "incorrect result for MWV true wind");
+  });
+});
