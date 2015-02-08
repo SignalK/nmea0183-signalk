@@ -1,5 +1,6 @@
 var Parser  = require('../').parse;
 var assert  = require('assert');
+var validateSchema = require('signalk-schema').validate;
 
 function clearTimestampFromObj(obj) {
   var out = {};
@@ -19,178 +20,219 @@ function clearTimestampFromObj(obj) {
   return out;
 }
 
-function verifyParsing(sentence, expected, errorMessage) {
-  var cbPassed = false;
+function parse(sentence) {
+  var parsed;
+  // Note, this assumes that Parser is synchronous (which it should be).
+  // For a really nice implementation, a promise should be used here.
   Parser(sentence,
-         function(_, sk) {
-           assert.deepEqual(clearTimestampFromObj(sk),
-                            expected,
-                            errorMessage);
-           cbPassed = true;
+         function(unused, parsedSentence) {
+           parsed = parsedSentence;
          },
-         { selfType: 'uuid', selfId: '1A77F355' });
-  assert(cbPassed, errorMessage + ": statement was not parsed");
+         { selfType: 'mmsi', selfId: '123456789' });
+  return parsed;
+}
+
+function verifyParsing(sentence, expected) {
+  var parsedSentence = parse(sentence);
+
+  it ('Parsed data matches the expected result', function() {
+    assert.deepEqual(clearTimestampFromObj(parsedSentence),
+                     expected);
+  });
+
+  it('Schema conformance', function() {
+    var vesselData = parsedSentence.vessels["123456789"];
+    var result = validateSchema(vesselData);
+    result.errors.forEach(function(error) {
+      console.error("Schema validation error:",
+                    "data path:", error.dataPath, ",",
+                    "message:", error.message);
+    });
+    assert(!result.errors.length,
+           "Parsed data does not conform to the schema");
+  });
 }
 
 describe('DBT parser', function() {
-  it('DBT sentence', function() {
-    verifyParsing('$IIDBT,034.28,f,010.45,M,005.64,F*2B',
-                  {
-                    "vessels": {
-                      "1A77F355": {
-                        "environment": {
-                          "depth": {
-                            "belowTransducer": {
-                              "value": 10.45,
-                              "source": {
-                                "device": "signalk-parser-nmea0183",
-                                "sentence": "DBT",
-                                "type": "NMEA0183"
-                              }
+  verifyParsing('$IIDBT,034.28,f,010.45,M,005.64,F*2B',
+                {
+                  "vessels": {
+                    "123456789": {
+                      "environment": {
+                        "depth": {
+                          "belowTransducer": {
+                            "value": 10.45,
+                            "source": {
+                              "label": "signalk-parser-nmea0183",
+                              "type": "NMEA0183",
+                              "src": "DBT"
                             }
                           }
-                        },
-                        "uuid": "1A77F355"
-                      }
-                    },
-                    "version": 1,
-                    "self": "1A77F355"
+                        }
+                      },
+                      "mmsi": "123456789"
+                    }
                   },
-                  "incorrect result for DBT");
-  });
+                  "version": 1,
+                  "self": "123456789"
+                });
 });
 
-describe('MWV parser', function() {
-  it('MWV sentence with true wind data', function() {
-    verifyParsing('$IIMWV,318,T,07.61,N,A*2F',
-                  {
-                    "vessels": {
-                      "1A77F355": {
-                        "environment": {
-                          "wind": {
-                            "speedTrue": {
-                              "value": 3.91492321400277,
-                              "source": {
-                                "device": "signalk-parser-nmea0183",
-                                "sentence": "MWV",
-                                "type": "NMEA0183"
-                              }
-                            },
-                            "directionTrue": {
-                              "value": 318,
-                              "source": {
-                                "device": "signalk-parser-nmea0183",
-                                "sentence": "MWV",
-                                "type": "NMEA0183"
-                              }
+describe('MWV parser; sentence with true wind data', function() {
+  verifyParsing('$IIMWV,318,T,07.61,N,A*2F',
+                {
+                  "vessels": {
+                    "123456789": {
+                      "environment": {
+                        "wind": {
+                          "speedTrue": {
+                            "value": 3.91492321400277,
+                            "source": {
+                              "label": "signalk-parser-nmea0183",
+                              "type": "NMEA0183",
+                              "src": "MWV"
+                            }
+                          },
+                          "angleTrue": {
+                            "value": -42,
+                            "source": {
+                              "label": "signalk-parser-nmea0183",
+                              "type": "NMEA0183",
+                              "src": "MWV"
                             }
                           }
-                        },
-                        "uuid": "1A77F355"
-                      }
-                    },
-                    "version": 1,
-                    "self": "1A77F355"
+                        }
+                      },
+                      "mmsi": "123456789"
+                    }
                   },
-                  "incorrect result for MWV true wind");
-  });
+                  "version": 1,
+                  "self": "123456789"
+                });
+});
 
-  it('MWV sentence with apparent wind data', function() {
-    verifyParsing('$IIMWV,336,R,13.41,N,A*22',
-                  { "self": "1A77F355",
-                    "version": 1,
-                    "vessels": {
-                      "1A77F355": {
-                        "uuid": "1A77F355",
-                        "environment": {
-                          "wind": {
-                            "directionApparent": {
-                              "source": {
-                                "type": "NMEA0183",
-                                "sentence": "MWV",
-                                "device": "signalk-parser-nmea0183"
-                              },
-                              "value": 336
+describe('MWV parser; sentence with apparent wind data', function() {
+  verifyParsing('$IIMWV,336,R,13.41,N,A*22',
+                { "self": "123456789",
+                  "version": 1,
+                  "vessels": {
+                    "123456789": {
+                      "mmsi": "123456789",
+                      "environment": {
+                        "wind": {
+                          "angleApparent": {
+                            "source": {
+                              "label": "signalk-parser-nmea0183",
+                              "type": "NMEA0183",
+                              "src": "MWV"
                             },
-                            "speedApparent": {
-                              "source": {
-                                "type": "NMEA0183",
-                                "sentence": "MWV",
-                                "device": "signalk-parser-nmea0183"
-                              },
-                              "value": 6.89870174767111
-                            }
+                            "value": -24
+                          },
+                          "speedApparent": {
+                            "source": {
+                              "label": "signalk-parser-nmea0183",
+                              "type": "NMEA0183",
+                              "src": "MWV"
+                            },
+                            "value": 6.89870174767111
                           }
                         }
                       }
                     }
-                  },
-                  "Incorrect result for MWV apparent wind");
-  });
+                  }
+                });
 });
 
-describe('VHW parser', function() {
-  it('VHW sentence with speed data', function() {
-    verifyParsing('$IIVHW,,T,,M,06.12,N,11.33,K*50',
-                  {
-                    "vessels": {
-                      "1A77F355": {
-                        "navigation": {
-                          "speedThroughWater": {
-                            "value": 3.147222222222222,
+describe('MWV parser; apparent wind data (wind from starboard)', function() {
+  verifyParsing('$IIMWV,035,R,09.13,N,A*2E',
+                { "self": "123456789",
+                  "version": 1,
+                  "vessels": {
+                    "123456789": {
+                      "mmsi": "123456789",
+                      "environment": {
+                        "wind": {
+                          "angleApparent": {
                             "source": {
-                              "device": "signalk-parser-nmea0183",
-                              "sentence": "VHW",
-                              "type": "NMEA0183"
-                            }
+                              "label": "signalk-parser-nmea0183",
+                              "type": "NMEA0183",
+                              "src": "MWV"
+                            },
+                            "value": 35
+                          },
+                          "speedApparent": {
+                            "source": {
+                              "label": "signalk-parser-nmea0183",
+                              "type": "NMEA0183",
+                              "src": "MWV"
+                            },
+                            "value": 4.696878967653784
                           }
-                        },
-                        "uuid": "1A77F355"
+                        }
                       }
-                    },
-                    "version": 1,
-                    "self": "1A77F355"
-                  },
-                  "Incorrect value for VHW speed");
-  });
+                    }
+                  }
+                });
+});
 
-  it('VHW sentence with direction and speed data', function() {
-    verifyParsing('$SDVHW,182.5,T,181.8,M,0.0,N,0.0,K*4C',
-                  {
-                    "vessels": {
-                      "1A77F355": {
-                        "navigation": {
-                          "headingTrue": {
-                            "value": "182.5",
-                            "source": {
-                              "device": "signalk-parser-nmea0183",
-                              "sentence": "VHW",
-                              "type": "NMEA0183"
-                            }
-                          },
-                          "headingMagnetic": {
-                            "value": "181.8",
-                            "source": {
-                              "device": "signalk-parser-nmea0183",
-                              "sentence": "VHW",
-                              "type": "NMEA0183"
-                            }
-                          },
-                          "speedThroughWater": {
-                            "value": 0,
-                            "source": {
-                              "device": "signalk-parser-nmea0183",
-                              "sentence": "VHW",
-                              "type": "NMEA0183"
-                            }
+describe('VHW parser; sentence with speed data only', function() {
+  verifyParsing('$IIVHW,,T,,M,06.12,N,11.33,K*50',
+                {
+                  "vessels": {
+                    "123456789": {
+                      "navigation": {
+                        "speedThroughWater": {
+                          "value": 3.147222222222222,
+                          "source": {
+                            "label": "signalk-parser-nmea0183",
+                            "type": "NMEA0183",
+                            "src": "VHW"
+                          }
+                        }
+                      },
+                      "mmsi": "123456789"
+                    }
+                  },
+                  "version": 1,
+                  "self": "123456789"
+                });
+});
+
+describe('VHW parser; sentence with direction and speed data', function() {
+  verifyParsing('$SDVHW,182.5,T,181.8,M,0.0,N,0.0,K*4C',
+                {
+                  "vessels": {
+                    "123456789": {
+                      "navigation": {
+                        "headingTrue": {
+                          "value": "182.5",
+                          "source": {
+                            "label": "signalk-parser-nmea0183",
+                            "type": "NMEA0183",
+                            "src": "VHW"
                           }
                         },
-                        "uuid": "1A77F355"
-                      }
-                    },
-                    "version": 1,
-                    "self": "1A77F355"
+                        "headingMagnetic": {
+                          "value": "181.8",
+                          "source": {
+                            "label": "signalk-parser-nmea0183",
+                            "type": "NMEA0183",
+                            "src": "VHW"
+                          }
+                        },
+                        "speedThroughWater": {
+                          "value": 0,
+                          "source": {
+                            "label": "signalk-parser-nmea0183",
+                            "type": "NMEA0183",
+                            "src": "VHW"
+                          }
+                        }
+                      },
+                      "mmsi": "123456789"
+                    }
                   },
-                  "Incorrect value for VHW direction and speed");
-  });
+                  "version": 1,
+                  "self": "123456789"
+                });
 });
