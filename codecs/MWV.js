@@ -38,12 +38,20 @@ Field Number:
 0. Wind Angle, 0 to 360 degrees
 1. Reference, R = Relative, T = True
 2. Wind Speed
-3. Wind Speed Units, K(nots)/M(iles/hour)/N(m/s)
+3. Wind Speed Units, K = km/h, M = m/s, N = knots
 4. Status, A = Data Valid
 5. Checksum
 */
 
 var Codec = require('../lib/NMEA0183');
+
+function convertToWindAngle(self, angle) {
+        var numAngle = self.float(angle) % 360;
+        if (numAngle > 180 && numAngle <= 360) {
+                return numAngle - 360;
+        }
+        return numAngle;
+}
 
 module.exports = new Codec('MWV', function(multiplexer, input) {
   var values = input.values;
@@ -54,26 +62,20 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
 		return null;
 	}
 
-	var data 	  = {};
 	var ts 		  = this.timestamp();
 	var source 	= this.source();
 	var wsu 	  = values[3].toUpperCase();
 
 	if(wsu == 'K') {
+		wsu = 'kph';
+	} else if(wsu == 'N') {
 		wsu = 'knots';
-	} else if(wsu == 'M') {
-		wsu = 'mph';
-	} else {
+	} else { // M
 		wsu = 'ms';
 	}
 
-	if(values[1].toUpperCase() == "R") {
-		data['directionApparent'] = this.float(values[0]);
-		data['speedApparent'] = this.transform(values[2], wsu, 'ms');
-	} else {
-		data['directionTrue'] = this.float(values[0]);
-		data['speedTrue'] = this.transform(values[2], wsu, 'ms');
-	}
+        var angle = convertToWindAngle(this, values[0]);
+        var speed = this.transform(values[2], wsu, 'ms');
 
   multiplexer
     .self()
@@ -82,29 +84,29 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
 
   if(values[1].toUpperCase() == "R") {
     multiplexer.set('wind', {
-      directionApparent: {
+      angleApparent: {
         timestamp: ts,
         source: source,
-        value: this.float(values[0])
+        value: angle
       },
 
       speedApparent: {
         timestamp: ts,
         source: source,
-        value: this.transform(values[2], wsu, 'ms')
+        value: speed
       }
     });
   } else {
     multiplexer.set('wind', {
-      directionTrue: {
-        timestamp: ts, 
+      angleTrue: {
+        timestamp: ts,
         source: source,
-        value: this.float(values[0])
+        value: angle
       },
       speedTrue: {
-        timestamp: ts, 
+        timestamp: ts,
         source: source,
-        value: this.transform(values[2], wsu, 'ms')
+        value: speed
       }
     });
   }
