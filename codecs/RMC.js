@@ -76,17 +76,22 @@ module.exports = new Codec('RMC', function(multiplexer, input, line) {
     })
   ;
 
+  var vals = [
+    { path: 'courseOverGroundTrue', value: self.float(values[7]) },
+    { path: 'speedOverGround', value: self.transform(values[6], 'knots', 'ms') }
+  ];
+
+  if(typeof values[9] !== 'undefined' && typeof values[10] === 'string') {
+    vals.push({ path: 'magneticVariation', value: this.magneticVariaton(values[9], values[10]) });
+  }
+
   // Other
   multiplexer
     .self()
     .group('navigation')
     .source(this.source())
     .timestamp(ts)
-    .values([
-      { path: 'magneticVariation', value: this.magneticVariaton(values[9], values[10]) },
-      { path: 'courseOverGroundTrue', value: self.float(values[7]) },
-      { path: 'speedOverGround', value: self.transform(values[6], 'knots', 'ms') }
-    ])
+    .values(vals)
   ;
 
 	return true;
