@@ -1,44 +1,44 @@
 {
-  "name": "nmea0183-signalk",
-  "version": "0.2.2",
-  "description": "NMEA0183 to Signal K parser",
-  "main": "index.js",
-  "scripts": {
-    "start": "node ./index",
-    "test": "mocha"
-  },
-  "bin": {
-    "nmea0183-signalk": "./bin/nmea0183-signalk",
-    "nmea2signalk": "./bin/nmea0183-signalk"
-  },
-  "dependencies": {
-    "debug": "^2.1.0",
-    "ggencoder": "^0.1.5",
-    "lodash": "~2.4.1",
-    "mocha": "^2.1.0",
-    "node-uuid": "^1.4.1",
-    "signalk-multiplexer": "^0.1.7"
-  },
-  "devDependencies": {
-    "signalk-schema": "SignalK/specification",
-    "mocha": "^2.1.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/signalk/nmea0183-signalk"
-  },
-  "keywords": [
-    "nmea",
-    "nmea0183",
-    "signalk",
-    "signal",
-    "k",
-    "parser"
-  ],
-  "author": "Fabian Tollenaar <fabian@starting-point.nl>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/signalk/nmea0183-signalk/issues"
-  },
-  "homepage": "https://github.com/signalk/nmea0183-signalk"
+	"name": "nmea0183-signalk",
+	"version": "0.2.3",
+	"description": "NMEA0183 to Signal K parser",
+	"main": "index.js",
+	"scripts": {
+		"start": "node ./index",
+		"test": "mocha"
+	},
+	"bin": {
+		"nmea0183-signalk": "./bin/nmea0183-signalk",
+		"nmea2signalk": "./bin/nmea0183-signalk"
+	},
+	"dependencies": {
+		"debug": "^2.1.0",
+		"ggencoder": "^0.1.5",
+		"lodash": "~2.4.1",
+		"mocha": "^2.1.0",
+		"node-uuid": "^1.4.1",
+		"signalk-multiplexer": "^0.1.7"
+	},
+	"devDependencies": {
+		"signalk-schema": "SignalK/specification",
+		"mocha": "^2.1.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/signalk/nmea0183-signalk"
+	},
+	"keywords": [
+		"nmea",
+		"nmea0183",
+		"signalk",
+		"signal",
+		"k",
+		"parser"
+	],
+	"author": "Fabian Tollenaar <fabian@starting-point.nl>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/signalk/nmea0183-signalk/issues"
+	},
+	"homepage": "https://github.com/signalk/nmea0183-signalk"
 }
