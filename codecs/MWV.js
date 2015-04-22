@@ -74,8 +74,8 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
 		wsu = 'ms';
 	}
 
-        var angle = convertToWindAngle(this, values[0]);
-        var speed = this.transform(values[2], wsu, 'ms');
+  var angle = convertToWindAngle(this, values[0]);
+  var speed = this.transform(values[2], wsu, 'ms');
 
   multiplexer
     .self()
