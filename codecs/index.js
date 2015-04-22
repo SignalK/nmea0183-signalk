@@ -23,18 +23,19 @@
  *
  */
 
-var codecs = {};
-
-require("fs").readdirSync(__dirname).forEach(function(codec) {
-	if(codec !== 'index.js' && codec.charAt(0) !== '.' && codec.charAt(0) !== '_') {
-		var module = require('./' + codec);
-
-		if(typeof module === 'function') {
-			codecs[codec.replace('.js', '').toUpperCase()] = module();
-		} else {
-			codecs[codec.replace('.js', '').toUpperCase()] = module;
-		}
-	}
-});
+var codecs = {
+  APB: require('./APB'),
+  DBT: require('./DBT'),
+  GGA: require('./GGA'),
+  GLL: require('./GLL'),
+  HDM: require('./HDM'),
+  HDT: require('./HDT'),
+  MWV: require('./MWV'),
+  RMC: require('./RMC'),
+  VDM: require('./VDM'),
+  VDO: require('./VDO'),
+  VHW: require('./VHW'),
+  VTG: require('./VTG'),
+};
 
 module.exports = codecs;
