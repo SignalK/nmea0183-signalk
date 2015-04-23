@@ -9,7 +9,6 @@ describe('MWV', function() {
   it('converts ok', function(done) {
     parser = new(require('../lib/').Parser)();
     parser.on('delta', function(delta) {
-      console.log(JSON.stringify(delta, null, 2));
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleTrue');
       done();
     });
