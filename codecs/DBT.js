@@ -49,17 +49,19 @@ var Codec = require('../lib/NMEA0183');
 module.exports = new Codec('DBT', function(multiplexer, input) {
   var values = input.values;
 
-	multiplexer
-    .self()
-    .group('environment')
-    .set('depth', {
-      belowTransducer: {
-        source: this.source(),
-        timestamp: this.timestamp(),
-        value: this.float(values[2])
-      }
-    })
-  ;
+	multiplexer.self();
+
+  multiplexer.add({
+    "updates": [{
+      "source": this.source(),
+      "timestamp": this.timestamp(),
+      "values": [{
+        "path": "environment.depth.belowTransducer",
+        "value": this.float(values[2])
+      }]
+    }],
+    "context": multiplexer._context
+  });
 
 	return true;
 });
