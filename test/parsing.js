@@ -1,4 +1,4 @@
-var Parser  = require('../').parse;
+var Parser  = require('../');
 var assert  = require('assert');
 var validateSchema = require('signalk-schema').validate;
 
@@ -24,7 +24,7 @@ function parse(sentence) {
   var parsed;
   // Note, this assumes that Parser is synchronous (which it should be).
   // For a really nice implementation, a promise should be used here.
-  Parser(sentence,
+  Parser.parse(sentence,
          function(unused, parsedSentence) {
            parsed = parsedSentence;
          },

@@ -74,42 +74,25 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
 		wsu = 'ms';
 	}
 
-        var angle = convertToWindAngle(this, values[0]);
-        var speed = this.transform(values[2], wsu, 'ms');
+  var angle = convertToWindAngle(this, values[0]);
+  var speed = this.transform(values[2], wsu, 'ms');
 
-  multiplexer
-    .self()
-    .group('environment')
-  ;
+  multiplexer.self();
 
-  if(values[1].toUpperCase() == "R") {
-    multiplexer.set('wind', {
-      angleApparent: {
-        timestamp: ts,
-        source: source,
-        value: angle
-      },
-
-      speedApparent: {
-        timestamp: ts,
-        source: source,
-        value: speed
-      }
-    });
-  } else {
-    multiplexer.set('wind', {
-      angleTrue: {
-        timestamp: ts,
-        source: source,
-        value: angle
-      },
-      speedTrue: {
-        timestamp: ts,
-        source: source,
-        value: speed
-      }
-    });
-  }
-
+  var valueType = values[1].toUpperCase() == "R" ? 'Apparent' : 'True';
+  multiplexer.add({
+    "updates": [{
+      "source": source,
+      "timestamp": ts,
+      "values": [{
+        "path": "environment.wind.speed" + valueType,
+        "value": speed
+      }, {
+        "path": "environment.wind.angle" + valueType,
+        "value": angle
+      }]
+    }],
+    "context": multiplexer._context
+  });
 	return true;
 });
