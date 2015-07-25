@@ -4,6 +4,7 @@ chai.use(require('chai-things'));
 
 
 var nmeaLine = "$IIMWV,074,T,05.85,N,A*2E";
+var emptyNmeaLine = '$IIMWV,,,,*4C';
 
 describe('MWV', function() {
   it('converts ok', function(done) {
@@ -14,4 +15,11 @@ describe('MWV', function() {
     });
     parser.write(nmeaLine);
   })
+
+  it('handles empty fields without throwing errors', function(done) {
+    parser = new(require('../lib/').Parser)();
+    parser.write(emptyNmeaLine);
+    done();
+  })
 });
+
