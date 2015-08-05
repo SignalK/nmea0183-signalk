@@ -56,8 +56,8 @@ function convertToWindAngle(self, angle) {
 module.exports = new Codec('MWV', function(multiplexer, input) {
   var values = input.values;
   
-	if(values[4].toUpperCase() != 'A') {
-		// Don't parse this sentence as it's void, but report the exception to the main Codec.
+  if(!values[4] || values[4].toUpperCase() != 'A') {
+		// Don't parse this sentence as it's void/has no data, but report the exception to the main Codec.
 		this.reportError(this.errors.VOID, "Not parsing sentence for it's void."); 
 		return null;
 	}
