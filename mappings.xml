@@ -2,130 +2,85 @@
 <mappings>
   <mapping>
     <path>~/navigation/position/latitude</path>
-    <sentence>
-      <id>RMC</id>
+    <sentence id="RMC" filter="uppercase:1 == A">
       <fieldset type="coordinate">
         <field>2</field>
         <field>3</field>
       </fieldset>
-      <filter type="if">
-        <field>1</field>
-        <value transform="uppercase">A</value>
-      </filter>
     </sentence>
   </mapping>
 
   <mapping>
     <path>~/navigation/position/longitude</path>
-    <sentence>
-      <id>RMC</id>
+    <sentence id="RMC" filter="uppercase:1 == A">
       <fieldset type="coordinate">
         <field>4</field>
         <field>5</field>
       </fieldset>
-      <filter type="if">
-        <field>1</field>
-        <value transform="uppercase">A</value>
-      </filter>
-    </sentence>
-  </mapping>
-
-  <mapping>
-    <path>~/navigation/magneticVariation/value</path>
-    <sentence>
-      <id>RMC</id>
-      <fieldset type="magneticVariation">
-        <field>9</field>
-        <field>10</field>
-      </fieldset>
-      <filter type="if">
-        <field>1</field>
-        <value transform="uppercase">A</value>
-      </filter>
     </sentence>
   </mapping>
 
   <mapping>
     <path>~/navigation/position/timestamp</path>
-    <sentence>
-      <id>RMC</id>
+    <sentence id="RMC" filter="uppercase:1 == A">
       <fieldset type="datetime">
         <field type="time">0</field>
         <field type="date">8</field>
       </fieldset>
-      <filter type="if">
-        <field>1</field>
-        <value transform="uppercase">A</value>
-      </filter>
     </sentence>
   </mapping>
 
   <mapping>
     <path>~/navigation/courseOverGroundTrue/value</path>
-    <sentence>
-      <id>RMC</id>
+    <sentence id="RMC" filter="uppercase:1 == A">
       <field type="float">7</field>
-      <filter type="if">
-        <field>1</field>
-        <value transform="uppercase">A</value>
-      </filter>
     </sentence>
   </mapping>
 
   <mapping>
     <path>~/navigation/courseOverGroundTrue/timestamp</path>
-    <sentence>
-      <id>RMC</id>
+    <sentence id="RMC" filter="uppercase:1 == A">
       <fieldset type="datetime">
         <field type="time">0</field>
         <field type="date">8</field>
       </fieldset>
-      <filter type="if">
-        <field>1</field>
-        <value transform="uppercase">A</value>
-      </filter>
     </sentence>
   </mapping>
 
   <mapping>
     <path>~/navigation/speedOverGround/value</path>
-    <sentence>
-      <id>RMC</id>
+    <sentence id="RMC" filter="uppercase:1 == A">
       <field transform="knots-ms" type="float">6</field>
-      <filter type="if">
-        <field>1</field>
-        <value transform="uppercase">A</value>
-      </filter>
     </sentence>
   </mapping>
 
   <mapping>
     <path>~/navigation/speedOverGround/timestamp</path>
-    <sentence>
-      <id>RMC</id>
+    <sentence id="RMC" filter="uppercase:1 == A">
       <fieldset type="datetime">
         <field type="time">0</field>
         <field type="date">8</field>
       </fieldset>
-      <filter type="if">
-        <field>1</field>
-        <value transform="uppercase">A</value>
-      </filter>
     </sentence>
   </mapping>
 
   <mapping>
     <path>~/navigation/magneticVariation/timestamp</path>
-    <sentence>
-      <id>RMC</id>
+    <sentence id="RMC" filter="uppercase:1 == A">
       <fieldset type="datetime">
         <field type="time">0</field>
         <field type="date">8</field>
       </fieldset>
-      <filter type="if">
-        <field>1</field>
-        <value transform="uppercase">A</value>
-      </filter>
+    </sentence>
+  </mapping>
+
+  <mapping>
+    <path>~/navigation/magneticVariation/value</path>
+    <sentence id="RMC" filter="uppercase:1 == A">
+      <fieldset type="magneticVariation">
+        <field>9</field>
+        <field>10</field>
+      </fieldset>
     </sentence>
   </mapping>
 </mappings>
