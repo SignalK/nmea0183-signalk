@@ -10,7 +10,7 @@ var tcp = new TcpStream({
 var parser = new Parser;
 
 parser.on('data', function(data) {
-  debug(JSON.stringify(data));
+  // debug(JSON.stringify(data, null, 2));
 });
 
 tcp.pipe(parser);
