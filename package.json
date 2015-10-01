@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./index",
-    "tcp": "DEBUG=signalk* node ./test"
+    "tcp": "DEBUG=signalk* node ./test/test-tcp"
   },
   "bin": {
     "nmea0183-signalk": "./bin/nmea0183-signalk",
