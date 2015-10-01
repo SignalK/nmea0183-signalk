@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./index",
+    "test": "mocha ./test/index.js",
     "tcp": "DEBUG=signalk* node ./test/test-tcp"
   },
   "bin": {
