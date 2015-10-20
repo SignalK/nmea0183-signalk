@@ -14,14 +14,11 @@
     "nmea-signalk": "./bin/nmea0183-signalk"
   },
   "dependencies": {
-    "JSONPath": "^0.10.0",
     "debug": "^2.2.0",
-    "ggencoder": "^0.1.5",
     "lodash": "^2.4.2",
     "nmea0183-utilities": "^0.1.1",
     "node-uuid": "^1.4.1",
-    "pixl-xml": "^1.0.4",
-    "signalk-multiplexer": "SignalK/signalk-multiplexer-node"
+    "pixl-xml": "^1.0.4"
   },
   "devDependencies": {
     "chai": "~2.1.2",

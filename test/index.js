@@ -1,12 +1,32 @@
-var chai = require("chai");
-chai.Should();
-chai.use(require('chai-things'));
+var Parser  = require('../lib/Parser');
+var chai    = require('chai');
+var expect  = require('chai').expect;
 
 
-describe('Replace this stub with real tests once the lite version is finished', function() {
-  it('...or you shall be shot.', function(done) {
-    var t = true;
-    t.should.equal.true; 
-    done();
+describe('NMEA0183:', function() {
+  it('GLL', function(done) {
+    
+    Parser.parse('$GPGLL,5233.0040,N,00527.1160,E,151033.750,A,A*5B', function(err, result) {
+      // Validate the delta message
+      expect(result).to.be.an('object');
+      expect(result.context).to.equal('vessels.self');
+      expect(result.updates).to.be.an('array');
+      expect(result.updates).to.have.length(1);
+
+      // Validate the updates
+      expect(result.updates[0].source).to.be.an('object');
+      expect(result.updates[0].source.sentence).to.equal('GLL');
+      expect(result.updates[0].values).to.be.an('array');
+      expect(result.updates[0].values).to.have.length(1);
+
+      // Validate the values in the update
+      expect(result.updates[0].values[0]).to.be.an('object');
+      expect(result.updates[0].values[0].path).to.equal('navigation.position');
+      expect(result.updates[0].values[0].value).to.be.an('object');
+      expect(result.updates[0].values[0].value.latitude).to.equal(52.550066666666666);
+      expect(result.updates[0].values[0].value.longitude).to.equal(5.451933333333334);
+      
+      done();
+    });
   })
 });
