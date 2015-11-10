@@ -80,6 +80,7 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
   multiplexer.self();
 
   var valueType = values[1].toUpperCase() == "R" ? 'Apparent' : 'True';
+  var angleType = values[1].toUpperCase() == "R" ? 'Apparent' : 'TrueWater';
   multiplexer.add({
     "updates": [{
       "source": source,
@@ -88,7 +89,7 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
         "path": "environment.wind.speed" + valueType,
         "value": speed
       }, {
-        "path": "environment.wind.angle" + valueType,
+        "path": "environment.wind.angle" + angleType,
         "value": angle
       }]
     }],

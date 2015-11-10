@@ -1,6 +1,6 @@
 var Parser  = require('../');
 var assert  = require('assert');
-var validateSchema = require('signalk-schema').validate;
+var validateSchema = require('signalk-schema').validateVessel;
 
 function clearTimestampFromObj(obj) {
   var out = {};
@@ -93,7 +93,7 @@ describe('MWV parser; sentence with true wind data', function() {
                               "src": "MWV"
                             }
                           },
-                          "angleTrue": {
+                          "angleTrueWater": {
                             "value": -42,
                             "source": {
                               "label": "signalk-parser-nmea0183",

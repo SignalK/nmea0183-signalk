@@ -10,7 +10,7 @@ describe('MWV', function() {
   it('converts ok', function(done) {
     parser = new(require('../lib/').Parser)();
     parser.on('delta', function(delta) {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleTrue');
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleTrueWater');
       done();
     });
     parser.write(nmeaLine);
