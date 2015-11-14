@@ -65,7 +65,7 @@ describe('DBT parser', function() {
                             "source": {
                               "label": "signalk-parser-nmea0183",
                               "type": "NMEA0183",
-                              "src": "DBT"
+                              "sentence": "DBT"
                             }
                           }
                         }
@@ -90,7 +90,7 @@ describe('MWV parser; sentence with true wind data', function() {
                             "source": {
                               "label": "signalk-parser-nmea0183",
                               "type": "NMEA0183",
-                              "src": "MWV"
+                              "sentence": "MWV"
                             }
                           },
                           "angleTrueWater": {
@@ -98,7 +98,7 @@ describe('MWV parser; sentence with true wind data', function() {
                             "source": {
                               "label": "signalk-parser-nmea0183",
                               "type": "NMEA0183",
-                              "src": "MWV"
+                              "sentence": "MWV"
                             }
                           }
                         }
@@ -124,7 +124,7 @@ describe('MWV parser; sentence with apparent wind data', function() {
                             "source": {
                               "label": "signalk-parser-nmea0183",
                               "type": "NMEA0183",
-                              "src": "MWV"
+                              "sentence": "MWV"
                             },
                             "value": -24
                           },
@@ -132,7 +132,7 @@ describe('MWV parser; sentence with apparent wind data', function() {
                             "source": {
                               "label": "signalk-parser-nmea0183",
                               "type": "NMEA0183",
-                              "src": "MWV"
+                              "sentence": "MWV"
                             },
                             "value": 6.89870174767111
                           }
@@ -156,7 +156,7 @@ describe('MWV parser; apparent wind data (wind from starboard)', function() {
                             "source": {
                               "label": "signalk-parser-nmea0183",
                               "type": "NMEA0183",
-                              "src": "MWV"
+                              "sentence": "MWV"
                             },
                             "value": 35
                           },
@@ -164,7 +164,7 @@ describe('MWV parser; apparent wind data (wind from starboard)', function() {
                             "source": {
                               "label": "signalk-parser-nmea0183",
                               "type": "NMEA0183",
-                              "src": "MWV"
+                              "sentence": "MWV"
                             },
                             "value": 4.696878967653784
                           }
@@ -186,7 +186,7 @@ describe('VHW parser; sentence with speed data only', function() {
                           "source": {
                             "label": "signalk-parser-nmea0183",
                             "type": "NMEA0183",
-                            "src": "VHW"
+                            "sentence": "VHW"
                           }
                         }
                       },
@@ -209,7 +209,7 @@ describe('VHW parser; sentence with direction and speed data', function() {
                           "source": {
                             "label": "signalk-parser-nmea0183",
                             "type": "NMEA0183",
-                            "src": "VHW"
+                            "sentence": "VHW"
                           }
                         },
                         "headingMagnetic": {
@@ -217,7 +217,7 @@ describe('VHW parser; sentence with direction and speed data', function() {
                           "source": {
                             "label": "signalk-parser-nmea0183",
                             "type": "NMEA0183",
-                            "src": "VHW"
+                            "sentence": "VHW"
                           }
                         },
                         "speedThroughWater": {
@@ -225,7 +225,7 @@ describe('VHW parser; sentence with direction and speed data', function() {
                           "source": {
                             "label": "signalk-parser-nmea0183",
                             "type": "NMEA0183",
-                            "src": "VHW"
+                            "sentence": "VHW"
                           }
                         }
                       },
