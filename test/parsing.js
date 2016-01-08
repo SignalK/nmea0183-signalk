@@ -42,13 +42,16 @@ function verifyParsing(sentence, expected) {
 
   it('Schema conformance', function() {
     var vesselData = parsedSentence.vessels["123456789"];
+    vesselData.mmsi = '230099999';
     var result = validateSchema(vesselData);
-    result.errors.forEach(function(error) {
-      console.error("Schema validation error:",
-                    "data path:", error.dataPath, ",",
-                    "message:", error.message);
-    });
-    assert(!result.errors.length,
+    if (!result.valid) {
+      result.errors.forEach(function(error) {
+        console.error("Schema validation error:",
+                      "data path:", error.dataPath, ",",
+                      "message:", error.message);
+      });
+    }
+    assert(result.valid,
            "Parsed data does not conform to the schema");
   });
 }
