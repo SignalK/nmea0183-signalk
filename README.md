@@ -6,6 +6,10 @@ signalk-parser-nmea0183
 
 A parser written in node.js to parse NMEA 0183 sentences into Signal K. 
 
+Run Tests
+------------------------
+`npm test`
+
 
 SUPPORTED NMEA SENTENCES
 ------------------------

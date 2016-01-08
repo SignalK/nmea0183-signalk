@@ -45,12 +45,16 @@ Field Number:
 
 var Codec = require('../lib/NMEA0183');
 
+Math.radians = function(degrees) {
+  return degrees * Math.PI / 180;
+};
+
 function convertToWindAngle(self, angle) {
         var numAngle = self.float(angle) % 360;
         if (numAngle > 180 && numAngle <= 360) {
-                return numAngle - 360;
+                return Math.radians(numAngle - 360);
         }
-        return numAngle;
+        return Math.radians(numAngle);
 }
 
 module.exports = new Codec('MWV', function(multiplexer, input) {

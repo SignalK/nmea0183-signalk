@@ -97,7 +97,7 @@ describe('MWV parser; sentence with true wind data', function() {
                             }
                           },
                           "angleTrueWater": {
-                            "value": -42,
+                            "value": -0.7330382858376184,
                             "source": {
                               "label": "signalk-parser-nmea0183",
                               "type": "NMEA0183",
@@ -129,7 +129,7 @@ describe('MWV parser; sentence with apparent wind data', function() {
                               "type": "NMEA0183",
                               "sentence": "MWV"
                             },
-                            "value": -24
+                            "value": -0.41887902047863906
                           },
                           "speedApparent": {
                             "source": {
@@ -161,7 +161,7 @@ describe('MWV parser; apparent wind data (wind from starboard)', function() {
                               "type": "NMEA0183",
                               "sentence": "MWV"
                             },
-                            "value": 35
+                            "value": 0.6108652381980153
                           },
                           "speedApparent": {
                             "source": {
