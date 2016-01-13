@@ -45,7 +45,7 @@ module.exports = new Codec('HDM', function(multiplexer, input) {
   var values = input.values;
   var self = this;
   var vals = [
-    { path: 'headingMagnetic', value: self.float(values[0]) }
+    { path: 'headingMagnetic', value: self.transform(self.float(values[0]), 'deg', 'rad') }
   ];
 
   multiplexer

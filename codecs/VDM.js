@@ -52,10 +52,10 @@ module.exports = new Codec('VDM', function(multiplexer, input, line) {
     .timestamp(this.timestamp())
     .source(this.source())
     .values([
-      { path: "speedOverGround", value: data.sog },
-      { path: "courseOverGround", value: data.cog },
+      { path: "speedOverGround", value: this.transform(data.sog, 'knots', 'ms') },
+      { path: "courseOverGround", value: this.transform(data.cog, 'deg', 'rad') },
       { path: "state", value: data.GetNavStatus() },
-      { path: "headingTrue", value: data.hdg }
+      { path: "headingTrue", value: this.transform(data.hdg, 'deg', 'rad') }
     ])
   ;
 

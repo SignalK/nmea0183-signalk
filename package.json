@@ -12,16 +12,16 @@
     "nmea2signalk": "./bin/nmea0183-signalk"
   },
   "dependencies": {
-    "debug": "^2.1.0",
     "ggencoder": "^0.1.5",
-    "lodash": "~2.4.1",
+    "lodash": "^4.0.0",
     "node-uuid": "^1.4.1",
     "signalk-multiplexer": "git://github.com/SignalK/signalk-multiplexer-node.git"
   },
   "devDependencies": {
-    "chai": "~2.1.2",
-    "chai-things": "~0.2.0",
-    "mocha": "^2.1.0",
+    "chai": "^3.4.1",
+    "chai-things": "^0.2.0",
+    "debug": "^2.2.0",
+    "mocha": "^2.3.4",
     "signalk-schema": "SignalK/specification"
   },
   "repository": {

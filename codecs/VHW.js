@@ -51,40 +51,38 @@ Field Number:
 var Codec = require('../lib/NMEA0183');
 
 function hasValue(value) {
-    return (typeof value !== 'undefined' &&
-           value !== '');
+  return (typeof value !== 'undefined' && value !== '' && value !== null);
 }
 
 module.exports = new Codec('VHW', function(multiplexer, input) {
-    var values = input.values;
+  var values = input.values;
 
-    var speed;
-    var parsedValues = [];
+  var speed;
+  var parsedValues = [];
 
-    if (hasValue(values[0])) {
-        parsedValues.push({ path: 'headingTrue', value: parseFloat(values[0]) });
-    }
-    if (hasValue(values[2])) {
-        parsedValues.push({ path: 'headingMagnetic', value: parseFloat(values[2]) });
-    }
+  if(hasValue(values[0])) {
+    parsedValues.push({ path: 'headingTrue', value: this.transform(this.float(values[0]), 'deg', 'rad') });
+  }
+  if(hasValue(values[2])) {
+    parsedValues.push({ path: 'headingMagnetic', value: this.transform(this.float(values[2]), 'deg', 'rad') });
+  }
 
-    if (hasValue(values[6])) {
-        speed = this.transform(values[6], 'kph', 'ms');
-    }
-    else if (hasValue(values[4])) {
-        speed = this.transform(values[4], 'knots', 'ms');
-    }
+  if(hasValue(values[6])) {
+    speed = this.transform(values[6], 'kph', 'ms');
+  } else if(hasValue(values[4])) {
+    speed = this.transform(values[4], 'knots', 'ms');
+  }
 
-    if (typeof speed !== 'undefined') {
-        parsedValues.push({ path: 'speedThroughWater', value: speed });
-    }
+  if (typeof speed !== 'undefined') {
+    parsedValues.push({ path: 'speedThroughWater', value: speed });
+  }
 
-    multiplexer
-        .self()
-        .group('navigation')
-        .timestamp(this.timestamp())
-        .source(this.source())
-        .values(parsedValues);
+  multiplexer
+  .self()
+  .group('navigation')
+  .timestamp(this.timestamp())
+  .source(this.source())
+  .values(parsedValues);
 
-    return true;
+  return true;
 });
