@@ -58,7 +58,6 @@ function verifyParsing(sentence, expected) {
   });
 }
 
-/*
 describe('DBT parser', function() {
   verifyParsing('$IIDBT,034.28,f,010.45,M,005.64,F*2B',
     {
@@ -84,9 +83,7 @@ describe('DBT parser', function() {
     }
   );
 });
-//*/
 
-/*
 describe('MWV parser; sentence with true wind data', function() {
   verifyParsing('$IIMWV,318,T,07.61,N,A*2F',
     {
@@ -120,9 +117,7 @@ describe('MWV parser; sentence with true wind data', function() {
     }
   );
 });
-//*/
 
-/*
 describe('MWV parser; sentence with apparent wind data', function() {
   verifyParsing('$IIMWV,336,R,13.41,N,A*22',
     { 
@@ -156,9 +151,7 @@ describe('MWV parser; sentence with apparent wind data', function() {
     }
   );
 });
-//*/
 
-/*
 describe('MWV parser; apparent wind data (wind from starboard)', function() {
   verifyParsing('$IIMWV,035,R,09.13,N,A*2E',
     { 
@@ -192,7 +185,6 @@ describe('MWV parser; apparent wind data (wind from starboard)', function() {
     }
   );
 });
-//*/
 
 describe('VHW parser; sentence with speed data only', function() {
   verifyParsing('$IIVHW,,T,,M,06.12,N,11.33,K*50',
