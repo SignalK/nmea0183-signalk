@@ -45,7 +45,7 @@ module.exports = new Codec('HDT', function(multiplexer, input) {
   var values = input.values;
   var self = this;
   var vals = [
-    { path: 'headingTrue', value: self.float(values[0]) }
+    { path: 'headingTrue', value: self.transform(self.float(values[0]), 'deg', 'rad') }
   ];
 
   multiplexer

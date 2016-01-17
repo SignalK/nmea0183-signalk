@@ -46,11 +46,11 @@ Field Number:
 var Codec = require('../lib/NMEA0183');
 
 function convertToWindAngle(self, angle) {
-        var numAngle = self.float(angle) % 360;
-        if (numAngle > 180 && numAngle <= 360) {
-                return numAngle - 360;
-        }
-        return numAngle;
+  var numAngle = self.float(angle) % 360;
+  if (numAngle > 180 && numAngle <= 360) {
+    return numAngle - 360;
+  }
+  return numAngle;
 }
 
 module.exports = new Codec('MWV', function(multiplexer, input) {
@@ -81,6 +81,7 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
 
   var valueType = values[1].toUpperCase() == "R" ? 'Apparent' : 'True';
   var angleType = values[1].toUpperCase() == "R" ? 'Apparent' : 'TrueWater';
+
   multiplexer.add({
     "updates": [{
       "source": source,
@@ -90,7 +91,7 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
         "value": speed
       }, {
         "path": "environment.wind.angle" + angleType,
-        "value": angle
+        "value": this.transform(angle, 'deg', 'rad')
       }]
     }],
     "context": multiplexer._context
