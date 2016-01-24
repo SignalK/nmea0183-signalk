@@ -70,7 +70,7 @@ module.exports = new Codec('APB', function(multiplexer, input) {
     .self()
     .group('navigation')
     .set('currentRoute', {
-      source: this.source(),
+      source: this.source(input.instrument),
       timestamp: this.timestamp(),
       steer: (values[3].toUpperCase() == 'R' ? 'right' : 'left'),
       bearingActual: this.transform(this.float(values[10]), 'deg', 'rad'),
