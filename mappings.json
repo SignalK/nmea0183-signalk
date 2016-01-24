@@ -1,0 +1,153 @@
+{
+  "~/navigation/position/latitude": {
+    "nmea0183": {
+      "RMC": {
+        "filter": "uppercase:1 == A",
+        "fieldset": {
+          "type": "coordinate",
+          "fields": [
+            { "index": 2 },
+            { "index": 3 }
+          ]
+        }
+      },
+
+      "GLL": {
+        "filter": "uppercase:5 == A",
+        "fieldset": {
+          "type": "coordinate",
+          "fields": [
+            { "index": 0 },
+            { "index": 1 }
+          ]
+        }
+      }
+    }
+  },
+
+  "~/navigation/position/longitude": {
+    "nmea0183": {
+      "RMC": {
+        "filter": "uppercase:1 == A",
+        "fieldset": {
+          "type": "coordinate",
+          "fields": [
+            { "index": 4 },
+            { "index": 5 }
+          ]
+        }
+      },
+
+      "GLL": {
+        "filter": "uppercase:5 == A",
+        "fieldset": {
+          "type": "coordinate",
+          "fields": [
+            { "index": 2 },
+            { "index": 3 }
+          ]
+        }
+      }
+    }
+  }, 
+
+  "~/navigation/position/timestamp": {
+    "nmea0183": {
+      "RMC": {
+        "filter": "uppercase:1 == A",
+        "fieldset": {
+          "type": "datetime",
+          "fields": [
+            { "index": 0, "type": "time" },
+            { "index": 8, "type": "date" }
+          ]
+        }
+      }
+    }
+  }, 
+
+  "~/navigation/courseOverGroundTrue/value": {
+    "nmea0183": {
+      "RMC": {
+        "filter": "uppercase:1 == A",
+        "field": {
+          "index": 7,
+          "type": "float"
+        }
+      }
+    }
+  },
+
+  "~/navigation/courseOverGroundTrue/timestamp": {
+    "nmea0183": {
+      "RMC": {
+        "filter": "uppercase:1 == A",
+        "fieldset": {
+          "type": "datetime",
+          "fields": [
+            { "index": 0, "type": "time" },
+            { "index": 8, "type": "date" }
+          ]
+        }
+      }
+    }
+  },
+
+  "~/navigation/speedOverGround/value": {
+    "nmea0183": {
+      "RMC": {
+        "filter": "uppercase:1 == A",
+        "field": {
+          "index": 6,
+          "type": "float",
+          "transform": "knots-ms"
+        }
+      }
+    }
+  },
+
+  "~/navigation/speedOverGround/timestamp": {
+    "nmea0183": {
+      "RMC": {
+        "filter": "uppercase:1 == A",
+        "fieldset": {
+          "type": "datetime",
+          "fields": [
+            { "index": 0, "type": "time" },
+            { "index": 8, "type": "date" }
+          ]
+        }
+      }
+    }
+  },
+
+  "~/navigation/magneticVariation/timestamp": {
+    "nmea0183": {
+      "RMC": {
+        "filter": "uppercase:1 == A",
+        "fieldset": {
+          "type": "datetime",
+          "fields": [
+            { "index": 0, "type": "time" },
+            { "index": 8, "type": "date" }
+          ]
+        }
+      }
+    }
+  },
+
+  "~/navigation/magneticVariation/value": {
+    "nmea0183": {
+      "RMC": {
+        "filter": "uppercase:1 == A",
+        "fieldset": {
+          "type": "magneticVariation",
+          "fields": [
+            { "index": 9 },
+            { "index": 10 }
+          ]
+        }
+      }
+    }
+  }
+}

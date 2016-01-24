@@ -29,4 +29,27 @@ describe('NMEA0183:', function() {
       done();
     });
   })
+
+  it('RMC', function(done) {
+    
+    Parser.parse('$GPRMC,195719,A,5310.8115,N,00525.7025,E,0.0,0.0,160414,0.7,E,A*10', function(err, result) {
+      expect(result).to.be.an('object')
+      expect(result.context).to.equal('vessels.self')
+      expect(result.updates).to.be.an('array')
+      expect(result.updates[0].timestamp).to.be.a('string')
+      expect(result.updates[0].source).to.be.an('object')
+      expect(result.updates[0].source.sentence).to.equal('RMC')
+      expect(result.updates[0].values).to.be.an('array')
+      expect(result.updates[0].values).to.have.length(4)   
+      expect(result.updates[0].values[0]).to.be.an('object')
+      expect(result.updates[0].values[0].path).to.equal('navigation.position')
+      expect(result.updates[0].values[1]).to.be.an('object')
+      expect(result.updates[0].values[1].path).to.equal('navigation.courseOverGroundTrue')
+      expect(result.updates[0].values[2]).to.be.an('object')
+      expect(result.updates[0].values[2].path).to.equal('navigation.speedOverGround')
+      expect(result.updates[0].values[3]).to.be.an('object')
+      expect(result.updates[0].values[3].path).to.equal('navigation.magneticVariation')
+      done()
+    });
+  })
 });
