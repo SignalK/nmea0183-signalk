@@ -51,7 +51,7 @@ module.exports = new Codec('HDM', function(multiplexer, input) {
   multiplexer
     .self()
     .group('navigation')
-    .source(this.source())
+    .source(this.source(input.instrument))
     .timestamp(this.timestamp())
     .values(vals)
   ;

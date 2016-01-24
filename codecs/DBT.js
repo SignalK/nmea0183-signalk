@@ -53,7 +53,7 @@ module.exports = new Codec('DBT', function(multiplexer, input) {
 
   multiplexer.add({
     "updates": [{
-      "source": this.source(),
+      "source": this.source(input.instrument),
       "timestamp": this.timestamp(),
       "values": [{
         "path": "environment.depth.belowTransducer",

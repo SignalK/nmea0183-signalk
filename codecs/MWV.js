@@ -63,7 +63,7 @@ module.exports = new Codec('MWV', function(multiplexer, input) {
 	}
 
 	var ts 		  = this.timestamp();
-	var source 	= this.source();
+	var source 	= this.source(input.instrument);
 	var wsu 	  = values[3].toUpperCase();
 
 	if(wsu == 'K') {

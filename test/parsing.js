@@ -68,9 +68,10 @@ describe('DBT parser', function() {
               "belowTransducer": {
                 "value": 10.45,
                 "source": {
-                  "label": "signalk-parser-nmea0183",
+                  "label": "signalk/signalk-parser-nmea0183",
                   "type": "NMEA0183",
-                  "sentence": "DBT"
+                  "sentence": "DBT",
+                  "talker": "II"
                 }
               }
             }
@@ -78,7 +79,7 @@ describe('DBT parser', function() {
           "mmsi": "123456789"
         }
       },
-      "version": 1,
+      "version": "1",
       "self": "123456789"
     }
   );
@@ -94,17 +95,19 @@ describe('MWV parser; sentence with true wind data', function() {
               "speedTrue": {
                 "value": 3.91492321400277,
                 "source": {
-                  "label": "signalk-parser-nmea0183",
+                  "label": "signalk/signalk-parser-nmea0183",
                   "type": "NMEA0183",
-                  "sentence": "MWV"
+                  "sentence": "MWV",
+                  "talker": "II"
                 }
               },
               "angleTrueWater": {
                 "value": -0.7330382858376184,
                 "source": {
-                  "label": "signalk-parser-nmea0183",
+                  "label": "signalk/signalk-parser-nmea0183",
                   "type": "NMEA0183",
-                  "sentence": "MWV"
+                  "sentence": "MWV",
+                  "talker": "II"
                 }
               }
             }
@@ -130,17 +133,19 @@ describe('MWV parser; sentence with apparent wind data', function() {
             "wind": {
               "angleApparent": {
                 "source": {
-                  "label": "signalk-parser-nmea0183",
+                  "label": "signalk/signalk-parser-nmea0183",
                   "type": "NMEA0183",
-                  "sentence": "MWV"
+                  "sentence": "MWV",
+                  "talker": "II"
                 },
                 "value": -0.41887902047863906
               },
               "speedApparent": {
                 "source": {
-                  "label": "signalk-parser-nmea0183",
+                  "label": "signalk/signalk-parser-nmea0183",
                   "type": "NMEA0183",
-                  "sentence": "MWV"
+                  "sentence": "MWV",
+                  "talker": "II"
                 },
                 "value": 6.89870174767111
               }
@@ -164,17 +169,19 @@ describe('MWV parser; apparent wind data (wind from starboard)', function() {
             "wind": {
               "angleApparent": {
                 "source": {
-                  "label": "signalk-parser-nmea0183",
+                  "label": "signalk/signalk-parser-nmea0183",
                   "type": "NMEA0183",
-                  "sentence": "MWV"
+                  "sentence": "MWV",
+                  "talker": "II"
                 },
                 "value": 0.6108652381980153
               },
               "speedApparent": {
                 "source": {
-                  "label": "signalk-parser-nmea0183",
+                  "label": "signalk/signalk-parser-nmea0183",
                   "type": "NMEA0183",
-                  "sentence": "MWV"
+                  "sentence": "MWV",
+                  "talker": "II"
                 },
                 "value": 4.696878967653784
               }
@@ -195,9 +202,10 @@ describe('VHW parser; sentence with speed data only', function() {
             "speedThroughWater": {
               "value": 3.147222222222222,
               "source": {
-                "label": "signalk-parser-nmea0183",
+                "label": "signalk/signalk-parser-nmea0183",
                 "type": "NMEA0183",
-                "sentence": "VHW"
+                "sentence": "VHW",
+                  "talker": "II"
               }
             }
           },
@@ -219,25 +227,28 @@ describe('VHW parser; sentence with direction and speed data', function() {
             "headingTrue": {
               "value": 3.1852258848896517,
               "source": {
-                "label": "signalk-parser-nmea0183",
+                "label": "signalk/signalk-parser-nmea0183",
                 "type": "NMEA0183",
-                "sentence": "VHW"
+                "sentence": "VHW",
+                "talker": "SD"
               }
             },
             "headingMagnetic": {
               "value": 3.1730085801256913,
               "source": {
-                "label": "signalk-parser-nmea0183",
+                "label": "signalk/signalk-parser-nmea0183",
                 "type": "NMEA0183",
-                "sentence": "VHW"
+                "sentence": "VHW",
+                "talker": "SD"
               }
             },
             "speedThroughWater": {
               "value": 0,
               "source": {
-                "label": "signalk-parser-nmea0183",
+                "label": "signalk/signalk-parser-nmea0183",
                 "type": "NMEA0183",
-                "sentence": "VHW"
+                "sentence": "VHW",
+                "talker": "SD"
               }
             }
           },

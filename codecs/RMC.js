@@ -69,7 +69,7 @@ module.exports = new Codec('RMC', function(multiplexer, input, line) {
     .self()
     .group('navigation')
     .set('position', {
-      source: this.source(),
+      source: this.source(input.instrument),
       timestamp: ts,
       longitude: self.coordinate(values[4], String(values[5]).toUpperCase()),
       latitude: self.coordinate(values[2], String(values[3]).toUpperCase())
@@ -89,7 +89,7 @@ module.exports = new Codec('RMC', function(multiplexer, input, line) {
   multiplexer
     .self()
     .group('navigation')
-    .source(this.source())
+    .source(this.source(input.instrument))
     .timestamp(ts)
     .values(vals)
   ;

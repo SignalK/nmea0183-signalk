@@ -81,7 +81,7 @@ module.exports = new Codec('VHW', function(multiplexer, input) {
   .self()
   .group('navigation')
   .timestamp(this.timestamp())
-  .source(this.source())
+  .source(this.source(input.instrument))
   .values(parsedValues);
 
   return true;

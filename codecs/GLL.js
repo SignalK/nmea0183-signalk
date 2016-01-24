@@ -49,7 +49,7 @@ var Codec = require('../lib/NMEA0183');
 module.exports = new Codec('GLL', function(multiplexer, input) {
   var values = input.values;
 
-	if(values[5].toUpperCase() == 'V') {
+  if(values[5].toUpperCase() == 'V') {
 		// Don't parse this sentence as it's void, but report the exception to the main Codec.
 		this.reportError(this.errors.VOID, "Not parsing sentence for it's void."); 
 		return null;
@@ -78,7 +78,7 @@ module.exports = new Codec('GLL', function(multiplexer, input) {
 
   multiplexer.add({
     "updates": [{
-      "source": this.source(),
+      "source": this.source(input.instrument),
       "timestamp": ts,
       "values": [{
         "path": "navigation.position",

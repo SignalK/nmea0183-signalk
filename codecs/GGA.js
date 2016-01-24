@@ -73,7 +73,7 @@ var Codec = require('../lib/NMEA0183');
 module.exports = new Codec('GGA', function(multiplexer, input) {
   var values = input.values;
 	var ts     = this.timestamp(values[0]);
-  var src    = this.source();
+  var src    = this.source(input.instrument);
   var self   = this;
 
   // Position
@@ -81,7 +81,7 @@ module.exports = new Codec('GGA', function(multiplexer, input) {
     .self()
     .group('navigation')
     .set('position', {
-      source: this.source(),
+      source: this.source(input.instrument),
       timestamp: ts,
       longitude: this.coordinate(values[3], values[4]),
       latitude: this.coordinate(values[1], values[2])
@@ -93,7 +93,7 @@ module.exports = new Codec('GGA', function(multiplexer, input) {
     .self()
     .group('navigation')
     .set('gnss', {
-      source: this.source(),
+      source: this.source(input.instrument),
       timestamp: ts,
       quality: this.int(values[5]),
       satellites: this.int(values[6]),
