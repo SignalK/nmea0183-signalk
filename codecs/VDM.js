@@ -27,9 +27,8 @@ module.exports = new Codec('VDM', function(multiplexer, input, line) {
     return this.reportError(this.errors.VOID, "Not parsing sentence for it isn't valid."); 
   }
 
-  // console.log(JSON.stringify(data, null, 2));
-  // console.log('\n');
-
+  // Set MRN with MMSI
+  data.mmsi = 'urn:mrn:imo:mmsi:' + data.mmsi;
   // MMSI
   multiplexer.vessel(data.mmsi).set('mmsi', data.mmsi);
 
@@ -38,7 +37,7 @@ module.exports = new Codec('VDM', function(multiplexer, input, line) {
     .vessel(data.mmsi)
     .group('navigation')
     .set('position', {
-      source: this.source(),
+      source: this.source(input.instrument),
       timestamp: this.timestamp(),
       longitude: data.lon,
       latitude: data.lat
@@ -50,7 +49,7 @@ module.exports = new Codec('VDM', function(multiplexer, input, line) {
     .vessel(data.mmsi)
     .group('navigation')
     .timestamp(this.timestamp())
-    .source(this.source())
+    .source(this.source(input.instrument))
     .values([
       { path: "speedOverGround", value: this.transform(data.sog, 'knots', 'ms') },
       { path: "courseOverGround", value: this.transform(data.cog, 'deg', 'rad') },

@@ -65,7 +65,7 @@ module.exports = new Codec('VTG', function(multiplexer, input) {
     .self()
     .group('navigation')
     .timestamp(this.timestamp())
-    .source(this.source())
+    .source(this.source(input.instrument))
     .values([
       { path: 'courseOverGroundMagnetic', value: this.transform(this.float(values[2]), 'deg', 'rad') },
       { path: 'courseOverGroundTrue', value: this.transform(this.float(values[0]), 'deg', 'rad') },
