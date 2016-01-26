@@ -40,3 +40,9 @@ TODO (SENTENCES)
 - HDG
 - MWD
 - XDR
+
+- ROT
+- RPM
+- VDR
+- VPW
+- VWR
