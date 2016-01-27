@@ -6,37 +6,7 @@ signalk-parser-nmea0183
 
 A parser written in node.js to parse NMEA 0183 sentences into Signal K. 
 
-
-SUPPORTED NMEA SENTENCES
-------------------------
-- APB
-- DBT
-- GGA
-- GLL
-- HDM
-- HDT
-- MWV
-- RMC
-- VDM
-- VDO
-- VTG
+[List of supported sentences.](https://github.com/SignalK/signalk-parser-nmea0183/tree/master/codecs)
 
 
-TODO (SENTENCES)
-----------------
-- GSA*
-- GBS*
-- GSV*
-- BWC* (Started work, but needs an update)
-- ZDA
-- AAM
-- BOD
-- RMB
-- XTE
-- DPT
-- MTW
-- VLW
-- VHW
-- HDG
-- MWD
-- XDR
+
