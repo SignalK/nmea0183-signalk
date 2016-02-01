@@ -24,7 +24,7 @@
 "use strict";
 
 /*
-#        1 2 3 4 5 6
+#        0 1 2   3   4 5
 #        | | |   |   | |
 # $--RPM,a,x,x.x,x.x,A*hh<CR><LF> Field Number:
 #  1) Source, S = Shaft, E = Engine 2) Engine or shaft number 3) Speed, 
@@ -44,7 +44,7 @@ module.exports = new Codec('RPM', function(multiplexer, input) {
       "timestamp": this.timestamp(),
       "values": [{
         "path": "propulsion.propulsion.revolutions",
-        "value": this.float(values[3])
+        "value": this.float(values[2])
       }]
     }],
     "context": multiplexer._context
