@@ -27,9 +27,9 @@
 #        0 1 2   3   4 5
 #        | | |   |   | |
 # $--RPM,a,x,x.x,x.x,A*hh<CR><LF> Field Number:
-#  1) Source, S = Shaft, E = Engine 2) Engine or shaft number 3) Speed, 
-#  Revolutions per minute 4) Propeller pitch, % of maximum, "-" means 
-#  astern 5) Status, A means data is valid 6) Checksum
+#  0) Source, S = Shaft, E = Engine 1) Engine or shaft number 2) Speed, 
+#  Revolutions per minute 3) Propeller pitch, % of maximum, "-" means 
+#  astern 4) Status, A means data is valid 5) Checksum
 */ 
 
 var Codec = require('../lib/NMEA0183');
