@@ -8,17 +8,26 @@ applicable law or agreed to in writing, software * distributed under
 the License is distributed on an "AS IS" BASIS, * WITHOUT WARRANTIES OR 
 CONDITIONS OF ANY KIND, either express or implied. * See the License 
 for the specific language governing permissions and * limitations under 
-the License. * */ "use strict"; /*
+the License. * 
+*/ 
+
+"use strict";
+
+/*
 #        1 2 3 4 5 6
 #        | | |   |   | |
 # $--RPM,a,x,x.x,x.x,A*hh<CR><LF> Field Number:
 #  1) Source, S = Shaft, E = Engine 2) Engine or shaft number 3) Speed, 
 #  Revolutions per minute 4) Propeller pitch, % of maximum, "-" means 
 #  astern 5) Status, A means data is valid 6) Checksum
-*/ var Codec = require('../lib/NMEA0183'); module.exports = new 
-Codec('RPM', function(multiplexer, input) {
+*/ 
+
+var Codec = require('../lib/NMEA0183');
+module.exports = new Codec('RPM', function(multiplexer, input) {
   var values = input.values;
+
 	multiplexer.self();
+
   multiplexer.add({
     "updates": [{
       "source": this.source(input.instrument),
