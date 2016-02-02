@@ -3,7 +3,7 @@ chai.Should();
 chai.use(require('chai-things'));
 
 
-var nmeaLine = "$GPROT,35.6,A*4E";
+var nmeaLine = "$GPROT,35.6,A*01";
 
 describe('ROT', function() {
   it('converts ok', function(done) {

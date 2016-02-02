@@ -43,8 +43,12 @@ module.exports = new Codec('RPM', function(multiplexer, input) {
       "source": this.source(input.instrument),
       "timestamp": this.timestamp(),
       "values": [{
-        "path": "propulsion.revolutions",
+        "path": "propulsion.rpm",
         "value": this.float(values[2])
+      },
+      {
+        "path": "propulsion.state",
+        "value": "started"
       }]
     }],
     "context": multiplexer._context

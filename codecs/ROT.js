@@ -33,7 +33,7 @@
 # 0 - Rate Of Turn, degrees per minute, "-" means bow turns to port
 # 1 - Status, A means data is valid
 # 2 - Checksum
-# RPM - Revolutions
+# 
 #
 */ 
 
