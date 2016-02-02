@@ -10,7 +10,7 @@ describe('RPM', function() {
     parser = new(require('../lib/').Parser)();
     parser.on('delta', function(delta) {
       delta.should.be.validSignalKDelta;
-      delta.updates[0].values[0].path.should.equal('propulsion.rpm');
+      delta.updates[0].values[0].path.should.equal('propulsion.engine1.rpm');
       done();
     });
     parser.write(nmeaLine);
