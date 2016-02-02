@@ -36,6 +36,8 @@ var codecs = {
   VDO: require('./VDO'),
   VHW: require('./VHW'),
   VTG: require('./VTG'),
+  RPM: require('./RPM'),
+  ROT: require('./ROT'),
 };
 
 module.exports = codecs;
