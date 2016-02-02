@@ -3,14 +3,13 @@ chai.Should();
 chai.use(require('chai-things'));
 
 
-var nmeaLine = "$IIRPM,E,1,2418.2,10.5,A*7B";
+var nmeaLine = "$GPROT,35.6,A*4E";
 
-describe('RPM', function() {
+describe('ROT', function() {
   it('converts ok', function(done) {
     parser = new(require('../lib/').Parser)();
     parser.on('delta', function(delta) {
-      delta.should.be.validSignalKDelta;
-      delta.updates[0].values[0].path.should.equal('propulsion.revolutions');
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.rateOfTurn');
       done();
     });
     parser.write(nmeaLine);
