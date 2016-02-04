@@ -38,6 +38,7 @@ var codecs = {
   VTG: require('./VTG'),
   RPM: require('./RPM'),
   ROT: require('./ROT'),
+  VDR: require('./VDR'),
 };
 
 module.exports = codecs;
