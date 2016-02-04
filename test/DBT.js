@@ -12,7 +12,6 @@ describe('DBT', function() {
     parser.on('delta', function(delta) {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer');
       var full = signalkSchema.deltaToFull(delta);
-      signalkSchema.fillIdentity(full);
       full.should.be.validSignalK;
       done();
     });
