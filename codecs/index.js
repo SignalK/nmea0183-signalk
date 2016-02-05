@@ -39,6 +39,7 @@ var codecs = {
   RPM: require('./RPM'),
   ROT: require('./ROT'),
   VDR: require('./VDR'),
+  VPW: require('./VPW'),
 };
 
 module.exports = codecs;
