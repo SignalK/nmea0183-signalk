@@ -3,3 +3,8 @@ node_js:
   - "0.11"
   - "0.10"
 sudo: false
+
+notifications:
+  email
+    on_success: never# default: change
+    on_failure: never#[always|never|change] # default: always
