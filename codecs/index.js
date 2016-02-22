@@ -40,6 +40,7 @@ var codecs = {
   ROT: require('./ROT'),
   VDR: require('./VDR'),
   VPW: require('./VPW'),
+	XDR: require('./XDR'),
 };
 
 module.exports = codecs;
