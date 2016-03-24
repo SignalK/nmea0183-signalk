@@ -1,5 +1,5 @@
 /*
-* RPM codec
+* VWR codec
 *
 * @repository https://github.com/signalk/nmea-signalk
 * @author Joachim Bakke, joabakk
