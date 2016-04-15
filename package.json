@@ -37,7 +37,7 @@
     "parser"
   ],
   "author": "Fabian Tollenaar <fabian@starting-point.nl>",
-  "license": "Apache 2",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/signalk/nmea0183-signalk/issues"
   },
