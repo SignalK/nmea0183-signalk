@@ -1,10 +1,10 @@
 /*
  * Copyright 2015 Fabian Tollenaar <fabian@starting-point.nl>
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -20,11 +20,20 @@
 var Codec   = require('../lib/NMEA0183');
 var Decoder = require ("ggencoder").AisDecode;
 
+/*
+A QUICK HACK THAT WILL NOT WORK WITH MULTIPLE
+AIS NMEA STREAMS. Implements ggencoder session
+as a global singleton. Proper implementation would be
+a per stream constructer NMEA0183 encoder that would be able
+to keep a coherent internal parsing state.
+*/
+var session = {};
+
 module.exports = new Codec('VDM', function(multiplexer, input, line) {
-  var data = new Decoder(line);
+  var data = new Decoder(line, session);
 
   if(!data.valid) {
-    return this.reportError(this.errors.VOID, "Not parsing sentence for it isn't valid."); 
+    return this.reportError(this.errors.VOID, "Not parsing sentence for it isn't valid.");
   }
 
   // Set MRN with MMSI
