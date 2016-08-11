@@ -35,6 +35,7 @@ var codecs = {
   VDM: require('./VDM'),
   VDO: require('./VDO'),
   VHW: require('./VHW'),
+  VPW: require('./VPW'),
   VTG: require('./VTG'),
   RPM: require('./RPM'),
   ROT: require('./ROT'),
