@@ -50,7 +50,7 @@ module.exports = new Codec('ROT', function(multiplexer, input) {
       "timestamp": this.timestamp(),//ts,
       "values": [{
         "path": "navigation.rateOfTurn",
-        "value": this.float(values[0])
+        "value": this.transform(this.float(values[0]), 'deg', 'rad')/60
       }]
     }],
     "context": multiplexer._context
