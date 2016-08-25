@@ -29,6 +29,7 @@ var codecs = {
   GGA: require('./GGA'),
   GLL: require('./GLL'),
   HDM: require('./HDM'),
+  HDG: require('./HDG'),
   HDT: require('./HDT'),
   MWV: require('./MWV'),
   RMC: require('./RMC'),
