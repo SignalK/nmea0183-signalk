@@ -15,6 +15,7 @@ The following is the list of sentences the parser supports. Pull requests welcom
 - [GLL - Geographic Position - Latitude/Longitude](http://www.catb.org/gpsd/NMEA.html#_gll_geographic_position_latitude_longitude)
 - [HDM - Heading - Magnetic](http://www.catb.org/gpsd/NMEA.html#_hdm_heading_magnetic)
 - [HDT - Heading - True](http://www.catb.org/gpsd/NMEA.html#_hdt_heading_true)
+- [MTW - Mean Temperature of Water](http://catb.org/gpsd/NMEA.html#_mtw_mean_temperature_of_water)
 - [MWV - Wind Speed and Angle](http://www.catb.org/gpsd/NMEA.html#_mwv_wind_speed_and_angle)
 - [RMC - Recommended Minimum Navigation Information](http://www.catb.org/gpsd/NMEA.html#_rmc_recommended_minimum_navigation_information)
 - [ROT - Rate of Turn](http://www.catb.org/gpsd/NMEA.html#_rot_rate_of_turn)
