@@ -14,8 +14,8 @@
   "dependencies": {
     "ggencoder": "^0.1.5",
     "lodash": "^4.0.0",
-    "node-uuid": "^1.4.1",
-    "signalk-multiplexer": "git://github.com/SignalK/signalk-multiplexer-node.git"
+    "signalk-multiplexer": "git://github.com/SignalK/signalk-multiplexer-node.git",
+    "uuid": "^3.0.0"
   },
   "devDependencies": {
     "chai": "^3.4.1",
