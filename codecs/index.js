@@ -43,6 +43,7 @@ var codecs = {
   VDR: require('./VDR'),
   VPW: require('./VPW'),
   VWR: require('./VWR'),
+  XDR: require('./XDR')
 };
 
 module.exports = codecs;
