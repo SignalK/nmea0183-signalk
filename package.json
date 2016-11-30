@@ -21,7 +21,6 @@
     "chai": "^3.4.1",
     "chai-things": "^0.2.0",
     "debug": "^2.2.0",
-    "mocha": "^2.3.4",
     "signalk-schema": "SignalK/specification"
   },
   "repository": {
