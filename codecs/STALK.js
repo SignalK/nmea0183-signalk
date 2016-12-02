@@ -96,15 +96,13 @@ case 0x84:	/*Compass heading and turning direction, autopilot course, active mod
   var SS = parseInt(values[7],16);
   var TT = parseInt(values[8],16);
   var compassHeading = (U & 0x3)*90 + (VW & 0x3F) *2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1): 0);
-//console.log("compass heading: " + compassHeading);
-//console.log("compass heading rad: " + this.transform(this.float(compassHeading), 'deg', 'rad'));
+
   var apCourse = (V & 0xC0) * 90 + (XY) / 2;
 
  	/*Positive to right*/
 var rudderPos = RR;
   if (rudderPos > 127) { rudderPos = rudderPos - 256};
 
-//console.log("rudder: " + rudderPos);
 var modeVar = (Z & 0x2);
   switch(modeVar){
     case 0: var mode = "standby";
