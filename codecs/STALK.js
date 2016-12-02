@@ -37,7 +37,6 @@ where:
 2 			hex   		Last datagram content 
 3 			hex      	Checksum 
 
-$STALK,84,E6,15,00,00,00,00,00,08*1E
 $STALK,9C,E1,15,00*4B
 */
 
@@ -87,25 +86,40 @@ case 0x56:	/*Date*/
 case 0x80:	/*Set lamp intensity*/
   break;
 case 0x84:	/*Compass heading and turning direction, autopilot course, active mode (standby, auto , wind, track) and rudden position*/
-  var U = values[1].charAt(0);
-  var VW = values[2];
-  var V = values[2].charAt(0);
-  var XY = values[3];
-  var Z = values[4].charAt(1);
-  var M = values[5].charAt(1);
-  var RR = values[6];
-  var SS = values[7];
-  var TT = values[8];
-  var compassHeading = (U & 0x3)*90 + (VW & 0x3F) *2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1): 0) 
-  var apCourse = (V & 0xC)*90 + (parseInt(XY) / 2)
-  var rudderPos = parseInt(RR); 	/*Positive to right*/
-  switch(Z & 0x2){
+  var U = parseInt(values[1].charAt(0),16);
+  var VW = parseInt(values[2],16);
+  var V = parseInt(values[2].charAt(0),16);
+  var XY = parseInt(values[3],16);
+  var Z = parseInt(values[4].charAt(1),16);
+  var M = parseInt(values[5].charAt(1),16);
+  var RR = parseInt(values[6],16);
+  var SS = parseInt(values[7],16);
+  var TT = parseInt(values[8],16);
+  var compassHeading = (U & 0x3)*90 + (VW & 0x3F) *2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1): 0);
+//console.log("compass heading: " + compassHeading);
+//console.log("compass heading rad: " + this.transform(this.float(compassHeading), 'deg', 'rad'));
+  var apCourse = (V & 0xC0) * 90 + (XY) / 2;
+
+ 	/*Positive to right*/
+var rudderPos = RR;
+  if (rudderPos > 127) { rudderPos = rudderPos - 256};
+
+//console.log("rudder: " + rudderPos);
+var modeVar = (Z & 0x2);
+  switch(modeVar){
     case 0: var mode = "standby";
+	break;
     case 2: var mode = "auto";
-    case 4: var mode = "wind";
-    case 8: var mode = "route";
+	break;
     default: break;
     }
+if ((Z & 0x4) == 4) {
+  var mode = "wind";
+}
+if ((Z & 0x8) == 8) {
+  var mode = "route"; 
+}
+
   var pathValues = []
   if (compassHeading) {
     pathValues.push({
