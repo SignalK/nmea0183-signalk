@@ -89,16 +89,14 @@ case 0x84:	/*Compass heading and turning direction, autopilot course, active mod
   var U = parseInt(values[1].charAt(0),16);
   var VW = parseInt(values[2],16);
   var V = parseInt(values[2].charAt(0),16);
-  var XY = parseInt(values[3],16);
+  var XY = values[3];
   var Z = parseInt(values[4].charAt(1),16);
   var M = parseInt(values[5].charAt(1),16);
   var RR = parseInt(values[6],16);
   var SS = parseInt(values[7],16);
   var TT = parseInt(values[8],16);
   var compassHeading = (U & 0x3)*90 + (VW & 0x3F) *2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1): 0);
-
-  var apCourse = (V & 0xC0) * 90 + (XY) / 2;
-
+  var apCourse = ((V & 0xC )>> 2)* 90 + parseInt(XY,16)/ 2;
  	/*Positive to right*/
 var rudderPos = RR;
   if (rudderPos > 127) { rudderPos = rudderPos - 256};
