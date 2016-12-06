@@ -37,7 +37,6 @@ where:
 2 			hex   		Last datagram content 
 3 			hex      	Checksum 
 
-$STALK,9C,E1,15,00*4B
 */
 
 var Codec = require('../lib/NMEA0183');
@@ -49,56 +48,18 @@ multiplexer.self();
 
 var x = parseInt(values[0], 16);
 switch(x){
-case 0x00:	/*depth*/
-  break;
-case 0x10:	/*Wind angle*/
-  break;
-case 0x11:	/*Wind speed*/
-  break;
-case 0x20:	/*Speed through water*/
-  break;
-case 0x21:	/*Trip Mileage*/
-  break;
-case 0x22:	/*Total Mileage*/
-  break;
-case 0x23:	/*Water Temperature*/
-  break;
-case 0x25:	/*Total Trip & Log*/
-  break;
-case 0x26:	/*Speed Through Water*/
-  break;
-case 0x27:	/*Water Temperature*/
-  break;
-case 0x30:	/*Set Lamp intensity*/
-  break;
-case 0x50:	/*Latitude*/
-  break;
-case 0x51:	/*Longitude*/
-  break;
-case 0x52:	/*Speed over Ground*/
-  break;
-case 0x53:	/*Magnetic Course*/
-  break;
-case 0x54:	/*UTC Time*/
-  break;
-case 0x56:	/*Date*/
-  break;
-case 0x80:	/*Set lamp intensity*/
-  break;
 case 0x84:	/*Compass heading and turning direction, autopilot course, active mode (standby, auto , wind, track) and rudden position*/
   var U = parseInt(values[1].charAt(0),16);
   var VW = parseInt(values[2],16);
   var V = parseInt(values[2].charAt(0),16);
-  var XY = parseInt(values[3],16);
+  var XY = values[3];
   var Z = parseInt(values[4].charAt(1),16);
   var M = parseInt(values[5].charAt(1),16);
   var RR = parseInt(values[6],16);
   var SS = parseInt(values[7],16);
   var TT = parseInt(values[8],16);
   var compassHeading = (U & 0x3)*90 + (VW & 0x3F) *2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1): 0);
-
-  var apCourse = (V & 0xC0) * 90 + (XY) / 2;
-
+  var apCourse = ((V & 0xC )>> 2)* 90 + parseInt(XY,16)/ 2;
  	/*Positive to right*/
 var rudderPos = RR;
   if (rudderPos > 127) { rudderPos = rudderPos - 256};
@@ -157,26 +118,43 @@ if ((Z & 0x8) == 8) {
   return true;
 
   break;
-case 0x85:	/*Navigation to waypoint information*/
-  break;
-case 0x86:	/*Keystroke*/
-  break;
-case 0x87:	/*Set response level*/
-  break;
-case 0x88:	/*Autopilot Parameter*/
-
-  break;
-case 0x89:	/*Compass heading sent by ST40 compass instrument*/
-  break;
-case 0x91:	/*Set rudder gain*/
-  break;
-case 0x92:	/*Set autopilot parameter*/
-  break;
-case 0x99: 	/*Compass variation*/
-  break;
 case 0x9C:	/*Compass heading and turning direction*/
+  var U = parseInt(values[1].charAt(0),16);
+  var VW = parseInt(values[2],16);
+  var RR = parseInt(values[3],16);
 
+  var compassHeading = (U & 0x3)*90 + (VW & 0x3F) *2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1): 0);
+  var rudderPos = RR;
+  if (rudderPos > 127) { rudderPos = rudderPos - 256};
+    
+  
+  var pathValues = []
+  if (compassHeading) {
+    pathValues.push({
+      path: 'navigation.headingMagnetic',
+      value: this.transform(this.float(compassHeading), 'deg', 'rad')
+    })
+  }
+  if (rudderPos) {
+    pathValues.push({
+      path: 'steering.rudderAngle',
+      value: this.transform(this.float(rudderPos), 'deg', 'rad')
+    })
+  }
+
+  if (pathValues.length > 0) {
+    multiplexer.add({
+      "updates": [{
+        "source": this.source(input.instrument),
+        "timestamp": this.timestamp(),
+        "values": pathValues
+      }],
+      "context": multiplexer._context
+    });
+  }
+  return true;
   break;
+
 default:
   break;
 }

@@ -5,10 +5,11 @@ chai.use(require('chai-things'));
 
 var heading = "$STALK,84,B6,10,00,00,00,00,00,00*14"
 var standby = "$STALK,84,E6,15,00,00,00,00,00,08*1E"
-var auto = "$STALK,84,86,09,0B,02,00,00,00,08*1E"
+var auto = "$STALK,84,56,5E,79,02,00,00,00,08*16"
 var wind = "$STALK,84,06,00,00,04,00,00,00,00*63"
 var route = "$STALK,84,06,00,00,08,00,00,00,00*6F"
 var rudder = "$STALK,84,06,00,00,08,00FE,00,00*6C"
+var heading_nineC = "$STALK,9C,51,1E,00*4B"
 
 parser = new(require('../lib/').Parser)();
 
@@ -93,11 +94,23 @@ describe('STALK', function(done) {
     parser.on('delta', function(delta) {
             delta.updates[0].values.should.include({
         'path': 'steering.autopilot.target.headingMagnetic',
-        'value': 0.09599310885968812
+        'value': 2.626720524251466
       });
       delta.should.be.validSignalKDelta;
       done();
     });
     parser.write(auto);
+  })
+  it('0x9C ap target heading  converted', function(done) {
+    var parser = new(require('../lib/').Parser)();
+    parser.on('delta', function(delta) {
+            delta.updates[0].values.should.include({
+        'path': 'navigation.headingMagnetic',
+        'value': 2.6529004630313806
+      });
+      delta.should.be.validSignalKDelta;
+      done();
+    });
+    parser.write(heading_nineC);
   })
 });
