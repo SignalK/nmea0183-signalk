@@ -26,6 +26,7 @@
 var codecs = {
   APB: require('./APB'),
   DBT: require('./DBT'),
+  DSC: require('./DSC'),
   GGA: require('./GGA'),
   GLL: require('./GLL'),
   HDM: require('./HDM'),

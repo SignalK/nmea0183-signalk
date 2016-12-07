@@ -11,6 +11,7 @@ The following is the list of sentences the parser supports. Pull requests welcom
 
 - [APB - Autopilot Sentence "B"](http://www.catb.org/gpsd/NMEA.html#_apb_autopilot_sentence_b)
 - [DBT - Depth Below Transducer](http://www.catb.org/gpsd/NMEA.html#_dbt_depth_below_transducer)
+- [DSC - Digital Selective Calling Class-D Radios](http://continuouswave.com/whaler/reference/DSC_Datagrams.html)
 - [GGA - Global Positioning System Fix Data](http://www.catb.org/gpsd/NMEA.html#_gga_global_positioning_system_fix_data)
 - [GLL - Geographic Position - Latitude/Longitude](http://www.catb.org/gpsd/NMEA.html#_gll_geographic_position_latitude_longitude)
 - [HDM - Heading - Magnetic](http://www.catb.org/gpsd/NMEA.html#_hdm_heading_magnetic)
