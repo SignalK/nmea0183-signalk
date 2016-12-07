@@ -41,6 +41,7 @@ var codecs = {
   VDR: require('./VDR'),
   VPW: require('./VPW'),
   VWR: require('./VWR'),
+  STALK: require('./STALK'),
 };
 
 module.exports = codecs;
