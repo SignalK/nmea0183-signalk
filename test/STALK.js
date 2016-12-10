@@ -40,9 +40,9 @@ describe('STALK', function(done) {
         'value': 5.305800926062761
       });
       delta.should.be.validSignalKDelta;
-      done();
     });
     parser.write(heading);
+    done();
   })
   it('0x84 ap mode: standby converted', function(done) {
     var parser = new(require('../lib/').Parser)();
@@ -52,9 +52,9 @@ describe('STALK', function(done) {
         'value': "standby"
       });
       delta.should.be.validSignalKDelta;
-      done();
     });
     parser.write(standby);
+    done();
   })
   it('0x84 ap mode: auto converted', function(done) {
     var parser = new(require('../lib/').Parser)();
@@ -64,9 +64,9 @@ describe('STALK', function(done) {
         'value': "auto"
       });
       delta.should.be.validSignalKDelta;
-      done();
     });
     parser.write(auto);
+    done();
   })
   it('0x84 ap mode: wind converted', function(done) {
     var parser = new(require('../lib/').Parser)();
@@ -76,9 +76,9 @@ describe('STALK', function(done) {
         'value': "wind"
       });
       delta.should.be.validSignalKDelta;
-      done();
     });
     parser.write(wind);
+    done();
   })
   it('0x84 ap mode: route converted', function(done) {
     var parser = new(require('../lib/').Parser)();
@@ -88,9 +88,9 @@ describe('STALK', function(done) {
         'value': "route"
       });
       delta.should.be.validSignalKDelta;
-      done();
     });
     parser.write(route);
+    done();
   })
   it('0x84 rudder angle converted', function(done) {
     var parser = new(require('../lib/').Parser)();
@@ -100,7 +100,6 @@ describe('STALK', function(done) {
         'value': -0.03490658503988659
       });
       delta.should.be.validSignalKDelta;
-      done();
     });
     parser.write(rudder);
     done();
@@ -113,9 +112,9 @@ describe('STALK', function(done) {
         'value': 2.626720524251466
       });
       delta.should.be.validSignalKDelta;
-      done();
     });
     parser.write(auto);
+    done();
   })
   it('0x9C ap target heading  converted', function(done) {
     var parser = new(require('../lib/').Parser)();
@@ -125,8 +124,9 @@ describe('STALK', function(done) {
         'value': 2.6529004630313806
       });
       delta.should.be.validSignalKDelta;
-      done();
     });
     parser.write(heading_nineC);
+    done();
   })
 });
+
