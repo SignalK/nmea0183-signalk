@@ -51,9 +51,4 @@ module.exports = new Codec('STALK', function(multiplexer, input) {
     return datagrams[x](values, multiplexer, input.instrument)
   }
   return false
-<<<<<<< HEAD
 });
-
-=======
-});
->>>>>>> seatalk-exp
