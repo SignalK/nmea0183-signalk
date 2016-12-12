@@ -24,7 +24,7 @@ var standby = "$STALK,84,E6,15,00,00,00,00,00,08*1E"
 var auto = "$STALK,84,56,5E,79,02,00,00,00,08*16"
 var wind = "$STALK,84,06,00,00,04,00,00,00,00*63"
 var route = "$STALK,84,06,00,00,08,00,00,00,00*6F"
-var rudder = "$STALK,84,06,00,00,08,00,FE,00,00*5C"
+var rudder = "$STALK,84,06,00,00,08,00,FE,00,00*6C"
 var heading_nineC = "$STALK,9C,51,1E,00*4B"
 
 parser = new(require('../lib/').Parser)();

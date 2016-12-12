@@ -14,6 +14,7 @@
  * limitations under the License.
  */
  
+
 var Codec = require('../../lib/NMEA0183')
 
 module.exports = function(values, multiplexer, instrument) {
