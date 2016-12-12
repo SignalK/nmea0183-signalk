@@ -44,10 +44,12 @@ var datagrams = require('./stalk/')
 
 module.exports = new Codec('STALK', function(multiplexer, input) {
   var values = input.values;
+console.log("datagram(1): " + values[0]);
   multiplexer.self();
 
   var x = parseInt(values[0], 16);
   if(datagrams[x]) {
+console.log("datagram: " + x);
     return datagrams[x](values, multiplexer, input.instrument)
   }
   return false
