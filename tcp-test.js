@@ -25,11 +25,9 @@ client.on('end', () => {
   debug('Disconnected from NMEA talker')
 })
 
-/*
 parser.on('warning', warning => {
   debug(`[warning] ${warning.message}`)
 })
-// */
 
 parser.on('error', error => {
   debug(`[error] ${error.message}`)
