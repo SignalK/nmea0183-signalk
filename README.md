@@ -8,7 +8,6 @@ A node.js/javascript parser of NMEA0183 sentences. This is a newer, more light-w
 ### Supported sentences
 
 - [x] DBT
-- [ ] `@TODO`
 
 
 ### Work in progress
@@ -17,6 +16,7 @@ A node.js/javascript parser of NMEA0183 sentences. This is a newer, more light-w
 - [ ] Tests for every sentence
 - [ ] Stream interface
 - [ ] Tests for the stream interface
+- [ ] Update readme
 
 
 ### Usage
