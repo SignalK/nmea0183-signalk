@@ -23,21 +23,25 @@ Field Number:
 module.exports = function (parser, input) {
   const { id, sentence, parts, tags } = input
 
-  const delta = {
-    context: 'vessels.self',
-    updates: [
-      {
-        source: tags.source,
-        timestamp: tags.timestamp,
-        values: [
-          {
-            path: 'environment.depth.belowTransducer',
-            value: utils.float(parts[2])
-          }
-        ]
-      }
-    ],
+  try {
+    const delta = {
+      context: 'vessels.self',
+      updates: [
+        {
+          source: tags.source,
+          timestamp: tags.timestamp,
+          values: [
+            {
+              path: 'environment.depth.belowTransducer',
+              value: utils.float(parts[2])
+            }
+          ]
+        }
+      ],
+    }
+    
+    return Promise.resolve({ delta })
+  } catch (e) {
+    return Promise.reject(e)
   }
-  
-  return Promise.resolve({ delta })
 }
