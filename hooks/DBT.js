@@ -21,13 +21,14 @@ Field Number:
 */
 
 module.exports = function (parser, input) {
-  const { id, sentence, parts } = input
+  const { id, sentence, parts, tags } = input
+
   const delta = {
     context: 'vessels.self',
     updates: [
       {
-        source: utils.source(id),
-        timestamp: utils.timestamp(),
+        source: tags.source,
+        timestamp: tags.timestamp,
         values: [
           {
             path: 'environment.depth.belowTransducer',
