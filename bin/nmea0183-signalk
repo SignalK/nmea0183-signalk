@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+const Parser = require('../lib/index.js')
+const parser = new Parser()
+const stream = parser.stream()
+
+process.stdin.resume()
+process.stdin.setEncoding('utf8')
+
+stream.on('delta', delta => {
+  console.log(JSON.stringify(delta))
+})
+
+stream.on('error', err => {
+  console.error(err.message)
+})
+
+process.stdin.pipe(stream)
