@@ -21,7 +21,7 @@ A node.js/javascript parser of NMEA0183 sentences. This is a newer, more light-w
 
 ### Usage
 
-```
+```javascript
 const Parser = require('signalk-parser-nmea0183')
 const parser = new Parser()
 
@@ -57,7 +57,7 @@ This is necessary because javascript, like many, many other languages, treats th
 
 Example: 
 
-```
+```javascript
 const Parser = require('signalk-parser-nmea0183')
 const parser = new Parser()
 
