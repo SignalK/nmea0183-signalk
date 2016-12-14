@@ -11,11 +11,42 @@ A node.js/javascript parser of NMEA0183 sentences. This is a newer, more light-w
 - [ ] `@TODO`
 
 
-### Installation and use
+### Work in progress
+
+- [ ] Sentence support (parity with exisiting parser)
+- [ ] Tests for every sentence
+- [ ] Stream interface
+- [ ] Tests for the stream interface
+
+
+### Usage
 
 ```
-@TODO
+const Parser = require('signalk-parser-nmea0183')
+const parser = new Parser()
+
+parser.on('error', error => {
+  console.error(`[error] ${error.message}`)
+})
+
+parser.on('warning', warning => {
+  console.warn(`[warning] ${warning.message}`)
+})
+
+parser.on('delta', delta => {
+  console.log(`[delta] ${JSON.stringify(delta, null, 2)}`)
+})
+
+// Individual sentence
+parser.parse('$SDDBT,17.0,f,5.1,M,2.8,F*3E')
+
+// Streams
+const stream = parser.stream()
+someInputStreamOfSentences.pipe(parser.stream) // piping
+stream.write('$SDDBT,17.0,f,5.1,M,2.8,F*3E') // manual writing
 ```
+
+*At this time, streams are not yet implemented*
 
 
 ### NMEA0183v4 tag blocks
@@ -23,7 +54,27 @@ A node.js/javascript parser of NMEA0183 sentences. This is a newer, more light-w
 This parser has limited support of [NMEA0183v4 tag blocks](http://www.nmea.org/Assets/may%2009%20rtcm%200183_v400.pdf) (e.g. `\s:airmar dst800,c:1438489697*13\$SDDBT,17.0,f,5.1,M,2.8,F*3E`). 
 Keep in mind that, since NMEA uses the backslash `\` as the start and end character of the tag block, you need to escape these characters *before* parsing them. 
 This is necessary because javascript, like many, many other languages, treats the backslash as the escape character causing it not to be included in the resulting string unless escaped. 
-Example: `\\s:airmar dst800,c:1438489697*13\\$SDDBT,17.0,f,5.1,M,2.8,F*3E`.
+
+Example: 
+
+```
+const Parser = require('signalk-parser-nmea0183')
+const parser = new Parser()
+
+parser.on('error', error => {
+  console.error(`[error] ${error.message}`)
+})
+
+parser.on('warning', warning => {
+  console.warn(`[warning] ${warning.message}`)
+})
+
+parser.on('delta', delta => {
+  console.log(`[delta] ${JSON.stringify(delta, null, 2)}`)
+})
+
+parser.parse('\\s:airmar dst800,c:1438489697*13\\$SDDBT,17.0,f,5.1,M,2.8,F*3E')
+```
 
 
 ### License 
