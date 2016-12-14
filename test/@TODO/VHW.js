@@ -11,7 +11,7 @@ describe('VHW', () => {
   it('speed data only', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'navigation.speedThroughWater',
         'value': 3.147222222222222
@@ -28,7 +28,7 @@ describe('VHW', () => {
   it('speed & direction data', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'navigation.speedThroughWater',
         'value': 0

@@ -13,7 +13,7 @@ describe('DSC Position', () => {
   it('converts ok', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
       delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338158137')
       const full = signalkSchema.deltaToFull(delta)
@@ -29,7 +29,7 @@ describe('DSC Distress', () => {
   it('converts ok', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'notifications.adrift')
       delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')

@@ -13,7 +13,7 @@ describe('VPW', () => {
   it('converts ok', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
       const full = signalkSchema.deltaToFull(delta)

@@ -12,7 +12,7 @@ describe('VDR', () => {
   it('converts ok', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.current')
       const full = signalkSchema.deltaToFull(delta)
       signalkSchema.fillIdentity(full)

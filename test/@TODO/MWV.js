@@ -13,7 +13,7 @@ describe('MWV', () => {
   it('true converts ok', done => {
     const parser = new Parser
 
-    parser.on('delta', function(delta) {
+    parser.on('signalk:delta', function(delta) {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleTrueWater')
       delta.updates[0].values.should.contain.an.item.with.property('value', 1.2915436464758039)
       signalkSchema.deltaToFull(delta).should.be.validSignalK
@@ -26,7 +26,7 @@ describe('MWV', () => {
   it('apparent converts ok', done => {
     const parser = new Parser
 
-    parser.on('delta', function(delta) {
+    parser.on('signalk:delta', function(delta) {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
       delta.updates[0].values.should.contain.an.item.with.property('value', -0.41887902047863906)
       signalkSchema.deltaToFull(delta).should.be.validSignalK

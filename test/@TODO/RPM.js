@@ -11,7 +11,7 @@ chai.use(require('chai-things'))
 describe('RPM', () => {
   it('converts ok', done => {
     const parser = new Parser
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.should.be.validSignalKDelta
       delta.updates[0].values[0].path.should.equal('propulsion.engine1.revolutions')
       const full = signalkSchema.deltaToFull(delta)

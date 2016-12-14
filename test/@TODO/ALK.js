@@ -17,7 +17,7 @@ describe('ALK', done => {
   it('0x84 heading converted', done => {
     const parser = new Parser
     
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'navigation.headingMagnetic',
         'value': 5.305800926062761
@@ -32,7 +32,7 @@ describe('ALK', done => {
   it('0x84 ap mode: standby converted', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'steering.autopilot.state',
         'value': 'standby'
@@ -48,7 +48,7 @@ describe('ALK', done => {
   it('0x84 ap mode: auto converted', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'steering.autopilot.state',
         'value': 'auto'
@@ -63,7 +63,7 @@ describe('ALK', done => {
   it('0x84 ap mode: wind converted', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'steering.autopilot.state',
         'value': 'wind'
@@ -78,7 +78,7 @@ describe('ALK', done => {
   it('0x84 ap mode: route converted', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'steering.autopilot.state',
         'value': 'route'
@@ -93,7 +93,7 @@ describe('ALK', done => {
   it('0x84 rudder angle converted', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'steering.rudderAngle',
         'value': -0.03490658503988659
@@ -108,7 +108,7 @@ describe('ALK', done => {
   it('0x84 ap target heading  converted', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'steering.autopilot.target.headingMagnetic',
         'value': 2.626720524251466
@@ -123,7 +123,7 @@ describe('ALK', done => {
   it('0x9C ap target heading  converted', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'navigation.headingMagnetic',
         'value': 2.6529004630313806

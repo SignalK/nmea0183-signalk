@@ -17,7 +17,7 @@ describe('VDM', function() {
   it(' multiline converts ok', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       // validate schema conformance
       const full = signalkSchema.deltaToFull(delta)
       signalkSchema.fillIdentity(full)
@@ -35,7 +35,7 @@ describe('VDM', function() {
   it(' single line converts ok', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       // validate schema conformance
       const full = signalkSchema.deltaToFull(delta)
       signalkSchema.fillIdentity(full)

@@ -12,7 +12,7 @@ describe('GLL', () => {
   it('converts ok', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values[0].path.should.equal('navigation.position')
       delta.updates[0].values[0].value.latitude.should.be.closeTo(59.9768833, 0.000005)
       delta.updates[0].values[0].value.longitude.should.be.closeTo(23.432133, 0.000005)

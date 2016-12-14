@@ -13,7 +13,7 @@ describe('DBT', () => {
   it('converts ok', done => {
     const parser = new Parser
 
-    parser.on('delta', delta => {
+    parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
       done()
     })
