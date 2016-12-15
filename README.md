@@ -14,7 +14,7 @@ A node.js/javascript parser of NMEA0183 sentences. This is a newer, more light-w
 
 - [ ] Sentence support (parity with exisiting parser)
 - [ ] Tests for every sentence
-- [ ] Stream interface
+- [x] Stream interface
 - [ ] Tests for the stream interface
 - [ ] Update readme
 
@@ -33,7 +33,7 @@ parser.on('warning', warning => {
   console.warn(`[warning] ${warning.message}`)
 })
 
-parser.on('delta', delta => {
+parser.on('signalk:delta', delta => {
   console.log(`[delta] ${JSON.stringify(delta, null, 2)}`)
 })
 
@@ -45,8 +45,6 @@ const stream = parser.stream()
 someInputStreamOfSentences.pipe(parser.stream) // piping
 stream.write('$SDDBT,17.0,f,5.1,M,2.8,F*3E') // manual writing
 ```
-
-*At this time, streams are not yet implemented*
 
 
 ### NMEA0183v4 tag blocks
@@ -69,12 +67,14 @@ parser.on('warning', warning => {
   console.warn(`[warning] ${warning.message}`)
 })
 
-parser.on('delta', delta => {
+parser.on('signalk:delta', delta => {
   console.log(`[delta] ${JSON.stringify(delta, null, 2)}`)
 })
 
 parser.parse('\\s:airmar dst800,c:1438489697*13\\$SDDBT,17.0,f,5.1,M,2.8,F*3E')
 ```
+
+**Note:** *at this time, the checksum of the timestamp (`c:1438489697*13`) is not validated.*
 
 
 ### License 
