@@ -45,6 +45,7 @@ describe('DBT', () => {
       result.should.be.an.object
       result.should.have.property('delta')
       result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
+      result.delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
       done()
     })
 
