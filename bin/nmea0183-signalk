@@ -7,8 +7,8 @@ const stream = parser.stream()
 process.stdin.resume()
 process.stdin.setEncoding('utf8')
 
-stream.on('delta', delta => {
-  console.log(JSON.stringify(delta))
+stream.on('data', data => {
+  console.log(JSON.stringify(data.delta))
 })
 
 stream.on('error', err => {
