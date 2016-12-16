@@ -42,7 +42,6 @@ module.exports = function (parser, input) {
   }
   */
 
-
   try {
     const delta = {
       context: 'vessels.self',
@@ -53,7 +52,9 @@ module.exports = function (parser, input) {
           values: [
             {
               path: 'navigation.rateOfTurn',
-              value: utils.transform(utils.float(parts[0]), 'deg', 'rad') / 60
+              value: (utils.float(parts[0]) / 180 * Math.PI) / 60
+              // Why didn't this work?:
+              //value: utils.transform(utils.float(parts[0]), 'deg', 'rad') / 60
             }
           ]
         }
