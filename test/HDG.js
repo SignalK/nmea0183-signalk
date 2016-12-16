@@ -1,7 +1,5 @@
-'use strict'
-
 /**
- * Copyright 2016 Signal K and Fabian Tollenaar <fabian@signalk.org>.
+ * Copyright 2016 Signal K <info@signalk.org> and contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +16,20 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const nmeaLine = '$IIDBT,035.53,f,010.83,M,005.85,F*23'
+const nmeaLine = '$SDHDG,181.9,,,0.6,E*32'
 
 chai.Should()
 chai.use(require('chai-things'))
 
-describe('DBT', () => {
+describe('HDG', () => {
 
   it('Converts OK using individual parser', done => {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
-      delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
+      delta.updates[0].values.should.have.all.keys({'path': 'navigation.headingMagnetic', 'value': (181.9 / 180 * Math.PI)})
+      delta.updates[0].values.should.have.all.keys({'path': 'navigation.magneticVariation', 'value': (0.6 / 180 * Math.PI)})
+
       done()
     })
 
@@ -44,8 +43,8 @@ describe('DBT', () => {
     stream.on('data', result => {
       result.should.be.an.object
       result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
-      result.delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
+      result.delta.updates[0].values.should.have.all.keys({'path': 'navigation.headingMagnetic', 'value': (181.9 / 180 * Math.PI)})
+      result.delta.updates[0].values.should.have.all.keys({'path': 'navigation.magneticVariation', 'value': (0.6 / 180 * Math.PI)})
       done()
     })
 
