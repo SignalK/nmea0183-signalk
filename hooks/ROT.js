@@ -35,10 +35,12 @@ const utils = require('nmea0183-utilities')
 module.exports = function (parser, input) {
   const { id, sentence, parts, tags } = input
 
+  /*
   if(parts[1].toUpperCase() != 'A') {
     // Don't parse this sentence as it's void.
     return Promise.reject(new Error('Not parsing sentence as data is not valid)'))
   }
+  */
 
 
   try {
