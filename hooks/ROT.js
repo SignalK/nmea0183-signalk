@@ -51,10 +51,8 @@ module.exports = function (parser, input) {
           timestamp: tags.timestamp,
           values: [
             {
-              path: 'navigation.rateOfTurn',
-              value: (utils.float(parts[0]) / 180 * Math.PI) / 60
-              // Why didn't this work?:
-              //value: utils.transform(utils.float(parts[0]), 'deg', 'rad') / 60
+              path: 'navigation.rateOfTurn'
+              value: utils.transform(utils.float(parts[0]), 'deg', 'rad') / 60
             }
           ]
         }
