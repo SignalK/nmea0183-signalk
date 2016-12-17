@@ -3,12 +3,12 @@
 const Parser = require('../lib')
 const chai = require('chai')
 const signalkSchema = require('signalk-schema')
+const should = chai.Should()
 
-chai.Should()
 chai.use(require('chai-things'))
 
 describe('MWV', () => {
-  it('true converts ok', done => {
+  it('True wind converts ok', done => {
     const parser = new Parser
 
     parser.on('signalk:delta', function(delta) {
@@ -20,7 +20,7 @@ describe('MWV', () => {
     parser.parse('$IIMWV,074,T,05.85,N,A*2E').catch(e => { done(e) })
   })
 
-  it('apparent converts ok', done => {
+  it('Apparent wind converts ok', done => {
     const parser = new Parser
 
     parser.on('signalk:delta', function(delta) {
@@ -32,9 +32,13 @@ describe('MWV', () => {
     parser.parse('$IIMWV,336,R,13.41,N,A*22').catch(e => { done(e) })
   })
 
-  it('handles empty fields without throwing errors', done => {
-    const parser = new Parser
-    parser.parse('$IIMWV,,,,*4C').catch(e => { done(e) })
-    done()
+  it('Doesn\'t choke on empty sentences', done => {
+    new Parser()
+    .parse('$IIMWV,,,,*4C')
+    .then(result => {
+      should.equal(result, null)
+      done()
+    })
+    .catch(e => done(e))
   })
 })

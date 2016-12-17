@@ -37,9 +37,13 @@ Field Number:
 */
 
 module.exports = function (parser, input) {
-  const { id, sentence, parts, tags } = input
-
   try {
+    const { id, sentence, parts, tags } = input
+
+    if ((typeof parts[2] !== 'string' && typeof parts[2] !== 'number') || (typeof parts[2] === 'string' && parts[2].trim() === '')) {
+      return Promise.resolve(null)
+    }
+
     const delta = {
       context: 'vessels.self',
       updates: [

@@ -18,9 +18,8 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const nmeaLine = '$IIDBT,035.53,f,010.83,M,005.85,F*23'
+const should = chai.Should()
 
-chai.Should()
 chai.use(require('chai-things'))
 
 describe('DBT', () => {
@@ -34,7 +33,7 @@ describe('DBT', () => {
       done()
     })
 
-    parser.parse(nmeaLine)
+    parser.parse('$IIDBT,035.53,f,010.83,M,005.85,F*23').catch(e => done(e))
   })
 
   it('Converts OK using stream parser', done => {
@@ -49,7 +48,17 @@ describe('DBT', () => {
       done()
     })
 
-    stream.write(nmeaLine)
+    stream.write('$IIDBT,035.53,f,010.83,M,005.85,F*23')
+  })
+
+  it('Doesn\'t choke on empty sentences', done => {
+    new Parser()
+    .parse('$IIDBT,,,,,,*52')
+    .then(result => {
+      should.equal(result, null)
+      done()
+    })
+    .catch(e => done(e))
   })
 
 })

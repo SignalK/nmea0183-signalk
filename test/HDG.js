@@ -16,9 +16,8 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const nmeaLine = '$SDHDG,181.9,,,0.6,E*32'
+const should = chai.Should()
 
-chai.Should()
 chai.use(require('chai-things'))
 
 describe('HDG', () => {
@@ -29,11 +28,10 @@ describe('HDG', () => {
     parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.have.all.keys({'path': 'navigation.headingMagnetic', 'value': (181.9 / 180 * Math.PI)})
       delta.updates[0].values.should.have.all.keys({'path': 'navigation.magneticVariation', 'value': (0.6 / 180 * Math.PI)})
-
       done()
     })
 
-    parser.parse(nmeaLine)
+    parser.parse('$SDHDG,181.9,,,0.6,E*32').catch(e => done(e))
   })
 
   it('Converts OK using stream parser', done => {
@@ -48,7 +46,17 @@ describe('HDG', () => {
       done()
     })
 
-    stream.write(nmeaLine)
+    stream.write('$SDHDG,181.9,,,0.6,E*32')
+  })
+
+  it('Doesn\'t choke on empty sentences', done => {
+    new Parser()
+    .parse('$SDHDG,,,,,*70')
+    .then(result => {
+      should.equal(result, null)
+      done()
+    })
+    .catch(e => done(e))
   })
 
 })

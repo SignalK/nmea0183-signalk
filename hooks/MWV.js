@@ -50,15 +50,12 @@ module.exports = function(parser, input) {
     const valueType = parts[1].toUpperCase() == 'R' ? 'Apparent' : 'True';
     const angleType = parts[1].toUpperCase() == 'R' ? 'Apparent' : 'TrueWater';
 
-    debug(sentence)
-    debug(`Angle: ${angle}`)
-
     const delta = {
       context: 'vessels.self',
       updates: [
         {
-          source: utils.source(id),
-          timestamp: utils.timestamp(),
+          source: tags.source,
+          timestamp: tags.timestamp,
           values: [
             {
               path: 'environment.wind.speed' + valueType,

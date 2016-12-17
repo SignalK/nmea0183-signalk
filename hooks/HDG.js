@@ -31,10 +31,18 @@ Field Number:
 4 Magnetic Variation direction, E = Easterly, W = Westerly
 */
 
-module.exports = function (parser, input) {
-  const { id, sentence, parts, tags } = input
+function isEmpty(mixed) {
+  return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+}
 
+module.exports = function (parser, input) {
   try {
+    const { id, sentence, parts, tags } = input
+
+    if (isEmpty(parts[0]) || isEmpty(parts[3]) || isEmpty(parts[4])) {
+      return Promise.resolve(null)
+    }
+
     const delta = {
       context: 'vessels.self',
       updates: [
