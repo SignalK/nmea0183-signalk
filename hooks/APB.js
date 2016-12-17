@@ -42,31 +42,36 @@ where:
 */
 
 module.exports = function (parser, input) {
-  const { id, sentence, parts } = input
-  
-  if(parts[0].toUpperCase() == 'V') {
-    // Don't parse this sentence as it's void.
-    return Promise.reject(new Error('Not parsing sentence for it\'s void (LORAN-C blink/SNR warning)'))
-  }
-
-  if(parts[1].toUpperCase() == 'V') {
-    return Promise.reject(new Error('Not parsing sentence for it\'s void (LORAN-C cycle warning)'))
-  }
-
-  const xte = utils.transform(parts[2], (parts[4].toUpperCase() === 'N' ? 'nm' : 'km'), 'm')
-
-  const currentRoute = {
-    source: utils.source(id),
-    timestamp: utils.timestamp(),
-    steer: (parts[3].toUpperCase() == 'R' ? 'right' : 'left'),
-    bearingActual: utils.transform(utils.float(parts[10]), 'deg', 'rad'),
-    bearingDirect: utils.transform(utils.float(parts[7]), 'deg', 'rad'),
-    courseRequired: utils.transform(utils.float(parts[12]), 'deg', 'rad'),
-    waypoint: {
-      next: parts[9],
-      xte: xte
+  try {
+    const { id, sentence, parts } = input
+    
+    if(parts[0].toUpperCase() == 'V') {
+      // Don't parse this sentence as it's void.
+      return Promise.reject(new Error('Not parsing sentence for it\'s void (LORAN-C blink/SNR warning)'))
     }
+
+    if(parts[1].toUpperCase() == 'V') {
+      return Promise.reject(new Error('Not parsing sentence for it\'s void (LORAN-C cycle warning)'))
+    }
+
+    const xte = utils.transform(parts[2], (parts[4].toUpperCase() === 'N' ? 'nm' : 'km'), 'm')
+
+    const currentRoute = {
+      source: utils.source(id),
+      timestamp: utils.timestamp(),
+      steer: (parts[3].toUpperCase() == 'R' ? 'right' : 'left'),
+      bearingActual: utils.transform(utils.float(parts[10]), 'deg', 'rad'),
+      bearingDirect: utils.transform(utils.float(parts[7]), 'deg', 'rad'),
+      courseRequired: utils.transform(utils.float(parts[12]), 'deg', 'rad'),
+      waypoint: {
+        next: parts[9],
+        xte: xte
+      }
+    }
+    
+    return Promise.reject(new Error('@FIXME: APB hook needs to be rewritten to fit latest version of SK'))
+  } catch (e) {
+    debug(`Try/catch failed: ${e.message}`)
+    return Promise.reject(e)
   }
-  
-  return Promise.reject(new Error('@FIXME: APB hook needs to be rewritten to fit latest version of SK'))
 }

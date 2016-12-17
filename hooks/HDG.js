@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 
+const debug = require('debug')('signalk-parser-nmea0183/HDG')
 const utils = require('nmea0183-utilities')
 
 /*
@@ -56,6 +57,7 @@ module.exports = function (parser, input) {
 
     return Promise.resolve({ delta })
   } catch (e) {
+    debug(`Try/catch failed: ${e.message}`)
     return Promise.reject(e)
   }
 }

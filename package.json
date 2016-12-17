@@ -1,6 +1,6 @@
 {
   "name": "signalk-parser-nmea0183",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "description": "NMEA0183 to Signal K parser",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
   "dependencies": {
     "moment": "^2.17.1",
     "moment-timezone": "^0.5.10",
-    "nmea0183-utilities": "^0.1.2"
+    "nmea0183-utilities": "^0.3.2"
   },
   "devDependencies": {
     "debug": "^2.2.0",

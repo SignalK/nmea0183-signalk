@@ -58,6 +58,7 @@ module.exports = function (parser, input) {
     
     return Promise.resolve({ delta })
   } catch (e) {
+    debug(`Try/catch failed: ${e.message}`)
     return Promise.reject(e)
   }
 }

@@ -3,8 +3,6 @@
 const Parser = require('../lib')
 const chai = require('chai')
 const signalkSchema = require('signalk-schema')
-const nmeaLine = '$IIMWV,074,T,05.85,N,A*2E'
-const emptyNmeaLine = '$IIMWV,,,,*4C'
 
 chai.Should()
 chai.use(require('chai-things'))
@@ -15,12 +13,11 @@ describe('MWV', () => {
 
     parser.on('signalk:delta', function(delta) {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleTrueWater')
-      delta.updates[0].values.should.contain.an.item.with.property('value', 1.2915436464758039)
-      signalkSchema.deltaToFull(delta).should.be.validSignalK
+      delta.updates[0].values.should.contain.an.item.with.property('value', 1.2915436467707015)
       done()
     })
 
-    parser.parse(nmeaLine)
+    parser.parse('$IIMWV,074,T,05.85,N,A*2E').catch(e => { done(e) })
   })
 
   it('apparent converts ok', done => {
@@ -28,17 +25,16 @@ describe('MWV', () => {
 
     parser.on('signalk:delta', function(delta) {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
-      delta.updates[0].values.should.contain.an.item.with.property('value', -0.41887902047863906)
-      signalkSchema.deltaToFull(delta).should.be.validSignalK
+      delta.updates[0].values.should.contain.an.item.with.property('value', -0.41887902057428156)
       done()
     })
 
-    parser.parse('$IIMWV,336,R,13.41,N,A*22')
+    parser.parse('$IIMWV,336,R,13.41,N,A*22').catch(e => { done(e) })
   })
 
   it('handles empty fields without throwing errors', done => {
     const parser = new Parser
-    parser.parse(emptyNmeaLine)
+    parser.parse('$IIMWV,,,,*4C').catch(e => { done(e) })
     done()
   })
 })
