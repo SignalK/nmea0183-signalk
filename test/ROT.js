@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * Copyright 2016 Signal K and contributors.
+ * Copyright 2016 Signal K and Fabian Tollenaar <fabian@signalk.org>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,23 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const should = chai.Should()
+const nmeaLine = '$GPROT,35.6,A*01'
 
+chai.Should()
 chai.use(require('chai-things'))
 
-describe('DBT', () => {
+describe('ROT', () => {
 
   it('Converts OK using individual parser', done => {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
-      delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.rateOfTurn')
+      delta.updates[0].values.should.contain.an.item.with.property('value', (35.6 / 180 * Math.PI / 60))
       done()
     })
 
-    parser.parse('$IIDBT,035.53,f,010.83,M,005.85,F*23').catch(e => done(e))
+    parser.parse(nmeaLine)
   })
 
   it('Converts OK using stream parser', done => {
@@ -43,22 +44,12 @@ describe('DBT', () => {
     stream.on('data', result => {
       result.should.be.an.object
       result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
-      result.delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
+      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.rateOfTurn')
+      result.delta.updates[0].values.should.contain.an.item.with.property('value', (35.6 / 180 * Math.PI / 60))
       done()
     })
 
-    stream.write('$IIDBT,035.53,f,010.83,M,005.85,F*23')
-  })
-
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$IIDBT,,,,,,*52')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+    stream.write(nmeaLine)
   })
 
 })
