@@ -32,7 +32,7 @@ module.exports = function(parser, input) {
     const { id, sentence, parts, tags } = input
 
     if(!parts[4] || parts[4].toUpperCase() !== 'A') {
-      throw new Error('Not parsing sentence as it\'s void.')
+      return Promise.resolve(null)
     }
 
     let wsu = parts[3].toUpperCase()
