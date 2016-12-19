@@ -16,24 +16,27 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const should = chai.Should()
+const nmeaLine = '$PIVWR,75,R,1.0,N,0.51,M,1.85,K*75'
 
+chai.Should()
 chai.use(require('chai-things'))
 
-describe('HDG', () => {
+describe('VWR', () => {
 
   it('Converts OK using individual parser', done => {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      delta.updates[0].values[0].value.should.be.closeTo((181.9 / 180 * Math.PI), 0.005)
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
-      delta.updates[0].values[1].value.should.be.closeTo((0.6 / 180 * Math.PI), 0.005)
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
+      delta.updates[0].values.should.contain.an.item.with.property('value', 1.30899693929463)
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
+      delta.updates[0].values.should.contain.an.item.with.property('value', 0.5144445747704034)
+
+
       done()
     })
 
-    parser.parse('$SDHDG,181.9,,,0.6,E*32').catch(e => done(e))
+    parser.parse(nmeaLine)
   })
 
   it('Converts OK using stream parser', done => {
@@ -43,24 +46,26 @@ describe('HDG', () => {
     stream.on('data', result => {
       result.should.be.an.object
       result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      result.delta.updates[0].values[0].value.should.be.closeTo((181.9 / 180 * Math.PI), 0.005)
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
-      result.delta.updates[0].values[1].value.should.be.closeTo((0.6 / 180 * Math.PI), 0.005)
+      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
+      result.delta.updates[0].values.should.contain.an.item.with.property('value', 1.30899693929463)
+      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
+      result.delta.updates[0].values.should.contain.an.item.with.property('value', 0.5144445747704034)
       done()
     })
 
-    stream.write('$SDHDG,181.9,,,0.6,E*32')
+    stream.write(nmeaLine)
   })
 
+  /*
   it('Doesn\'t choke on empty sentences', done => {
     new Parser()
-    .parse('$SDHDG,,,,,*70')
+    .parse('$PIVWR,,,,,,,,*4A')
     .then(result => {
       should.equal(result, null)
       done()
     })
     .catch(e => done(e))
   })
+  */
 
 })

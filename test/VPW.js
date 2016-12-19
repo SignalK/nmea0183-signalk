@@ -16,51 +16,67 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const should = chai.Should()
+const nmeaLine = '$IIVPW,4.5,N,6.7,M*52'
+const nmeaLineKnots = '$IIVPW,4.5,N,,*30'
 
+chai.Should()
 chai.use(require('chai-things'))
 
-describe('HDG', () => {
+describe('VPW', () => {
 
   it('Converts OK using individual parser', done => {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      delta.updates[0].values[0].value.should.be.closeTo((181.9 / 180 * Math.PI), 0.005)
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
-      delta.updates[0].values[1].value.should.be.closeTo((0.6 / 180 * Math.PI), 0.005)
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.velocityMadeGood')
+      delta.updates[0].values.should.contain.an.item.with.property('value', 6.7)
+
+
       done()
     })
 
-    parser.parse('$SDHDG,181.9,,,0.6,E*32').catch(e => done(e))
+    parser.parse(nmeaLine)
   })
 
-  it('Converts OK using stream parser', done => {
+  it('Converts OK using stream parser if speed in m/s', done => {
     const parser = new Parser
     const stream = parser.stream()
 
     stream.on('data', result => {
       result.should.be.an.object
       result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      result.delta.updates[0].values[0].value.should.be.closeTo((181.9 / 180 * Math.PI), 0.005)
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
-      result.delta.updates[0].values[1].value.should.be.closeTo((0.6 / 180 * Math.PI), 0.005)
+      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.velocityMadeGood')
+      result.delta.updates[0].values.should.contain.an.item.with.property('value', 6.7)
       done()
     })
 
-    stream.write('$SDHDG,181.9,,,0.6,E*32')
+    stream.write(nmeaLine)
   })
 
+  it('Converts OK using stream parser if speed in knots', done => {
+    const parser = new Parser
+    const stream = parser.stream()
+
+    stream.on('data', result => {
+      result.should.be.an.object
+      result.should.have.property('delta')
+      result.delta.updates[0].values.should.have.all.keys({'path': 'performance.velocityMadeGood', 'value': 6.7})
+      done()
+    })
+
+    stream.write(nmeaLineKnots)
+  })
+
+  /*
   it('Doesn\'t choke on empty sentences', done => {
     new Parser()
-    .parse('$SDHDG,,,,,*70')
+    .parse('$IIVPW,,,,*51')
     .then(result => {
       should.equal(result, null)
       done()
     })
     .catch(e => done(e))
   })
+  */
 
 })
