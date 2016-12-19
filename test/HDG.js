@@ -26,8 +26,10 @@ describe('HDG', () => {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.have.all.keys({'path': 'navigation.headingMagnetic', 'value': (181.9 / 180 * Math.PI)})
-      delta.updates[0].values.should.have.all.keys({'path': 'navigation.magneticVariation', 'value': (0.6 / 180 * Math.PI)})
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+      delta.updates[0].values[0].value.should.be.closeTo((181.9 / 180 * Math.PI), 0.005)
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
+      delta.updates[0].values[1].value.should.be.closeTo((0.6 / 180 * Math.PI), 0.005)
       done()
     })
 
@@ -41,8 +43,10 @@ describe('HDG', () => {
     stream.on('data', result => {
       result.should.be.an.object
       result.should.have.property('delta')
-      result.delta.updates[0].values.should.have.all.keys({'path': 'navigation.headingMagnetic', 'value': (181.9 / 180 * Math.PI)})
-      result.delta.updates[0].values.should.have.all.keys({'path': 'navigation.magneticVariation', 'value': (0.6 / 180 * Math.PI)})
+      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+      result.delta.updates[0].values[0].value.should.be.closeTo((181.9 / 180 * Math.PI), 0.005)
+      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
+      result.delta.updates[0].values[1].value.should.be.closeTo((0.6 / 180 * Math.PI), 0.005)
       done()
     })
 

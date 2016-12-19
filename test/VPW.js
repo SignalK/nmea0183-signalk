@@ -28,7 +28,8 @@ describe('VPW', () => {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.have.all.keys({'path': 'performance.velocityMadeGood', 'value': 6.7})
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.velocityMadeGood')
+      delta.updates[0].values.should.contain.an.item.with.property('value', 6.7)
 
 
       done()
@@ -44,7 +45,8 @@ describe('VPW', () => {
     stream.on('data', result => {
       result.should.be.an.object
       result.should.have.property('delta')
-      result.delta.updates[0].values.should.have.all.keys({'path': 'performance.velocityMadeGood', 'value': 6.7})
+      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.velocityMadeGood')
+      result.delta.updates[0].values.should.contain.an.item.with.property('value', 6.7)
       done()
     })
 
