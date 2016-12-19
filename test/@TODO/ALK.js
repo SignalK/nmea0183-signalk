@@ -7,7 +7,7 @@ const standby = '$STALK,84,E6,15,00,00,00,00,00,08*1E'
 const auto = '$STALK,84,56,5E,79,02,00,00,00,08*16'
 const wind = '$STALK,84,06,00,00,04,00,00,00,00*63'
 const route = '$STALK,84,06,00,00,08,00,00,00,00*6F'
-const rudder = '$STALK,84,06,00,00,08,00FE,00,00*6C'
+const rudder = '$STALK,84,06,00,00,08,00,FE,00,00*6C'
 const heading_nineC = '$STALK,9C,51,1E,00*4B'
 
 chai.Should()
@@ -16,7 +16,7 @@ chai.use(require('chai-things'))
 describe('ALK', done => {
   it('0x84 heading converted', done => {
     const parser = new Parser
-    
+
     parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.include({
         'path': 'navigation.headingMagnetic',
