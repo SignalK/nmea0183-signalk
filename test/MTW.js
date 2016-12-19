@@ -30,7 +30,7 @@ describe('MTW', () => {
 
     parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.water.temperature')
-      delta.updates[0].values.should.contain.an.item.with.property('value', 288.35)
+      delta.updates[0].values[0].value.should.be.closeTo(288.35, 0.005)
       done()
     })
 
@@ -45,7 +45,7 @@ describe('MTW', () => {
       result.should.be.an.object
       result.should.have.property('delta')
       result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.water.temperature')
-      result.delta.updates[0].values.should.contain.an.item.with.property('value', 288.35)
+      result.delta.updates[0].values[0].value.should.be.closeTo(288.35, 0.005)
       done()
     })
 
