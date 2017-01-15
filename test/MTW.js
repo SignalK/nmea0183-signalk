@@ -18,7 +18,6 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const nmeaLine = '$YXMTW,15.2,C*14'
 
 chai.Should()
 chai.use(require('chai-things'))
@@ -34,7 +33,7 @@ describe('MTW', () => {
       done()
     })
 
-    parser.parse(nmeaLine)
+    parser.parse('$YXMTW,15.2,C*14').catch(e => done(e))
   })
 
   it('Converts OK using stream parser', done => {
@@ -49,7 +48,7 @@ describe('MTW', () => {
       done()
     })
 
-    stream.write(nmeaLine)
+    stream.write('$YXMTW,15.2,C*14')
   })
 
 })
