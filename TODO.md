@@ -2,6 +2,6 @@
 
 [ ] DSC hook
 [x] HDM hook
-[ ] HDT hook
+[x] HDT hook
 [ ] RMC hook
 [ ] VTG hook
