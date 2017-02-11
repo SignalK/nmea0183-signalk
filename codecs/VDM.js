@@ -27,10 +27,9 @@ as a global singleton. Proper implementation would be
 a per stream constructer NMEA0183 encoder that would be able
 to keep a coherent internal parsing state.
 */
-var session = {};
 
 module.exports = new Codec('VDM', function(multiplexer, input, line) {
-  var data = new Decoder(line, session);
+  var data = new Decoder(line, multiplexer.aisSession);
 
   if (!data.valid) {
     return this.reportError(this.errors.VOID, "Not parsing sentence for it isn't valid.");
