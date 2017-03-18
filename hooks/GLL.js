@@ -62,8 +62,6 @@ module.exports = function (parser, input) {
     const timestamp = utils.timestamp(time, moment.tz('UTC').format('DDMMYY'))
 
     const delta = {
-      version: '1.0',
-      context: 'vessels.self',
       updates: [
         {
           source: tags.source,

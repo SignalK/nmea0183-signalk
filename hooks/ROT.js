@@ -42,7 +42,6 @@ module.exports = function (parser, input) {
 
   try {
     const delta = {
-      context: 'vessels.self',
       updates: [
         {
           source: tags.source,
