@@ -18,7 +18,7 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const nmeaLog = require('./logs/unknown.js')
+const nmeaLog = require('./logs/unrecognised.js')
 
 chai.Should()
 chai.use(require('chai-things'))
