@@ -48,9 +48,13 @@ module.exports = function (parser, input) {
   let bearing = 0.0
   let vmg = 0.0
   let distance = 0.0
+  let crossTrackError = 0.0
 
   latitude = utils.coordinate(parts[5], parts[6])
   longitude = utils.coordinate(parts[7], parts[8])
+  if (isNaN(latitude) || isNaN(longitude)) {
+    return Promise.resolve(null)
+  }
   
   bearing = utils.float(parts[10])
   bearing = (!isNaN(bearing)) ? bearing : 0.0
@@ -61,6 +65,11 @@ module.exports = function (parser, input) {
   distance = utils.float(parts[9])
   distance = (!isNaN(distance)) ? distance : 0.0
  
+  crossTrackError = utils.float(parts[1])
+  crossTrackError = (!isNaN(crossTrackError)) ? crossTrackError : 0.0
+
+  crossTrackError = parts[2] == 'R' ? crossTrackError : -crossTrackError;
+
   try {
     const delta = {
       updates: [
@@ -91,10 +100,10 @@ module.exports = function (parser, input) {
               'value': utils.transform(distance, 'nm', 'km') * 1000
             },
 
-            // {
-            //   'path': 'navigation.magneticVariationAgeOfService',
-            //   value: age
-            // }
+            {
+              'path': 'navigation.courseRhumbline.crossTrackError',
+              value: utils.transform(crossTrackError, 'nm', 'km') * 1000
+            }
           ]
         }
       ],
