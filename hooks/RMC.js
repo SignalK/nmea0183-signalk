@@ -45,21 +45,21 @@ module.exports = function (parser, input) {
   let track = 0.0
   let variation = 0.0
 
-  const timestamp = utils.timestamp(parts[0], parts[8])
-  const age = moment.tz(timestamp, 'UTC').unix()
-  
-  latitude = utils.coordinate(parts[2], parts[3])
-  longitude = utils.coordinate(parts[4], parts[5])
-  
-  speed = utils.float(parts[6])
-  speed = (!isNaN(speed) && speed > 0) ? speed : 0.0
-
-  track = utils.float(parts[7])
-  track = (!isNaN(track)) ? track : 0.0
-
-  variation = utils.magneticVariaton(parts[9], parts[10])
-
   try {
+    const timestamp = utils.timestamp(parts[0], parts[8])
+    const age = moment.tz(timestamp, 'UTC').unix()
+    
+    latitude = utils.coordinate(parts[2], parts[3])
+    longitude = utils.coordinate(parts[4], parts[5])
+    
+    speed = utils.float(parts[6])
+    speed = (!isNaN(speed) && speed > 0) ? speed : 0.0
+
+    track = utils.float(parts[7])
+    track = (!isNaN(track)) ? track : 0.0
+
+    variation = utils.magneticVariaton(parts[9], parts[10])
+
     const delta = {
       updates: [
         {
