@@ -74,7 +74,7 @@ module.exports = function (parser, input) {
       return e
     }, 0)
 
-    if (empty > 0) {
+    if (empty > 3) {
       return Promise.resolve(null)
     }
 
