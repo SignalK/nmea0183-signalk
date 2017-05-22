@@ -40,7 +40,7 @@ describe('VDM', function() {
       full.should.be.validSignalK;
 
       full.vessels['urn:mrn:imo:mmsi:603916439'].should.have.property('mmsi', '603916439');
-      full.vessels['urn:mrn:imo:mmsi:603916439'].should.have.property('name', '   ARCO AVON');
+      full.vessels['urn:mrn:imo:mmsi:603916439'].should.have.property('name', 'ARCO AVON');
       countDones();
     });
     parser1.write(nmeaLines[0]);
