@@ -4,7 +4,7 @@
 
 A Node.js [stream.Transform](https://nodejs.org/api/stream.html#stream_class_stream_transform)
 which converts [NMEA 0183](http://www.nmea.org/content/nmea_standards/nmea_0183_v_410.asp)
-sentences into Signal K delta messages.
+sentences into Signal K sparse messages.
 
 ## Supported Sentences
 The following is the list of sentences the parser supports. Pull requests welcome!
