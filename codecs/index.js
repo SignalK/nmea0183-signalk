@@ -45,6 +45,7 @@ var codecs = {
   VDR: require('./VDR'),
   VPW: require('./VPW'),
   VWR: require('./VWR'),
+  ZDA: require('./ZDA'),
   STALK: require('./STALK'),
 };
 
