@@ -1,6 +1,6 @@
 {
   "name": "nmea0183-signalk",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "NMEA0183 to Signal K parser",
   "main": "index.js",
   "scripts": {
