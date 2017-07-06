@@ -19,4 +19,11 @@ describe('GLL', function() {
     });
     parser.write(nmeaLine);
   })
+
+    it('does not throw error with malformed data', function(done) {
+    parser = new(require('../lib/').Parser)();
+    parser.write("$GPGLL,4840.434N,12325.053,W,191313.74A,D*7F");
+    done();
+  })
+
 });
