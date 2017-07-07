@@ -78,7 +78,8 @@ module.exports = new Codec('RMC', function(multiplexer, input, line) {
 
   var vals = [
     { path: 'courseOverGroundTrue', value: self.transform(self.float(values[7]), 'deg', 'rad') },
-    { path: 'speedOverGround', value: self.transform(values[6], 'knots', 'ms') }
+    { path: 'speedOverGround', value: self.transform(values[6], 'knots', 'ms') },
+    { path: 'datetime', value: ts }
   ];
 
   if(typeof values[9] !== 'undefined' && typeof values[10] === 'string') {
