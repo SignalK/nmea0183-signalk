@@ -63,38 +63,39 @@ module.exports = new Codec('RMC', function(multiplexer, input, line) {
 
 	var ts 	 = this.timestamp(time, date);
 	var self = this;
-
-  // Position
-  multiplexer
-    .self()
-    .group('navigation')
-    .set('position', {
-      source: this.source(input.instrument),
-      timestamp: ts,
-      longitude: self.coordinate(values[4], String(values[5]).toUpperCase()),
-      latitude: self.coordinate(values[2], String(values[3]).toUpperCase())
-    })
-  ;
-
-  var vals = [
-    { path: 'courseOverGroundTrue', value: self.transform(self.float(values[7]), 'deg', 'rad') },
-    { path: 'speedOverGround', value: self.transform(values[6], 'knots', 'ms') },
-    { path: 'datetime', value: ts }
-  ];
-
-  if(typeof values[9] !== 'undefined' && typeof values[10] === 'string') {
-    vals.push({ path: 'magneticVariation', value: self.transform(this.magneticVariaton(values[9], values[10]), 'deg', 'rad') });
-  }
-
-  // Other
-  multiplexer
-    .self()
-    .group('navigation')
-    .source(this.source(input.instrument))
-    .timestamp(ts)
-    .values(vals)
-  ;
-
+	
+	var vals = [{ 
+        "path": "navigation.position",
+        "value": {
+		  longitude: self.coordinate(values[4], String(values[5]).toUpperCase()),
+		  latitude: self.coordinate(values[2], String(values[3]).toUpperCase())
+        }
+      },{ 
+		"path": "navigation.courseOverGroundTrue", 
+		"value": self.transform(self.float(values[7]), 'deg', 'rad') 
+      },{ 
+		"path": "navigation.speedOverGround", 
+		"value": self.transform(values[6], 'knots', 'ms')
+	  },{
+		"path": "navigation.datetime",
+		"value": ts.substring(0,10)+'T'+ts.substring(11,19)+'Z'
+      }];
+	  
+	if(typeof values[9] !== 'undefined' && typeof values[10] === 'string') {
+		vals.push({ path: 'navigation.magneticVariation', value: self.transform(this.magneticVariaton(values[9], values[10]), 'deg', 'rad') });
+	}
+	
+    // Position
+    multiplexer.self();
+  
+    multiplexer.add({
+    "updates": [{
+      "source": this.source(input.instrument),
+      "timestamp": ts,
+	  "values": vals
+    }],
+    "context": multiplexer._context
+  });
 	return true;
 });
 
