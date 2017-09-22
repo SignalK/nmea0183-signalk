@@ -32,7 +32,7 @@
     "debug": "^2.2.0",
     "chai": "^3.4.1",
     "chai-things": "^0.2.0",
-    "mocha": "^2.3.4",
+    "mocha": "^3.0.2",
     "signalk-schema": "0.0.1-0"
   },
   "repository": {
