@@ -21,6 +21,10 @@ const debug = require('debug')('signalk-parser-nmea0183/DSC')
 const utils = require('nmea0183-utilities')
 var delta = {}
 
+function isEmpty(mixed) {
+  return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+}
+
 function parsePosition(line) {
 
   /*
@@ -63,6 +67,17 @@ module.exports = function (parser, input) {
   try {
     const { id, sentence, parts, tags } = input
     var values = [];
+
+    const empty = parts.reduce((e, val) => {
+      if (isEmpty(val)) {
+        ++e
+      }
+      return e
+    }, 0)
+
+    if (empty > 3) {
+      return Promise.resolve(null)
+    }
 
     // for some reason, it seems the sender identification is mmsi+'0', so we
     // strip the trailing zero to get a 9 digit mmsi
