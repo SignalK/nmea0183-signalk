@@ -67,32 +67,37 @@ module.exports = function (parser, input) {
           timestamp: timestamp,
           values: [
             {
-              'path': 'navigation.position',
-              'value': {
+              path: 'navigation.position',
+              value: {
                 longitude,
                 latitude
               }
             },
 
             {
-              'path': 'navigation.courseOverGroundTrue',
-              'value': utils.transform(track, 'deg', 'rad')
+              path: 'navigation.courseOverGroundTrue',
+              value: utils.transform(track, 'deg', 'rad')
             },
 
             {
-              'path': 'navigation.speedOverGround',
-              'value': utils.transform(speed, 'knots', 'ms')
+              path: 'navigation.speedOverGround',
+              value: utils.transform(speed, 'knots', 'ms')
             },
 
             {
-              'path': 'navigation.magneticVariation',
-              'value': utils.transform(variation, 'deg', 'rad')
+              path: 'navigation.magneticVariation',
+              value: utils.transform(variation, 'deg', 'rad')
             },
 
             {
-              'path': 'navigation.magneticVariationAgeOfService',
+              path: 'navigation.magneticVariationAgeOfService',
               value: age
-            }
+            },
+
+            {
+              path: 'navigation.datetime',
+              value: timestamp,
+            },
           ]
         }
       ],
