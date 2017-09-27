@@ -16,7 +16,7 @@
 
 'use strict'
 
-const utils = require('nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 9C  U1  VW  RR    Compass heading and Rudder position (see also command 84)

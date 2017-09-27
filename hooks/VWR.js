@@ -16,7 +16,7 @@
 
 'use strict'
 
-const utils = require('nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 VWR - Relative (Apparent) Wind Speed and Angle

@@ -20,7 +20,7 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 chai.use(require('chai-things'))
-chai.use(require('signalk-schema').chaiModule)
+chai.use(require('@signalk/signalk-schema').chaiModule)
 
 describe('GLL', () => {
 

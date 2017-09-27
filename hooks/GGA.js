@@ -17,7 +17,7 @@
  */
  
 const debug = require('debug')('signalk-parser-nmea0183/GGA')
-const utils = require('nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 const moment = require('moment-timezone')
 
 /*

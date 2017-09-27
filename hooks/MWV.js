@@ -17,7 +17,7 @@
  */
  
 const debug = require('debug')('signalk-parser-nmea0183/MWV')
-const utils = require('nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 function convertToWindAngle(angle) {
   const numAngle = utils.float(angle) % 360
