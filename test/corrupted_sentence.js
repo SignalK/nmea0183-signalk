@@ -43,7 +43,7 @@ describe('Corrupted sentence', () => {
     parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseOverGroundTrue')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedOverGroundTrue')
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedOverGround')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariationAgeOfService')
       done()

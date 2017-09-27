@@ -48,10 +48,10 @@ module.exports = function (parser, input) {
   try {
     const timestamp = utils.timestamp(parts[0], parts[8])
     const age = moment.tz(timestamp, 'UTC').unix()
-    
+
     latitude = utils.coordinate(parts[2], parts[3])
     longitude = utils.coordinate(parts[4], parts[5])
-    
+
     speed = utils.float(parts[6])
     speed = (!isNaN(speed) && speed > 0) ? speed : 0.0
 
@@ -80,7 +80,7 @@ module.exports = function (parser, input) {
             },
 
             {
-              'path': 'navigation.speedOverGroundTrue',
+              'path': 'navigation.speedOverGround',
               'value': utils.transform(speed, 'knots', 'ms')
             },
 
