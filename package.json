@@ -24,7 +24,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "ggencoder": "0.1.14",
-    "minimist": "^1.2.0",
     "moment": "^2.17.1",
     "moment-timezone": "^0.5.11",
     "nmea0183-utilities": "^0.3.2"
