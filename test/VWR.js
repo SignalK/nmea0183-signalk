@@ -39,33 +39,14 @@ describe('VWR', () => {
     parser.parse(nmeaLine)
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
-      result.delta.updates[0].values.should.contain.an.item.with.property('value', 1.30899693929463)
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
-      result.delta.updates[0].values.should.contain.an.item.with.property('value', 0.5144445747704034)
-      done()
-    })
-
-    stream.write(nmeaLine)
-  })
-
-  /*
   it('Doesn\'t choke on empty sentences', done => {
     new Parser()
     .parse('$PIVWR,,,,,,,,*4A')
     .then(result => {
-      should.equal(result, null)
+      chai.assert.equal(result, null)
       done()
     })
     .catch(e => done(e))
   })
-  */
 
 })

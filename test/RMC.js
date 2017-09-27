@@ -46,29 +46,4 @@ describe('RMC', () => {
     parser.parse('$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,,,A*65').catch(e => done(e))
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].timestamp.should.equal('2014-04-03T08:54:00.000Z')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseOverGroundTrue')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedOverGround')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariationAgeOfService')
-      result.delta.updates[0].values[0].value.latitude.should.be.closeTo(52.372, 0.005)
-      result.delta.updates[0].values[0].value.longitude.should.be.closeTo(4.91, 0.005)
-      result.delta.updates[0].values[1].value.should.be.closeTo(4.387, 0.005)
-      result.delta.updates[0].values[2].value.should.be.closeTo(0.298, 0.005)
-      result.delta.updates[0].values[3].value.should.equal(0)
-      result.delta.updates[0].values[4].value.should.equal(1396515240)
-      done()
-    })
-
-    stream.write('$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,,,A*65')
-  })
-
 })

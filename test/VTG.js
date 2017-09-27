@@ -42,27 +42,4 @@ describe('VTG', () => {
     parser.parse('$GPVTG,0.0,T,359.3,M,0.0,N,0.0,K,A*2F').catch(e => done(e))
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseOverGroundMagnetic')
-      result.delta.updates[0].values[0].value.should.be.closeTo(6.271, 0.005)
-
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseOverGroundTrue')
-      result.delta.updates[0].values[1].value.should.equal(0)
-
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedOverGround')
-      result.delta.updates[0].values[2].value.should.equal(0)
-
-      done()
-    })
-
-    stream.write('$GPVTG,0.0,T,359.3,M,0.0,N,0.0,K,A*2F')
-  })
-
 })

@@ -45,29 +45,6 @@ describe('RMB', () => {
     parser.parse('$ECRMB,A,0.000,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*04').catch(e => done(e))
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.distance')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.bearingTrue')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.velocityMadeGood')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.crossTrackError')
-      result.delta.updates[0].values[0].value.latitude.should.be.closeTo(46.8925, 0.005)
-      result.delta.updates[0].values[0].value.longitude.should.be.closeTo(-71.2664, 0.005)
-      result.delta.updates[0].values[1].value.should.be.closeTo(5.832, 0.005)
-      result.delta.updates[0].values[2].value.should.be.closeTo(0, 0.005)
-      result.delta.updates[0].values[3].value.should.be.closeTo(4639.260, 0.005)
-      result.delta.updates[0].values[4].value.should.equal(0)
-      done()
-    })
-
-    stream.write('$ECRMB,A,0.000,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*04')
-  })
   it('crossTrackError should be positive to steer Right', done => {
     const parser = new Parser
     parser.on('signalk:delta', delta => {
@@ -76,7 +53,7 @@ describe('RMB', () => {
     })
 
     parser.parse('$ECRMB,A,0.432,R,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*1F').catch(e => done(e))
-    
+
   })
 
   it('crossTrackError should be negative to steer left', done => {
@@ -87,7 +64,7 @@ describe('RMB', () => {
     })
 
     parser.parse('$ECRMB,A,0.432,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*01').catch(e => done(e))
-    
+
   })
 
   it('Doesn\'t choke on empty sentences', done => {

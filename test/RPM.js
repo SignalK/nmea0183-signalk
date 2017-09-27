@@ -35,21 +35,6 @@ describe('RPM', () => {
     parser.parse(nmeaLine)
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'propulsion.engine_1.revolutions')
-      result.delta.updates[0].values[0].value.should.be.closeTo(((2418.2 / 60)), 0.0005)
-      done()
-    })
-
-    stream.write(nmeaLine)
-  })
-
   /*
   it('Doesn\'t choke on empty sentences', done => {
     const parser = new Parser

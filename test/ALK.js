@@ -119,23 +119,6 @@ describe('ALK', done => {
     parser.parse(heading_nineC)
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
-      result.delta.updates[0].values[2].value.should.equal('auto')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.target.headingMagnetic')
-      result.delta.updates[0].values[1].value.should.be.closeTo(2.626720524251466, 0.0005)
-      done()
-    })
-
-    stream.write(auto)
-  })
-
 /*
   it('Doesn\'t choke on empty sentences', done => {
     const parser = new Parser

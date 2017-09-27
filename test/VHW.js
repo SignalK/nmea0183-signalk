@@ -51,25 +51,6 @@ describe('VHW', () => {
     parser.parse('$SDVHW,182.5,T,181.8,M,0.0,N,0.0,K*4C')
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedThroughWater')
-      result.delta.updates[0].values[2].value.should.be.closeTo(0, 0.00005)
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      result.delta.updates[0].values[1].value.should.be.closeTo(3.1730085801256913, 0.00005)
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingTrue')
-      result.delta.updates[0].values[0].value.should.be.closeTo(3.1852258848896517, 0.00005)
-      done()
-    })
-
-    stream.write('$SDVHW,182.5,T,181.8,M,0.0,N,0.0,K*4C')
-  })
-
   /*
   it('Doesn\'t choke on empty sentences', done => {
     const parser = new Parser
