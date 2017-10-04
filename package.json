@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "deploy": "npm test && git tag -a v$npm_package_version -m 'Release v$npm_package_version' && git push --tags && npm publish --access public --scope @signalk ."
+    "deploy": "npm test && git tag -a v$npm_package_version -m 'Release v$npm_package_version'; git push --tags; npm publish --access public --scope @signalk ."
   },
   "bin": {
     "nmea0183-signalk": "./bin/nmea0183-signalk",

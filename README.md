@@ -30,15 +30,6 @@
 - [ZDA - UTC day, month, and year, and local time zone offset](http://www.trimble.com/oem_receiverhelp/v4.44/en/NMEA-0183messages_ZDA.html)
 
 
-### Todo
-
-- [x] Sentence support (parity with old parser)
-- [x] Tests for every sentence
-- [x] Update readme
-- [ ] Include parsing to full Signal K format
-- [ ] Extend sentence support beyond current set (continuing)
-
-
 ### Usage
 
 ```javascript
