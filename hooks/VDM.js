@@ -159,7 +159,7 @@ module.exports = function (parser, input) {
     if ( data.dimD && data.width ) {
       var fromCenter;
       if (data.dimD > data.width / 2) {
-        fromCenter = (data.dimD - width / 2) * -1
+        fromCenter = (data.dimD - data.width / 2) * -1
       } else {
         fromCenter =  data.width / 2 - data.dimD
       }
