@@ -38,7 +38,7 @@ Field Number:
 7. Checksum
 */
 const debug = require('debug')('signalk-parser-nmea0183/ZDA')
-const utils = require('nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 const moment = require('moment-timezone')
 
 function isEmpty(mixed) {

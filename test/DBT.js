@@ -36,21 +36,6 @@ describe('DBT', () => {
     parser.parse('$IIDBT,035.53,f,010.83,M,005.85,F*23').catch(e => done(e))
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
-      result.delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
-      done()
-    })
-
-    stream.write('$IIDBT,035.53,f,010.83,M,005.85,F*23')
-  })
-
   it('Doesn\'t choke on empty sentences', done => {
     new Parser()
     .parse('$IIDBT,,,,,,*52')

@@ -16,7 +16,7 @@
 
 'use strict'
 
-const utils = require('nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 VWR - Relative (Apparent) Wind Speed and Angle
@@ -33,8 +33,17 @@ $--VWR,x.x,a,x.x,N,x.x,M,x.x,K*hh<CR><LF>
  8 - Checksum
  */
 
+ function isEmpty(mixed) {
+   return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+ }
+
 module.exports = function (parser, input) {
   const { id, sentence, parts, tags } = input
+
+  const empty = parts.reduce((count, part) => { count += (isEmpty(part) ? 1 : 0); return count; }, 0)
+  if (empty > 3) {
+    return Promise.resolve(null)
+  }
 
   var rightPositive = 0;
   if (String(parts[1]).toUpperCase() === 'R') {

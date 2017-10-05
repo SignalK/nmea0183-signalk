@@ -2,17 +2,27 @@
 
 const Parser = require('../lib/index.js')
 const parser = new Parser()
-const stream = parser.stream()
 
 process.stdin.resume()
 process.stdin.setEncoding('utf8')
 
-stream.on('data', data => {
-  console.log(JSON.stringify(data.delta))
+process.stdin.on('data', data => {
+  if (typeof data !== 'string') {
+    return
+  }
+
+  data = data.trim()
+  parser
+    .parse(data)
+    .then(result => {
+      console.log(JSON.stringify(result))
+    })
+    .catch(e => {
+      console.error('Encountered an error:', e.message)
+    })
 })
 
-stream.on('error', err => {
-  console.error(err.message)
+process.stdin.on('error', err => {
+  console.error('Encountered an input error:', err.message)
+  process.exit(1)
 })
-
-process.stdin.pipe(stream)

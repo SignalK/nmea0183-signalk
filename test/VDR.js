@@ -36,28 +36,4 @@ describe('VDR', () => {
     parser.parse(nmeaLine)
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.current')
-      done()
-    })
-
-    it('Doesn\'t choke on empty sentences', done => {
-      new Parser()
-      .parse('$IIVDR,,,,,,*40')
-      .then(result => {
-        should.equal(result, null)
-        done()
-      })
-      .catch(e => done(e))
-    })
-
-    stream.write(nmeaLine)
-  })
-
 })

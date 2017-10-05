@@ -36,21 +36,6 @@ describe('HDM', () => {
     parser.parse('$04HDM,186.5,M*2C').catch(e => done(e))
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      result.delta.updates[0].values[0].value.should.be.closeTo(3.26, 0.005)
-      done()
-    })
-
-    stream.write('$04HDM,186.5,M*2C')
-  })
-
   it('Doesn\'t choke on empty sentences', done => {
     new Parser()
     .parse('$SKHDM,,*59')

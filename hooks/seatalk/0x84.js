@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('nmea0183-utilities')
+ const utils = require('@signalk/nmea0183-utilities')
 
 /*
 84  U6  VW  XY 0Z 0M RR SS TT  Compass heading  Autopilot course and

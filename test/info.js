@@ -18,32 +18,32 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const should = chai.Should()
-
+const pkg = require('../package.json')
+chai.Should()
 chai.use(require('chai-things'))
 
-describe('HDT', () => {
-
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingTrue')
-      delta.updates[0].values[0].value.should.be.closeTo(2.155, 0.005)
-      done()
-    })
-
-    parser.parse('$GPHDT,123.456,T*32').catch(e => done(e))
+describe('Package info', () => {
+  it(`Retrieves name "${pkg.name}" successfully`, done => {
+    const data = new Parser().name
+    data.should.equal(pkg.name)
+    done()
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$SKHDT,,*40')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+  it(`Retrieves license "${pkg.license}" successfully`, done => {
+    const data = new Parser().license
+    data.should.equal(pkg.license)
+    done()
   })
 
+  it(`Retrieves version "${pkg.version}" successfully`, done => {
+    const data = new Parser().version
+    data.should.equal(pkg.version)
+    done()
+  })
+
+  it(`Retrieves author "${pkg.author}" successfully`, done => {
+    const data = new Parser().author
+    data.should.equal(pkg.author)
+    done()
+  })
 })

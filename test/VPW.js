@@ -38,45 +38,4 @@ describe('VPW', () => {
     parser.parse(nmeaLine)
   })
 
-  it('Converts OK using stream parser if speed in m/s', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.velocityMadeGood')
-      result.delta.updates[0].values.should.contain.an.item.with.property('value', 6.7)
-      done()
-    })
-
-    stream.write(nmeaLine)
-  })
-
-  it('Converts OK using stream parser if speed in knots', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.have.all.keys({'path': 'performance.velocityMadeGood', 'value': 6.7})
-      done()
-    })
-
-    stream.write(nmeaLineKnots)
-  })
-
-  /*
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$IIVPW,,,,*51')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
-  })
-  */
-
 })

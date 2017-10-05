@@ -36,19 +36,4 @@ describe('MTW', () => {
     parser.parse('$YXMTW,15.2,C*14').catch(e => done(e))
   })
 
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.water.temperature')
-      result.delta.updates[0].values[0].value.should.be.closeTo(288.35, 0.005)
-      done()
-    })
-
-    stream.write('$YXMTW,15.2,C*14')
-  })
-
 })

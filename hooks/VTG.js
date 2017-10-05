@@ -17,7 +17,7 @@
  */
 
 const debug = require('debug')('signalk-parser-nmea0183/HDG')
-const utils = require('nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
  === VTG - Track made good and Ground speed ===

@@ -20,7 +20,7 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 chai.use(require('chai-things'))
-chai.use(require('signalk-schema').chaiModule)
+chai.use(require('@signalk/signalk-schema').chaiModule)
 
 describe('GLL', () => {
 
@@ -36,22 +36,6 @@ describe('GLL', () => {
     })
 
     parser.parse('$GPGLL,5958.613,N,02325.928,E,121022,A,D*40').catch(e => done(e))
-  })
-
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].values[0].path.should.equal('navigation.position')
-      result.delta.updates[0].values[0].value.latitude.should.be.closeTo(59.9768833, 0.000005)
-      result.delta.updates[0].values[0].value.longitude.should.be.closeTo(23.432133, 0.000005)
-      done()
-    })
-
-    stream.write('$GPGLL,5958.613,N,02325.928,E,121022,A,D*40')
   })
 
   it('Doesn\'t choke on empty sentences', done => {

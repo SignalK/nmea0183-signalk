@@ -2,7 +2,7 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const signalkSchema = require('signalk-schema')
+const signalkSchema = require('@signalk/signalk-schema')
 const should = chai.Should()
 
 chai.use(require('chai-things'))

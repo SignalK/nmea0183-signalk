@@ -17,7 +17,7 @@
  */
  
 const debug = require('debug')('signalk-parser-nmea0183/DBT')
-const utils = require('nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 === DBT - Depth below transducer ===

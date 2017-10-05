@@ -17,7 +17,7 @@
  */
 
 const debug = require('debug')('signalk-parser-nmea0183/VDM')
-const utils = require('nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 const Decoder = require('ggencoder').AisDecode
 
 module.exports = function (parser, input) {

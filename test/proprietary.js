@@ -1,5 +1,7 @@
+'use strict'
+
 /**
- * Copyright 2016 Signal K <info@signalk.org> and contributors.
+ * Copyright 2016 Signal K and Fabian Tollenaar <fabian@signalk.org>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +18,40 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const nmeaLine = '$IIRPM,E,1,2418.2,10.5,A*5F'
+const assert = chai.assert
+const nmeaLine = '$PMGNST,02.12,3,T,534,05.0,+03327,00*40'
 
 chai.Should()
 chai.use(require('chai-things'))
 
-describe('RPM', () => {
+describe('Proprietary sentences', () => {
 
-  it('Converts OK using individual parser', done => {
+  it('Don\'t break the parser', done => {
+    const parser = new Parser
+
+    parser
+      .parse(nmeaLine)
+      .then(result => {
+        assert.equal(result, null)
+        done()
+      })
+      .catch(e => done(e))
+  })
+
+  it('Emit no Signal K data', done => {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'propulsion.engine_1.revolutions')
-      delta.updates[0].values[0].value.should.be.closeTo(((2418.2 / 60)), 0.0005)
-      done()
+      done(new Error('Emitted delta for proprietary sentence: ' + JSON.stringify(delta)))
     })
 
-    parser.parse(nmeaLine)
-  })
-
-  /*
-  it('Doesn\'t choke on empty sentences', done => {
-    const parser = new Parser
     parser
-    .parse('$IIRPM,,,,,*63')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+      .parse(nmeaLine)
+      .then(result => {
+        assert.equal(result, null)
+        done()
+      })
+      .catch(e => done(e))
   })
-  */
 
 })

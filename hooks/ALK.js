@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('nmea0183-utilities')
+ const utils = require('@signalk/nmea0183-utilities')
  const path = require('path').join(__dirname, './seatalk')
  const fs = require('fs')
 

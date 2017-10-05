@@ -2,13 +2,13 @@
 
 /**
  * Copyright 2016 Signal K and Fabian Tollenaar <fabian@signalk.org>.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,23 +37,6 @@ describe('NMEA0183v4 tag block', () => {
     })
 
     parser.parse(nmeaLine)
-  })
-
-  it('Converts OK using stream parser', done => {
-    const parser = new Parser
-    const stream = parser.stream()
-
-    stream.on('data', result => {
-      result.should.be.an.object
-      result.should.have.property('delta')
-      result.delta.updates[0].source.should.be.an('object')
-      result.delta.updates[0].source.talker.should.equal('compass')
-      result.delta.updates[0].timestamp.should.equal('2015-08-02T04:28:17.000Z')
-      result.delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
-      done()
-    })
-
-    stream.write(nmeaLine)
   })
 
 })
