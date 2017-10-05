@@ -199,7 +199,7 @@ module.exports = function (parser, input) {
     }
     
     if (values.length === 0) {
-      return Promise.resolve("nothing found")
+      return Promise.resolve(null)
     }
 
     const delta = {
