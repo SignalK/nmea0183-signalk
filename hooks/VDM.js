@@ -178,7 +178,21 @@ module.exports = function (parser, input) {
           value: state
         })
       }        
-    }    
+    }
+
+    if ( data.destination ) {
+      values.push({
+        path: 'navigation.destination.commonName',
+        value: data.destination
+      })
+    }
+
+    if ( data.callsign ) {
+      values.push({
+        path: 'communication.callsignVhf',
+        value: data.callsign
+      })
+    }
     
     var contextPrefix = "vessels."
 
