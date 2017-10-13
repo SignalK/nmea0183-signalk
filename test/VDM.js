@@ -17,7 +17,6 @@ describe('VDM', function() {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
-      console.log(JSON.stringify(delta));
       delta.context.should.equal('vessels.urn:mrn:imo:mmsi:246326000')
       delta.updates[0].values[0].value.mmsi.should.equal('246326000')
       delta.updates[0].values[1].value.name.should.equal('UTGERDINA')
@@ -55,6 +54,24 @@ describe('VDM', function() {
     parser
     .parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
     .catch(e => { done(e) })
+  })
+
+  it('AtoN converts ok', done => {
+    const parser = new Parser
+    parser.on('signalk:delta', delta => {
+      delta.context.should.equal('atons.urn:mrn:imo:mmsi:993672087')
+      delta.updates[0].values[1].value.name.should.equal('46')
+      delta.updates[0].values[2].path.should.equal('navigation.position')
+      delta.updates[0].values[2].value.longitude.should.equal(-76.128155)
+      delta.updates[0].values[2].value.latitude.should.equal(39.36828666666667)
+      delta.updates[0].values[3].path.should.equal('atonType')
+      delta.updates[0].values[3].value.should.equal('14 Beacon, Starboard hand')
+      done()
+    })
+
+    parser
+      .parse('!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n')
+      .catch(e => { done(e) })
   })
 
   it('Doesn\'t choke on empty sentences', done => {
