@@ -17,9 +17,26 @@ describe('VDM', function() {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
+      console.log(JSON.stringify(delta));
       delta.context.should.equal('vessels.urn:mrn:imo:mmsi:246326000')
       delta.updates[0].values[0].value.mmsi.should.equal('246326000')
       delta.updates[0].values[1].value.name.should.equal('UTGERDINA')
+      delta.updates[0].values[2].path.should.equal('design.length')
+      delta.updates[0].values[2].value.should.equal(641)
+      delta.updates[0].values[3].path.should.equal('design.beam')
+      delta.updates[0].values[3].value.should.equal(65)
+      delta.updates[0].values[4].path.should.equal('design.draft.maximum')
+      delta.updates[0].values[4].value.should.equal(14.1)
+      delta.updates[0].values[5].path.should.equal('sensors.ais.fromBow')
+      delta.updates[0].values[5].value.should.equal(256)
+      delta.updates[0].values[6].path.should.equal('sensors.ais.fromCenter')
+      delta.updates[0].values[6].value.should.equal(-27.5)
+      delta.updates[0].values[7].path.should.equal('navigation.destination.commonName')
+      delta.updates[0].values[7].value.should.equal('OOI SILEN')
+      delta.updates[0].values[8].path.should.equal('communication.callsignVhf')
+      delta.updates[0].values[8].value.should.equal('PH510')
+      delta.updates[0].values[9].path.should.equal('design.aisShipType')
+      delta.updates[0].values[9].value.should.equal(67)
       done()
     })
 
