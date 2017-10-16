@@ -35,7 +35,8 @@ describe('VDM', function() {
       delta.updates[0].values[8].path.should.equal('communication.callsignVhf')
       delta.updates[0].values[8].value.should.equal('PH510')
       delta.updates[0].values[9].path.should.equal('design.aisShipType')
-      delta.updates[0].values[9].value.should.equal(67)
+      delta.updates[0].values[9].value.id.should.equal(67)
+      delta.updates[0].values[9].value.name.should.equal('Passenger ship')
       done()
     })
 
@@ -65,7 +66,8 @@ describe('VDM', function() {
       delta.updates[0].values[2].value.longitude.should.equal(-76.128155)
       delta.updates[0].values[2].value.latitude.should.equal(39.36828666666667)
       delta.updates[0].values[3].path.should.equal('atonType')
-      delta.updates[0].values[3].value.should.equal('14 Beacon, Starboard hand')
+      delta.updates[0].values[3].value.name.should.equal('Beacon, Starboard Hand')
+      delta.updates[0].values[3].value.id.should.equal(14)
       done()
     })
 
