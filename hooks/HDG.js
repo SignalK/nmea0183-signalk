@@ -39,7 +39,20 @@ module.exports = function (parser, input) {
   try {
     const { id, sentence, parts, tags } = input
 
-    if (isEmpty(parts[0]) || isEmpty(parts[3]) || isEmpty(parts[4])) {
+    const values = []
+    if (!isEmpty(parts[0])) {
+      values.push({
+        path: 'navigation.headingMagnetic',
+        value: utils.transform(utils.float(parts[0]), 'deg', 'rad')
+      })
+    }
+    if (!(isEmpty(parts[3]) || isEmpty(parts[4]))) {
+      values.push({
+        path: 'navigation.magneticVariation',
+        value: utils.transform(utils.float(parts[3]), 'deg', 'rad') * (parts[4] === 'E' ? 1 : -1)
+      })
+    }
+    if (!values.length) {
       return Promise.resolve(null)
     }
 
@@ -48,16 +61,7 @@ module.exports = function (parser, input) {
         {
           source: tags.source,
           timestamp: tags.timestamp,
-          values: [
-            {
-              path: 'navigation.headingMagnetic',
-              value: utils.transform(utils.float(parts[0]), 'deg', 'rad')
-            },
-            {
-              path: 'navigation.magneticVariation',
-              value: utils.transform(utils.float(parts[3]), 'deg', 'rad') * (parts[4] === 'E' ? 1 : -1)
-            }
-          ]
+          values
         }
       ],
     }
