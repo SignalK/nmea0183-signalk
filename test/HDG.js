@@ -36,6 +36,18 @@ describe('HDG', () => {
     parser.parse('$SDHDG,181.9,,,0.6,E*32').catch(e => done(e))
   })
 
+  it('Sentence with just heading works', done => {
+    const parser = new Parser
+
+    parser.on('signalk:delta', delta => {
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+      delta.updates[0].values[0].value.should.be.closeTo((51.5 / 180 * Math.PI), 0.005)
+      done()
+    })
+
+    parser.parse('$HCHDG,51.5,,,,*73').catch(e => done(e))
+  })
+
   it('Doesn\'t choke on empty sentences', done => {
     new Parser()
     .parse('$SDHDG,,,,,*70')
