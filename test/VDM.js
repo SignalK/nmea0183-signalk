@@ -20,6 +20,23 @@ describe('VDM', function() {
       delta.context.should.equal('vessels.urn:mrn:imo:mmsi:246326000')
       delta.updates[0].values[0].value.mmsi.should.equal('246326000')
       delta.updates[0].values[1].value.name.should.equal('UTGERDINA')
+      delta.updates[0].values[2].path.should.equal('design.length')
+      delta.updates[0].values[2].value.should.equal(641)
+      delta.updates[0].values[3].path.should.equal('design.beam')
+      delta.updates[0].values[3].value.should.equal(65)
+      delta.updates[0].values[4].path.should.equal('design.draft.maximum')
+      delta.updates[0].values[4].value.should.equal(14.1)
+      delta.updates[0].values[5].path.should.equal('sensors.ais.fromBow')
+      delta.updates[0].values[5].value.should.equal(256)
+      delta.updates[0].values[6].path.should.equal('sensors.ais.fromCenter')
+      delta.updates[0].values[6].value.should.equal(-27.5)
+      delta.updates[0].values[7].path.should.equal('navigation.destination.commonName')
+      delta.updates[0].values[7].value.should.equal('OOI SILEN')
+      delta.updates[0].values[8].path.should.equal('communication.callsignVhf')
+      delta.updates[0].values[8].value.should.equal('PH510')
+      delta.updates[0].values[9].path.should.equal('design.aisShipType')
+      delta.updates[0].values[9].value.id.should.equal(67)
+      delta.updates[0].values[9].value.name.should.equal('Passenger ship')
       done()
     })
 
@@ -38,6 +55,25 @@ describe('VDM', function() {
     parser
     .parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
     .catch(e => { done(e) })
+  })
+
+  it('AtoN converts ok', done => {
+    const parser = new Parser
+    parser.on('signalk:delta', delta => {
+      delta.context.should.equal('atons.urn:mrn:imo:mmsi:993672087')
+      delta.updates[0].values[1].value.name.should.equal('46')
+      delta.updates[0].values[2].path.should.equal('navigation.position')
+      delta.updates[0].values[2].value.longitude.should.equal(-76.128155)
+      delta.updates[0].values[2].value.latitude.should.equal(39.36828666666667)
+      delta.updates[0].values[3].path.should.equal('atonType')
+      delta.updates[0].values[3].value.name.should.equal('Beacon, Starboard Hand')
+      delta.updates[0].values[3].value.id.should.equal(14)
+      done()
+    })
+
+    parser
+      .parse('!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n')
+      .catch(e => { done(e) })
   })
 
   it('Doesn\'t choke on empty sentences', done => {

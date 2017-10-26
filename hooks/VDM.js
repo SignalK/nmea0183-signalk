@@ -19,6 +19,22 @@
 const debug = require('debug')('signalk-parser-nmea0183/VDM')
 const utils = require('@signalk/nmea0183-utilities')
 const Decoder = require('ggencoder').AisDecode
+const schema = require('@signalk/signalk-schema')
+
+const stateMapping = {
+  0: 'motoring',
+  1: 'anchored',
+  2: 'not under command',
+  3: 'restricted manouverability',
+  4: 'constrained by draft',
+  5: 'moored',
+  6: 'aground',
+  7: 'fishing',
+  8: 'sailing',
+  9: 'hazardous material high speed',
+  10: 'hazardous material wing in ground',
+  14: 'ais-sart'
+};
 
 module.exports = function (parser, input) {
   try {
@@ -79,12 +95,102 @@ module.exports = function (parser, input) {
       })
     }
 
+    if ( data.length ) {
+      values.push({
+        path: 'design.length',
+        value: data.length
+      })
+    }
+
+    if ( data.width ) {
+      values.push({
+        path: 'design.beam',
+        value: data.width
+      })
+    }    
+
+    if ( data.draught ) {
+      values.push({
+        path: 'design.draft.maximum',
+        value: data.draught
+      })
+    }
+
+    if ( data.dimA ) {
+      values.push({
+        path: 'sensors.ais.fromBow',
+        value: data.dimA
+      })
+    }
+
+    if ( data.dimD && data.width ) {
+      var fromCenter;
+      if (data.dimD > data.width / 2) {
+        fromCenter = (data.dimD - data.width / 2) * -1
+      } else {
+        fromCenter =  data.width / 2 - data.dimD
+      }
+
+      values.push({
+        path: 'sensors.ais.fromCenter',
+        value: fromCenter
+      })
+    }
+
+    if ( data.navstatus ) {
+      var state = stateMapping[data.navstatus]
+      if ( typeof state !== 'undefined' ) {
+        values.push({
+          path: 'navigation.state',
+          value: state
+        })
+      }        
+    }
+
+    if ( data.destination ) {
+      values.push({
+        path: 'navigation.destination.commonName',
+        value: data.destination
+      })
+    }
+
+    if ( data.callsign ) {
+      values.push({
+        path: 'communication.callsignVhf',
+        value: data.callsign
+      })
+    }
+    
+    var contextPrefix = "vessels."
+
+    if ( data.aidtype ) {
+      contextPrefix = "atons."
+      var atonType = schema.getAtonTypeName(data.aidtype)
+      if ( typeof atonType !== 'undefined' ) {
+        values.push({
+          path: 'atonType',
+          value: { "id": data.aidtype, "name": atonType }
+        })
+      }
+    }
+
+    if ( data.cargo )
+    {
+      var typeName = schema.getAISShipTypeName(data.cargo)
+      if ( typeof typeName !== 'undefined' ) {
+        values.push({
+          path: 'design.aisShipType',
+          value: { "id": data.cargo, "name": typeName }
+        })
+      }
+    }
+    
     if (values.length === 0) {
       return Promise.resolve(null)
     }
 
     const delta = {
-      context: `vessels.urn:mrn:imo:mmsi:${data.mmsi}`,
+      context: contextPrefix + `urn:mrn:imo:mmsi:${data.mmsi}`,
       updates: [
         {
           source: tags.source,
