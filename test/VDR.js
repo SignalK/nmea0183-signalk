@@ -22,6 +22,9 @@ const nmeaLine = '$IIVDR,10.1,T,12.3,M,1.2,N*3A'
 
 chai.Should()
 chai.use(require('chai-things'))
+chai.use(require('@signalk/signalk-schema').chaiModule)
+const toFull = require('./toFull')
+
 
 describe('VDR', () => {
 
@@ -30,6 +33,12 @@ describe('VDR', () => {
 
     parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.current')
+      delta.updates[0].values[0].value.should.deep.equal({
+        setTrue: 0.1762782544916768,
+        setMagnetic: 0.21467549804431932,
+        drift: 0.6173334897244841
+      })
+      toFull(delta).should.be.validSignalK
       done()
     })
 
