@@ -97,22 +97,22 @@ module.exports = function (parser, input) {
 
     if ( data.length ) {
       values.push({
-        path: 'design.length',
-        value: data.length
+        path: '',
+        value: {design: {length: {overall: Number(data.length)}}}
       })
     }
 
     if ( data.width ) {
       values.push({
-        path: 'design.beam',
-        value: data.width
+        path: '',
+        value: {design: {beam: Number(data.width)}}
       })
     }    
 
     if ( data.draught ) {
       values.push({
-        path: 'design.draft.maximum',
-        value: data.draught
+        path: '',
+        value: {design: {draft: {maximum: Number(data.draught)}}}
       })
     }
 
@@ -156,8 +156,8 @@ module.exports = function (parser, input) {
 
     if ( data.callsign ) {
       values.push({
-        path: 'communication.callsignVhf',
-        value: data.callsign
+        path: '',
+        value: {communication:{ callsignVhf: data.callsign}}
       })
     }
     
