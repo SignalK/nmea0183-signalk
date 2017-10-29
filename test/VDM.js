@@ -5,6 +5,7 @@ const chai = require('chai')
 const should = chai.Should()
 
 chai.use(require('chai-things'))
+chai.use(require('@signalk/signalk-schema').chaiModule)
 const toFull = require('./toFull')
 
 const sentences = [
