@@ -21,6 +21,9 @@ const chai = require('chai')
 const should = chai.Should()
 
 chai.use(require('chai-things'))
+chai.use(require('@signalk/signalk-schema').chaiModule)
+
+const toFull = require('./toFull')
 
 describe('GGA', () => {
 
@@ -29,23 +32,22 @@ describe('GGA', () => {
 
     parser.on('signalk:delta', delta => {
       // Paths
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position.longitude')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position.latitude')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position.gnss.methodQuality')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position.gnss.satellites')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position.gnss.antennaAltitude')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position.gnss.horizontalDilution')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position.gnss.differentialAge')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position.gnss.differentialReference')
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.methodQuality')
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.satellites')
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.antennaAltitude')
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.horizontalDilution')
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.differentialAge')
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.differentialReference')
       // Values
-      delta.updates[0].values[0].value.should.equal(-122.03782631066667)
-      delta.updates[0].values[1].value.should.equal(37.39109795066667)
-      delta.updates[0].values[2].value.should.equal('DGNSS fix')
-      delta.updates[0].values[3].value.should.equal(6)
-      delta.updates[0].values[4].value.should.equal(18)
-      delta.updates[0].values[5].value.should.equal(1)
-      delta.updates[0].values[6].value.should.equal(2)
-      delta.updates[0].values[7].value.should.equal('0031')
+      delta.updates[0].values[0].value.should.deep.equal({longitude: -122.03782631066667, latitude: 37.39109795066667})
+      delta.updates[0].values[1].value.should.equal('DGNSS fix')
+      delta.updates[0].values[2].value.should.equal(6)
+      delta.updates[0].values[3].value.should.equal(18)
+      delta.updates[0].values[4].value.should.equal(1)
+      delta.updates[0].values[5].value.should.equal(2)
+      delta.updates[0].values[6].value.should.equal(31)
+      toFull(delta).should.be.validSignalK
       done()
     })
 
