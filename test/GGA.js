@@ -31,6 +31,7 @@ describe('GGA', () => {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
+      should.not.exist(delta.updates[0].source.label)
       // Paths
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.methodQuality')
