@@ -101,48 +101,45 @@ module.exports = function (parser, input) {
           timestamp: timestamp,
           values: [
             {
-              path: 'navigation.position.longitude',
-              value: utils.coordinate(parts[3], parts[4])
+              path: 'navigation.position',
+              value: {
+                longitude: utils.coordinate(parts[3], parts[4]),
+                latitude: utils.coordinate(parts[1], parts[2])
+              }
             },
-
             {
-              path: 'navigation.position.latitude',
-              value: utils.coordinate(parts[1], parts[2])
-            },
-
-            {
-              path: 'navigation.position.gnss.methodQuality',
+              path: 'navigation.gnss.methodQuality',
               value: quality[utils.int(parts[5])]
             },
 
             {
-              path: 'navigation.position.gnss.satellites',
+              path: 'navigation.gnss.satellites',
               value: utils.int(parts[6])
             },
 
             {
-              path: 'navigation.position.gnss.antennaAltitude',
+              path: 'navigation.gnss.antennaAltitude',
               value: utils.int(parts[8])
             },
 
             {
-              path: 'navigation.position.gnss.horizontalDilution',
+              path: 'navigation.gnss.horizontalDilution',
               value: utils.int(parts[7])
             },
 
             {
-              path: 'navigation.position.gnss.geoidalSeparation',
+              path: 'navigation.gnss.geoidalSeparation',
               value: utils.int(parts[11])
             },
 
             {
-              path: 'navigation.position.gnss.differentialAge',
+              path: 'navigation.gnss.differentialAge',
               value: utils.int(parts[12])
             },
 
             {
-              path: 'navigation.position.gnss.differentialReference',
-              value: parts[13]
+              path: 'navigation.gnss.differentialReference',
+              value: Number(parts[13])
             }
           ]
         }
@@ -152,7 +149,7 @@ module.exports = function (parser, input) {
     const toRemove = []
 
     delta.updates[0].values.forEach((update, index) => {
-      if (typeof update.value === 'undefined' || update.value === null || (typeof update.value === 'string' && update.value.trim() === '') || (typeof update.value !== 'string' && isNaN(update.value))) {
+      if (typeof update.value === 'undefined' || update.value === null || (typeof update.value === 'string' && update.value.trim() === '') || (typeof update.value === 'number' && isNaN(update.value))) {
         toRemove.push(index)
       }
     })
