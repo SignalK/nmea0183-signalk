@@ -97,22 +97,22 @@ module.exports = function (parser, input) {
 
     if ( data.length ) {
       values.push({
-        path: '',
-        value: {design: {length: {overall: Number(data.length)}}}
+        path: 'design.length',
+        value: {overall: data.length}
       })
     }
 
     if ( data.width ) {
       values.push({
-        path: '',
-        value: {design: {beam: Number(data.width)}}
+        path: 'design.beam',
+        value: data.width
       })
     }    
 
     if ( data.draught ) {
       values.push({
-        path: '',
-        value: {design: {draft: {maximum: Number(data.draught)}}}
+        path: 'design.draft',
+        value: {current: data.draught}
       })
     }
 
