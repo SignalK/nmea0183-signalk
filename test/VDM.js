@@ -85,6 +85,27 @@ describe('VDM', function() {
       .catch(e => { done(e) })
   })
 
+  it('SAR aircraft', done => {
+    const parser = new Parser
+    parser.on('signalk:delta', delta => {
+      delta.context.should.equal('aircraft.urn:mrn:imo:mmsi:111230303')
+      delta.updates[0].values[3].path.should.equal('navigation.position')
+      delta.updates[0].values[3].value.longitude.should.equal(24.992333333333335)
+      delta.updates[0].values[3].value.latitude.should.equal(60.21876833333334)
+      delta.updates[0].values[1].path.should.equal('navigation.speedOverGround')
+      delta.updates[0].values[1].value.should.equal(40.12667683209147)
+      delta.updates[0].values[2].path.should.equal('navigation.courseOverGroundTrue')
+      delta.updates[0].values[2].value.should.equal( 3.049090203930291)
+
+      done()
+    })
+
+    parser
+      .parse('!AIVDM,1,1,,A,91b4uGhW1>QjIv@RMAgFlwh20<2L,0*72\n')
+      .catch(e => { done(e) })
+  })
+
+
   it('Doesn\'t choke on empty sentences', done => {
     const parser = new Parser
     parser
