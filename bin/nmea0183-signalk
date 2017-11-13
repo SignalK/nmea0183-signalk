@@ -15,7 +15,7 @@ process.stdin.on('data', data => {
   parser
     .parse(data)
     .then(result => {
-      console.log(JSON.stringify(result))
+      console.log(JSON.stringify(result.delta))
     })
     .catch(e => {
       console.error('Encountered an error:', e.message)
