@@ -36,6 +36,18 @@ const stateMapping = {
   14: 'ais-sart'
 };
 
+const msgTypeToPrefix = {
+  1: "vessels.",
+  2: "vessels.",
+  3: "vessels.",
+  5: "vessels.",
+  9: "aircraft.",
+  18: "vessels.",
+  19: "vessels.",
+  21: "atons.",
+  24: "vessels."
+}
+
 module.exports = function (parser, input) {
   try {
     const { id, sentence, parts, tags } = input
@@ -161,7 +173,7 @@ module.exports = function (parser, input) {
       })
     }
     
-    var contextPrefix = "vessels."
+    var contextPrefix =  msgTypeToPrefix[data.aistype] || "vessels."
 
     if ( data.aidtype ) {
       contextPrefix = "atons."
