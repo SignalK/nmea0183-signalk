@@ -26,7 +26,7 @@ describe('RMB', () => {
   it('Converts OK using individual parser', done => {
     const parser = new Parser
     parser.on('signalk:delta', delta => {
-      delta.updates[0].timestamp.should.be.an.timestamp
+      delta.updates[0].timestamp.should.match(/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]*)*Z/)
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.distance')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.bearingTrue')
