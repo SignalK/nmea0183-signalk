@@ -23,19 +23,19 @@ const signalkSchema = require('@signalk/signalk-schema')
 chai.use(require('chai-things'))
 
   describe('KEP', () => {
-    it('polarspeed data ', done => {
+    it('Polarspeed data ', done => {
       const parser = new Parser
 
         parser.on('signalk:delta', delta => {
           delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.polarSpeed')
-          delta.updates[0].values[0].value.should.be.closeTo(4.475667, 0.0005)
+          delta.updates[0].values[0].value.should.be.closeTo(4.269889970594349, 0.0005)
           done()
         })
 
         parser.parse('$PNKEP,01,8.3,N,15.5,K*52')
     })
 
-    it('course on next track data', done => {
+    it('Course on next track data', done => {
       const parser = new Parser
 
         parser.on('signalk:delta', delta => {
@@ -47,7 +47,7 @@ chai.use(require('chai-things'))
         parser.parse('$PNKEP,02,344.4*6B')
     })
 
-    it('direction data', done => {
+    it('Direction data', done => {
       const parser = new Parser
 
         parser.on('signalk:delta', delta => {
