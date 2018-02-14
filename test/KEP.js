@@ -27,7 +27,7 @@ chai.use(require('chai-things'))
       const parser = new Parser
 
         parser.on('signalk:delta', delta => {
-          delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.polarSpeed')
+          delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.targetSpeed')
           delta.updates[0].values[0].value.should.be.closeTo(4.269889970594349, 0.0005)
           done()
         })
@@ -39,7 +39,7 @@ chai.use(require('chai-things'))
       const parser = new Parser
 
         parser.on('signalk:delta', delta => {
-          delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.tackTrue')
+          delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.tackMagnetic')
           delta.updates[0].values[0].value.should.be.closeTo(6.0109139439, 0.00005)
           done()
         })

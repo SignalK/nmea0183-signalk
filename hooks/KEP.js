@@ -85,14 +85,14 @@ module.exports = function (parser, input) {
           return Promise.resolve(null)
         }
 
-        let polarspeed = 0.0
+        let targetspeed = 0.0
 
           if (utils.float(parts[3]) > 0 && String(parts[4]).toUpperCase() === 'K') {
-            polarspeed = utils.transform(utils.float(parts[3]), 'kph', 'ms');
+            targetspeed = utils.transform(utils.float(parts[3]), 'kph', 'ms');
           }
 
           if (utils.float(parts[1]) > 0 && String(parts[2]).toUpperCase() === 'N') {
-            polarspeed = utils.transform(utils.float(parts[1]), 'knots', 'ms');
+            targetspeed = utils.transform(utils.float(parts[1]), 'knots', 'ms');
           }
 
           delta = {
@@ -100,8 +100,8 @@ module.exports = function (parser, input) {
               source: tags.source,
               timestamp: tags.timestamp,
               values: [{
-                  path: 'performance.polarSpeed',
-                  value: polarspeed
+                  path: 'performance.targetSpeed',
+                  value: targetspeed
                 },
               ]
             }
