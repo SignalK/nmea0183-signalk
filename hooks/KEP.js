@@ -127,7 +127,7 @@ module.exports = function (parser, input) {
               source: tags.source,
               timestamp: tags.timestamp,
               values: [{
-                  path: 'performance.tackTrue',
+                  path: 'performance.tackMagnetic',
                   value: nxtcourse
                 },
               ]
