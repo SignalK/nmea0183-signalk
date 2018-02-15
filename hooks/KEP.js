@@ -1,4 +1,4 @@
-"use strict";
+"use strict"
 
 /**
  * Copyright 2018 Signal K <info@signalk.org> and contributors.
@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-const debug = require("debug")("signalk-parser-nmea0183/KEP");
-const utils = require("@signalk/nmea0183-utilities");
+const debug = require("debug")("signalk-parser-nmea0183/KEP")
+const utils = require("@signalk/nmea0183-utilities")
 
 /*
 === PNKEP,01 - NKE Target speed ===
@@ -66,29 +66,29 @@ function isEmpty(mixed) {
   return (
     (typeof mixed !== "string" && typeof mixed !== "number") ||
     (typeof mixed === "string" && mixed.trim() === "")
-  );
+  )
 }
 
 module.exports = function(parser, input) {
   try {
-    const { id, sentence, parts, tags } = input;
+    const { id, sentence, parts, tags } = input
 
-    var delta;
+    var delta
     //PNKEP,01
 
     if (parts[0] === "01") {
       if (parts[1] === "" && parts[3] === "") {
-        return Promise.resolve(null);
+        return Promise.resolve(null)
       }
 
-      let targetspeed = 0.0;
+      let targetspeed = 0.0
 
       if (utils.float(parts[3]) > 0 && String(parts[4]).toUpperCase() === "K") {
-        targetspeed = utils.transform(utils.float(parts[3]), "kph", "ms");
+        targetspeed = utils.transform(utils.float(parts[3]), "kph", "ms")
       }
 
       if (utils.float(parts[1]) > 0 && String(parts[2]).toUpperCase() === "N") {
-        targetspeed = utils.transform(utils.float(parts[1]), "knots", "ms");
+        targetspeed = utils.transform(utils.float(parts[1]), "knots", "ms")
       }
 
       delta = {
@@ -104,20 +104,20 @@ module.exports = function(parser, input) {
             ]
           }
         ]
-      };
+      }
     }
 
     // PNKEP,02
 
     if (parts[0] === "02") {
       if (parts[1] === "") {
-        return Promise.resolve(null);
+        return Promise.resolve(null)
       }
 
-      let nxtcourse = 0.0;
+      let nxtcourse = 0.0
 
       if (utils.float(parts[1]) > 0) {
-        nxtcourse = utils.transform(utils.float(parts[1]), "deg", "rad");
+        nxtcourse = utils.transform(utils.float(parts[1]), "deg", "rad")
       }
 
       delta = {
@@ -133,20 +133,20 @@ module.exports = function(parser, input) {
             ]
           }
         ]
-      };
+      }
     }
 
     // PNKEP,03
 
     if (parts[0] === "03") {
       if (parts[1] === "") {
-        return Promise.resolve(null);
+        return Promise.resolve(null)
       }
 
-      let optcourse = 0.0;
+      let optcourse = 0.0
 
       if (utils.float(parts[1]) > 0) {
-        optcourse = utils.transform(utils.float(parts[1]), "deg", "rad");
+        optcourse = utils.transform(utils.float(parts[1]), "deg", "rad")
       }
 
       delta = {
@@ -162,14 +162,14 @@ module.exports = function(parser, input) {
             ]
           }
         ]
-      };
+      }
     }
 
     return Promise.resolve({
       delta
-    });
+    })
   } catch (e) {
-    debug(`Try/catch failed: ${e.message}`);
-    return Promise.reject(e);
+    debug(`Try/catch failed: ${e.message}`)
+    return Promise.reject(e)
   }
-};
+}
