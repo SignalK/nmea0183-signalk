@@ -1,56 +1,120 @@
-var chai = require("chai");
-chai.Should();
-chai.use(require('chai-things'));
-var signalkSchema = require('signalk-schema');
+'use strict'
 
+const Parser = require('../lib')
+const chai = require('chai')
+const should = chai.Should()
 
+chai.use(require('chai-things'))
+chai.use(require('@signalk/signalk-schema').chaiModule)
+const toFull = require('./toFull')
 
-var nmeaLines = [
-  "!AIVDM,2,1,0,A,53brRt4000010SG;700iE@LE8@Tp4000000000153P615t0Ht0SCkjH4jC1C,0*1E\n",
-  "!AIVDM,2,2,0,A,`0000000001,2*75\n"
-];
+const sentences = [
+  '!AIVDM,2,1,0,A,53brRt4000010SG700iE@LE8@Tp4000000000153P615t0Ht0SCkjH4jC1C,0*25\n',
+  '!AIVDM,2,2,0,A,`0000000001,2*75\n'
+]
 
 describe('VDM', function() {
-  it(' multiline converts ok', function(done) {
-    var parser = new(require('../lib/').Parser)({
-      selfId: 'urn:mrn:signalk:uuid:c0d79334-4e25-4245-8892-54e8ccc8021d'
-    });
-    parser.on('delta', function(delta) {
-      // validate schema conformance
-      var full = signalkSchema.deltaToFull(delta);
-      signalkSchema.fillIdentity(full);
-      full.should.be.validSignalK;
 
-      full.vessels['urn:mrn:imo:mmsi:246326000'].should.have.property('mmsi', '246326000');
-      full.vessels['urn:mrn:imo:mmsi:246326000'].should.have.property('name', 'LUTGERDINA');
-      done();
-    });
-    parser.write(nmeaLines[0]);
-    parser.write(nmeaLines[1]);
+  it('Multiline converts ok', done => {
+    const parser = new Parser
+
+    parser.on('signalk:delta', delta => {
+      should.not.exist(delta.updates[0].source.label)
+      delta.updates[0].source.talker.should.equal('AI')
+
+      delta.context.should.equal('vessels.urn:mrn:imo:mmsi:246326000')
+      delta.updates[0].values[0].value.mmsi.should.equal('246326000')
+      delta.updates[0].values[1].path.should.equal('')
+      delta.updates[0].values[1].value.should.deep.equal({name: 'UTGERDINA'})
+      delta.updates[0].values[2].path.should.equal('design.length')
+      delta.updates[0].values[2].value.should.deep.equal({overall: 641})
+      delta.updates[0].values[3].path.should.equal('design.beam')
+      delta.updates[0].values[3].value.should.equal(65)
+      delta.updates[0].values[4].path.should.equal('design.draft')
+      delta.updates[0].values[4].value.should.deep.equal({current:14.1})
+      delta.updates[0].values[5].path.should.equal('sensors.ais.fromBow')
+      delta.updates[0].values[5].value.should.equal(256)
+      delta.updates[0].values[6].path.should.equal('sensors.ais.fromCenter')
+      delta.updates[0].values[6].value.should.equal(-27.5)
+      delta.updates[0].values[7].path.should.equal('navigation.destination.commonName')
+      delta.updates[0].values[7].value.should.equal('OOI SILEN')
+      delta.updates[0].values[8].path.should.equal('')
+      delta.updates[0].values[8].value.should.deep.equal({communication:{callsignVhf: 'PH510'}})
+      delta.updates[0].values[9].path.should.equal('design.aisShipType')
+      delta.updates[0].values[9].value.id.should.equal(67)
+      delta.updates[0].values[9].value.name.should.equal('Passenger ship')
+
+      toFull(delta).should.be.validSignalK
+
+      done()
+    })
+
+    parser.parse(sentences[0]).catch(e => { done(e) })
+    parser.parse(sentences[1]).catch(e => { done(e) })
   })
 
-  it(' single line converts ok', function(done) {
-    var parser = new(require('../lib/').Parser)({
-      selfId: 'urn:mrn:signalk:uuid:c0d79334-4e25-4245-8892-54e8ccc8021d'
-    });
-    parser.on('delta', function(delta) {
-      // validate schema conformance
-      var full = signalkSchema.deltaToFull(delta);
-      signalkSchema.fillIdentity(full);
-      full.should.be.validSignalK;
+  it('Single line converts ok', done => {
+    const parser = new Parser
 
-      delta.updates[0].values.length.should.equal(5);
+    parser.on('signalk:delta', delta => {
+      delta.context.should.equal('vessels.urn:mrn:imo:mmsi:244670316')
+      done()
+    })
 
-      full.vessels['urn:mrn:imo:mmsi:232002939'].should.have.property('mmsi', '232002939');
-      full.vessels['urn:mrn:imo:mmsi:232002939'].navigation.courseOverGroundTrue.should.have.property('value', 6.021385919380437);
-      full.vessels['urn:mrn:imo:mmsi:232002939'].navigation.speedOverGround.should.have.property('value', 0);
-      full.vessels['urn:mrn:imo:mmsi:232002939'].navigation.headingTrue.should.have.property('value', 0.08726646259971647);
-      full.vessels['urn:mrn:imo:mmsi:232002939'].navigation.position.should.have.property('latitude', 50.806205);
-      full.vessels['urn:mrn:imo:mmsi:232002939'].navigation.position.should.have.property('longitude', -1.10399);
-      done();
-    });
-    parser.write("!AIVDM,1,1,,B,13M@ENw000OrtT<M4U2uNP;20<2<,0*39\n");
+    parser
+    .parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
+    .catch(e => { done(e) })
+  })
+
+  it('AtoN converts ok', done => {
+    const parser = new Parser
+    parser.on('signalk:delta', delta => {
+      delta.context.should.equal('atons.urn:mrn:imo:mmsi:993672087')
+      delta.updates[0].values[1].value.name.should.equal('46')
+      delta.updates[0].values[2].path.should.equal('navigation.position')
+      delta.updates[0].values[2].value.longitude.should.equal(-76.128155)
+      delta.updates[0].values[2].value.latitude.should.equal(39.36828666666667)
+      delta.updates[0].values[3].path.should.equal('atonType')
+      delta.updates[0].values[3].value.name.should.equal('Beacon, Starboard Hand')
+      delta.updates[0].values[3].value.id.should.equal(14)
+      done()
+    })
+
+    parser
+      .parse('!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n')
+      .catch(e => { done(e) })
+  })
+
+  it('SAR aircraft', done => {
+    const parser = new Parser
+    parser.on('signalk:delta', delta => {
+      delta.context.should.equal('aircraft.urn:mrn:imo:mmsi:111230303')
+      delta.updates[0].values[3].path.should.equal('navigation.position')
+      delta.updates[0].values[3].value.longitude.should.equal(24.992333333333335)
+      delta.updates[0].values[3].value.latitude.should.equal(60.21876833333334)
+      delta.updates[0].values[1].path.should.equal('navigation.speedOverGround')
+      delta.updates[0].values[1].value.should.equal(40.12667683209147)
+      delta.updates[0].values[2].path.should.equal('navigation.courseOverGroundTrue')
+      delta.updates[0].values[2].value.should.equal( 3.049090203930291)
+
+      done()
+    })
+
+    parser
+      .parse('!AIVDM,1,1,,A,91b4uGhW1>QjIv@RMAgFlwh20<2L,0*72\n')
+      .catch(e => { done(e) })
   })
 
 
-});
+  it('Doesn\'t choke on empty sentences', done => {
+    const parser = new Parser
+    parser
+    .parse('!AIVDM,,,,,,*57')
+    .then(result => {
+      should.equal(result, null)
+      done()
+    })
+    .catch(e => done(e))
+  })
+
+})

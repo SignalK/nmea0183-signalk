@@ -1,45 +1,48 @@
 {
-  "name": "nmea0183-signalk",
-  "version": "0.3.0",
-  "description": "NMEA0183 to Signal K parser",
+  "name": "@signalk/nmea0183-signalk",
+  "version": "2.2.0",
+  "description": "A node.js/javascript parser for NMEA0183 sentences. Sentences are parsed to Signal K format.",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index",
-    "test": "mocha"
+    "test": "mocha",
+    "deploy": "npm test && git tag -a v$npm_package_version -m 'Release v$npm_package_version'; git push --tags; npm publish --access public --scope @signalk ."
   },
   "bin": {
     "nmea0183-signalk": "./bin/nmea0183-signalk",
     "nmea2signalk": "./bin/nmea0183-signalk"
   },
-  "dependencies": {
-    "ggencoder": "^0.1.5",
-    "lodash": "^4.0.0",
-    "signalk-multiplexer": "git://github.com/SignalK/signalk-multiplexer-node.git",
-    "uuid": "^3.0.0"
-  },
-  "devDependencies": {
-    "chai": "^3.4.1",
-    "chai-things": "^0.2.0",
-    "debug": "^2.2.0",
-    "mocha": "^2.3.4",
-    "signalk-schema": "0.0.1-0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/signalk/nmea0183-signalk"
-  },
   "keywords": [
     "nmea",
+    "0183",
     "nmea0183",
     "signalk",
     "signal",
     "k",
     "parser"
   ],
-  "author": "Fabian Tollenaar <fabian@starting-point.nl>",
+  "author": "Fabian Tollenaar <fabian@signalk.org> (http://signalk.org)",
   "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/signalk/nmea0183-signalk/issues"
+  "dependencies": {
+    "@signalk/nmea0183-utilities": "^0.5.0",
+    "@signalk/signalk-schema": "1.0.3",
+    "ggencoder": "^0.1.18",
+    "moment": "^2.17.1",
+    "moment-timezone": "^0.5.11",
+    "split": "^1.0.1",
+    "lodash": "^4.17.4"
   },
-  "homepage": "https://github.com/signalk/nmea0183-signalk"
+  "devDependencies": {
+    "debug": "^3.1.0",
+    "chai": "^4.1.2",
+    "chai-things": "^0.2.0",
+    "mocha": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/signalk/signalk-parser-nmea0183"
+  },
+  "bugs": {
+    "url": "https://github.com/signalk/signalk-parser-nmea0183/issues"
+  },
+  "homepage": "https://github.com/signalk/signalk-parser-nmea0183"
 }

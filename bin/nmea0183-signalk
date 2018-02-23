@@ -1,25 +1,30 @@
 #!/usr/bin/env node
 
-var parser = new (require('../index.js').Parser)();
+const Parser = require('../lib/index.js')
+const parser = new Parser()
 
-process.stdin.resume();
-process.stdin.setEncoding('utf8');
+process.stdin.resume()
+process.stdin.setEncoding('utf8')
 
-var Transform = require('stream').Transform;
+process.stdin.pipe(require('split')()).on('data', data => {
+  if (typeof data !== 'string') {
+    return
+  }
 
-function ToJson() {
-  Transform.call(this, {
-    objectMode: true
-  });
-}
+  data = data.trim()
+  parser
+    .parse(data)
+    .then(result => {
+      if (result != null) {
+        console.log(JSON.stringify(result.delta))
+      }
+    })
+    .catch(e => {
+      console.error('Encountered an error:', e.message)
+    })
+})
 
-require('util').inherits(ToJson, Transform);
-
-ToJson.prototype._transform = function(chunk, encoding, done) {
-  this.push(JSON.stringify(chunk, null, 2));
-  done();
-}
-
-
-process.stdin.pipe(parser).pipe(new ToJson()).pipe(process.stdout);
-//process.stdin.pipe(parser).pipe(process.stdout);
+process.stdin.on('error', err => {
+  console.error('Encountered an input error:', err.message)
+  process.exit(1)
+})
