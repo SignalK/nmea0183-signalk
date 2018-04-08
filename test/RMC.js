@@ -28,7 +28,7 @@ describe('RMC', () => {
     const parser = new Parser
 
     parser.on('signalk:delta', delta => {
-      delta.updates[0].timestamp.should.equal('2014-04-03T08:54:00.000Z')
+      delta.updates[0].timestamp.should.equal('2014-04-03T08:54:12.000Z')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseOverGroundTrue')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedOverGround')
