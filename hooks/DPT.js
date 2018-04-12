@@ -36,10 +36,10 @@ module.exports = function (parser, input) {
   try {
     const { id, sentence, parts, tags } = input
 
-    if ((typeof parts[0] !== 'string' && typeof parts[0] !== 'number') || (typeof parts[1] !== 'string' && typeof parts[1] !== 'number')) {
+    if (((typeof parts[0] !== 'string' || parts[0].trim() == '') && typeof parts[0] !== 'number') ||
+        (typeof parts[1] !== 'string' && typeof parts[1] !== 'number')) {
       return Promise.resolve(null)
     }
-
     var depth = utils.float(parts[0])
 
     const delta = {
@@ -61,7 +61,7 @@ module.exports = function (parser, input) {
 
     if ( offset > 0 ) {
       delta.updates[0].values.push({
-        path: 'environment.depth.belowTransducer',
+        path: 'environment.depth.surfaceToTransducer',
         value: offset
       })
       delta.updates[0].values.push({
@@ -71,7 +71,7 @@ module.exports = function (parser, input) {
     } else if ( offset < 0 ) {
       delta.updates[0].values.push({
         path: 'environment.depth.transducerToKeel',
-        value: offset
+        value: offset * -1
       })
       delta.updates[0].values.push({
         path: 'environment.depth.belowKeel',
@@ -79,8 +79,6 @@ module.exports = function (parser, input) {
       })
     }
 
-    console.log(JSON.stringify(delta))
-    
     return Promise.resolve({ delta })
   } catch (e) {
     debug(`Try/catch failed: ${e.message}`)
