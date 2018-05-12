@@ -36,7 +36,7 @@ values:
  -      *6A          The checksum data, always begins with *
 */
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   const {
     id, sentence, parts, tags,
   } = input

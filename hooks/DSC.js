@@ -18,7 +18,6 @@
  */
 
 const debug = require('debug')('signalk-parser-nmea0183/DSC')
-const utils = require('@signalk/nmea0183-utilities')
 
 let delta = {}
 

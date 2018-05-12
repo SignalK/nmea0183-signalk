@@ -32,7 +32,7 @@ const utils = require('@signalk/nmea0183-utilities')
  * 2. Checksum
 */
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   try {
     const {
       id, sentence, parts, tags,

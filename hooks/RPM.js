@@ -27,7 +27,7 @@ const utils = require('@signalk/nmea0183-utilities')
 #  astern 4) Status, A means data is valid 5) Checksum
 */
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   const {
     id, sentence, parts, tags,
   } = input

@@ -32,7 +32,7 @@ const utils = require('@signalk/nmea0183-utilities')
   *
   */
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   const {
     id, sentence, parts, tags,
   } = input

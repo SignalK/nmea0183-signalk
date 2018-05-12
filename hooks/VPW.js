@@ -31,7 +31,7 @@ Field Number:
 4 - Checksum
 */
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   let velocityValue
   const {
     id, sentence, parts, tags,

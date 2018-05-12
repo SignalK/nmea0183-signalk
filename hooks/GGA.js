@@ -66,11 +66,9 @@ function isEmpty(mixed) {
   )
 }
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   try {
-    const {
-      id, sentence, parts, tags,
-    } = input
+    const { parts, tags } = input
 
     const empty = parts.reduce((e, val) => {
       if (isEmpty(val)) {
