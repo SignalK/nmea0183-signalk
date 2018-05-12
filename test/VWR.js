@@ -17,6 +17,8 @@
 const Parser = require('../lib')
 const chai = require('chai')
 
+/* globals describe it */
+
 const nmeaLine = '$PIVWR,75,R,1.0,N,0.51,M,1.85,K*75'
 
 chai.Should()

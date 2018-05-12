@@ -18,7 +18,8 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const signalkSchema = require('@signalk/signalk-schema')
+
+/* globals describe it */
 
 chai.use(require('chai-things'))
 

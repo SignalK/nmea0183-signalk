@@ -19,7 +19,9 @@
 const Parser = require('../lib')
 const chai = require('chai')
 
-const assert = chai.assert
+/* globals describe it */
+
+const { assert } = chai
 const nmeaLine = '$PMGNST,02.12,3,T,534,05.0,+03327,00*40'
 
 chai.Should()

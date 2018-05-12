@@ -16,7 +16,6 @@
 
 'use strict'
 
-const utils = require('@signalk/nmea0183-utilities')
 const loadSubHooks = require('../lib/loadSubhooks')
 const path = require('path').join(__dirname, './seatalk')
 
@@ -26,19 +25,17 @@ const folderName = 'seatalk'
 |  |  |  |
 $STALK,xx,yy,nn*CS
 where:
-STALK     	Raymarine Seatalk1 datagram sentence
-0 			00-9C       	Datagram type
-1 			hex       	First datagram content
-2 			hex   		Last datagram content
-3 			hex      	Checksum
+STALK       Raymarine Seatalk1 datagram sentence
+0       00-9C         Datagram type
+1       hex         First datagram content
+2       hex       Last datagram content
+3       hex        Checksum
 */
 
 const subHooks = loadSubHooks(folderName)
 
-module.exports = function (parser, input) {
-  const {
-    id, sentence, parts, tags,
-  } = input
+module.exports = function parse(parser, input) {
+  const { parts } = input
   const key = `0x${parseInt(parts[0], 16)
     .toString(16)
     .toUpperCase()}`

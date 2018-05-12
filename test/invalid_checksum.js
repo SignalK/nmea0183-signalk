@@ -19,6 +19,8 @@
 const Parser = require('../lib')
 const chai = require('chai')
 
+/* globals describe it */
+
 const nmeaLine = '$GPROT,35.6,A*FF'
 
 chai.Should()

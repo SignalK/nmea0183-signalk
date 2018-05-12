@@ -32,14 +32,12 @@ Field Number:
 2. Checksum
 */
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   try {
-    const {
-      id, sentence, parts, tags,
-    } = input
+    const { parts, tags } = input
 
     if (
-      ((typeof parts[0] !== 'string' || parts[0].trim() == '') && typeof parts[0] !== 'number') ||
+      ((typeof parts[0] !== 'string' || parts[0].trim() === '') && typeof parts[0] !== 'number') ||
       (typeof parts[1] !== 'string' && typeof parts[1] !== 'number')
     ) {
       return Promise.resolve(null)

@@ -19,18 +19,20 @@
 const Parser = require('../lib')
 const chai = require('chai')
 
+/* globals describe it */
+
 const heading = '$STALK,84,B6,10,00,00,00,00,00,00*14'
 const standby = '$STALK,84,E6,15,00,00,00,00,00,08*1E'
 const auto = '$STALK,84,56,5E,79,02,00,00,00,08*16'
 const wind = '$STALK,84,06,00,00,04,00,00,00,00*63'
 const route = '$STALK,84,06,00,00,08,00,00,00,00*6F'
 const rudder = '$STALK,84,06,00,00,08,00,FE,00,00*6C'
-const heading_nineC = '$STALK,9C,51,1E,00*4B'
+const headingNineC = '$STALK,9C,51,1E,00*4B'
 
 chai.Should()
 chai.use(require('chai-things'))
 
-describe('ALK', (done) => {
+describe('ALK', () => {
   it('0x84 heading converted', (done) => {
     const parser = new Parser()
 
@@ -138,7 +140,7 @@ describe('ALK', (done) => {
       done()
     })
 
-    parser.parse(heading_nineC)
+    parser.parse(headingNineC)
   })
 
   /*

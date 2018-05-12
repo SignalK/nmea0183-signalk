@@ -17,8 +17,10 @@
 const Parser = require('../lib')
 const chai = require('chai')
 
+/* globals describe it */
+
 const nmeaLine = '$IIVPW,4.5,N,6.7,M*52'
-const nmeaLineKnots = '$IIVPW,4.5,N,,*30'
+// const nmeaLineKnots = '$IIVPW,4.5,N,,*30'
 
 chai.Should()
 chai.use(require('chai-things'))

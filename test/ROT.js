@@ -19,6 +19,8 @@
 const Parser = require('../lib')
 const chai = require('chai')
 
+/* globals describe it */
+
 const nmeaLine = '$GPROT,35.6,A*01'
 
 chai.Should()
@@ -30,7 +32,7 @@ describe('ROT', () => {
 
     parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.rateOfTurn')
-      delta.updates[0].values[0].value.should.be.closeTo(35.6 / 180 * Math.PI / 60, 0.0005)
+      delta.updates[0].values[0].value.should.be.closeTo(35.6 / (180 * Math.PI) / 60, 0.0005)
       done()
     })
 

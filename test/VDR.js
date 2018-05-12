@@ -19,6 +19,8 @@
 const Parser = require('../lib')
 const chai = require('chai')
 
+/* globals describe it */
+
 const nmeaLine = '$IIVDR,10.1,T,12.3,M,1.2,N*3A'
 
 chai.Should()
@@ -37,7 +39,7 @@ describe('VDR', () => {
         setMagnetic: 0.21467549804431932,
         drift: 0.6173334897244841,
       })
-      toFull(delta).should.be.validSignalK
+      toFull(delta).should.be.validSignalK()
       done()
     })
 

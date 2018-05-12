@@ -19,6 +19,8 @@
 const Parser = require('../lib')
 const chai = require('chai')
 
+/* globals describe it */
+
 chai.Should()
 chai.use(require('chai-things'))
 

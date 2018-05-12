@@ -17,6 +17,8 @@
 const Parser = require('../lib')
 const chai = require('chai')
 
+/* globals describe it */
+
 const should = chai.Should()
 
 chai.use(require('chai-things'))
@@ -30,12 +32,12 @@ describe('HDG', () => {
         'path',
         'navigation.headingMagnetic',
       )
-      delta.updates[0].values[0].value.should.be.closeTo(181.9 / 180 * Math.PI, 0.005)
+      delta.updates[0].values[0].value.should.be.closeTo(181.9 / (180 * Math.PI), 0.005)
       delta.updates[0].values.should.contain.an.item.with.property(
         'path',
         'navigation.magneticVariation',
       )
-      delta.updates[0].values[1].value.should.be.closeTo(0.6 / 180 * Math.PI, 0.005)
+      delta.updates[0].values[1].value.should.be.closeTo(0.6 / (180 * Math.PI), 0.005)
       done()
     })
 
@@ -50,7 +52,7 @@ describe('HDG', () => {
         'path',
         'navigation.headingMagnetic',
       )
-      delta.updates[0].values[0].value.should.be.closeTo(51.5 / 180 * Math.PI, 0.005)
+      delta.updates[0].values[0].value.should.be.closeTo(51.5 / (180 * Math.PI), 0.005)
       done()
     })
 

@@ -41,16 +41,16 @@ where:
 
 */
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   try {
-    const { id, sentence, parts } = input
+    const { id, parts } = input
 
-    if (parts[0].toUpperCase() == 'V') {
+    if (parts[0].toUpperCase() === 'V') {
       // Don't parse this sentence as it's void.
       return Promise.reject(new Error("Not parsing sentence for it's void (LORAN-C blink/SNR warning)"))
     }
 
-    if (parts[1].toUpperCase() == 'V') {
+    if (parts[1].toUpperCase() === 'V') {
       return Promise.reject(new Error("Not parsing sentence for it's void (LORAN-C cycle warning)"))
     }
 
@@ -59,7 +59,7 @@ module.exports = function (parser, input) {
     const currentRoute = {
       source: utils.source(id),
       timestamp: utils.timestamp(),
-      steer: parts[3].toUpperCase() == 'R' ? 'right' : 'left',
+      steer: parts[3].toUpperCase() === 'R' ? 'right' : 'left',
       bearingActual: utils.transform(utils.float(parts[10]), 'deg', 'rad'),
       bearingDirect: utils.transform(utils.float(parts[7]), 'deg', 'rad'),
       courseRequired: utils.transform(utils.float(parts[12]), 'deg', 'rad'),

@@ -20,6 +20,8 @@ const Parser = require('../lib')
 const chai = require('chai')
 const pkg = require('../package.json')
 
+/* globals describe it */
+
 chai.Should()
 chai.use(require('chai-things'))
 

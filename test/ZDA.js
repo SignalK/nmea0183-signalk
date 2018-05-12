@@ -17,7 +17,9 @@
 const Parser = require('../lib')
 const chai = require('chai')
 
-const assert = chai.assert
+/* globals describe it */
+
+const { assert } = chai
 const nmeaLine = '$GPZDA,160012.71,11,03,2004,-1,00*7D'
 const emptyNmeaLine = '$GPZDA,,,,,,*48'
 
