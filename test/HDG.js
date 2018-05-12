@@ -26,10 +26,16 @@ describe('HDG', () => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      delta.updates[0].values[0].value.should.be.closeTo((181.9 / 180 * Math.PI), 0.005)
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
-      delta.updates[0].values[1].value.should.be.closeTo((0.6 / 180 * Math.PI), 0.005)
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.headingMagnetic',
+      )
+      delta.updates[0].values[0].value.should.be.closeTo(181.9 / 180 * Math.PI, 0.005)
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.magneticVariation',
+      )
+      delta.updates[0].values[1].value.should.be.closeTo(0.6 / 180 * Math.PI, 0.005)
       done()
     })
 
@@ -40,15 +46,18 @@ describe('HDG', () => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      delta.updates[0].values[0].value.should.be.closeTo((51.5 / 180 * Math.PI), 0.005)
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.headingMagnetic',
+      )
+      delta.updates[0].values[0].value.should.be.closeTo(51.5 / 180 * Math.PI, 0.005)
       done()
     })
 
     parser.parse('$HCHDG,51.5,,,,*73').catch(e => done(e))
   })
 
-  it('Doesn\'t choke on empty sentences', (done) => {
+  it("Doesn't choke on empty sentences", (done) => {
     new Parser()
       .parse('$SDHDG,,,,,*70')
       .then((result) => {

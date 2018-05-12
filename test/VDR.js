@@ -26,7 +26,6 @@ chai.use(require('chai-things'))
 chai.use(require('@signalk/signalk-schema').chaiModule)
 const toFull = require('./toFull')
 
-
 describe('VDR', () => {
   it('Converts OK using individual parser', (done) => {
     const parser = new Parser()

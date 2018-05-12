@@ -23,8 +23,12 @@ describe('VDO', () => {
       done()
     })
 
-    parser.parse(sentences[0]).catch((e) => { done(e) })
-    parser.parse(sentences[1]).catch((e) => { done(e) })
+    parser.parse(sentences[0]).catch((e) => {
+      done(e)
+    })
+    parser.parse(sentences[1]).catch((e) => {
+      done(e)
+    })
   })
 
   it('Single line converts ok', (done) => {
@@ -35,12 +39,12 @@ describe('VDO', () => {
       done()
     })
 
-    parser
-      .parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
-      .catch((e) => { done(e) })
+    parser.parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n').catch((e) => {
+      done(e)
+    })
   })
 
-  it('Doesn\'t choke on empty sentences', (done) => {
+  it("Doesn't choke on empty sentences", (done) => {
     const parser = new Parser()
     parser
       .parse('!AIVDM,,,,,,*57')

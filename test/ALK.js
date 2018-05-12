@@ -35,7 +35,10 @@ describe('ALK', (done) => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.headingMagnetic',
+      )
       delta.updates[0].values[0].value.should.be.closeTo(5.305800926062761, 0.0005)
       done()
     })
@@ -46,7 +49,10 @@ describe('ALK', (done) => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'steering.autopilot.state',
+      )
       delta.updates[0].values[1].value.should.equal('standby')
       done()
     })
@@ -57,7 +63,10 @@ describe('ALK', (done) => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'steering.autopilot.state',
+      )
       delta.updates[0].values[2].value.should.equal('auto')
       done()
     })
@@ -68,7 +77,10 @@ describe('ALK', (done) => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'steering.autopilot.state',
+      )
       delta.updates[0].values[0].value.should.equal('wind')
       done()
     })
@@ -79,7 +91,10 @@ describe('ALK', (done) => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'steering.autopilot.state',
+      )
       delta.updates[0].values[0].value.should.equal('route')
       done()
     })
@@ -101,7 +116,10 @@ describe('ALK', (done) => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.target.headingMagnetic')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'steering.autopilot.target.headingMagnetic',
+      )
       delta.updates[0].values[1].value.should.be.closeTo(2.626720524251466, 0.0005)
       done()
     })
@@ -112,7 +130,10 @@ describe('ALK', (done) => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.headingMagnetic',
+      )
       delta.updates[0].values[0].value.should.be.closeTo(2.6529004630313806, 0.0005)
       done()
     })
@@ -120,7 +141,7 @@ describe('ALK', (done) => {
     parser.parse(heading_nineC)
   })
 
-/*
+  /*
   it('Doesn\'t choke on empty sentences', done => {
     const parser = new Parser
     parser

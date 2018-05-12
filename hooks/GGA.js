@@ -60,7 +60,10 @@ Field Number:
 */
 
 function isEmpty(mixed) {
-  return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+  return (
+    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
+    (typeof mixed === 'string' && mixed.trim() === '')
+  )
 }
 
 module.exports = function (parser, input) {
@@ -151,7 +154,12 @@ module.exports = function (parser, input) {
     const toRemove = []
 
     delta.updates[0].values.forEach((update, index) => {
-      if (typeof update.value === 'undefined' || update.value === null || (typeof update.value === 'string' && update.value.trim() === '') || (typeof update.value === 'number' && isNaN(update.value))) {
+      if (
+        typeof update.value === 'undefined' ||
+        update.value === null ||
+        (typeof update.value === 'string' && update.value.trim() === '') ||
+        (typeof update.value === 'number' && isNaN(update.value))
+      ) {
         toRemove.push(index)
       }
     })

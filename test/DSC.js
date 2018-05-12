@@ -19,7 +19,10 @@ describe('DSC', () => {
     parser
       .parse(nmeaLinePos)
       .then((result) => {
-        result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
+        result.delta.updates[0].values.should.contain.an.item.with.property(
+          'path',
+          'navigation.position',
+        )
         result.delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338158137')
       })
       .catch(e => done(e))
@@ -38,14 +41,20 @@ describe('DSC', () => {
     parser
       .parse(nmeaLineDistress)
       .then((result) => {
-        result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
-        result.delta.updates[0].values.should.contain.an.item.with.property('path', 'notifications.adrift')
+        result.delta.updates[0].values.should.contain.an.item.with.property(
+          'path',
+          'navigation.position',
+        )
+        result.delta.updates[0].values.should.contain.an.item.with.property(
+          'path',
+          'notifications.adrift',
+        )
         result.delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')
       })
       .catch(e => done(e))
   })
 
-  it('Doesn\'t choke on empty sentences', (done) => {
+  it("Doesn't choke on empty sentences", (done) => {
     const parser = new Parser()
 
     parser

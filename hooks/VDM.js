@@ -175,7 +175,7 @@ module.exports = function (parser, input) {
       })
     }
 
-    let contextPrefix = msgTypeToPrefix[data.aistype] || 'vessels.'
+    let contextPrefix = msgTypeToPrefix[data.aistype] || 'vessels.'
 
     if (data.aidtype) {
       contextPrefix = 'atons.'

@@ -26,7 +26,7 @@ chai.Should()
 chai.use(require('chai-things'))
 
 describe('Proprietary sentences', () => {
-  it('Don\'t break the parser', (done) => {
+  it("Don't break the parser", (done) => {
     const parser = new Parser()
 
     parser

@@ -27,8 +27,11 @@ describe('RPM', () => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'propulsion.engine_1.revolutions')
-      delta.updates[0].values[0].value.should.be.closeTo(((2418.2 / 60)), 0.0005)
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'propulsion.engine_1.revolutions',
+      )
+      delta.updates[0].values[0].value.should.be.closeTo(2418.2 / 60, 0.0005)
       done()
     })
 

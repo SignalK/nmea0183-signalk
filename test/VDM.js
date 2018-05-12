@@ -39,7 +39,9 @@ describe('VDM', () => {
       delta.updates[0].values[7].path.should.equal('navigation.destination.commonName')
       delta.updates[0].values[7].value.should.equal('OOI SILEN')
       delta.updates[0].values[8].path.should.equal('')
-      delta.updates[0].values[8].value.should.deep.equal({ communication: { callsignVhf: 'PH510' } })
+      delta.updates[0].values[8].value.should.deep.equal({
+        communication: { callsignVhf: 'PH510' },
+      })
       delta.updates[0].values[9].path.should.equal('design.aisShipType')
       delta.updates[0].values[9].value.id.should.equal(67)
       delta.updates[0].values[9].value.name.should.equal('Passenger ship')
@@ -49,8 +51,12 @@ describe('VDM', () => {
       done()
     })
 
-    parser.parse(sentences[0]).catch((e) => { done(e) })
-    parser.parse(sentences[1]).catch((e) => { done(e) })
+    parser.parse(sentences[0]).catch((e) => {
+      done(e)
+    })
+    parser.parse(sentences[1]).catch((e) => {
+      done(e)
+    })
   })
 
   it('Single line converts ok', (done) => {
@@ -61,9 +67,9 @@ describe('VDM', () => {
       done()
     })
 
-    parser
-      .parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
-      .catch((e) => { done(e) })
+    parser.parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n').catch((e) => {
+      done(e)
+    })
   })
 
   it('AtoN converts ok', (done) => {
@@ -80,9 +86,9 @@ describe('VDM', () => {
       done()
     })
 
-    parser
-      .parse('!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n')
-      .catch((e) => { done(e) })
+    parser.parse('!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n').catch((e) => {
+      done(e)
+    })
   })
 
   it('SAR aircraft', (done) => {
@@ -100,13 +106,12 @@ describe('VDM', () => {
       done()
     })
 
-    parser
-      .parse('!AIVDM,1,1,,A,91b4uGhW1>QjIv@RMAgFlwh20<2L,0*72\n')
-      .catch((e) => { done(e) })
+    parser.parse('!AIVDM,1,1,,A,91b4uGhW1>QjIv@RMAgFlwh20<2L,0*72\n').catch((e) => {
+      done(e)
+    })
   })
 
-
-  it('Doesn\'t choke on empty sentences', (done) => {
+  it("Doesn't choke on empty sentences", (done) => {
     const parser = new Parser()
     parser
       .parse('!AIVDM,,,,,,*57')

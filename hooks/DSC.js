@@ -1,21 +1,21 @@
 'use strict'
 
 /**
-* Copyright 2016 Signal K and Fabian Tollenaar <fabian@signalk.org>.
-* Based on the work by Philip J Freeman
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2016 Signal K and Fabian Tollenaar <fabian@signalk.org>.
+ * Based on the work by Philip J Freeman
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 const debug = require('debug')('signalk-parser-nmea0183/DSC')
 const utils = require('@signalk/nmea0183-utilities')
@@ -23,7 +23,10 @@ const utils = require('@signalk/nmea0183-utilities')
 let delta = {}
 
 function isEmpty(mixed) {
-  return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+  return (
+    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
+    (typeof mixed === 'string' && mixed.trim() === '')
+  )
 }
 
 function parsePosition(line) {
@@ -45,11 +48,11 @@ function parsePosition(line) {
 
   const lat = parseFloat(line.substring(1, 3))
   const lat_min = parseFloat(line.substring(3, 5))
-  let lat_dec = lat + (lat_min / 60)
+  let lat_dec = lat + lat_min / 60
 
   const lon = parseFloat(line.substring(5, 8))
   const lon_min = parseFloat(line.substring(8, 10))
-  let lon_dec = lon + (lon_min / 60)
+  let lon_dec = lon + lon_min / 60
 
   const quadrant = parseInt(line.substring(0, 1))
 
@@ -98,7 +101,7 @@ module.exports = function (parser, input) {
             handled = true
             get_position = true
             break
-        // case '??': // other telecommands
+          // case '??': // other telecommands
         }
         break
 
@@ -147,7 +150,8 @@ module.exports = function (parser, input) {
           case '12': // = EPRIB emission
             distress_nature = 'epirb'
             break
-          default: // unassigned symbol; take no action
+          default:
+            // unassigned symbol; take no action
             distress_nature = 'unassigned'
         }
     }
@@ -158,7 +162,6 @@ module.exports = function (parser, input) {
         mmsi: parts[1]
       }
     }) */
-
 
     if (get_position) {
       const position = parsePosition(parts[5])
@@ -191,11 +194,13 @@ module.exports = function (parser, input) {
       // multiplexer.self();
 
       delta = {
-        updates: [{
-          source: tags.source, // this.source(input.instrument),
-          timestamp: tags.timestamp,
-          values,
-        }],
+        updates: [
+          {
+            source: tags.source, // this.source(input.instrument),
+            timestamp: tags.timestamp,
+            values,
+          },
+        ],
         context: `vessels.urn:mrn:imo:mmsi:${mmsi}`,
       }
     }
@@ -205,7 +210,6 @@ module.exports = function (parser, input) {
     return Promise.reject(e)
   }
 }
-
 
 /*
 * DSC Codec - Some DSC Capable VHF Radios output DSC Sentences

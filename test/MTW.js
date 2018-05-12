@@ -27,7 +27,10 @@ describe('MTW', () => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.water.temperature')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'environment.water.temperature',
+      )
       delta.updates[0].values[0].value.should.be.closeTo(288.35, 0.005)
       done()
     })

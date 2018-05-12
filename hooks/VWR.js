@@ -34,7 +34,10 @@ $--VWR,x.x,a,x.x,N,x.x,M,x.x,K*hh<CR><LF>
  */
 
 function isEmpty(mixed) {
-  return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+  return (
+    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
+    (typeof mixed === 'string' && mixed.trim() === '')
+  )
 }
 
 module.exports = function (parser, input) {
@@ -42,7 +45,10 @@ module.exports = function (parser, input) {
     id, sentence, parts, tags,
   } = input
 
-  const empty = parts.reduce((count, part) => { count += (isEmpty(part) ? 1 : 0); return count }, 0)
+  const empty = parts.reduce((count, part) => {
+    count += isEmpty(part) ? 1 : 0
+    return count
+  }, 0)
   if (empty > 3) {
     return Promise.resolve(null)
   }

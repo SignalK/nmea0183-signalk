@@ -28,7 +28,10 @@ describe('HDM', () => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.headingMagnetic',
+      )
       delta.updates[0].values[0].value.should.be.closeTo(3.26, 0.005)
       done()
     })
@@ -36,7 +39,7 @@ describe('HDM', () => {
     parser.parse('$04HDM,186.5,M*2C').catch(e => done(e))
   })
 
-  it('Doesn\'t choke on empty sentences', (done) => {
+  it("Doesn't choke on empty sentences", (done) => {
     new Parser()
       .parse('$SKHDM,,*59')
       .then((result) => {

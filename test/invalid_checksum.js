@@ -38,7 +38,7 @@ describe('Invalid checksum', () => {
         done(new Error(`Parser resolved despite an invalid checksum: ${JSON.stringify(result)}`))
       })
       .catch((e) => {
-        chai.assert.equal((e.message.indexOf('is invalid') !== -1), true)
+        chai.assert.equal(e.message.indexOf('is invalid') !== -1, true)
         done()
       })
   })

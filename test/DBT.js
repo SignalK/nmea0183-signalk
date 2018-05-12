@@ -28,7 +28,10 @@ describe('DBT', () => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'environment.depth.belowTransducer',
+      )
       delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
       done()
     })
@@ -36,7 +39,7 @@ describe('DBT', () => {
     parser.parse('$IIDBT,035.53,f,010.83,M,005.85,F*23').catch(e => done(e))
   })
 
-  it('Doesn\'t choke on empty sentences', (done) => {
+  it("Doesn't choke on empty sentences", (done) => {
     new Parser()
       .parse('$IIDBT,,,,,,*52')
       .then((result) => {

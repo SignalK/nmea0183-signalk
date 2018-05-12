@@ -28,9 +28,11 @@ describe('VPW', () => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.velocityMadeGood')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'performance.velocityMadeGood',
+      )
       delta.updates[0].values.should.contain.an.item.with.property('value', 6.7)
-
 
       done()
     })

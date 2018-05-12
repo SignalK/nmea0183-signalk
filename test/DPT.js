@@ -28,7 +28,10 @@ describe('DPT', () => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'environment.depth.belowTransducer',
+      )
       delta.updates[0].values.should.contain.an.item.with.property('value', 4.1)
       done()
     })
@@ -52,7 +55,10 @@ describe('DPT', () => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'environment.depth.belowTransducer',
+      )
       delta.updates[0].values.should.contain.an.item.with.property('value', 4.1)
 
       delta.updates[0].values[1].path.should.equal('environment.depth.surfaceToTransducer')
@@ -84,7 +90,7 @@ describe('DPT', () => {
     parser.parse('$IIDPT,4.1,-1.0*69').catch(e => done(e))
   })
 
-  it('Doesn\'t choke on empty sentences', (done) => {
+  it("Doesn't choke on empty sentences", (done) => {
     new Parser()
       .parse('$IIDPT,,,*6C')
       .then((result) => {

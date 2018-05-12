@@ -27,11 +27,16 @@ describe('VWR', () => {
     const parser = new Parser()
 
     parser.on('signalk:delta', (delta) => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'environment.wind.angleApparent',
+      )
       delta.updates[0].values.should.contain.an.item.with.property('value', 1.30899693929463)
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'environment.wind.speedApparent',
+      )
       delta.updates[0].values.should.contain.an.item.with.property('value', 0.5144445747704034)
-
 
       done()
     })
@@ -39,7 +44,7 @@ describe('VWR', () => {
     parser.parse(nmeaLine)
   })
 
-  it('Doesn\'t choke on empty sentences', (done) => {
+  it("Doesn't choke on empty sentences", (done) => {
     new Parser()
       .parse('$PIVWR,,,,,,,,*4A')
       .then((result) => {

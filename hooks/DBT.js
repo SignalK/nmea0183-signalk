@@ -42,7 +42,10 @@ module.exports = function (parser, input) {
       id, sentence, parts, tags,
     } = input
 
-    if ((typeof parts[2] !== 'string' && typeof parts[2] !== 'number') || (typeof parts[2] === 'string' && parts[2].trim() === '')) {
+    if (
+      (typeof parts[2] !== 'string' && typeof parts[2] !== 'number') ||
+      (typeof parts[2] === 'string' && parts[2].trim() === '')
+    ) {
       return Promise.resolve(null)
     }
 

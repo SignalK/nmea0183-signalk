@@ -36,7 +36,7 @@ describe('HDT', () => {
     parser.parse('$GPHDT,123.456,T*32').catch(e => done(e))
   })
 
-  it('Doesn\'t choke on empty sentences', (done) => {
+  it("Doesn't choke on empty sentences", (done) => {
     new Parser()
       .parse('$SKHDT,,*40')
       .then((result) => {

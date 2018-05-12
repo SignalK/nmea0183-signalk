@@ -55,10 +55,10 @@ module.exports = function (parser, input) {
     longitude = utils.coordinate(parts[4], parts[5])
 
     speed = utils.float(parts[6])
-    speed = (!isNaN(speed) && speed > 0) ? speed : 0.0
+    speed = !isNaN(speed) && speed > 0 ? speed : 0.0
 
     track = utils.float(parts[7])
-    track = (!isNaN(track)) ? track : 0.0
+    track = !isNaN(track) ? track : 0.0
 
     variation = utils.magneticVariaton(parts[9], parts[10])
 

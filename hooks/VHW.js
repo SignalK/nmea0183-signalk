@@ -64,7 +64,6 @@ module.exports = function (parser, input) {
     })
   }
 
-
   try {
     const delta = {
       updates: [

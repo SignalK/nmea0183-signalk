@@ -32,7 +32,6 @@ module.exports = function (parser, input) {
     id, sentence, parts, tags,
   } = input
 
-
   try {
     const delta = {
       updates: [
@@ -41,7 +40,9 @@ module.exports = function (parser, input) {
           timestamp: tags.timestamp,
           values: [
             {
-              path: `propulsion.${(parts[0].toUpperCase() === 'S' ? 'shaft' : 'engine')}_${parts[1]}.revolutions`,
+              path: `propulsion.${parts[0].toUpperCase() === 'S' ? 'shaft' : 'engine'}_${
+                parts[1]
+              }.revolutions`,
               value: utils.float(parts[2]) / 60,
             },
           ],

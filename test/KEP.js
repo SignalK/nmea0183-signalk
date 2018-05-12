@@ -32,10 +32,7 @@ describe('KEP', () => {
         'path',
         'performance.targetSpeed',
       )
-      delta.updates[0].values[0].value.should.be.closeTo(
-        4.269889970594349,
-        0.0005,
-      )
+      delta.updates[0].values[0].value.should.be.closeTo(4.269889970594349, 0.0005)
       toFull(delta).should.be.validSignalK
       done()
     })

@@ -38,8 +38,10 @@ module.exports = function (parser, input) {
       id, sentence, parts, tags,
     } = input
 
-    if (((typeof parts[0] !== 'string' || parts[0].trim() == '') && typeof parts[0] !== 'number') ||
-        (typeof parts[1] !== 'string' && typeof parts[1] !== 'number')) {
+    if (
+      ((typeof parts[0] !== 'string' || parts[0].trim() == '') && typeof parts[0] !== 'number') ||
+      (typeof parts[1] !== 'string' && typeof parts[1] !== 'number')
+    ) {
       return Promise.resolve(null)
     }
     const depth = utils.float(parts[0])

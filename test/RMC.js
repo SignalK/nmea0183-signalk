@@ -29,10 +29,22 @@ describe('RMC', () => {
     parser.on('signalk:delta', (delta) => {
       delta.updates[0].timestamp.should.equal('2014-04-03T08:54:12.000Z')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseOverGroundTrue')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedOverGround')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariationAgeOfService')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.courseOverGroundTrue',
+      )
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.speedOverGround',
+      )
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.magneticVariation',
+      )
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.magneticVariationAgeOfService',
+      )
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.datetime')
       delta.updates[0].values[0].value.latitude.should.be.closeTo(52.372, 0.005)
       delta.updates[0].values[0].value.longitude.should.be.closeTo(4.91, 0.005)
@@ -44,6 +56,8 @@ describe('RMC', () => {
       done()
     })
 
-    parser.parse('$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,,,A*65').catch(e => done(e))
+    parser
+      .parse('$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,,,A*65')
+      .catch(e => done(e))
   })
 })
