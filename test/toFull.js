@@ -1,11 +1,11 @@
 const signalkSchema = require('@signalk/signalk-schema')
 const debug = require('debug')('signalk-parser-nmea0183:test')
 
-module.exports = delta => {
+module.exports = (delta) => {
   if (!delta.context) {
-    delta.context = 'vessels.' + signalkSchema.fakeMmsiId
+    delta.context = `vessels.${signalkSchema.fakeMmsiId}`
   }
-  delta.updates.forEach(update => {
+  delta.updates.forEach((update) => {
     if (!update.timestamp) {
       update.timestamp = new Date().toISOString()
     }

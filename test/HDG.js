@@ -16,16 +16,16 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
 const should = chai.Should()
 
 chai.use(require('chai-things'))
 
 describe('HDG', () => {
+  it('Converts OK using individual parser', (done) => {
+    const parser = new Parser()
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
       delta.updates[0].values[0].value.should.be.closeTo((181.9 / 180 * Math.PI), 0.005)
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
@@ -36,10 +36,10 @@ describe('HDG', () => {
     parser.parse('$SDHDG,181.9,,,0.6,E*32').catch(e => done(e))
   })
 
-  it('Sentence with just heading works', done => {
-    const parser = new Parser
+  it('Sentence with just heading works', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
       delta.updates[0].values[0].value.should.be.closeTo((51.5 / 180 * Math.PI), 0.005)
       done()
@@ -48,14 +48,13 @@ describe('HDG', () => {
     parser.parse('$HCHDG,51.5,,,,*73').catch(e => done(e))
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
+  it('Doesn\'t choke on empty sentences', (done) => {
     new Parser()
-    .parse('$SDHDG,,,,,*70')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+      .parse('$SDHDG,,,,,*70')
+      .then((result) => {
+        should.equal(result, null)
+        done()
+      })
+      .catch(e => done(e))
   })
-
 })

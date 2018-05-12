@@ -16,6 +16,7 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
 const nmeaLine = '$IIVPW,4.5,N,6.7,M*52'
 const nmeaLineKnots = '$IIVPW,4.5,N,,*30'
 
@@ -23,11 +24,10 @@ chai.Should()
 chai.use(require('chai-things'))
 
 describe('VPW', () => {
+  it('Converts OK using individual parser', (done) => {
+    const parser = new Parser()
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.velocityMadeGood')
       delta.updates[0].values.should.contain.an.item.with.property('value', 6.7)
 
@@ -37,5 +37,4 @@ describe('VPW', () => {
 
     parser.parse(nmeaLine)
   })
-
 })

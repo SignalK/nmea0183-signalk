@@ -16,16 +16,16 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
 const should = chai.Should()
 
 chai.use(require('chai-things'))
 chai.use(require('@signalk/signalk-schema').chaiModule)
 
 describe('RMB', () => {
-
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-    parser.on('signalk:delta', delta => {
+  it('Converts OK using individual parser', (done) => {
+    const parser = new Parser()
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].timestamp.should.match(/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]*)*Z/)
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.distance')
@@ -45,38 +45,35 @@ describe('RMB', () => {
     parser.parse('$ECRMB,A,0.000,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*04').catch(e => done(e))
   })
 
-  it('crossTrackError should be positive to steer Right', done => {
-    const parser = new Parser
-    parser.on('signalk:delta', delta => {
+  it('crossTrackError should be positive to steer Right', (done) => {
+    const parser = new Parser()
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values[4].value.should.be.closeTo(800.064, 0.005)
       done()
     })
 
     parser.parse('$ECRMB,A,0.432,R,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*1F').catch(e => done(e))
-
   })
 
-  it('crossTrackError should be negative to steer left', done => {
-    const parser = new Parser
-    parser.on('signalk:delta', delta => {
+  it('crossTrackError should be negative to steer left', (done) => {
+    const parser = new Parser()
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values[4].value.should.be.closeTo(-800.064, 0.005)
       done()
     })
 
     parser.parse('$ECRMB,A,0.432,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*01').catch(e => done(e))
-
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
+  it('Doesn\'t choke on empty sentences', (done) => {
     const parser = new Parser()
     parser
-    .parse('$ECRMB,,,,,,,,,,,,,*77')
-    .then(result => {
-      should.equal(result, null)
+      .parse('$ECRMB,,,,,,,,,,,,,*77')
+      .then((result) => {
+        should.equal(result, null)
 
-      done()
-    })
-    .catch(e => done(e))
+        done()
+      })
+      .catch(e => done(e))
   })
-
 })

@@ -37,19 +37,21 @@ function isEmpty(mixed) {
 
 module.exports = function (parser, input) {
   try {
-    const { id, sentence, parts, tags } = input
+    const {
+      id, sentence, parts, tags,
+    } = input
 
     const values = []
     if (!isEmpty(parts[0])) {
       values.push({
         path: 'navigation.headingMagnetic',
-        value: utils.transform(utils.float(parts[0]), 'deg', 'rad')
+        value: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
       })
     }
     if (!(isEmpty(parts[3]) || isEmpty(parts[4]))) {
       values.push({
         path: 'navigation.magneticVariation',
-        value: utils.transform(utils.float(parts[3]), 'deg', 'rad') * (parts[4] === 'E' ? 1 : -1)
+        value: utils.transform(utils.float(parts[3]), 'deg', 'rad') * (parts[4] === 'E' ? 1 : -1),
       })
     }
     if (!values.length) {
@@ -61,8 +63,8 @@ module.exports = function (parser, input) {
         {
           source: tags.source,
           timestamp: tags.timestamp,
-          values
-        }
+          values,
+        },
       ],
     }
 

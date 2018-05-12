@@ -16,17 +16,17 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
 const nmeaLine = '$PIVWR,75,R,1.0,N,0.51,M,1.85,K*75'
 
 chai.Should()
 chai.use(require('chai-things'))
 
 describe('VWR', () => {
+  it('Converts OK using individual parser', (done) => {
+    const parser = new Parser()
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
       delta.updates[0].values.should.contain.an.item.with.property('value', 1.30899693929463)
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
@@ -39,14 +39,13 @@ describe('VWR', () => {
     parser.parse(nmeaLine)
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
+  it('Doesn\'t choke on empty sentences', (done) => {
     new Parser()
-    .parse('$PIVWR,,,,,,,,*4A')
-    .then(result => {
-      chai.assert.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+      .parse('$PIVWR,,,,,,,,*4A')
+      .then((result) => {
+        chai.assert.equal(result, null)
+        done()
+      })
+      .catch(e => done(e))
   })
-
 })

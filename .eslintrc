@@ -1,0 +1,15 @@
+---
+env:
+  browser: false
+extends:
+  - eslint:recommended
+  - airbnb-base
+  - plugin:import/errors
+  - plugin:import/warnings
+plugins:
+  - import
+rules:
+  semi: [2, never]
+  strict: [0, global]
+  no-underscore-dangle: 1
+  import/no-dynamic-require: 1

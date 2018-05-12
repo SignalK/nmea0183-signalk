@@ -18,16 +18,16 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
 const should = chai.Should()
 
 chai.use(require('chai-things'))
 
 describe('HDM', () => {
+  it('Converts OK using individual parser', (done) => {
+    const parser = new Parser()
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
       delta.updates[0].values[0].value.should.be.closeTo(3.26, 0.005)
       done()
@@ -36,14 +36,13 @@ describe('HDM', () => {
     parser.parse('$04HDM,186.5,M*2C').catch(e => done(e))
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
+  it('Doesn\'t choke on empty sentences', (done) => {
     new Parser()
-    .parse('$SKHDM,,*59')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+      .parse('$SKHDM,,*59')
+      .then((result) => {
+        should.equal(result, null)
+        done()
+      })
+      .catch(e => done(e))
   })
-
 })

@@ -16,9 +16,9 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
- /*
+/*
   * MTW - Mean Temperature of Water
   *
   *        0   1 2
@@ -33,7 +33,9 @@
   */
 
 module.exports = function (parser, input) {
-  const { id, sentence, parts, tags } = input
+  const {
+    id, sentence, parts, tags,
+  } = input
 
   try {
     const delta = {
@@ -44,11 +46,11 @@ module.exports = function (parser, input) {
           values: [
             {
               path: 'environment.water.temperature',
-              value: utils.transform(utils.float(parts[0]), 'c', 'k')
-              //returns raw value, no transformation done
-            }
-          ]
-        }
+              value: utils.transform(utils.float(parts[0]), 'c', 'k'),
+              // returns raw value, no transformation done
+            },
+          ],
+        },
       ],
     }
 

@@ -18,6 +18,7 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
 const heading = '$STALK,84,B6,10,00,00,00,00,00,00*14'
 const standby = '$STALK,84,E6,15,00,00,00,00,00,08*1E'
 const auto = '$STALK,84,56,5E,79,02,00,00,00,08*16'
@@ -29,11 +30,11 @@ const heading_nineC = '$STALK,9C,51,1E,00*4B'
 chai.Should()
 chai.use(require('chai-things'))
 
-describe('ALK', done => {
-  it('0x84 heading converted', done => {
-    const parser = new Parser
+describe('ALK', (done) => {
+  it('0x84 heading converted', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
       delta.updates[0].values[0].value.should.be.closeTo(5.305800926062761, 0.0005)
       done()
@@ -41,10 +42,10 @@ describe('ALK', done => {
     parser.parse(heading)
   })
 
-  it('0x84 ap mode: standby converted', done => {
-    const parser = new Parser
+  it('0x84 ap mode: standby converted', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
       delta.updates[0].values[1].value.should.equal('standby')
       done()
@@ -52,10 +53,10 @@ describe('ALK', done => {
     parser.parse(standby)
   })
 
-  it('0x84 ap mode: auto converted', done => {
-    const parser = new Parser
+  it('0x84 ap mode: auto converted', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
       delta.updates[0].values[2].value.should.equal('auto')
       done()
@@ -63,10 +64,10 @@ describe('ALK', done => {
     parser.parse(auto)
   })
 
-  it('0x84 ap mode: wind converted', done => {
-    const parser = new Parser
+  it('0x84 ap mode: wind converted', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
       delta.updates[0].values[0].value.should.equal('wind')
       done()
@@ -74,10 +75,10 @@ describe('ALK', done => {
     parser.parse(wind)
   })
 
-  it('0x84 ap mode: route converted', done => {
-    const parser = new Parser
+  it('0x84 ap mode: route converted', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
       delta.updates[0].values[0].value.should.equal('route')
       done()
@@ -85,10 +86,10 @@ describe('ALK', done => {
     parser.parse(route)
   })
 
-  it('0x84 rudder angle converted', done => {
-    const parser = new Parser
+  it('0x84 rudder angle converted', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.rudderAngle')
       delta.updates[0].values[0].value.should.be.closeTo(-0.03490658503988659, 0.0005)
       done()
@@ -96,10 +97,10 @@ describe('ALK', done => {
     parser.parse(rudder)
   })
 
-  it('0x84 ap target heading  converted', done => {
-    const parser = new Parser
+  it('0x84 ap target heading  converted', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.target.headingMagnetic')
       delta.updates[0].values[1].value.should.be.closeTo(2.626720524251466, 0.0005)
       done()
@@ -107,10 +108,10 @@ describe('ALK', done => {
     parser.parse(auto)
   })
 
-  it('0x9C ap target heading  converted', done => {
-    const parser = new Parser
+  it('0x9C ap target heading  converted', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
       delta.updates[0].values[0].value.should.be.closeTo(2.6529004630313806, 0.0005)
       done()

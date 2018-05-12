@@ -16,17 +16,17 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
 const nmeaLine = '$IIRPM,E,1,2418.2,10.5,A*5F'
 
 chai.Should()
 chai.use(require('chai-things'))
 
 describe('RPM', () => {
+  it('Converts OK using individual parser', (done) => {
+    const parser = new Parser()
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'propulsion.engine_1.revolutions')
       delta.updates[0].values[0].value.should.be.closeTo(((2418.2 / 60)), 0.0005)
       done()
@@ -47,5 +47,4 @@ describe('RPM', () => {
     .catch(e => done(e))
   })
   */
-
 })

@@ -23,11 +23,10 @@ chai.Should()
 chai.use(require('chai-things'))
 
 describe('VTG', () => {
+  it('Converts OK using individual parser', (done) => {
+    const parser = new Parser()
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseOverGroundMagnetic')
       delta.updates[0].values[0].value.should.be.closeTo(6.271, 0.005)
 
@@ -41,5 +40,4 @@ describe('VTG', () => {
 
     parser.parse('$GPVTG,0.0,T,359.3,M,0.0,N,0.0,K,A*2F').catch(e => done(e))
   })
-
 })

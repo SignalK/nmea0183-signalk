@@ -18,16 +18,16 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
 const should = chai.Should()
 chai.use(require('chai-things'))
 chai.use(require('@signalk/signalk-schema').chaiModule)
 
 describe('GLL', () => {
+  it('Converts OK using individual parser', (done) => {
+    const parser = new Parser()
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values[0].path.should.equal('navigation.position')
       delta.updates[0].values[0].value.latitude.should.be.closeTo(59.9768833, 0.000005)
       delta.updates[0].values[0].value.longitude.should.be.closeTo(23.432133, 0.000005)
@@ -38,15 +38,14 @@ describe('GLL', () => {
     parser.parse('$GPGLL,5958.613,N,02325.928,E,121022,A,D*40').catch(e => done(e))
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    const parser = new Parser
+  it('Doesn\'t choke on empty sentences', (done) => {
+    const parser = new Parser()
     parser
-    .parse('$GPGLL,,,,,,,*7C')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+      .parse('$GPGLL,,,,,,,*7C')
+      .then((result) => {
+        should.equal(result, null)
+        done()
+      })
+      .catch(e => done(e))
   })
-
 })

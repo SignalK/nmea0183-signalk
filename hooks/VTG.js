@@ -45,7 +45,9 @@ function isEmpty(mixed) {
 
 module.exports = function (parser, input) {
   try {
-    const { id, sentence, parts, tags } = input
+    const {
+      id, sentence, parts, tags,
+    } = input
 
     if (parts[2] === '' && parts[0] === '' && parts[6] === '' && parts[4] === '') {
       return Promise.resolve(null)
@@ -54,11 +56,11 @@ module.exports = function (parser, input) {
     let speed = 0.0
 
     if (utils.float(parts[6]) > 0 && String(parts[7]).toUpperCase() === 'K') {
-      speed = utils.transform(utils.float(parts[6]), 'kph', 'ms');
+      speed = utils.transform(utils.float(parts[6]), 'kph', 'ms')
     }
 
     if (utils.float(parts[4]) > 0 && String(parts[5]).toUpperCase() === 'N') {
-      speed = utils.transform(utils.float(parts[4]), 'knots', 'ms');
+      speed = utils.transform(utils.float(parts[4]), 'knots', 'ms')
     }
 
     const delta = {
@@ -69,18 +71,18 @@ module.exports = function (parser, input) {
           values: [
             {
               path: 'navigation.courseOverGroundMagnetic',
-              value: utils.transform(utils.float(parts[2]), 'deg', 'rad')
+              value: utils.transform(utils.float(parts[2]), 'deg', 'rad'),
             },
             {
               path: 'navigation.courseOverGroundTrue',
-              value: utils.transform(utils.float(parts[0]), 'deg', 'rad')
+              value: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
             },
             {
               path: 'navigation.speedOverGround',
-              value: speed
+              value: speed,
             },
-          ]
-        }
+          ],
+        },
       ],
     }
 

@@ -32,19 +32,18 @@ Field Number:
 */
 
 module.exports = function (parser, input) {
-  var velocityValue
-  const { id, sentence, parts, tags } = input
-  if (parts[2]){
+  let velocityValue
+  const {
+    id, sentence, parts, tags,
+  } = input
+  if (parts[2]) {
     velocityValue = utils.float(parts[2])
-  }
-  else if (parts[0]){
+  } else if (parts[0]) {
     velocityValue = utils.transform(utils.float(parts[0]), 'knots', 'ms')
-  }
-  else {
+  } else {
     return null
   }
   try {
-
     const delta = {
       updates: [
         {
@@ -53,10 +52,10 @@ module.exports = function (parser, input) {
           values: [
             {
               path: 'performance.velocityMadeGood',
-              value: velocityValue
-            }
-          ]
-        }
+              value: velocityValue,
+            },
+          ],
+        },
       ],
     }
 

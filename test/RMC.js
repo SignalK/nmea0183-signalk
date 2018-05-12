@@ -23,11 +23,10 @@ chai.Should()
 chai.use(require('chai-things'))
 
 describe('RMC', () => {
+  it('Converts OK using individual parser', (done) => {
+    const parser = new Parser()
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].timestamp.should.equal('2014-04-03T08:54:12.000Z')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseOverGroundTrue')
@@ -47,5 +46,4 @@ describe('RMC', () => {
 
     parser.parse('$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,,,A*65').catch(e => done(e))
   })
-
 })

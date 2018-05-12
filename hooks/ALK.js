@@ -19,6 +19,7 @@
 const utils = require('@signalk/nmea0183-utilities')
 const loadSubHooks = require('../lib/loadSubhooks')
 const path = require('path').join(__dirname, './seatalk')
+
 const folderName = 'seatalk'
 /*
 0  1  2  3
@@ -34,16 +35,17 @@ STALK     	Raymarine Seatalk1 datagram sentence
 
 const subHooks = loadSubHooks(folderName)
 
-module.exports = function(parser, input) {
-  const { id, sentence, parts, tags } = input
-  const key = '0x' + parseInt(parts[0],16).toString(16).toUpperCase()
-  if (key in subHooks){
+module.exports = function (parser, input) {
+  const {
+    id, sentence, parts, tags,
+  } = input
+  const key = `0x${parseInt(parts[0], 16).toString(16).toUpperCase()}`
+  if (key in subHooks) {
     try {
       return require(`${path}/${key}`)(parser, input)
     } catch (e) {
       return Promise.reject(e)
     }
-
   } else {
     return Promise.resolve(null)
   }
