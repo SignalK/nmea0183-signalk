@@ -39,7 +39,7 @@ describe('VDR', () => {
         setMagnetic: 0.21467549804431932,
         drift: 0.6173334897244841,
       })
-      toFull(delta).should.be.validSignalK()
+      toFull(delta).should.be.validSignalK
       done()
     })
 

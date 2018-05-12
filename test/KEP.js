@@ -34,7 +34,7 @@ describe('KEP', () => {
         'performance.targetSpeed',
       )
       delta.updates[0].values[0].value.should.be.closeTo(4.269889970594349, 0.0005)
-      toFull(delta).should.be.validSignalK()
+      toFull(delta).should.be.validSignalK
       done()
     })
 
@@ -50,7 +50,7 @@ describe('KEP', () => {
         'performance.tackMagnetic',
       )
       delta.updates[0].values[0].value.should.be.closeTo(6.0109139439, 0.00005)
-      toFull(delta).should.be.validSignalK()
+      toFull(delta).should.be.validSignalK
       done()
     })
 
@@ -66,7 +66,7 @@ describe('KEP', () => {
         'performance.targetAngle',
       )
       delta.updates[0].values[0].value.should.be.closeTo(2.652900463, 0.00005)
-      toFull(delta).should.be.validSignalK()
+      toFull(delta).should.be.validSignalK
       done()
     })
 
