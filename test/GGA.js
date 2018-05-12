@@ -72,7 +72,7 @@ describe('GGA', () => {
       delta.updates[0].values[4].value.should.equal(1)
       delta.updates[0].values[5].value.should.equal(2)
       delta.updates[0].values[6].value.should.equal(31)
-      toFull(delta).should.be.validSignalK
+      toFull(delta).should.be.validSignalK // eslint-disable-line no-unused-expressions
       done()
     })
 
