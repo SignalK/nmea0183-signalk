@@ -51,7 +51,7 @@ const msgTypeToPrefix = {
 module.exports = function parse(parser, input) {
   try {
     const {
-      id, sentence, parts, tags,
+      sentence, tags,
     } = input
     const data = new Decoder(sentence, parser.session)
     const values = []
@@ -140,9 +140,9 @@ module.exports = function parse(parser, input) {
     if (data.dimD && data.width) {
       let fromCenter
       if (data.dimD > data.width / 2) {
-        fromCenter = (data.dimD - data.width / 2) * -1
+        fromCenter = (data.dimD - (data.width / 2)) * -1
       } else {
-        fromCenter = data.width / 2 - data.dimD
+        fromCenter = (data.width / 2) - data.dimD
       }
 
       values.push({

@@ -41,7 +41,7 @@ function isEmpty(mixed) {
 module.exports = function parse(parser, input) {
   try {
     const {
-      id, sentence, parts, tags,
+      parts, tags,
     } = input
 
     const values = []

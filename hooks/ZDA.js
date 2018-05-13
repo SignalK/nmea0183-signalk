@@ -38,8 +38,6 @@ Field Number:
 7. Checksum
 */
 const debug = require('debug')('signalk-parser-nmea0183/ZDA')
-const utils = require('@signalk/nmea0183-utilities')
-const moment = require('moment-timezone')
 
 function isEmpty(mixed) {
   return (
@@ -51,15 +49,10 @@ function isEmpty(mixed) {
 module.exports = function parse(parser, input) {
   try {
     const {
-      id, sentence, parts, tags,
+      parts, tags,
     } = input
 
-    const empty = parts.reduce((e, val) => {
-      if (isEmpty(val)) {
-        ++e
-      }
-      return e
-    }, 0)
+    const empty = parts.reduce((e, val) => (isEmpty(val) ? e + 1 : e), 0)
 
     if (empty > 3) {
       return Promise.resolve(null)
@@ -102,7 +95,7 @@ module.exports = function parse(parser, input) {
         typeof update.value === 'undefined' ||
         update.value === null ||
         (typeof update.value === 'string' && update.value.trim() === '') ||
-        (typeof update.value !== 'string' && isNaN(update.value))
+        (typeof update.value !== 'string' && Number.isNaN(update.value))
       ) {
         toRemove.push(index)
       }

@@ -17,7 +17,6 @@
 'use strict'
 
 const utils = require('@signalk/nmea0183-utilities')
-const moment = require('moment-timezone')
 
 /*
 RMC Sentence
@@ -42,7 +41,7 @@ values:
 
 module.exports = function parse(parser, input) {
   const {
-    id, sentence, parts, tags,
+    parts, tags,
   } = input
 
   let latitude = -1
@@ -54,23 +53,23 @@ module.exports = function parse(parser, input) {
 
   latitude = utils.coordinate(parts[5], parts[6])
   longitude = utils.coordinate(parts[7], parts[8])
-  if (isNaN(latitude) || isNaN(longitude)) {
+  if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
     return Promise.resolve(null)
   }
 
   bearing = utils.float(parts[10])
-  bearing = !isNaN(bearing) ? bearing : 0.0
+  bearing = !Number.isNaN(bearing) ? bearing : 0.0
 
   vmg = utils.float(parts[11])
-  vmg = !isNaN(vmg) && vmg > 0 ? vmg : 0.0
+  vmg = !Number.isNaN(vmg) && vmg > 0 ? vmg : 0.0
 
   distance = utils.float(parts[9])
-  distance = !isNaN(distance) ? distance : 0.0
+  distance = !Number.isNaN(distance) ? distance : 0.0
 
   crossTrackError = utils.float(parts[1])
-  crossTrackError = !isNaN(crossTrackError) ? crossTrackError : 0.0
+  crossTrackError = !Number.isNaN(crossTrackError) ? crossTrackError : 0.0
 
-  crossTrackError = parts[2] == 'R' ? crossTrackError : -crossTrackError
+  crossTrackError = parts[2] === 'R' ? crossTrackError : -crossTrackError
 
   try {
     const delta = {

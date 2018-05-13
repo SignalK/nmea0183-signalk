@@ -28,7 +28,8 @@ $--DPT,x.x,x.x*hh<CR><LF>
 ------------------------------------------------------------------------------
 Field Number:
 0. Depth, meters
-1. transducer offset, positive means distance from tansducer to water line negative means distance from transducer to keel
+1. transducer offset, positive means distance from tansducer to water line negative
+     means distance from transducer to keel.
 2. Checksum
 */
 

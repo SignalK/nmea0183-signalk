@@ -47,13 +47,10 @@ function isEmpty(mixed) {
 module.exports = function parse(parser, input) {
   try {
     const {
-      id, sentence, parts, tags,
+      parts, tags,
     } = input
 
-    let valid = parts.reduce((v, part) => {
-      v = !isEmpty(part)
-      return v
-    }, true)
+    let valid = parts.reduce((v, part) => !isEmpty(part), true)
 
     if (typeof parts[5] === 'string' && parts[5].toLowerCase() === 'v') {
       valid = false

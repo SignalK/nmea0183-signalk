@@ -17,7 +17,7 @@
  */
 
 const debug = require('debug')('signalk-parser-nmea0183/APB')
-const utils = require('@signalk/nmea0183-utilities')
+// const utils = require('@signalk/nmea0183-utilities')
 
 /*
 
@@ -43,7 +43,7 @@ where:
 
 module.exports = function parse(parser, input) {
   try {
-    const { id, parts } = input
+    const { parts } = input
 
     if (parts[0].toUpperCase() === 'V') {
       // Don't parse this sentence as it's void.
@@ -54,22 +54,22 @@ module.exports = function parse(parser, input) {
       return Promise.reject(new Error("Not parsing sentence for it's void (LORAN-C cycle warning)"))
     }
 
-    const xte = utils.transform(parts[2], parts[4].toUpperCase() === 'N' ? 'nm' : 'km', 'm')
+    // const xte = utils.transform(parts[2], parts[4].toUpperCase() === 'N' ? 'nm' : 'km', 'm')
+    // const currentRoute = {
+    //   source: utils.source(id),
+    //   timestamp: utils.timestamp(),
+    //   steer: parts[3].toUpperCase() === 'R' ? 'right' : 'left',
+    //   bearingActual: utils.transform(utils.float(parts[10]), 'deg', 'rad'),
+    //   bearingDirect: utils.transform(utils.float(parts[7]), 'deg', 'rad'),
+    //   courseRequired: utils.transform(utils.float(parts[12]), 'deg', 'rad'),
+    //   waypoint: {
+    //     next: parts[9],
+    //     xte,
+    //   },
+    // }
 
-    const currentRoute = {
-      source: utils.source(id),
-      timestamp: utils.timestamp(),
-      steer: parts[3].toUpperCase() === 'R' ? 'right' : 'left',
-      bearingActual: utils.transform(utils.float(parts[10]), 'deg', 'rad'),
-      bearingDirect: utils.transform(utils.float(parts[7]), 'deg', 'rad'),
-      courseRequired: utils.transform(utils.float(parts[12]), 'deg', 'rad'),
-      waypoint: {
-        next: parts[9],
-        xte,
-      },
-    }
-
-    return Promise.reject(new Error('@FIXME: APB hook needs to be rewritten to fit latest version of SK'))
+    const TEMP_ERROR = '@FIXME: APB hook needs to be rewritten to fit latest version of SK'
+    return Promise.reject(new Error(TEMP_ERROR))
   } catch (e) {
     debug(`Try/catch failed: ${e.message}`)
     return Promise.reject(e)

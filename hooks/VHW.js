@@ -39,25 +39,25 @@ Field Number:
 */
 
 module.exports = function parse(parser, input) {
-  let velocityValue
+  // let velocityValue
   const {
-    id, sentence, parts, tags,
+    parts, tags,
   } = input
   const pathValues = []
 
-  if (parts[0] != '') {
+  if (parts[0] !== '') {
     pathValues.push({
       path: 'navigation.headingTrue',
       value: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
     })
   }
-  if (parts[2] != '') {
+  if (parts[2] !== '') {
     pathValues.push({
       path: 'navigation.headingMagnetic',
       value: utils.transform(utils.float(parts[2]), 'deg', 'rad'),
     })
   }
-  if (parts[4] != '') {
+  if (parts[4] !== '') {
     pathValues.push({
       path: 'navigation.speedThroughWater',
       value: utils.transform(utils.float(parts[4]), 'knots', 'ms'),

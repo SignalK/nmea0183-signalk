@@ -30,7 +30,7 @@ function convertToWindAngle(angle) {
 module.exports = function parse(parser, input) {
   try {
     const {
-      id, sentence, parts, tags,
+      parts, tags,
     } = input
 
     if (!parts[4] || parts[4].toUpperCase() !== 'A') {

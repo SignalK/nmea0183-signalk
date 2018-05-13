@@ -46,30 +46,28 @@ function parsePosition(line) {
   */
 
   const lat = parseFloat(line.substring(1, 3))
-  const lat_min = parseFloat(line.substring(3, 5))
-  let lat_dec = lat + lat_min / 60
+  const latMin = parseFloat(line.substring(3, 5))
+  let latDec = lat + (latMin / 60)
 
   const lon = parseFloat(line.substring(5, 8))
-  const lon_min = parseFloat(line.substring(8, 10))
-  let lon_dec = lon + lon_min / 60
+  const lonMin = parseFloat(line.substring(8, 10))
+  let lonDec = lon + (lonMin / 60)
 
-  const quadrant = parseInt(line.substring(0, 1))
+  const quadrant = parseInt(line.substring(0, 1), 10)
 
-  if (quadrant == 1 || quadrant == 3) {
-    lon_dec *= -1
+  if (quadrant === 1 || quadrant === 3) {
+    lonDec *= -1
   }
-  if (quadrant == 2 || quadrant == 3) {
-    lat_dec *= -1
+  if (quadrant === 2 || quadrant === 3) {
+    latDec *= -1
   }
-  debug(`lat: ${lat_dec} ,lon: ${lon_dec}`)
-  return { longitude: lon_dec, latitude: lat_dec }
+  debug(`lat: ${latDec} ,lon: ${lonDec}`)
+  return { longitude: lonDec, latitude: latDec }
 }
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   try {
-    const {
-      id, sentence, parts, tags,
-    } = input
+    const { parts, tags } = input
     const values = []
 
     const empty = parts.reduce((e, val) => {
@@ -89,16 +87,16 @@ module.exports = function (parser, input) {
     debug(`mmsi: ${mmsi}`)
 
     let handled = false
-    let get_position = false
+    let getPosition = false
     let distress = false
-    let distress_nature = ''
+    let distressNature = ''
 
     switch (parts[2]) {
       case '00': // routine category
         switch (parts[3]) {
           case '21': // ship position
             handled = true
-            get_position = true
+            getPosition = true
             break
           // case '??': // other telecommands
         }
@@ -110,49 +108,51 @@ module.exports = function (parser, input) {
         break
       case '12': // * 112 = distress
         handled = true
-        get_position = true
+        getPosition = true
         distress = true
         switch (parts[3]) { // Nature of Distress
           case '00': // = Fire, explosion
-            distress_nature = 'fire'
+            distressNature = 'fire'
             break
           case '01': // = Flooding
-            distress_nature = 'flooding'
+            distressNature = 'flooding'
             break
           case '02': // = Collision
-            distress_nature = 'collision'
+            distressNature = 'collision'
             break
           case '03': // = Grounding
-            distress_nature = 'grounding'
+            distressNature = 'grounding'
             break
           case '04': // = Listing, in danger of capsize
-            distress_nature = 'listing'
+            distressNature = 'listing'
             break
           case '05': // = Sinking
-            distress_nature = 'sinking'
+            distressNature = 'sinking'
             break
           case '06': // = Disabled and adrift
-            distress_nature = 'adrift'
+            distressNature = 'adrift'
             break
           case '07': // = Undesignated distres
-            distress_nature = 'undesignated'
+            distressNature = 'undesignated'
             break
           case '08': // = Abandoning ship
-            distress_nature = 'abandon'
+            distressNature = 'abandon'
             break
           case '09': // = Piracy/armed robbery attack
-            distress_nature = 'piracy'
+            distressNature = 'piracy'
             break
           case '10': // = Man overboard
-            distress_nature = 'mob'
+            distressNature = 'mob'
             break
           case '12': // = EPRIB emission
-            distress_nature = 'epirb'
+            distressNature = 'epirb'
             break
           default:
             // unassigned symbol; take no action
-            distress_nature = 'unassigned'
+            distressNature = 'unassigned'
         }
+        break
+      default:
     }
 
     /* values.push({
@@ -162,7 +162,7 @@ module.exports = function (parser, input) {
       }
     }) */
 
-    if (get_position) {
+    if (getPosition) {
       const position = parsePosition(parts[5])
       values.push({
         path: 'navigation.position',
@@ -174,9 +174,9 @@ module.exports = function (parser, input) {
     }
     if (distress) {
       values.push({
-        path: `notifications.${distress_nature}`,
+        path: `notifications.${distressNature}`,
         value: {
-          message: `DSC Distress Recieved! Nature of distress: ${distress_nature}`,
+          message: `DSC Distress Recieved! Nature of distress: ${distressNature}`,
         },
       })
     }

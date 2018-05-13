@@ -34,7 +34,7 @@ Field Number:
 module.exports = function parse(parser, input) {
   let velocityValue
   const {
-    id, sentence, parts, tags,
+    parts, tags,
   } = input
   if (parts[2]) {
     velocityValue = utils.float(parts[2])

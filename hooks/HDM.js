@@ -35,7 +35,7 @@ const utils = require('@signalk/nmea0183-utilities')
 module.exports = function parse(parser, input) {
   try {
     const {
-      id, sentence, parts, tags,
+      parts, tags,
     } = input
 
     if (

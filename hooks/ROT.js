@@ -34,7 +34,7 @@ const utils = require('@signalk/nmea0183-utilities')
 
 module.exports = function parse(parser, input) {
   const {
-    id, sentence, parts, tags,
+    parts, tags,
   } = input
 
   if (String(parts[1]).toUpperCase() !== 'A') {

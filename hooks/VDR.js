@@ -35,7 +35,7 @@ Field Number:
 
 module.exports = function parse(parser, input) {
   const {
-    id, sentence, parts, tags,
+    parts, tags,
   } = input
 
   try {

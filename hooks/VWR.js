@@ -42,13 +42,10 @@ function isEmpty(mixed) {
 
 module.exports = function parse(parser, input) {
   const {
-    id, sentence, parts, tags,
+    parts, tags,
   } = input
 
-  const empty = parts.reduce((count, part) => {
-    count += isEmpty(part) ? 1 : 0
-    return count
-  }, 0)
+  const empty = parts.reduce((count, part) => (count + isEmpty(part) ? 1 : 0), 0)
   if (empty > 3) {
     return Promise.resolve(null)
   }
