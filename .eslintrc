@@ -1,0 +1,19 @@
+---
+env:
+  browser: false
+extends:
+  - eslint:recommended
+  - airbnb-base
+  - plugin:import/errors
+  - plugin:import/warnings
+plugins:
+  - import
+  - chai-friendly
+rules:
+  semi: [2, never]
+  strict: [0, global]
+  no-underscore-dangle: 1
+  import/no-dynamic-require: 1
+  global-require: 1
+  no-unused-expressions: 0
+  chai-friendly/no-unused-expressions: 2

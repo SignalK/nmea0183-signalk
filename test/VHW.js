@@ -18,16 +18,20 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const signalkSchema = require('@signalk/signalk-schema')
+
+/* globals describe it */
 
 chai.use(require('chai-things'))
 
 describe('VHW', () => {
-  it('speed data only', done => {
-    const parser = new Parser
+  it('speed data only', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedThroughWater')
+    parser.on('signalk:delta', (delta) => {
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.speedThroughWater',
+      )
       delta.updates[0].values[0].value.should.be.closeTo(3.148400797594869, 0.005)
       done()
     })
@@ -35,13 +39,19 @@ describe('VHW', () => {
     parser.parse('$IIVHW,,T,,M,06.12,N,11.33,K*50')
   })
 
-  it('speed & direction data', done => {
-    const parser = new Parser
+  it('speed & direction data', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedThroughWater')
+    parser.on('signalk:delta', (delta) => {
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.speedThroughWater',
+      )
       delta.updates[0].values[2].value.should.be.closeTo(0, 0.00005)
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.headingMagnetic',
+      )
       delta.updates[0].values[1].value.should.be.closeTo(3.1730085801256913, 0.00005)
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingTrue')
       delta.updates[0].values[0].value.should.be.closeTo(3.1852258848896517, 0.00005)

@@ -18,17 +18,22 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
+/* globals describe it */
+
 const should = chai.Should()
 
 chai.use(require('chai-things'))
 
 describe('DPT', () => {
+  it('Converts OK using individual parser', (done) => {
+    const parser = new Parser()
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
+    parser.on('signalk:delta', (delta) => {
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'environment.depth.belowTransducer',
+      )
       delta.updates[0].values.should.contain.an.item.with.property('value', 4.1)
       done()
     })
@@ -36,10 +41,10 @@ describe('DPT', () => {
     parser.parse('$IIDPT,4.1,0.0*45').catch(e => done(e))
   })
 
-  it('Converts OK with missing offset', done => {
-    const parser = new Parser
+  it('Converts OK with missing offset', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values[0].path.should.equal('environment.depth.belowTransducer')
       delta.updates[0].values[0].value.should.equal(4.1)
       done()
@@ -48,11 +53,14 @@ describe('DPT', () => {
     parser.parse('$IIDPT,4.1,*6B').catch(e => done(e))
   })
 
-  it('Converts OK with positive offset', done => {
-    const parser = new Parser
+  it('Converts OK with positive offset', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
+    parser.on('signalk:delta', (delta) => {
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'environment.depth.belowTransducer',
+      )
       delta.updates[0].values.should.contain.an.item.with.property('value', 4.1)
 
       delta.updates[0].values[1].path.should.equal('environment.depth.surfaceToTransducer')
@@ -66,10 +74,10 @@ describe('DPT', () => {
     parser.parse('$IIDPT,4.1,1.0*44').catch(e => done(e))
   })
 
-  it('Converts OK with negative offset', done => {
-    const parser = new Parser
+  it('Converts OK with negative offset', (done) => {
+    const parser = new Parser()
 
-    parser.on('signalk:delta', delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values[0].path.should.equal('environment.depth.belowTransducer')
       delta.updates[0].values[0].value.should.be.closeTo(4.1, 0.1)
 
@@ -82,16 +90,15 @@ describe('DPT', () => {
     })
 
     parser.parse('$IIDPT,4.1,-1.0*69').catch(e => done(e))
-  })  
-  
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$IIDPT,,,*6C')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
   })
 
+  it("Doesn't choke on empty sentences", (done) => {
+    new Parser()
+      .parse('$IIDPT,,,*6C')
+      .then((result) => {
+        should.equal(result, null)
+        done()
+      })
+      .catch(e => done(e))
+  })
 })

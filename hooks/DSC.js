@@ -1,32 +1,34 @@
 'use strict'
 
 /**
-* Copyright 2016 Signal K and Fabian Tollenaar <fabian@signalk.org>.
-* Based on the work by Philip J Freeman
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2016 Signal K and Fabian Tollenaar <fabian@signalk.org>.
+ * Based on the work by Philip J Freeman
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 const debug = require('debug')('signalk-parser-nmea0183/DSC')
-const utils = require('@signalk/nmea0183-utilities')
-var delta = {}
+
+let delta = {}
 
 function isEmpty(mixed) {
-  return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+  return (
+    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
+    (typeof mixed === 'string' && mixed.trim() === '')
+  )
 }
 
 function parsePosition(line) {
-
   /*
   * Position Format:
   *
@@ -43,30 +45,30 @@ function parsePosition(line) {
   * 1YYyyXXXxx
   */
 
-  var lat = parseFloat(line.substring(1,3));
-  var lat_min = parseFloat(line.substring(3,5));
-  var lat_dec = lat+(lat_min/60)
+  const lat = parseFloat(line.substring(1, 3))
+  const latMin = parseFloat(line.substring(3, 5))
+  let latDec = lat + (latMin / 60)
 
-  var lon = parseFloat(line.substring(5,8));
-  var lon_min = parseFloat(line.substring(8,10));
-  var lon_dec = lon+(lon_min/60)
+  const lon = parseFloat(line.substring(5, 8))
+  const lonMin = parseFloat(line.substring(8, 10))
+  let lonDec = lon + (lonMin / 60)
 
-  var quadrant = parseInt(line.substring(0,1))
+  const quadrant = parseInt(line.substring(0, 1), 10)
 
-  if (quadrant == 1 || quadrant == 3) {
-    lon_dec = lon_dec * -1;
+  if (quadrant === 1 || quadrant === 3) {
+    lonDec *= -1
   }
-  if (quadrant == 2 || quadrant == 3) {
-    lat_dec = lat_dec * -1;
+  if (quadrant === 2 || quadrant === 3) {
+    latDec *= -1
   }
-  debug('lat: ' + lat_dec + ' ,lon: ' + lon_dec)
-  return { 'longitude': lon_dec, 'latitude': lat_dec }
+  debug(`lat: ${latDec} ,lon: ${lonDec}`)
+  return { longitude: lonDec, latitude: latDec }
 }
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   try {
-    const { id, sentence, parts, tags } = input
-    var values = [];
+    const { parts, tags } = input
+    const values = []
 
     const empty = parts.reduce((e, val) => {
       if (isEmpty(val)) {
@@ -81,122 +83,125 @@ module.exports = function (parser, input) {
 
     // for some reason, it seems the sender identification is mmsi+'0', so we
     // strip the trailing zero to get a 9 digit mmsi
-    var mmsi = parts[1].substring(0,9);
-    debug ("mmsi: " + mmsi)
+    const mmsi = parts[1].substring(0, 9)
+    debug(`mmsi: ${mmsi}`)
 
-    var handled = false;
-    var get_position = false;
-    var distress = false;
-    var distress_nature = "";
+    let handled = false
+    let getPosition = false
+    let distress = false
+    let distressNature = ''
 
-    switch(parts[2]) {
-
+    switch (parts[2]) {
       case '00': // routine category
-      switch (parts[3]) {
-        case '21': // ship position
-        handled = true;
-        get_position = true;
-        break;
-        //case '??': // other telecommands
-      }
-      break;
+        switch (parts[3]) {
+          case '21': // ship position
+            handled = true
+            getPosition = true
+            break
+          // case '??': // other telecommands
+        }
+        break
 
       case '08': // * 108 = safety
-      break;
+        break
       case '10': // * 110 = urgency
-      break;
+        break
       case '12': // * 112 = distress
-      handled = true;
-      get_position = true;
-      distress = true;
-      switch (parts[3]) { // Nature of Distress
-        case '00': // = Fire, explosion
-        distress_nature = 'fire';
-        break;
-        case '01': // = Flooding
-        distress_nature = 'flooding';
-        break;
-        case '02': // = Collision
-        distress_nature = 'collision';
-        break;
-        case '03': // = Grounding
-        distress_nature = 'grounding';
-        break;
-        case '04': // = Listing, in danger of capsize
-        distress_nature = 'listing';
-        break;
-        case '05': // = Sinking
-        distress_nature = 'sinking';
-        break;
-        case '06': // = Disabled and adrift
-        distress_nature = 'adrift';
-        break;
-        case '07': // = Undesignated distres
-        distress_nature = 'undesignated';
-        break;
-        case '08': // = Abandoning ship
-        distress_nature = 'abandon'
-        break;
-        case '09': // = Piracy/armed robbery attack
-        distress_nature = 'piracy'
-        break;
-        case '10': // = Man overboard
-        distress_nature = 'mob'
-        break;
-        case '12': // = EPRIB emission
-        distress_nature = 'epirb';
-        break;
-        default: // unassigned symbol; take no action
-        distress_nature = 'unassigned';
-      }
+        handled = true
+        getPosition = true
+        distress = true
+        switch (parts[3]) { // Nature of Distress
+          case '00': // = Fire, explosion
+            distressNature = 'fire'
+            break
+          case '01': // = Flooding
+            distressNature = 'flooding'
+            break
+          case '02': // = Collision
+            distressNature = 'collision'
+            break
+          case '03': // = Grounding
+            distressNature = 'grounding'
+            break
+          case '04': // = Listing, in danger of capsize
+            distressNature = 'listing'
+            break
+          case '05': // = Sinking
+            distressNature = 'sinking'
+            break
+          case '06': // = Disabled and adrift
+            distressNature = 'adrift'
+            break
+          case '07': // = Undesignated distres
+            distressNature = 'undesignated'
+            break
+          case '08': // = Abandoning ship
+            distressNature = 'abandon'
+            break
+          case '09': // = Piracy/armed robbery attack
+            distressNature = 'piracy'
+            break
+          case '10': // = Man overboard
+            distressNature = 'mob'
+            break
+          case '12': // = EPRIB emission
+            distressNature = 'epirb'
+            break
+          default:
+            // unassigned symbol; take no action
+            distressNature = 'unassigned'
+        }
+        break
+      default:
     }
 
-    /*values.push({
+    /* values.push({
       path: "",
       value: {
         mmsi: parts[1]
       }
-    })*/
+    }) */
 
-
-    if (get_position) {
-      var position = parsePosition(parts[5])
+    if (getPosition) {
+      const position = parsePosition(parts[5])
       values.push({
-        path: "navigation.position",
+        path: 'navigation.position',
         value: {
           latitude: position.latitude,
-          longitude: position.longitude
-        }
+          longitude: position.longitude,
+        },
       })
     }
     if (distress) {
       values.push({
-        path: "notifications."+distress_nature,
+        path: `notifications.${distressNature}`,
         value: {
-          message: "DSC Distress Recieved! Nature of distress: "+distress_nature
-        }
+          message: `DSC Distress Recieved! Nature of distress: ${distressNature}`,
+        },
       })
     }
     if (!handled) {
-      console.log("DSC Message Not Handled: "+line);
+      console.log(`DSC Message Not Handled: ${line}`)
       values.push({
-        path: "notifications.dsc_parser",
+        path: 'notifications.dsc_parser',
         value: {
-          message: "DSC Message Not Handled: "+line
-        }
+          message: `DSC Message Not Handled: ${line}`,
+        },
       })
     }
     if (values.length > 0) {
-      //multiplexer.self();
+      // multiplexer.self();
 
       delta = {
-        "updates": [{
-          "source": tags.source,//this.source(input.instrument),
-          "timestamp": tags.timestamp,
-          "values": values
-        }],
-        "context": 'vessels.urn:mrn:imo:mmsi:' + mmsi
-      };
+        updates: [
+          {
+            source: tags.source, // this.source(input.instrument),
+            timestamp: tags.timestamp,
+            values,
+          },
+        ],
+        context: `vessels.urn:mrn:imo:mmsi:${mmsi}`,
+      }
     }
     return Promise.resolve({ delta })
   } catch (e) {
@@ -204,7 +209,6 @@ module.exports = function (parser, input) {
     return Promise.reject(e)
   }
 }
-
 
 /*
 * DSC Codec - Some DSC Capable VHF Radios output DSC Sentences

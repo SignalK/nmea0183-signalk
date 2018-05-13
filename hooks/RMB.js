@@ -17,7 +17,6 @@
 'use strict'
 
 const utils = require('@signalk/nmea0183-utilities')
-const moment = require('moment-timezone')
 
 /*
 RMC Sentence
@@ -40,8 +39,10 @@ values:
 
 */
 
-module.exports = function (parser, input) {
-  const { id, sentence, parts, tags } = input
+module.exports = function parse(parser, input) {
+  const {
+    parts, tags,
+  } = input
 
   let latitude = -1
   let longitude = -1
@@ -52,23 +53,23 @@ module.exports = function (parser, input) {
 
   latitude = utils.coordinate(parts[5], parts[6])
   longitude = utils.coordinate(parts[7], parts[8])
-  if (isNaN(latitude) || isNaN(longitude)) {
+  if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
     return Promise.resolve(null)
   }
-  
+
   bearing = utils.float(parts[10])
-  bearing = (!isNaN(bearing)) ? bearing : 0.0
+  bearing = !Number.isNaN(bearing) ? bearing : 0.0
 
   vmg = utils.float(parts[11])
-  vmg = (!isNaN(vmg) && vmg > 0) ? vmg : 0.0
+  vmg = !Number.isNaN(vmg) && vmg > 0 ? vmg : 0.0
 
   distance = utils.float(parts[9])
-  distance = (!isNaN(distance)) ? distance : 0.0
- 
-  crossTrackError = utils.float(parts[1])
-  crossTrackError = (!isNaN(crossTrackError)) ? crossTrackError : 0.0
+  distance = !Number.isNaN(distance) ? distance : 0.0
 
-  crossTrackError = parts[2] == 'R' ? crossTrackError : -crossTrackError;
+  crossTrackError = utils.float(parts[1])
+  crossTrackError = !Number.isNaN(crossTrackError) ? crossTrackError : 0.0
+
+  crossTrackError = parts[2] === 'R' ? crossTrackError : -crossTrackError
 
   try {
     const delta = {
@@ -78,34 +79,34 @@ module.exports = function (parser, input) {
           timestamp: tags.timestamp,
           values: [
             {
-              'path': 'navigation.courseRhumbline.nextPoint',
-              'value': {
+              path: 'navigation.courseRhumbline.nextPoint',
+              value: {
                 longitude,
-                latitude
-              }
+                latitude,
+              },
             },
 
             {
-              'path': 'navigation.courseRhumbline.nextPoint.bearingTrue',
-              'value': utils.transform(bearing, 'deg', 'rad')
+              path: 'navigation.courseRhumbline.nextPoint.bearingTrue',
+              value: utils.transform(bearing, 'deg', 'rad'),
             },
 
             {
-              'path': 'navigation.courseRhumbline.nextPoint.velocityMadeGood',
-              'value': utils.transform(vmg, 'knots', 'ms')
+              path: 'navigation.courseRhumbline.nextPoint.velocityMadeGood',
+              value: utils.transform(vmg, 'knots', 'ms'),
             },
 
             {
-              'path': 'navigation.courseRhumbline.nextPoint.distance',
-              'value': utils.transform(distance, 'nm', 'km') * 1000
+              path: 'navigation.courseRhumbline.nextPoint.distance',
+              value: utils.transform(distance, 'nm', 'km') * 1000,
             },
 
             {
-              'path': 'navigation.courseRhumbline.crossTrackError',
-              value: utils.transform(crossTrackError, 'nm', 'km') * 1000
-            }
-          ]
-        }
+              path: 'navigation.courseRhumbline.crossTrackError',
+              value: utils.transform(crossTrackError, 'nm', 'km') * 1000,
+            },
+          ],
+        },
       ],
     }
 

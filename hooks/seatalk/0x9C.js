@@ -34,28 +34,30 @@ const utils = require('@signalk/nmea0183-utilities')
 */
 
 module.exports = function (parser, input) {
-  const { id, sentence, parts, tags } = input
-  var U = parseInt(parts[1].charAt(0), 16)
-  var VW = parseInt(parts[2], 16)
-  var RR = parseInt(parts[3], 16)
+  const {
+    id, parts, tags,
+  } = input
+  const U = parseInt(parts[1].charAt(0), 16)
+  const VW = parseInt(parts[2], 16)
+  const RR = parseInt(parts[3], 16)
 
-  var compassHeading = (U & 0x3) * 90 + (VW & 0x3F) * 2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1) : 0);
-  var rudderPos = RR;
-  if(rudderPos > 127) {
-    rudderPos = rudderPos - 256
+  const compassHeading = (U & 0x3) * 90 + (VW & 0x3F) * 2 + (U & 0xC ? (U & wr0xC === 0xC ? 2 : 1) : 0)
+  let rudderPos = RR
+  if (rudderPos > 127) {
+    rudderPos -= 256
   }
 
-  var pathValues = []
-  if(compassHeading) {
+  const pathValues = []
+  if (compassHeading) {
     pathValues.push({
       path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(compassHeading), 'deg', 'rad')
+      value: utils.transform(utils.float(compassHeading), 'deg', 'rad'),
     })
   }
-  if(rudderPos) {
+  if (rudderPos) {
     pathValues.push({
       path: 'steering.rudderAngle',
-      value: utils.transform(utils.float(rudderPos), 'deg', 'rad')
+      value: utils.transform(utils.float(rudderPos), 'deg', 'rad'),
     })
   }
 
@@ -66,15 +68,14 @@ module.exports = function (parser, input) {
   */
 
   try {
-
     const delta = {
       updates: [
         {
           source: tags.source,
           timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ]
+          values: pathValues,
+        },
+      ],
     }
 
 

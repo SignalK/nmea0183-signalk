@@ -14,64 +14,62 @@
  * limitations under the License.
  */
 
-"use strict"
+'use strict'
 
-const Parser = require("../lib")
-const chai = require("chai")
-const signalkSchema = require("@signalk/signalk-schema")
-const toFull = require("./toFull")
+const Parser = require('../lib')
+const chai = require('chai')
+const toFull = require('./toFull')
 
-chai.use(require("chai-things"))
+/* globals describe it */
 
-describe("KEP", () => {
-  it("Polarspeed data ", done => {
+chai.use(require('chai-things'))
+
+describe('KEP', () => {
+  it('Polarspeed data ', (done) => {
     const parser = new Parser()
 
-    parser.on("signalk:delta", delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property(
-        "path",
-        "performance.targetSpeed"
+        'path',
+        'performance.targetSpeed',
       )
-      delta.updates[0].values[0].value.should.be.closeTo(
-        4.269889970594349,
-        0.0005
-      )
+      delta.updates[0].values[0].value.should.be.closeTo(4.269889970594349, 0.0005)
       toFull(delta).should.be.validSignalK
       done()
     })
 
-    parser.parse("$PNKEP,01,8.3,N,15.5,K*52")
+    parser.parse('$PNKEP,01,8.3,N,15.5,K*52')
   })
 
-  it("Course on next track data", done => {
+  it('Course on next track data', (done) => {
     const parser = new Parser()
 
-    parser.on("signalk:delta", delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property(
-        "path",
-        "performance.tackMagnetic"
+        'path',
+        'performance.tackMagnetic',
       )
       delta.updates[0].values[0].value.should.be.closeTo(6.0109139439, 0.00005)
       toFull(delta).should.be.validSignalK
       done()
     })
 
-    parser.parse("$PNKEP,02,344.4*6B")
+    parser.parse('$PNKEP,02,344.4*6B')
   })
 
-  it("Direction data", done => {
+  it('Direction data', (done) => {
     const parser = new Parser()
 
-    parser.on("signalk:delta", delta => {
+    parser.on('signalk:delta', (delta) => {
       delta.updates[0].values.should.contain.an.item.with.property(
-        "path",
-        "performance.targetAngle"
+        'path',
+        'performance.targetAngle',
       )
       delta.updates[0].values[0].value.should.be.closeTo(2.652900463, 0.00005)
       toFull(delta).should.be.validSignalK
       done()
     })
 
-    parser.parse("$PNKEP,03,152.0,55.2,67.1*69")
+    parser.parse('$PNKEP,03,152.0,55.2,67.1*69')
   })
 })

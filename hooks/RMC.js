@@ -36,8 +36,10 @@ values:
  -      *6A          The checksum data, always begins with *
 */
 
-module.exports = function (parser, input) {
-  const { id, sentence, parts, tags } = input
+module.exports = function parse(parser, input) {
+  const {
+    parts, tags,
+  } = input
 
   let latitude = -1
   let longitude = -1
@@ -53,10 +55,10 @@ module.exports = function (parser, input) {
     longitude = utils.coordinate(parts[4], parts[5])
 
     speed = utils.float(parts[6])
-    speed = (!isNaN(speed) && speed > 0) ? speed : 0.0
+    speed = !Number.isNaN(speed) && speed > 0 ? speed : 0.0
 
     track = utils.float(parts[7])
-    track = (!isNaN(track)) ? track : 0.0
+    track = !Number.isNaN(track) ? track : 0.0
 
     variation = utils.magneticVariaton(parts[9], parts[10])
 
@@ -64,42 +66,42 @@ module.exports = function (parser, input) {
       updates: [
         {
           source: tags.source,
-          timestamp: timestamp,
+          timestamp,
           values: [
             {
               path: 'navigation.position',
               value: {
                 longitude,
-                latitude
-              }
+                latitude,
+              },
             },
 
             {
               path: 'navigation.courseOverGroundTrue',
-              value: utils.transform(track, 'deg', 'rad')
+              value: utils.transform(track, 'deg', 'rad'),
             },
 
             {
               path: 'navigation.speedOverGround',
-              value: utils.transform(speed, 'knots', 'ms')
+              value: utils.transform(speed, 'knots', 'ms'),
             },
 
             {
               path: 'navigation.magneticVariation',
-              value: utils.transform(variation, 'deg', 'rad')
+              value: utils.transform(variation, 'deg', 'rad'),
             },
 
             {
               path: 'navigation.magneticVariationAgeOfService',
-              value: age
+              value: age,
             },
 
             {
               path: 'navigation.datetime',
               value: timestamp,
             },
-          ]
-        }
+          ],
+        },
       ],
     }
 

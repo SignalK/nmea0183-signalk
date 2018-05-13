@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
- 'use strict'
+'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
- /*
+/*
 === VHW - Water speed and heading ===
 ------------------------------------------------------------------------------
         0   1 2   3 4   5 6   7 8
@@ -38,31 +38,31 @@ Field Number:
 8. Checksum
 */
 
-module.exports = function (parser, input) {
-  var velocityValue
-  const { id, sentence, parts, tags } = input
-  var pathValues = []
+module.exports = function parse(parser, input) {
+  // let velocityValue
+  const {
+    parts, tags,
+  } = input
+  const pathValues = []
 
-  if(parts[0] != ''){
+  if (parts[0] !== '') {
     pathValues.push({
-      'path': 'navigation.headingTrue',
-      'value': utils.transform(utils.float(parts[0]), 'deg', 'rad')
+      path: 'navigation.headingTrue',
+      value: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
     })
   }
-  if(parts[2] != ''){
+  if (parts[2] !== '') {
     pathValues.push({
-      'path': 'navigation.headingMagnetic',
-      'value': utils.transform(utils.float(parts[2]), 'deg', 'rad')
+      path: 'navigation.headingMagnetic',
+      value: utils.transform(utils.float(parts[2]), 'deg', 'rad'),
     })
   }
-  if(parts[4] != ''){
+  if (parts[4] !== '') {
     pathValues.push({
-      'path': 'navigation.speedThroughWater',
-      'value': utils.transform(utils.float(parts[4]), 'knots', 'ms')
+      path: 'navigation.speedThroughWater',
+      value: utils.transform(utils.float(parts[4]), 'knots', 'ms'),
     })
   }
-
-
 
   try {
     const delta = {
@@ -70,8 +70,8 @@ module.exports = function (parser, input) {
         {
           source: tags.source,
           timestamp: tags.timestamp,
-          values: pathValues
-        }
+          values: pathValues,
+        },
       ],
     }
 

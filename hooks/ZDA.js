@@ -17,7 +17,7 @@
 *
 */
 
-"use strict"
+'use strict'
 
 /*
 === ZDA - Time & Date ===
@@ -38,42 +38,40 @@ Field Number:
 7. Checksum
 */
 const debug = require('debug')('signalk-parser-nmea0183/ZDA')
-const utils = require('@signalk/nmea0183-utilities')
-const moment = require('moment-timezone')
 
 function isEmpty(mixed) {
-  return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+  return (
+    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
+    (typeof mixed === 'string' && mixed.trim() === '')
+  )
 }
 
-module.exports = function (parser, input) {
+module.exports = function parse(parser, input) {
   try {
-    const { id, sentence, parts, tags } = input
+    const {
+      parts, tags,
+    } = input
 
-    const empty = parts.reduce((e, val) => {
-      if (isEmpty(val)) {
-        ++e
-      }
-      return e
-    }, 0)
+    const empty = parts.reduce((e, val) => (isEmpty(val) ? e + 1 : e), 0)
 
     if (empty > 3) {
       return Promise.resolve(null)
     }
 
-    const time = (parts[0] || '')
-    const date =  parts[1] + parts[2] + (parts[3] || '').slice(-2)
+    const time = parts[0] || ''
+    const date = parts[1] + parts[2] + (parts[3] || '').slice(-2)
 
-    var delta ={}
+    let delta = {}
     if (time.length >= 6 && date.length === 6 && empty < 3) {
       const year = parts[3]
-      const month = parts[2]-1
+      const month = parts[2] - 1
       const day = parts[1]
       const hour = (parts[0] || '').substring(0, 2)
       const minute = (parts[0] || '').substring(2, 4)
       const second = (parts[0] || '').substring(4, 6)
-      const milliSecond = (parts[0].substring(4) % second)*1000
-      const d = new Date(Date.UTC(year, month, day, hour, minute, second, milliSecond ))
-      const ts = d.toISOString();
+      const milliSecond = (parts[0].substring(4) % second) * 1000
+      const d = new Date(Date.UTC(year, month, day, hour, minute, second, milliSecond))
+      const ts = d.toISOString()
       delta = {
         updates: [
           {
@@ -81,11 +79,11 @@ module.exports = function (parser, input) {
             timestamp: tags.timestamp,
             values: [
               {
-                "path": "navigation.datetime",
-                "value": ts
-              }
-            ]
-          }
+                path: 'navigation.datetime',
+                value: ts,
+              },
+            ],
+          },
         ],
       }
     }
@@ -93,13 +91,18 @@ module.exports = function (parser, input) {
     const toRemove = []
 
     delta.updates[0].values.forEach((update, index) => {
-      if (typeof update.value === 'undefined' || update.value === null || (typeof update.value === 'string' && update.value.trim() === '') || (typeof update.value !== 'string' && isNaN(update.value))) {
+      if (
+        typeof update.value === 'undefined' ||
+        update.value === null ||
+        (typeof update.value === 'string' && update.value.trim() === '') ||
+        (typeof update.value !== 'string' && Number.isNaN(update.value))
+      ) {
         toRemove.push(index)
       }
     })
 
     if (toRemove.length > 0) {
-      toRemove.forEach(index => {
+      toRemove.forEach((index) => {
         delta.updates[0].values.splice(index, 1)
       })
     }

@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 84  U6  VW  XY 0Z 0M RR SS TT  Compass heading  Autopilot course and
@@ -49,78 +49,79 @@
 */
 
 module.exports = function (parser, input) {
-  const { id, sentence, parts, tags } = input
-  var mode
+  const {
+    id, sentence, parts, tags,
+  } = input
+  let mode
 
-  var U = parseInt(parts[1].charAt(0), 16)
-  var VW = parseInt(parts[2], 16)
-  var V = parseInt(parts[2].charAt(0), 16)
-  var XY = parseInt(parts[3], 16)
-  var Z = parseInt(parts[4].charAt(1), 16)
-  var M = parseInt(parts[5].charAt(1), 16)
-  var RR = parseInt(parts[6], 16)
-  var SS = parseInt(parts[7], 16)
-  var TT = parseInt(parts[8], 16)
-  var compassHeading = (U & 0x3) * 90 + (VW & 0x3F) * 2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1) : 0)
-  var apCourse = ((V & 0xC) >> 2) * 90 + XY / 2
-  /*Positive to right*/
-  var rudderPos = RR
-  if(rudderPos > 127) {
-    rudderPos = rudderPos - 256
+  const U = parseInt(parts[1].charAt(0), 16)
+  const VW = parseInt(parts[2], 16)
+  const V = parseInt(parts[2].charAt(0), 16)
+  const XY = parseInt(parts[3], 16)
+  const Z = parseInt(parts[4].charAt(1), 16)
+  const M = parseInt(parts[5].charAt(1), 16)
+  const RR = parseInt(parts[6], 16)
+  const SS = parseInt(parts[7], 16)
+  const TT = parseInt(parts[8], 16)
+  const compassHeading = (U & 0x3) * 90 + (VW & 0x3F) * 2 + (U & 0xC ? (U & 0xC === 0xC ? 2 : 1) : 0)
+  const apCourse = ((V & 0xC) >> 2) * 90 + XY / 2
+  /* Positive to right */
+  let rudderPos = RR
+  if (rudderPos > 127) {
+    rudderPos -= 256
   }
 
-  var modeVar = (Z & 0x2)
-  switch(modeVar) {
+  const modeVar = (Z & 0x2)
+  switch (modeVar) {
     case 0:
-      mode = "standby"
+      mode = 'standby'
       break
     case 2:
-      mode = "auto";
+      mode = 'auto'
       break
     default:
       break
   }
-  if((Z & 0x4) == 4) {
-    mode = "wind"
+  if ((Z & 0x4) == 4) {
+    mode = 'wind'
   }
-  if((Z & 0x8) == 8) {
-    mode = "route"
+  if ((Z & 0x8) == 8) {
+    mode = 'route'
   }
-  var pathValues = []
-  if(compassHeading) {
+  const pathValues = []
+  if (compassHeading) {
     pathValues.push({
       path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(compassHeading), 'deg', 'rad')
+      value: utils.transform(utils.float(compassHeading), 'deg', 'rad'),
     })
   }
-  if(apCourse) {
+  if (apCourse) {
     pathValues.push({
       path: 'steering.autopilot.target.headingMagnetic',
-      value: utils.transform(utils.float(apCourse), 'deg', 'rad')
+      value: utils.transform(utils.float(apCourse), 'deg', 'rad'),
     })
   }
-  if(rudderPos) {
+  if (rudderPos) {
     pathValues.push({
       path: 'steering.rudderAngle',
-      value: utils.transform(utils.float(rudderPos), 'deg', 'rad')
+      value: utils.transform(utils.float(rudderPos), 'deg', 'rad'),
     })
   }
-  if(mode) {
+  if (mode) {
     pathValues.push({
       path: 'steering.autopilot.state',
-      value: mode
+      value: mode,
     })
   }
 
   try {
-
     const delta = {
       updates: [
         {
           source: tags.source,
           timestamp: tags.timestamp,
-          values: pathValues
-        }
+          values: pathValues,
+        },
       ],
     }
 

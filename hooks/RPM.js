@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 #        0 1 2   3   4 5
@@ -27,9 +27,10 @@
 #  astern 4) Status, A means data is valid 5) Checksum
 */
 
-module.exports = function (parser, input) {
-  const { id, sentence, parts, tags } = input
-
+module.exports = function parse(parser, input) {
+  const {
+    parts, tags,
+  } = input
 
   try {
     const delta = {
@@ -39,11 +40,13 @@ module.exports = function (parser, input) {
           timestamp: tags.timestamp,
           values: [
             {
-              path: `propulsion.${(parts[0].toUpperCase() === 'S' ? 'shaft' : 'engine')}_${parts[1]}.revolutions`,
-              value: utils.float(parts[2]) / 60
-            }
-          ]
-        }
+              path: `propulsion.${parts[0].toUpperCase() === 'S' ? 'shaft' : 'engine'}_${
+                parts[1]
+              }.revolutions`,
+              value: utils.float(parts[2]) / 60,
+            },
+          ],
+        },
       ],
     }
 
