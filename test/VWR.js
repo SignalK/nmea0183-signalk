@@ -16,7 +16,6 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const nmeaLine = '$PIVWR,75,R,1.0,N,0.51,M,1.85,K*75'
 
 chai.Should()
 chai.use(require('chai-things'))
@@ -36,7 +35,8 @@ describe('VWR', () => {
       done()
     })
 
-    parser.parse(nmeaLine)
+    parser.parse('$PIVWR,75,R,1.0,N,0.51,M,1.85,K*75')
+    parser.parse('$IIVWR,024,L,018,N,,,,*5e')
   })
 
   it('Doesn\'t choke on empty sentences', done => {
