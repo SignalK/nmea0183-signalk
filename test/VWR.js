@@ -36,6 +36,21 @@ describe('VWR', () => {
     })
 
     parser.parse('$PIVWR,75,R,1.0,N,0.51,M,1.85,K*75')
+  })
+
+  it('Handles shorter valid sentences', done => {
+    const parser = new Parser
+
+    parser.on('signalk:delta', delta => {
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
+      delta.updates[0].values.should.contain.an.item.with.property('value', -0.41887902057428156)
+      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
+      delta.updates[0].values.should.contain.an.item.with.property('value', 9.260002345867262)
+
+
+      done()
+    })
+
     parser.parse('$IIVWR,024,L,018,N,,,,*5e')
   })
 
