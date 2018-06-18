@@ -41,7 +41,7 @@ module.exports = function (parser, input) {
   const { id, sentence, parts, tags } = input
 
   const empty = parts.reduce((count, part) => { count += (isEmpty(part) ? 1 : 0); return count; }, 0)
-  if (empty > 3) {
+  if (empty > 4) {
     return Promise.resolve(null)
   }
 
