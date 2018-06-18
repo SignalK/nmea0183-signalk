@@ -35,7 +35,7 @@ describe('VWR', () => {
       done()
     })
 
-    parser.parse('$PIVWR,75,R,1.0,N,0.51,M,1.85,K*75')
+    parser.parse('$IIVWR,75,R,1.0,N,0.51,M,1.85,K*6C')
   })
 
   it('Handles shorter valid sentences', done => {
@@ -56,7 +56,7 @@ describe('VWR', () => {
 
   it('Doesn\'t choke on empty sentences', done => {
     new Parser()
-    .parse('$PIVWR,,,,,,,,*4A')
+    .parse('$IIVWR,,,,,,,,*53')
     .then(result => {
       chai.assert.equal(result, null)
       done()
