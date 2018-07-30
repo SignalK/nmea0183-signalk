@@ -38,13 +38,8 @@ module.exports = function(parser, input) {
   const { id, sentence, parts, tags } = input
   const key = '0x' + parseInt(parts[0],16).toString(16).toUpperCase()
   if (key in subHooks){
-    try {
-      return require(`${path}/${key}`)(parser, input)
-    } catch (e) {
-      return Promise.reject(e)
-    }
-
+    return require(`${path}/${key}`)(parser, input)
   } else {
-    return Promise.resolve(null)
+    return null
   }
 }

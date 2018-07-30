@@ -39,6 +39,9 @@ module.exports = function (parser, input) {
   var VW = parseInt(parts[2], 16)
   var RR = parseInt(parts[3], 16)
 
+  if (Number.isNaN(U) || Number.isNaN(VW) || Number.isNaN(RR)) {
+    return null
+  }
   var compassHeading = (U & 0x3) * 90 + (VW & 0x3F) * 2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1) : 0);
   var rudderPos = RR;
   if(rudderPos > 127) {
@@ -59,27 +62,13 @@ module.exports = function (parser, input) {
     })
   }
 
-  /*
-  if(pathValues.length < 1){
-    return Promise.resolve(null)
-  }
-  */
-
-  try {
-
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ]
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }
