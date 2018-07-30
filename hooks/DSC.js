@@ -64,145 +64,140 @@ function parsePosition(line) {
 }
 
 module.exports = function (parser, input) {
-  try {
-    const { id, sentence, parts, tags } = input
-    var values = [];
+  const { id, sentence, parts, tags } = input
+  var values = [];
 
-    const empty = parts.reduce((e, val) => {
-      if (isEmpty(val)) {
-        ++e
-      }
-      return e
-    }, 0)
-
-    if (empty > 3) {
-      return Promise.resolve(null)
+  const empty = parts.reduce((e, val) => {
+    if (isEmpty(val)) {
+      ++e
     }
+    return e
+  }, 0)
 
-    // for some reason, it seems the sender identification is mmsi+'0', so we
-    // strip the trailing zero to get a 9 digit mmsi
-    var mmsi = parts[1].substring(0,9);
-    debug ("mmsi: " + mmsi)
+  if (empty > 3) {
+    return null
+  }
 
-    var handled = false;
-    var get_position = false;
-    var distress = false;
-    var distress_nature = "";
+  // for some reason, it seems the sender identification is mmsi+'0', so we
+  // strip the trailing zero to get a 9 digit mmsi
+  var mmsi = parts[1].substring(0,9);
+  debug ("mmsi: " + mmsi)
 
-    switch(parts[2]) {
+  var handled = false;
+  var get_position = false;
+  var distress = false;
+  var distress_nature = "";
 
-      case '00': // routine category
-      switch (parts[3]) {
-        case '21': // ship position
-        handled = true;
-        get_position = true;
-        break;
-        //case '??': // other telecommands
-      }
-      break;
+  switch(parts[2]) {
 
-      case '08': // * 108 = safety
-      break;
-      case '10': // * 110 = urgency
-      break;
-      case '12': // * 112 = distress
+    case '00': // routine category
+    switch (parts[3]) {
+      case '21': // ship position
       handled = true;
       get_position = true;
-      distress = true;
-      switch (parts[3]) { // Nature of Distress
-        case '00': // = Fire, explosion
-        distress_nature = 'fire';
-        break;
-        case '01': // = Flooding
-        distress_nature = 'flooding';
-        break;
-        case '02': // = Collision
-        distress_nature = 'collision';
-        break;
-        case '03': // = Grounding
-        distress_nature = 'grounding';
-        break;
-        case '04': // = Listing, in danger of capsize
-        distress_nature = 'listing';
-        break;
-        case '05': // = Sinking
-        distress_nature = 'sinking';
-        break;
-        case '06': // = Disabled and adrift
-        distress_nature = 'adrift';
-        break;
-        case '07': // = Undesignated distres
-        distress_nature = 'undesignated';
-        break;
-        case '08': // = Abandoning ship
-        distress_nature = 'abandon'
-        break;
-        case '09': // = Piracy/armed robbery attack
-        distress_nature = 'piracy'
-        break;
-        case '10': // = Man overboard
-        distress_nature = 'mob'
-        break;
-        case '12': // = EPRIB emission
-        distress_nature = 'epirb';
-        break;
-        default: // unassigned symbol; take no action
-        distress_nature = 'unassigned';
-      }
+      break;
+      //case '??': // other telecommands
     }
+    break;
 
-    /*values.push({
-      path: "",
-      value: {
-        mmsi: parts[1]
-      }
-    })*/
-
-
-    if (get_position) {
-      var position = parsePosition(parts[5])
-      values.push({
-        path: "navigation.position",
-        value: {
-          latitude: position.latitude,
-          longitude: position.longitude
-        }
-      })
+    case '08': // * 108 = safety
+    break;
+    case '10': // * 110 = urgency
+    break;
+    case '12': // * 112 = distress
+    handled = true;
+    get_position = true;
+    distress = true;
+    switch (parts[3]) { // Nature of Distress
+      case '00': // = Fire, explosion
+      distress_nature = 'fire';
+      break;
+      case '01': // = Flooding
+      distress_nature = 'flooding';
+      break;
+      case '02': // = Collision
+      distress_nature = 'collision';
+      break;
+      case '03': // = Grounding
+      distress_nature = 'grounding';
+      break;
+      case '04': // = Listing, in danger of capsize
+      distress_nature = 'listing';
+      break;
+      case '05': // = Sinking
+      distress_nature = 'sinking';
+      break;
+      case '06': // = Disabled and adrift
+      distress_nature = 'adrift';
+      break;
+      case '07': // = Undesignated distres
+      distress_nature = 'undesignated';
+      break;
+      case '08': // = Abandoning ship
+      distress_nature = 'abandon'
+      break;
+      case '09': // = Piracy/armed robbery attack
+      distress_nature = 'piracy'
+      break;
+      case '10': // = Man overboard
+      distress_nature = 'mob'
+      break;
+      case '12': // = EPRIB emission
+      distress_nature = 'epirb';
+      break;
+      default: // unassigned symbol; take no action
+      distress_nature = 'unassigned';
     }
-    if (distress) {
-      values.push({
-        path: "notifications."+distress_nature,
-        value: {
-          message: "DSC Distress Recieved! Nature of distress: "+distress_nature
-        }
-      })
-    }
-    if (!handled) {
-      console.log("DSC Message Not Handled: "+line);
-      values.push({
-        path: "notifications.dsc_parser",
-        value: {
-          message: "DSC Message Not Handled: "+line
-        }
-      })
-    }
-    if (values.length > 0) {
-      //multiplexer.self();
-
-      delta = {
-        "updates": [{
-          "source": tags.source,//this.source(input.instrument),
-          "timestamp": tags.timestamp,
-          "values": values
-        }],
-        "context": 'vessels.urn:mrn:imo:mmsi:' + mmsi
-      };
-    }
-    return Promise.resolve({ delta })
-  } catch (e) {
-    debug(`Try/catch failed: ${e.message}`)
-    return Promise.reject(e)
   }
+
+  /*values.push({
+    path: "",
+    value: {
+      mmsi: parts[1]
+    }
+  })*/
+
+
+  if (get_position) {
+    var position = parsePosition(parts[5])
+    values.push({
+      path: "navigation.position",
+      value: {
+        latitude: position.latitude,
+        longitude: position.longitude
+      }
+    })
+  }
+  if (distress) {
+    values.push({
+      path: "notifications."+distress_nature,
+      value: {
+        message: "DSC Distress Recieved! Nature of distress: "+distress_nature
+      }
+    })
+  }
+  if (!handled) {
+    console.log("DSC Message Not Handled: "+line);
+    values.push({
+      path: "notifications.dsc_parser",
+      value: {
+        message: "DSC Message Not Handled: "+line
+      }
+    })
+  }
+  if (values.length > 0) {
+    //multiplexer.self();
+
+    delta = {
+      "updates": [{
+        "source": tags.source,//this.source(input.instrument),
+        "timestamp": tags.timestamp,
+        "values": values
+      }],
+      "context": 'vessels.urn:mrn:imo:mmsi:' + mmsi
+    };
+  }
+  return delta
 }
 
 

@@ -52,6 +52,10 @@ module.exports = function (parser, input) {
   const { id, sentence, parts, tags } = input
   var mode
 
+  if (parts.length != 9) {
+    return null
+  }
+
   var U = parseInt(parts[1].charAt(0), 16)
   var VW = parseInt(parts[2], 16)
   var V = parseInt(parts[2].charAt(0), 16)
@@ -61,6 +65,12 @@ module.exports = function (parser, input) {
   var RR = parseInt(parts[6], 16)
   var SS = parseInt(parts[7], 16)
   var TT = parseInt(parts[8], 16)
+
+  const inputs = [U, VW, V, XY, Z, M, RR, SS, TT]
+  if (! inputs.every((x) => !isNaN(x))) {
+    return null
+  }
+
   var compassHeading = (U & 0x3) * 90 + (VW & 0x3F) * 2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1) : 0)
   var apCourse = ((V & 0xC) >> 2) * 90 + XY / 2
   /*Positive to right*/
@@ -112,21 +122,13 @@ module.exports = function (parser, input) {
     })
   }
 
-  try {
-
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ],
   }
 }
