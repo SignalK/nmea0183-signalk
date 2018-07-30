@@ -16,12 +16,12 @@
 
 "use strict"
 
-const Parser = require("../lib")
-const chai = require("chai")
-const signalkSchema = require("@signalk/signalk-schema")
+const Parser = require('../lib')
+const chai = require('chai')
 const toFull = require("./toFull")
-
-chai.use(require("chai-things"))
+chai.Should()
+chai.use(require('chai-things'))
+chai.use(require('@signalk/signalk-schema').chaiModule)
 
 describe("KEP", () => {
   it("Polarspeed data ", done => {

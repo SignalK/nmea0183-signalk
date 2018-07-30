@@ -12,16 +12,16 @@ process.stdin.pipe(require('split')()).on('data', data => {
   }
 
   data = data.trim()
-  parser
-    .parse(data)
-    .then(result => {
-      if (result != null) {
-        console.log(JSON.stringify(result.delta))
-      }
-    })
-    .catch(e => {
-      console.error('Encountered an error:', e.message)
-    })
+
+  try {
+    result = parser.parseImmediate(data)
+    if (result != null) {
+      console.log(JSON.stringify(result))
+    }
+  }
+  catch(e) {
+    console.error('Encountered an error:', e.message)
+  }
 })
 
 process.stdin.on('error', err => {

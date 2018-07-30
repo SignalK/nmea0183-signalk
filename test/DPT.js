@@ -33,7 +33,7 @@ describe('DPT', () => {
       done()
     })
 
-    parser.parse('$IIDPT,4.1,0.0*45').catch(e => done(e))
+    parser.parse('$IIDPT,4.1,0.0*45')
   })
 
   it('Converts OK with missing offset', done => {
@@ -45,7 +45,7 @@ describe('DPT', () => {
       done()
     })
 
-    parser.parse('$IIDPT,4.1,*6B').catch(e => done(e))
+    parser.parse('$IIDPT,4.1,*6B')
   })
 
   it('Converts OK with positive offset', done => {
@@ -63,7 +63,7 @@ describe('DPT', () => {
       done()
     })
 
-    parser.parse('$IIDPT,4.1,1.0*44').catch(e => done(e))
+    parser.parse('$IIDPT,4.1,1.0*44')
   })
 
   it('Converts OK with negative offset', done => {
@@ -81,17 +81,11 @@ describe('DPT', () => {
       done()
     })
 
-    parser.parse('$IIDPT,4.1,-1.0*69').catch(e => done(e))
-  })  
-  
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$IIDPT,,,*6C')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+    parser.parse('$IIDPT,4.1,-1.0*69')
   })
 
+  it('Doesn\'t choke on empty sentences', () => {
+    const result = new Parser().parseImmediate('$IIDPT,,,*6C')
+    should.equal(result, null)
+  })
 })

@@ -33,17 +33,12 @@ describe('DBT', () => {
       done()
     })
 
-    parser.parse('$IIDBT,035.53,f,010.83,M,005.85,F*23').catch(e => done(e))
+    parser.parse('$IIDBT,035.53,f,010.83,M,005.85,F*23')
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$IIDBT,,,,,,*52')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+  it('Doesn\'t choke on empty sentences', () => {
+    const result = new Parser().parseImmediate('$IIDBT,,,,,,*52')
+    should.equal(result, null)
   })
 
 })

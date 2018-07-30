@@ -39,7 +39,7 @@ describe('VTG', () => {
       done()
     })
 
-    parser.parse('$GPVTG,0.0,T,359.3,M,0.0,N,0.0,K,A*2F').catch(e => done(e))
+    parser.parse('$GPVTG,0.0,T,359.3,M,0.0,N,0.0,K,A*2F')
   })
 
 })

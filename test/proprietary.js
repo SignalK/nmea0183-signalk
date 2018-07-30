@@ -18,7 +18,7 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const assert = chai.assert
+const should = chai.Should()
 const nmeaLine = '$PMGNST,02.12,3,T,534,05.0,+03327,00*40'
 
 chai.Should()
@@ -26,32 +26,19 @@ chai.use(require('chai-things'))
 
 describe('Proprietary sentences', () => {
 
-  it('Don\'t break the parser', done => {
-    const parser = new Parser
-
-    parser
-      .parse(nmeaLine)
-      .then(result => {
-        assert.equal(result, null)
-        done()
-      })
-      .catch(e => done(e))
+  it('Don\'t break the parser', () => {
+    const result = new Parser().parseImmediate(nmeaLine)
+    should.equal(result, null)
   })
 
-  it('Emit no Signal K data', done => {
-    const parser = new Parser
+  it('Emit no Signal K data', () => {
+    const parser = new Parser()
 
     parser.on('signalk:delta', delta => {
       done(new Error('Emitted delta for proprietary sentence: ' + JSON.stringify(delta)))
     })
 
-    parser
-      .parse(nmeaLine)
-      .then(result => {
-        assert.equal(result, null)
-        done()
-      })
-      .catch(e => done(e))
+    const result = parser.parseImmediate(nmeaLine)
+    should.equal(result, null)
   })
-
 })

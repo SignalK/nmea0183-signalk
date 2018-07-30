@@ -16,8 +16,7 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-
-chai.Should()
+const should = chai.Should()
 chai.use(require('chai-things'))
 
 describe('VWR', () => {
@@ -30,7 +29,6 @@ describe('VWR', () => {
       delta.updates[0].values.should.contain.an.item.with.property('value', 1.30899693929463)
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
       delta.updates[0].values.should.contain.an.item.with.property('value', 0.5144445747704034)
-
 
       done()
     })
@@ -47,21 +45,15 @@ describe('VWR', () => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
       delta.updates[0].values.should.contain.an.item.with.property('value', 9.260002345867262)
 
-
       done()
     })
 
     parser.parse('$IIVWR,024,L,018,N,,,,*5e')
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$PIVWR,,,,,,,,*4A')
-    .then(result => {
-      chai.assert.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+  it('Doesn\'t choke on empty sentences', () => {
+    const result = new Parser().parseImmediate('$PIVWR,,,,,,,,*4A')
+    should.equal(result, null)
   })
 
 })
