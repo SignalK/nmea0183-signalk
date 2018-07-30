@@ -64,19 +64,15 @@ module.exports = function (parser, input) {
 
 
 
-  try {
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  const delta = {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ],
   }
+
+  return delta
 }

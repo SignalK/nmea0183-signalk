@@ -52,8 +52,7 @@ module.exports = function (parser, input) {
     })
   }
 
-  try {
-    const delta = {
+  return {
       updates: [
         {
           source: tags.source,
@@ -62,9 +61,4 @@ module.exports = function (parser, input) {
         }
       ],
     }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
-  }
 }
