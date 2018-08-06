@@ -6,7 +6,6 @@
 
 > A node.js/javascript parser of NMEA0183 sentences. Sentences are parsed to [Signal K delta](http://signalk.org/specification/master/data_model.html#delta-format) format.
 
-
 ### Supported sentences
 
 - [ALK - Seatalk](https://en.wikipedia.org/wiki/Seatalk)
@@ -31,8 +30,9 @@
 - [VWR - Relative Wind Speed and Angle](http://www.catb.org/gpsd/NMEA.html#_vwr_relative_wind_speed_and_angle)
 - [ZDA - UTC day, month, and year, and local time zone offset](http://www.trimble.com/oem_receiverhelp/v4.44/en/NMEA-0183messages_ZDA.html)
 
-
 ### Usage
+
+#### Event based API
 
 ```javascript
 const Parser = require('@signalk/nmea0183-signalk')
@@ -53,6 +53,24 @@ parser.on('signalk:delta', delta => {
 // Parse sentence
 parser.parse('$SDDBT,17.0,f,5.1,M,2.8,F*3E')
 ```
+
+#### Immediate API
+
+```javascript
+var parser = new Parser()
+
+try {
+  var delta = parser.parseImmediate('$SDDBT,17.0,f,5.1,M,2.8,F*3E')
+  if (delta !== null) {
+    console.log(`[delta] ${JSON.stringify(delta, null, 2)}`)
+  }
+}
+catch (error) {
+  console.error(`[error] ${error.message}`)
+}
+```
+
+#### Command line
 
 In addition to usage in your code, the parser can be used on the command-line if installed globally (`npm install --global`). This allows you to pipe data from one program into the parser directly, without using a Signal K server. The parser holds no Signal K tree in memory (a big change vs. 1.x), so the output will be stringified [Signal K delta](http://signalk.org/specification/master/data_model.html#delta-format) messages.
 

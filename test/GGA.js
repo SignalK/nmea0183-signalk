@@ -26,11 +26,11 @@ chai.use(require('@signalk/signalk-schema').chaiModule)
 const toFull = require('./toFull')
 
 describe('GGA', () => {
-
   it('Converts OK using individual parser', done => {
-    const parser = new Parser
+    const parser = new Parser()
 
     parser.on('signalk:delta', delta => {
+      // FIXME: label is a required property in the SK Spec.
       should.not.exist(delta.updates[0].source.label)
       delta.updates[0].source.talker.should.equal('GP')
       // Paths
@@ -53,17 +53,12 @@ describe('GGA', () => {
       done()
     })
 
-    parser.parse('$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F').catch(e => done(e))
+    parser.parse('$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F')
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$GPGGA,,,,,,,,,,,,,,*56')
-    .then(result => {
+  it('Doesn\'t choke on empty sentences', () => {
+    const result = new Parser().parseImmediate('$GPGGA,,,,,,,,,,,,,,*56')
       should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
   })
 
 })

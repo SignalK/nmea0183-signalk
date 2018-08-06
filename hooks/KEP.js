@@ -70,106 +70,96 @@ function isEmpty(mixed) {
 }
 
 module.exports = function(parser, input) {
-  try {
-    const { id, sentence, parts, tags } = input
+  const { id, sentence, parts, tags } = input
 
-    var delta
-    //PNKEP,01
-
-    if (parts[0] === "01") {
-      if (parts[1] === "" && parts[3] === "") {
-        return Promise.resolve(null)
-      }
-
-      let targetspeed = 0.0
-
-      if (utils.float(parts[3]) > 0 && String(parts[4]).toUpperCase() === "K") {
-        targetspeed = utils.transform(utils.float(parts[3]), "kph", "ms")
-      }
-
-      if (utils.float(parts[1]) > 0 && String(parts[2]).toUpperCase() === "N") {
-        targetspeed = utils.transform(utils.float(parts[1]), "knots", "ms")
-      }
-
-      delta = {
-        updates: [
-          {
-            source: tags.source,
-            timestamp: tags.timestamp,
-            values: [
-              {
-                path: "performance.targetSpeed",
-                value: targetspeed
-              }
-            ]
-          }
-        ]
-      }
+  var delta
+  //PNKEP,01
+  if (parts[0] === "01") {
+    if (parts[1] === "" && parts[3] === "") {
+      return null
     }
 
-    // PNKEP,02
+    let targetspeed = 0.0
 
-    if (parts[0] === "02") {
-      if (parts[1] === "") {
-        return Promise.resolve(null)
-      }
-
-      let nxtcourse = 0.0
-
-      if (utils.float(parts[1]) > 0) {
-        nxtcourse = utils.transform(utils.float(parts[1]), "deg", "rad")
-      }
-
-      delta = {
-        updates: [
-          {
-            source: tags.source,
-            timestamp: tags.timestamp,
-            values: [
-              {
-                path: "performance.tackMagnetic",
-                value: nxtcourse
-              }
-            ]
-          }
-        ]
-      }
+    if (utils.float(parts[3]) > 0 && String(parts[4]).toUpperCase() === "K") {
+      targetspeed = utils.transform(utils.float(parts[3]), "kph", "ms")
     }
 
-    // PNKEP,03
-
-    if (parts[0] === "03") {
-      if (parts[1] === "") {
-        return Promise.resolve(null)
-      }
-
-      let optcourse = 0.0
-
-      if (utils.float(parts[1]) > 0) {
-        optcourse = utils.transform(utils.float(parts[1]), "deg", "rad")
-      }
-
-      delta = {
-        updates: [
-          {
-            source: tags.source,
-            timestamp: tags.timestamp,
-            values: [
-              {
-                path: "performance.targetAngle",
-                value: optcourse
-              }
-            ]
-          }
-        ]
-      }
+    if (utils.float(parts[1]) > 0 && String(parts[2]).toUpperCase() === "N") {
+      targetspeed = utils.transform(utils.float(parts[1]), "knots", "ms")
     }
 
-    return Promise.resolve({
-      delta
-    })
-  } catch (e) {
-    debug(`Try/catch failed: ${e.message}`)
-    return Promise.reject(e)
+    delta = {
+      updates: [
+        {
+          source: tags.source,
+          timestamp: tags.timestamp,
+          values: [
+            {
+              path: "performance.targetSpeed",
+              value: targetspeed
+            }
+          ]
+        }
+      ]
+    }
   }
+
+  // PNKEP,02
+  if (parts[0] === "02") {
+    if (parts[1] === "") {
+      return null
+    }
+
+    let nxtcourse = 0.0
+
+    if (utils.float(parts[1]) > 0) {
+      nxtcourse = utils.transform(utils.float(parts[1]), "deg", "rad")
+    }
+
+    delta = {
+      updates: [
+        {
+          source: tags.source,
+          timestamp: tags.timestamp,
+          values: [
+            {
+              path: "performance.tackMagnetic",
+              value: nxtcourse
+            }
+          ]
+        }
+      ]
+    }
+  }
+
+  // PNKEP,03
+  if (parts[0] === "03") {
+    if (parts[1] === "") {
+      return null
+    }
+
+    let optcourse = 0.0
+
+    if (utils.float(parts[1]) > 0) {
+      optcourse = utils.transform(utils.float(parts[1]), "deg", "rad")
+    }
+
+    delta = {
+      updates: [
+        {
+          source: tags.source,
+          timestamp: tags.timestamp,
+          values: [
+            {
+              path: "performance.targetAngle",
+              value: optcourse
+            }
+          ]
+        }
+      ]
+    }
+  }
+
+  return delta
 }

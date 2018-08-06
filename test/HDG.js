@@ -33,11 +33,11 @@ describe('HDG', () => {
       done()
     })
 
-    parser.parse('$SDHDG,181.9,,,0.6,E*32').catch(e => done(e))
+    parser.parse('$SDHDG,181.9,,,0.6,E*32')
   })
 
   it('Sentence with just heading works', done => {
-    const parser = new Parser
+    const parser = new Parser()
 
     parser.on('signalk:delta', delta => {
       delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
@@ -45,17 +45,12 @@ describe('HDG', () => {
       done()
     })
 
-    parser.parse('$HCHDG,51.5,,,,*73').catch(e => done(e))
+    parser.parse('$HCHDG,51.5,,,,*73')
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$SDHDG,,,,,*70')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+  it('Doesn\'t choke on empty sentences', () => {
+    const result = new Parser().parseImmediate('$SDHDG,,,,,*70')
+    should.equal(result, null)
   })
 
 })

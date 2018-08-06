@@ -26,7 +26,7 @@ chai.use(require('chai-things'))
 describe('NMEA0183v4 tag block', () => {
 
   it('Converts OK using individual parser', done => {
-    const parser = new Parser
+    const parser = new Parser()
 
     parser.on('signalk:delta', delta => {
       delta.updates[0].source.should.be.an('object')

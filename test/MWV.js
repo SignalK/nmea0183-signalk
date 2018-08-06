@@ -17,7 +17,7 @@ describe('MWV', () => {
       done()
     })
 
-    parser.parse('$IIMWV,074,T,05.85,N,A*2E').catch(e => { done(e) })
+    parser.parse('$IIMWV,074,T,05.85,N,A*2E')
   })
 
   it('Apparent wind converts ok', done => {
@@ -29,16 +29,11 @@ describe('MWV', () => {
       done()
     })
 
-    parser.parse('$IIMWV,336,R,13.41,N,A*22').catch(e => { done(e) })
+    parser.parse('$IIMWV,336,R,13.41,N,A*22')
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$IIMWV,,,,*4C')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+  it('Doesn\'t choke on empty sentences', () => {
+    const result = new Parser().parseImmediate('$IIMWV,,,,*4C')
+    should.equal(result, null)
   })
 })

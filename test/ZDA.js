@@ -16,15 +16,14 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const assert = chai.assert
+const should = chai.Should()
+chai.use(require('chai-things'))
+chai.use(require('@signalk/signalk-schema').chaiModule)
+
 const nmeaLine = "$GPZDA,160012.71,11,03,2004,-1,00*7D"
 const emptyNmeaLine = "$GPZDA,,,,,,*48"
 
-chai.Should()
-chai.use(require('chai-things'))
-
 describe('ZDA', () => {
-
   it('Converts OK using individual parser', done => {
     const parser = new Parser
 
@@ -34,28 +33,12 @@ describe('ZDA', () => {
       done()
     })
 
-
-    parser
-      .parse(nmeaLine)
-      .then(result => {
-        result.delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.datetime')
-        result.delta.updates[0].values.should.contain.an.item.with.property('value', '2004-03-11T16:00:12.710Z')
-      })
-      .catch(e => {
-        done(e)
-      })
+    parser.parse(nmeaLine)
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    const parser = new Parser()
-
-    parser
-      .parse(emptyNmeaLine)
-      .then(result => {
-        assert.equal(result, null)
-        done()
-      })
-      .catch(e => done(e))
+  it('Doesn\'t choke on empty sentences', () => {
+    const result = new Parser().parseImmediate(emptyNmeaLine)
+    should.equal(result, null)
   })
 
 })

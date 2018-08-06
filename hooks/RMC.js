@@ -45,66 +45,62 @@ module.exports = function (parser, input) {
   let track = 0.0
   let variation = 0.0
 
-  try {
-    const timestamp = utils.timestamp(parts[0], parts[8])
-    const age = moment.tz(timestamp, 'UTC').unix()
+  const timestamp = utils.timestamp(parts[0], parts[8])
+  const age = moment.tz(timestamp, 'UTC').unix()
 
-    latitude = utils.coordinate(parts[2], parts[3])
-    longitude = utils.coordinate(parts[4], parts[5])
+  latitude = utils.coordinate(parts[2], parts[3])
+  longitude = utils.coordinate(parts[4], parts[5])
 
-    speed = utils.float(parts[6])
-    speed = (!isNaN(speed) && speed > 0) ? speed : 0.0
+  speed = utils.float(parts[6])
+  speed = (!isNaN(speed) && speed > 0) ? speed : 0.0
 
-    track = utils.float(parts[7])
-    track = (!isNaN(track)) ? track : 0.0
+  track = utils.float(parts[7])
+  track = (!isNaN(track)) ? track : 0.0
 
-    variation = utils.magneticVariaton(parts[9], parts[10])
+  variation = utils.magneticVariaton(parts[9], parts[10])
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: timestamp,
-          values: [
-            {
-              path: 'navigation.position',
-              value: {
-                longitude,
-                latitude
-              }
-            },
+  const delta = {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: timestamp,
+        values: [
+          {
+            path: 'navigation.position',
+            value: {
+              longitude,
+              latitude
+            }
+          },
 
-            {
-              path: 'navigation.courseOverGroundTrue',
-              value: utils.transform(track, 'deg', 'rad')
-            },
+          {
+            path: 'navigation.courseOverGroundTrue',
+            value: utils.transform(track, 'deg', 'rad')
+          },
 
-            {
-              path: 'navigation.speedOverGround',
-              value: utils.transform(speed, 'knots', 'ms')
-            },
+          {
+            path: 'navigation.speedOverGround',
+            value: utils.transform(speed, 'knots', 'ms')
+          },
 
-            {
-              path: 'navigation.magneticVariation',
-              value: utils.transform(variation, 'deg', 'rad')
-            },
+          {
+            path: 'navigation.magneticVariation',
+            value: utils.transform(variation, 'deg', 'rad')
+          },
 
-            {
-              path: 'navigation.magneticVariationAgeOfService',
-              value: age
-            },
+          {
+            path: 'navigation.magneticVariationAgeOfService',
+            value: age
+          },
 
-            {
-              path: 'navigation.datetime',
-              value: timestamp,
-            },
-          ]
-        }
-      ],
-    }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+          {
+            path: 'navigation.datetime',
+            value: timestamp,
+          },
+        ]
+      }
+    ],
   }
+
+  return delta
 }

@@ -49,8 +49,8 @@ describe('VDM', function() {
       done()
     })
 
-    parser.parse(sentences[0]).catch(e => { done(e) })
-    parser.parse(sentences[1]).catch(e => { done(e) })
+    parser.parse(sentences[0])
+    parser.parse(sentences[1])
   })
 
   it('Single line converts ok', done => {
@@ -61,9 +61,7 @@ describe('VDM', function() {
       done()
     })
 
-    parser
-    .parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
-    .catch(e => { done(e) })
+    parser.parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
   })
 
   it('AtoN converts ok', done => {
@@ -82,7 +80,6 @@ describe('VDM', function() {
 
     parser
       .parse('!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n')
-      .catch(e => { done(e) })
   })
 
   it('SAR aircraft', done => {
@@ -100,21 +97,12 @@ describe('VDM', function() {
       done()
     })
 
-    parser
-      .parse('!AIVDM,1,1,,A,91b4uGhW1>QjIv@RMAgFlwh20<2L,0*72\n')
-      .catch(e => { done(e) })
+    parser.parse('!AIVDM,1,1,,A,91b4uGhW1>QjIv@RMAgFlwh20<2L,0*72\n')
   })
 
-
-  it('Doesn\'t choke on empty sentences', done => {
-    const parser = new Parser
-    parser
-    .parse('!AIVDM,,,,,,*57')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+  it('Doesn\'t choke on empty sentences', () => {
+    const result = new Parser().parseImmediate('!AIVDM,,,,,,*57')
+    should.equal(result, null)
   })
 
 })

@@ -42,7 +42,7 @@ describe('RMB', () => {
       done()
     })
 
-    parser.parse('$ECRMB,A,0.000,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*04').catch(e => done(e))
+    parser.parse('$ECRMB,A,0.000,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*04')
   })
 
   it('crossTrackError should be positive to steer Right', done => {
@@ -52,7 +52,7 @@ describe('RMB', () => {
       done()
     })
 
-    parser.parse('$ECRMB,A,0.432,R,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*1F').catch(e => done(e))
+    parser.parse('$ECRMB,A,0.432,R,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*1F')
 
   })
 
@@ -63,20 +63,12 @@ describe('RMB', () => {
       done()
     })
 
-    parser.parse('$ECRMB,A,0.432,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*01').catch(e => done(e))
-
+    parser.parse('$ECRMB,A,0.432,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*01')
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    const parser = new Parser()
-    parser
-    .parse('$ECRMB,,,,,,,,,,,,,*77')
-    .then(result => {
-      should.equal(result, null)
-
-      done()
-    })
-    .catch(e => done(e))
+  it('Doesn\'t choke on empty sentences', () => {
+    const result = new Parser().parseImmediate('$ECRMB,,,,,,,,,,,,,*77')
+    should.equal(result, null)
   })
 
 })

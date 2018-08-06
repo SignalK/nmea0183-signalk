@@ -44,49 +44,42 @@ function isEmpty(mixed) {
 }
 
 module.exports = function (parser, input) {
-  try {
-    const { id, sentence, parts, tags } = input
+  const { id, sentence, parts, tags } = input
 
-    if (parts[2] === '' && parts[0] === '' && parts[6] === '' && parts[4] === '') {
-      return Promise.resolve(null)
-    }
+  if (parts[2] === '' && parts[0] === '' && parts[6] === '' && parts[4] === '') {
+    return null
+  }
 
-    let speed = 0.0
+  let speed = 0.0
 
-    if (utils.float(parts[6]) > 0 && String(parts[7]).toUpperCase() === 'K') {
-      speed = utils.transform(utils.float(parts[6]), 'kph', 'ms');
-    }
+  if (utils.float(parts[6]) > 0 && String(parts[7]).toUpperCase() === 'K') {
+    speed = utils.transform(utils.float(parts[6]), 'kph', 'ms');
+  }
 
-    if (utils.float(parts[4]) > 0 && String(parts[5]).toUpperCase() === 'N') {
-      speed = utils.transform(utils.float(parts[4]), 'knots', 'ms');
-    }
+  if (utils.float(parts[4]) > 0 && String(parts[5]).toUpperCase() === 'N') {
+    speed = utils.transform(utils.float(parts[4]), 'knots', 'ms');
+  }
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              path: 'navigation.courseOverGroundMagnetic',
-              value: utils.transform(utils.float(parts[2]), 'deg', 'rad')
-            },
-            {
-              path: 'navigation.courseOverGroundTrue',
-              value: utils.transform(utils.float(parts[0]), 'deg', 'rad')
-            },
-            {
-              path: 'navigation.speedOverGround',
-              value: speed
-            },
-          ]
-        }
-      ],
-    }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    debug(`Try/catch failed: ${e.message}`)
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [
+          {
+            path: 'navigation.courseOverGroundMagnetic',
+            value: utils.transform(utils.float(parts[2]), 'deg', 'rad')
+          },
+          {
+            path: 'navigation.courseOverGroundTrue',
+            value: utils.transform(utils.float(parts[0]), 'deg', 'rad')
+          },
+          {
+            path: 'navigation.speedOverGround',
+            value: speed
+          },
+        ]
+      }
+    ],
   }
 }

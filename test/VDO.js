@@ -12,7 +12,6 @@ const sentences = [
 ]
 
 describe('VDO', function() {
-
   it('Multiline converts ok', done => {
     const parser = new Parser
 
@@ -23,8 +22,8 @@ describe('VDO', function() {
       done()
     })
 
-    parser.parse(sentences[0]).catch(e => { done(e) })
-    parser.parse(sentences[1]).catch(e => { done(e) })
+    parser.parse(sentences[0])
+    parser.parse(sentences[1])
   })
 
   it('Single line converts ok', done => {
@@ -35,20 +34,11 @@ describe('VDO', function() {
       done()
     })
 
-    parser
-    .parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
-    .catch(e => { done(e) })
+    parser.parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    const parser = new Parser
-    parser
-    .parse('!AIVDM,,,,,,*57')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+  it('Doesn\'t choke on empty sentences', () => {
+    const result = new Parser().parseImmediate('!AIVDM,,,,,,*57')
+    should.equal(result, null)
   })
-
 })

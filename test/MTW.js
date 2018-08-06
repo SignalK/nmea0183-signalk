@@ -33,7 +33,7 @@ describe('MTW', () => {
       done()
     })
 
-    parser.parse('$YXMTW,15.2,C*14').catch(e => done(e))
+    parser.parse('$YXMTW,15.2,C*14')
   })
 
 })
