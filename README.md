@@ -26,6 +26,7 @@
 - [VDO - AIS Own Vessel Data](http://catb.org/gpsd/AIVDM.html)
 - [VDR - Set and Drift](http://www.catb.org/gpsd/NMEA.html#_vdr_set_and_drift)
 - [VHW - Water Speed and Heading](http://www.catb.org/gpsd/NMEA.html#_vhw_water_speed_and_heading)
+- [VLW - Distance Traveled through Water](http://www.catb.org/gpsd/NMEA.html#_vlw_distance_traveled_through_water)
 - [VPW - Speed - Measured Parallel to Wind](http://www.catb.org/gpsd/NMEA.html#_vpw_speed_measured_parallel_to_wind)
 - [VTG - Track Made Good and Ground Speed](http://www.catb.org/gpsd/NMEA.html#_vtg_track_made_good_and_ground_speed)
 - [VWR - Relative Wind Speed and Angle](http://www.catb.org/gpsd/NMEA.html#_vwr_relative_wind_speed_and_angle)
