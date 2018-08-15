@@ -41,7 +41,7 @@ where:
 
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts } = input
 
   if(parts[0].toUpperCase() == 'V') {

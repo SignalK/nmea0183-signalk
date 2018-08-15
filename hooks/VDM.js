@@ -48,9 +48,9 @@ const msgTypeToPrefix = {
   24: "vessels."
 }
 
-module.exports = function (parser, input) {
+module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
-  const data = new Decoder(sentence, parser.session)
+  const data = new Decoder(sentence, session)
   const values = []
 
   if (data.valid === false) {

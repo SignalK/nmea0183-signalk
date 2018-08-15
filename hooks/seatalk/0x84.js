@@ -48,7 +48,7 @@
                   TT : Always 0x08 on 400G computer, always 0x05 on 150(G) computer
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
   var mode
 

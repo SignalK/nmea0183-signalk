@@ -63,7 +63,7 @@ function parsePosition(line) {
   return { 'longitude': lon_dec, 'latitude': lat_dec }
 }
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
   var values = [];
 

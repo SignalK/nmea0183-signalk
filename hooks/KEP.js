@@ -69,7 +69,7 @@ function isEmpty(mixed) {
   )
 }
 
-module.exports = function(parser, input) {
+module.exports = function(input) {
   const { id, sentence, parts, tags } = input
 
   var delta

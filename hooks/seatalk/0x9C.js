@@ -33,7 +33,7 @@ const utils = require('@signalk/nmea0183-utilities')
                     The rudder angle bar on the ST600R uses this record
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
   var U = parseInt(parts[1].charAt(0), 16)
   var VW = parseInt(parts[2], 16)
