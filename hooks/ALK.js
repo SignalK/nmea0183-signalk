@@ -30,11 +30,11 @@ STALK     	Raymarine Seatalk1 datagram sentence
 
 const seatalkHooks = require('./seatalk')
 
-module.exports = function(parser, input) {
+module.exports = function(input) {
   const { id, sentence, parts, tags } = input
   const key = '0x' + parseInt(parts[0],16).toString(16).toUpperCase()
   if (typeof seatalkHooks[key] === 'function'){
-    return seatalkHooks[key](parser, input)
+    return seatalkHooks[key](input)
   } else {
     return null
   }

@@ -38,7 +38,7 @@ Field Number:
 8. Checksum
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   var velocityValue
   const { id, sentence, parts, tags } = input
   var pathValues = []

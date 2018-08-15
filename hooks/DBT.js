@@ -36,7 +36,7 @@ Field Number:
 6. Checksum
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   if ((typeof parts[2] !== 'string' && typeof parts[2] !== 'number') || (typeof parts[2] === 'string' && parts[2].trim() === '')) {
