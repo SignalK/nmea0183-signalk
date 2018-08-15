@@ -35,25 +35,21 @@
 module.exports = function (parser, input) {
   const { id, sentence, parts, tags } = input
 
-  try {
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              path: 'environment.water.temperature',
-              value: utils.transform(utils.float(parts[0]), 'c', 'k')
-              //returns raw value, no transformation done
-            }
-          ]
-        }
-      ],
-    }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  const delta = {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [
+          {
+            path: 'environment.water.temperature',
+            value: utils.transform(utils.float(parts[0]), 'c', 'k')
+            //returns raw value, no transformation done
+          }
+        ]
+      }
+    ],
   }
+
+  return delta
 }

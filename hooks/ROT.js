@@ -36,28 +36,23 @@ module.exports = function (parser, input) {
   const { id, sentence, parts, tags } = input
 
   if (String(parts[1]).toUpperCase() !== 'A') {
-    // Don't parse this sentence as it's void.
-    return Promise.reject(new Error('Not parsing sentence as data is not valid)'))
+    return null
   }
 
-  try {
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              path: 'navigation.rateOfTurn',
-              value: utils.transform(utils.float(parts[0]), 'deg', 'rad') / 60
-            }
-          ]
-        }
-      ],
-    }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  const delta = {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [
+          {
+            path: 'navigation.rateOfTurn',
+            value: utils.transform(utils.float(parts[0]), 'deg', 'rad') / 60
+          }
+        ]
+      }
+    ],
   }
+
+  return delta
 }

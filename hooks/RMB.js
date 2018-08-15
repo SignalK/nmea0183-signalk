@@ -53,9 +53,9 @@ module.exports = function (parser, input) {
   latitude = utils.coordinate(parts[5], parts[6])
   longitude = utils.coordinate(parts[7], parts[8])
   if (isNaN(latitude) || isNaN(longitude)) {
-    return Promise.resolve(null)
+    return null
   }
-  
+
   bearing = utils.float(parts[10])
   bearing = (!isNaN(bearing)) ? bearing : 0.0
 
@@ -64,53 +64,49 @@ module.exports = function (parser, input) {
 
   distance = utils.float(parts[9])
   distance = (!isNaN(distance)) ? distance : 0.0
- 
+
   crossTrackError = utils.float(parts[1])
   crossTrackError = (!isNaN(crossTrackError)) ? crossTrackError : 0.0
 
   crossTrackError = parts[2] == 'R' ? crossTrackError : -crossTrackError;
 
-  try {
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              'path': 'navigation.courseRhumbline.nextPoint',
-              'value': {
-                longitude,
-                latitude
-              }
-            },
-
-            {
-              'path': 'navigation.courseRhumbline.nextPoint.bearingTrue',
-              'value': utils.transform(bearing, 'deg', 'rad')
-            },
-
-            {
-              'path': 'navigation.courseRhumbline.nextPoint.velocityMadeGood',
-              'value': utils.transform(vmg, 'knots', 'ms')
-            },
-
-            {
-              'path': 'navigation.courseRhumbline.nextPoint.distance',
-              'value': utils.transform(distance, 'nm', 'km') * 1000
-            },
-
-            {
-              'path': 'navigation.courseRhumbline.crossTrackError',
-              value: utils.transform(crossTrackError, 'nm', 'km') * 1000
+  const delta = {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [
+          {
+            'path': 'navigation.courseRhumbline.nextPoint',
+            'value': {
+              longitude,
+              latitude
             }
-          ]
-        }
-      ],
-    }
+          },
 
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+          {
+            'path': 'navigation.courseRhumbline.nextPoint.bearingTrue',
+            'value': utils.transform(bearing, 'deg', 'rad')
+          },
+
+          {
+            'path': 'navigation.courseRhumbline.nextPoint.velocityMadeGood',
+            'value': utils.transform(vmg, 'knots', 'ms')
+          },
+
+          {
+            'path': 'navigation.courseRhumbline.nextPoint.distance',
+            'value': utils.transform(distance, 'nm', 'km') * 1000
+          },
+
+          {
+            'path': 'navigation.courseRhumbline.crossTrackError',
+            value: utils.transform(crossTrackError, 'nm', 'km') * 1000
+          }
+        ]
+      }
+    ],
   }
+
+  return delta
 }
