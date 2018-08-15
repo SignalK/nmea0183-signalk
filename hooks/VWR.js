@@ -42,38 +42,32 @@ module.exports = function (parser, input) {
 
   const empty = parts.reduce((count, part) => { count += (isEmpty(part) ? 1 : 0); return count; }, 0)
   if (empty > 4) {
-    return Promise.resolve(null)
+    return null
   }
 
   var rightPositive = 0;
   if (String(parts[1]).toUpperCase() === 'R') {
     rightPositive = 1;
-  }else if (String(parts[1]).toUpperCase() === 'L') {
+  } else if (String(parts[1]).toUpperCase() === 'L') {
     rightPositive = -1;
   }
 
-  try {
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              path: 'environment.wind.angleApparent',
-              value: utils.transform(utils.float(parts[0])*rightPositive, 'deg', 'rad')
-            },
-            {
-              path: 'environment.wind.speedApparent',
-              value: utils.transform(utils.float(parts[2]), 'knots', 'ms')
-            }
-          ]
-        }
-      ],
-    }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [
+          {
+            path: 'environment.wind.angleApparent',
+            value: utils.transform(utils.float(parts[0])*rightPositive, 'deg', 'rad')
+          },
+          {
+            path: 'environment.wind.speedApparent',
+            value: utils.transform(utils.float(parts[2]), 'knots', 'ms')
+          }
+        ]
+      }
+    ],
   }
 }

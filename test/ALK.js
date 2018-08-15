@@ -119,16 +119,21 @@ describe('ALK', done => {
     parser.parse(heading_nineC)
   })
 
-/*
-  it('Doesn\'t choke on empty sentences', done => {
-    const parser = new Parser
-    parser
-    .parse('$STALK,9C,,,*3B')
-    .then(result => {
-      should.equal(result, null)
+  it('Doesn\'t choke on empty 0x9C sentences', () => {
+    const parser = new Parser()
+    parser.on('signalk:delta', delta => {
+      should.equal(delta, null)
       done()
     })
-    .catch(e => done(e))
+    parser.parse('$STALK,9C,,,*3B').catch(e => done(e))
   })
-*/
+
+  it('Doesn\'t choke on empty 0x84 sentences', () => {
+    const parser = new Parser()
+    parser.on('signalk:delta', delta => {
+      should.equal(delta, null)
+      done()
+    })
+    parser.parse('$STALK,84,,,,,,,,*61').catch(e => done(e))
+  })
 })

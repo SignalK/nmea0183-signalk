@@ -43,26 +43,19 @@ module.exports = function (parser, input) {
   else {
     return null
   }
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              path: 'performance.velocityMadeGood',
-              value: velocityValue
-            }
-          ]
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [
+          {
+            path: 'performance.velocityMadeGood',
+            value: velocityValue
+          }
+        ]
+      }
+    ],
   }
 }
