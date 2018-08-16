@@ -23,27 +23,15 @@ const should = chai.Should()
 chai.use(require('chai-things'))
 
 describe('HDM', () => {
+  it('Converts OK using individual parser', () => {
+    const delta = new Parser().parse('$04HDM,186.5,M*2C')
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      delta.updates[0].values[0].value.should.be.closeTo(3.26, 0.005)
-      done()
-    })
-
-    parser.parse('$04HDM,186.5,M*2C').catch(e => done(e))
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+    delta.updates[0].values[0].value.should.be.closeTo(3.26, 0.005)
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$SKHDM,,*59')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+  it('Doesn\'t choke on empty sentences', () => {
+    const delta = new Parser().parse('$SKHDM,,*59')
+    should.equal(delta, null)
   })
-
 })

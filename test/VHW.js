@@ -18,49 +18,32 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const signalkSchema = require('@signalk/signalk-schema')
+const should = chai.Should()
 
 chai.use(require('chai-things'))
 
 describe('VHW', () => {
-  it('speed data only', done => {
-    const parser = new Parser
+  it('speed data only', () => {
+    const delta = new Parser().parse('$IIVHW,,T,,M,06.12,N,11.33,K*50')
 
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedThroughWater')
-      delta.updates[0].values[0].value.should.be.closeTo(3.148400797594869, 0.005)
-      done()
-    })
-
-    parser.parse('$IIVHW,,T,,M,06.12,N,11.33,K*50')
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedThroughWater')
+    delta.updates[0].values[0].value.should.be.closeTo(3.148400797594869, 0.005)
   })
 
-  it('speed & direction data', done => {
-    const parser = new Parser
+  it('speed & direction data', () => {
+    const delta = new Parser().parse('$SDVHW,182.5,T,181.8,M,0.0,N,0.0,K*4C')
 
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedThroughWater')
-      delta.updates[0].values[2].value.should.be.closeTo(0, 0.00005)
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      delta.updates[0].values[1].value.should.be.closeTo(3.1730085801256913, 0.00005)
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingTrue')
-      delta.updates[0].values[0].value.should.be.closeTo(3.1852258848896517, 0.00005)
-      done()
-    })
-
-    parser.parse('$SDVHW,182.5,T,181.8,M,0.0,N,0.0,K*4C')
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedThroughWater')
+    delta.updates[0].values[2].value.should.be.closeTo(0, 0.00005)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+    delta.updates[0].values[1].value.should.be.closeTo(3.1730085801256913, 0.00005)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingTrue')
+    delta.updates[0].values[0].value.should.be.closeTo(3.1852258848896517, 0.00005)
   })
 
-  /*
-  it('Doesn\'t choke on empty sentences', done => {
-    const parser = new Parser
-    parser
-    .parse('$IIRPM,,,,,*63')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
-  })
-  */
+  /* FIXME!
+  it('Doesn\'t choke on empty sentences', () => {
+    const delta = new Parser().parse('$IIRPM,,,,,*63')
+    should.equal(delta, null)
+  }) */
 })

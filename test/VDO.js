@@ -11,44 +11,29 @@ const sentences = [
   '!AIVDM,2,2,0,A,`0000000001,2*75\n'
 ]
 
+// FIXME: This is testing VDM - not VDO
 describe('VDO', function() {
+  it('Multiline converts ok', () => {
+    const parser = new Parser()
+    let delta = parser.parse(sentences[0])
+    should.equal(delta, null)
 
-  it('Multiline converts ok', done => {
-    const parser = new Parser
+    delta = parser.parse(sentences[1])
 
-    parser.on('signalk:delta', delta => {
-      delta.context.should.equal('vessels.urn:mrn:imo:mmsi:246326000')
-      delta.updates[0].values[0].value.mmsi.should.equal('246326000')
-      delta.updates[0].values[1].value.name.should.equal('UTGERDINA')
-      done()
-    })
-
-    parser.parse(sentences[0]).catch(e => { done(e) })
-    parser.parse(sentences[1]).catch(e => { done(e) })
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:246326000')
+    delta.updates[0].values[0].value.mmsi.should.equal('246326000')
+    delta.updates[0].values[1].value.name.should.equal('UTGERDINA')
   })
 
-  it('Single line converts ok', done => {
-    const parser = new Parser
 
-    parser.on('signalk:delta', delta => {
-      delta.context.should.equal('vessels.urn:mrn:imo:mmsi:244670316')
-      done()
-    })
-
-    parser
-    .parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
-    .catch(e => { done(e) })
+  it('Single line converts ok', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n')
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:244670316')
   })
 
-  it('Doesn\'t choke on empty sentences', done => {
-    const parser = new Parser
-    parser
-    .parse('!AIVDM,,,,,,*57')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+  it('Doesn\'t choke on empty sentences', () => {
+    const delta = new Parser().parse('!AIVDM,,,,,,*57')
+    should.equal(delta, null)
   })
 
 })

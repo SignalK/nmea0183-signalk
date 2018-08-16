@@ -24,17 +24,12 @@ chai.Should()
 chai.use(require('chai-things'))
 
 describe('APB', done => {
-  it('Doesn\'t parse APB sentences', done => {
-    new Parser()
-    .parse('$GPAPB,A,A,0.10,R,N,V,V,011,M,DEST,011,M,011,M*3C')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => {
-      should.equal(e.message, "@FIXME: APB hook needs to be rewritten to fit latest version of SK")
-      done()
-    })
+  it('Doesn\'t parse APB sentences', () => {
+    should.Throw(() => {
+      new Parser().parse('$GPAPB,A,A,0.10,R,N,V,V,011,M,DEST,011,M,011,M*3C')
+      },
+      /@FIXME: APB hook needs to be rewritten to fit latest version of SK/
+    )
   })
 
 })
