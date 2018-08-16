@@ -18,6 +18,7 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
 const heading = '$STALK,84,B6,10,00,00,00,00,00,00*14'
 const standby = '$STALK,84,E6,15,00,00,00,00,00,08*1E'
 const auto = '$STALK,84,56,5E,79,02,00,00,00,08*16'
@@ -26,114 +27,62 @@ const route = '$STALK,84,06,00,00,08,00,00,00,00*6F'
 const rudder = '$STALK,84,06,00,00,08,00,FE,00,00*6C'
 const heading_nineC = '$STALK,9C,51,1E,00*4B'
 
-chai.Should()
+const should = chai.Should()
 chai.use(require('chai-things'))
 
-describe('ALK', done => {
-  it('0x84 heading converted', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      delta.updates[0].values[0].value.should.be.closeTo(5.305800926062761, 0.0005)
-      done()
-    })
-    parser.parse(heading)
+describe('ALK', () => {
+  it('0x84 heading converted', () => {
+    const delta = new Parser().parse(heading)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+    delta.updates[0].values[0].value.should.be.closeTo(5.305800926062761, 0.0005)
   })
 
-  it('0x84 ap mode: standby converted', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
-      delta.updates[0].values[1].value.should.equal('standby')
-      done()
-    })
-    parser.parse(standby)
+  it('0x84 ap mode: standby converted', () => {
+    const delta = new Parser().parse(standby)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
+    delta.updates[0].values[1].value.should.equal('standby')
   })
 
-  it('0x84 ap mode: auto converted', done => {
-    const parser = new Parser
+  it('0x84 ap mode: auto converted', () => {
+    const delta = new Parser().parse(auto)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.target.headingMagnetic')
+    delta.updates[0].values[1].value.should.be.closeTo(2.626720524251466, 0.0005)
 
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
-      delta.updates[0].values[2].value.should.equal('auto')
-      done()
-    })
-    parser.parse(auto)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
+    delta.updates[0].values[2].value.should.equal('auto')
   })
 
-  it('0x84 ap mode: wind converted', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
-      delta.updates[0].values[0].value.should.equal('wind')
-      done()
-    })
-    parser.parse(wind)
+  it('0x84 ap mode: wind converted', () => {
+    const delta = new Parser().parse(wind)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
+    delta.updates[0].values[0].value.should.equal('wind')
   })
 
-  it('0x84 ap mode: route converted', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
-      delta.updates[0].values[0].value.should.equal('route')
-      done()
-    })
-    parser.parse(route)
+  it('0x84 ap mode: route converted', () => {
+    const delta = new Parser().parse(route)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.state')
+    delta.updates[0].values[0].value.should.equal('route')
   })
 
-  it('0x84 rudder angle converted', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.rudderAngle')
-      delta.updates[0].values[0].value.should.be.closeTo(-0.03490658503988659, 0.0005)
-      done()
-    })
-    parser.parse(rudder)
+  it('0x84 rudder angle converted', () => {
+    const delta = new Parser().parse(rudder)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.rudderAngle')
+    delta.updates[0].values[0].value.should.be.closeTo(-0.03490658503988659, 0.0005)
   })
 
-  it('0x84 ap target heading  converted', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.target.headingMagnetic')
-      delta.updates[0].values[1].value.should.be.closeTo(2.626720524251466, 0.0005)
-      done()
-    })
-    parser.parse(auto)
-  })
-
-  it('0x9C ap target heading  converted', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-      delta.updates[0].values[0].value.should.be.closeTo(2.6529004630313806, 0.0005)
-      done()
-    })
-
-    parser.parse(heading_nineC)
+  it('0x9C ap target heading  converted', () => {
+    const delta = new Parser().parse(heading_nineC)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+    delta.updates[0].values[0].value.should.be.closeTo(2.6529004630313806, 0.0005)
   })
 
   it('Doesn\'t choke on empty 0x9C sentences', () => {
-    const parser = new Parser()
-    parser.on('signalk:delta', delta => {
-      should.equal(delta, null)
-      done()
-    })
-    parser.parse('$STALK,9C,,,*3B').catch(e => done(e))
+    const delta = new Parser().parse('$STALK,9C,,,*3B')
+    should.equal(delta, null)
   })
 
   it('Doesn\'t choke on empty 0x84 sentences', () => {
-    const parser = new Parser()
-    parser.on('signalk:delta', delta => {
-      should.equal(delta, null)
-      done()
-    })
-    parser.parse('$STALK,84,,,,,,,,*61').catch(e => done(e))
+    const delta = new Parser().parse('$STALK,84,,,,,,,,*61')
+    should.equal(delta, null)
   })
 })

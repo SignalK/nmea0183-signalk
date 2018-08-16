@@ -18,23 +18,16 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+
 const nmeaLine = '$GPROT,35.6,A*01'
 
 chai.Should()
 chai.use(require('chai-things'))
 
 describe('ROT', () => {
-
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.rateOfTurn')
-      delta.updates[0].values[0].value.should.be.closeTo((35.6 / 180 * Math.PI / 60), 0.0005)
-      done()
-    })
-
-    parser.parse(nmeaLine)
+  it('Converts OK using individual parser', () => {
+    const delta = new Parser().parse(nmeaLine)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.rateOfTurn')
+    delta.updates[0].values[0].value.should.be.closeTo((35.6 / 180 * Math.PI / 60), 0.0005)
   })
-
 })

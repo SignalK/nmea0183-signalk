@@ -23,75 +23,46 @@ const should = chai.Should()
 chai.use(require('chai-things'))
 
 describe('DPT', () => {
-
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
-      delta.updates[0].values.should.contain.an.item.with.property('value', 4.1)
-      done()
-    })
-
-    parser.parse('$IIDPT,4.1,0.0*45').catch(e => done(e))
+  it('Converts OK using individual parser', () => {
+    const delta = new Parser().parse('$IIDPT,4.1,0.0*45')
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
+    delta.updates[0].values.should.contain.an.item.with.property('value', 4.1)
   })
 
-  it('Converts OK with missing offset', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values[0].path.should.equal('environment.depth.belowTransducer')
-      delta.updates[0].values[0].value.should.equal(4.1)
-      done()
-    })
-
-    parser.parse('$IIDPT,4.1,*6B').catch(e => done(e))
+  it('Converts OK with missing offset', () => {
+    const delta = new Parser().parse('$IIDPT,4.1,*6B')
+    delta.updates[0].values[0].path.should.equal('environment.depth.belowTransducer')
+    delta.updates[0].values[0].value.should.equal(4.1)
   })
 
-  it('Converts OK with positive offset', done => {
-    const parser = new Parser
+  it('Converts OK with positive offset', () => {
+    const delta = new Parser().parse('$IIDPT,4.1,1.0*44')
 
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
-      delta.updates[0].values.should.contain.an.item.with.property('value', 4.1)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowTransducer')
+    delta.updates[0].values.should.contain.an.item.with.property('value', 4.1)
 
-      delta.updates[0].values[1].path.should.equal('environment.depth.surfaceToTransducer')
-      delta.updates[0].values[1].value.should.equal(1)
+    delta.updates[0].values[1].path.should.equal('environment.depth.surfaceToTransducer')
+    delta.updates[0].values[1].value.should.equal(1)
 
-      delta.updates[0].values[2].path.should.equal('environment.depth.belowSurface')
-      delta.updates[0].values[2].value.should.equal(5.1)
-      done()
-    })
-
-    parser.parse('$IIDPT,4.1,1.0*44').catch(e => done(e))
+    delta.updates[0].values[2].path.should.equal('environment.depth.belowSurface')
+    delta.updates[0].values[2].value.should.equal(5.1)
   })
 
-  it('Converts OK with negative offset', done => {
-    const parser = new Parser
+  it('Converts OK with negative offset', () => {
+    const delta = new Parser().parse('$IIDPT,4.1,-1.0*69')
 
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values[0].path.should.equal('environment.depth.belowTransducer')
-      delta.updates[0].values[0].value.should.be.closeTo(4.1, 0.1)
+    delta.updates[0].values[0].path.should.equal('environment.depth.belowTransducer')
+    delta.updates[0].values[0].value.should.be.closeTo(4.1, 0.1)
 
-      delta.updates[0].values[1].path.should.equal('environment.depth.transducerToKeel')
-      delta.updates[0].values[1].value.should.equal(1)
+    delta.updates[0].values[1].path.should.equal('environment.depth.transducerToKeel')
+    delta.updates[0].values[1].value.should.equal(1)
 
-      delta.updates[0].values[2].path.should.equal('environment.depth.belowKeel')
-      delta.updates[0].values[2].value.should.be.closeTo(3.1, 0.1)
-      done()
-    })
-
-    parser.parse('$IIDPT,4.1,-1.0*69').catch(e => done(e))
-  })  
-  
-  it('Doesn\'t choke on empty sentences', done => {
-    new Parser()
-    .parse('$IIDPT,,,*6C')
-    .then(result => {
-      should.equal(result, null)
-      done()
-    })
-    .catch(e => done(e))
+    delta.updates[0].values[2].path.should.equal('environment.depth.belowKeel')
+    delta.updates[0].values[2].value.should.be.closeTo(3.1, 0.1)
   })
 
+  it('Doesn\'t choke on empty sentences', () => {
+    const delta = new Parser().parse('$IIDPT,,,*6C')
+    should.equal(delta, null)
+  })
 })
