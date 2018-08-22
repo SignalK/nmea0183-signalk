@@ -25,7 +25,8 @@
 module.exports = function (parser, input) {
   const { id, sentence, parts, tags } = input
 
-  var speedOverGround=parseInt(parts[2],16)+256*parseInt(parts[3],16)/10.0;
+  var XXXX=parseInt(parts[2],16)+256*parseInt(parts[3],16)
+  var speedOverGround=XXXX/10.0;
   var pathValues = []
   
   pathValues.push({
