@@ -36,7 +36,7 @@ const subHooks = loadSubHooks(folderName)
 
 module.exports = function(parser, input) {
   const { id, sentence, parts, tags } = input
-  const key = '0x' + parseInt(parts[0],16).toString(16).toUpperCase()
+  const key = '0x'+parts[0].toUpperCase()
   if (key in subHooks){
     return require(`${path}/${key}`)(parser, input)
   } else {
