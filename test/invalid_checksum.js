@@ -21,11 +21,37 @@ const chai = require('chai')
 const should = chai.Should()
 chai.use(require('chai-things'))
 
-const nmeaLine = '$GPROT,35.6,A*FF'
+const nmeaLineInvalidChecksum = '$GPROT,35.6,A*FF'
+const nmeaLineWithoutChecksum = '$GPROT,35.6,A*'
 
 describe('Invalid checksum', () => {
-  it('throws exception on invalid checksum', () => {
-    should.Throw(() => { new Parser().parse(nmeaLine) },
+  it('by default throws exception on invalid checksum', () => {
+    should.Throw(() => { new Parser().parse(nmeaLineInvalidChecksum) },
+      /is invalid/)
+  })
+
+  it('by default throws exception on line without a checksum', () => {
+    should.Throw(() => { new Parser().parse(nmeaLineWithoutChecksum) },
+      /is invalid/)
+  })
+
+  it('with option requireChecksum==false, do not throw on missing checkum', () => {
+    should.not.Throw(() => { new Parser({ requireChecksum: false }).parse(nmeaLineWithoutChecksum) },
+      /is invalid/)
+  })
+
+  it('with options requireChecksum==false, should still throw on invalid checkum', () => {
+    should.Throw(() => { new Parser({ requireChecksum: false }).parse(nmeaLineInvalidChecksum) },
+      /is invalid/)
+  })
+
+  it('with option validateChecksum==false, do not throw on invalid checkum', () => {
+    should.not.Throw(() => { new Parser({ validateChecksum: false }).parse(nmeaLineInvalidChecksum) },
+      /is invalid/)
+  })
+
+  it('with option validateChecksum==false, do not throw on missing checkum', () => {
+    should.not.Throw(() => { new Parser({ validateChecksum: false }).parse(nmeaLineWithoutChecksum) },
       /is invalid/)
   })
 })
