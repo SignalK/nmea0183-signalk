@@ -19,51 +19,45 @@
  const utils = require('@signalk/nmea0183-utilities')
 
 /*
-54  T1  RS  HH  GMT-time: 
+54  T1  RS  HH  GMT-time:
                           HH hours, 6 MSBits of RST = minutes = (RS & 0xFC) / 4
-                                    6 LSBits of RST = seconds =  ST & 0x3F 
+                                    6 LSBits of RST = seconds =  ST & 0x3F
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var T = (parseInt(parts[1],16) & 0xF0) >> 4;
   var S = (parseInt(parts[2],16) & 0x0F);
   var RS = parseInt(parts[2],16);
-  var HH = parseInt(parts[3],16); 
+  var HH = parseInt(parts[3],16);
 
   var ST=(S << 4)+T
 
   var hour=HH
   var minute=(RS & 0xFC) / 4
-  var second=ST & 0x3F  
+  var second=ST & 0x3F
   var milliSecond=0
 
   var year=parseInt(tags.timestamp.substr(0,4))
   var month=parseInt(tags.timestamp.substr(5,2))-1
   var day=parseInt(tags.timestamp.substr(8,2))
-  
-  try {
 
-    const d = new Date(Date.UTC(year, month, day, hour, minute, second, milliSecond ))
-    const ts = d.toISOString();
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              "path": "navigation.datetime",
-              "value": ts
-            }
-          ]
-        }
-      ],
-    }
+  const d = new Date(Date.UTC(year, month, day, hour, minute, second, milliSecond ))
+  const ts = d.toISOString();
+  var pathValues = []
 
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  pathValues.push({
+    path: 'navigation.datetime',
+    value: ts
+  })
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

@@ -22,7 +22,7 @@
 56  M1  DD  YY  Date: YY year, M month, DD day in month
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var M = (parseInt(parts[1],16) & 0xF0) >> 4;
@@ -37,28 +37,22 @@ module.exports = function (parser, input) {
   var minute=parseInt(tags.timestamp.substr(14,2))
   var second=parseInt(tags.timestamp.substr(17,2))
   var milliSecond=parseInt(tags.timestamp.substr(20,3))
-  
-  try {
 
-    const d = new Date(Date.UTC(year, month, day, hour, minute, second, milliSecond ))
-    const ts = d.toISOString();
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              "path": "navigation.datetime",
-              "value": ts
-            }
-          ]
-        }
-      ],
-    }
+  const d = new Date(Date.UTC(year, month, day, hour, minute, second, milliSecond ))
+  const ts = d.toISOString();
+  var pathValues = []
 
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  pathValues.push({
+    path: 'navigation.datetime',
+    value: ts
+  })
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

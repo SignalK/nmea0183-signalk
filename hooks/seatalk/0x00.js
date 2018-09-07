@@ -29,7 +29,7 @@ Z&2 = 2: Deep Alarm is active
 Z&1 = 1: Shallow Depth Alarm is active
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var Y = parseInt(parts[2].charAt(0),16)

@@ -32,9 +32,9 @@ const seatalkHooks = require('./seatalk')
 
 module.exports = function(input) {
   const { id, sentence, parts, tags } = input
-  const key = '0x'+parts[0].toUpperCase()
-  if (key in subHooks){
-    return require(`${path}/${key}`)(parser, input)
+  const key = '0x' + (parts[0]).toUpperCase()
+  if (typeof seatalkHooks[key] === 'function'){
+    return seatalkHooks[key](input)
   } else {
     return null
   }

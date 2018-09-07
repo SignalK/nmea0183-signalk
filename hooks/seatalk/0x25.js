@@ -20,11 +20,11 @@
 
 /*
 25  Z4  XX  YY  UU  VV AW  Total & Trip Log 
-                      total= (XX+YY*256+Z* 4096)/ 10 [max=104857.5] nautical miles 
+                      total= (XX+YY*256+Z* 4096)/ 10 [max=104857.5] nautical miles
                       trip = (UU+VV*256+W*65536)/100 [max=10485.75] nautical miles
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var Z = (parseInt(parts[1],16) & 0xF0) >> 4;
@@ -38,7 +38,7 @@ module.exports = function (parser, input) {
   var trip = (UU+VV*256+W*65536)/100.0
 
   var pathValues = []
-  
+
   pathValues.push({
     path: 'navigation.trip',
     value: utils.transform(utils.float(trip), 'nm', 'km') * 1000
@@ -48,22 +48,14 @@ module.exports = function (parser, input) {
     path: 'navigation.log',
     value: utils.transform(utils.float(total), 'nm', 'km') * 1000
   })
-               
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

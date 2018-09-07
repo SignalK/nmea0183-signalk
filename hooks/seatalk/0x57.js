@@ -19,19 +19,19 @@
  const utils = require('@signalk/nmea0183-utilities')
 
 /*
-57  S0  DD  
+57  S0  DD
                 Sat Info: S number of sats, DD horiz. dillution of position, if S=1 -> DD=0x94
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var S = (parseInt(parts[1],16) & 0xF0) >> 4;
   var DD = parseInt(parts[2],16);
-  if (S==1){d=0x94};
-  
+  if (S==1){DD=0x94};
+
   var pathValues = []
-  
+
   pathValues.push({
     path: 'navigation.gnss.satellites',
     value: utils.float(S)
@@ -41,22 +41,14 @@ module.exports = function (parser, input) {
     path: 'navigation.gnss.horizontalDilution',
     value: utils.float(DD)
   })
-               
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

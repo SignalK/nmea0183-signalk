@@ -19,44 +19,35 @@
  const utils = require('@signalk/nmea0183-utilities')
 
 /*
-53  U0  VW      Magnetic Course in degrees: 
-                  The two lower  bits of  U * 90 + 
-                  the six lower  bits of VW *  2 + 
-                  the two higher bits of  U /  2 = 
+53  U0  VW      Magnetic Course in degrees:
+                  The two lower  bits of  U * 90 +
+                  the six lower  bits of VW *  2 +
+                  the two higher bits of  U /  2 =
                   (U & 0x3) * 90 + (VW & 0x3F) * 2 + (U & 0xC) / 8
                   The Magnetic Course may be offset by the Compass Variation (see datagram 99) to get the Course Over Ground (COG).
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var U = (parseInt(parts[1],16) & 0xF0) >> 4;
   var VW = parseInt(parts[2],16);
   var magneticCourse=(U & 0x3) * 90.0 + (VW & 0x3F) * 2.0 + (U & 0xC) / 8.0;
-  console.log("magneticCourse:"+magneticCourse)
-  
+
   var pathValues = []
-  
+
   pathValues.push({
     path: 'navigation.courseOverGroundMagnetic',
     value: utils.transform(utils.float(magneticCourse), 'deg', 'rad')
   })
-                 
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

@@ -22,32 +22,24 @@
 22  02  XX  XX  00  Total Mileage: XXXX/10 nautical miles
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
-
-  var totalMileage=(parseInt(parts[2],16)+parseInt(parts[3],16))/10.0;
+  const nauticalMilesToMeters = 1852
+  var totalMileage=(parseInt(parts[2],16)+256*parseInt(parts[3],16))*nauticalMilesToMeters/10.0;
   var pathValues = []
-  
+
   pathValues.push({
     path: 'navigation.log',
     value: utils.float(totalMileage)
   })
-               
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

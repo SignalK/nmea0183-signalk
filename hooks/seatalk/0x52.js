@@ -22,33 +22,25 @@
 52  01  XX  XX  Speed over Ground: XXXX/10 Knots
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var XXXX=parseInt(parts[2],16)+256*parseInt(parts[3],16)
   var speedOverGround=XXXX/10.0;
   var pathValues = []
-  
+
   pathValues.push({
     path: 'navigation.speedOverGround',
     value: utils.transform(utils.float(speedOverGround), 'knots', 'ms')
   })
-               
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

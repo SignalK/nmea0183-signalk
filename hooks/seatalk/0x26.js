@@ -19,16 +19,16 @@
  const utils = require('@signalk/nmea0183-utilities')
 
 /*
-26  04  XX  XX  YY  YY DE  Speed through water: 
-                        XXXX/100 Knots, sensor 1, current speed, valid if D&4=4 
-                        YYYY/100 Knots, average speed (trip/time) if D&8=0 
+26  04  XX  XX  YY  YY DE  Speed through water:
+                        XXXX/100 Knots, sensor 1, current speed, valid if D&4=4
+                        YYYY/100 Knots, average speed (trip/time) if D&8=0
                                 or data from sensor 2 if D&8=8
                         E&1=1: Average speed calulation stopped
                         E&2=2: Display value in MPH
                         Corresponding NMEA sentence: VHW
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var D = (parseInt(parts[6],16) & 0xF0) >> 4
@@ -41,13 +41,13 @@ module.exports = function (parser, input) {
 
   var pathValues = []
 
-  // Check if value1 is a valid speedThroughWater 
+  // Check if value1 is a valid speedThroughWater
   if ((D & 4)==4) {
-    var speedThroughWater=value1   
+    var speedThroughWater=value1
     // Check if value2 is a valid speedThroughWater from sensor 2
     /*
     if ((D & 8)==8) {
-      // compute the speedThroughWater as the average between the two values 
+      // compute the speedThroughWater as the average between the two values
       speedThroughWater=(value1+value2)/2
     }
     */
@@ -65,22 +65,14 @@ module.exports = function (parser, input) {
       value: utils.transform(utils.float(value2), 'knots', 'ms')
     })
   }
-               
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

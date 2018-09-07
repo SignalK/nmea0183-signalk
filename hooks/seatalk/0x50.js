@@ -19,14 +19,14 @@
  const utils = require('@signalk/nmea0183-utilities')
 
 /*
-50  Z2  XX  YY  YY  LAT position: XX degrees, (YYYY & 0x7FFF)/100 minutes 
+50  Z2  XX  YY  YY  LAT position: XX degrees, (YYYY & 0x7FFF)/100 minutes
                      MSB of Y = YYYY & 0x8000 = South if set, North if cleared
                      Z= 0xA or 0x0 (reported for Raystar 120 GPS), meaning unknown
                      Stable filtered position, for raw data use command 58
                      Corresponding NMEA sentences: RMC, GAA, GLL
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var Z = (parseInt(parts[1],16) & 0xF0) >> 4;
@@ -36,29 +36,21 @@ module.exports = function (parser, input) {
   if ((YYYY & 0x8000)!=0) { s=-1; }
   var minutes=(YYYY & 0x7FFF)/100.0
   var latitude=s*(XX+minutes/60);
-  
+
   var pathValues = []
-  
+
   pathValues.push({
     path: 'navigation.position.latitude',
     value: utils.float(latitude)
   })
-               
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

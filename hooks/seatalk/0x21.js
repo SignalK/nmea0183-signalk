@@ -19,10 +19,10 @@
  const utils = require('@signalk/nmea0183-utilities')
 
 /*
- 21  02  XX  XX  0X  Trip Mileage: XXXXX/100 nautical miles 
+ 21  02  XX  XX  0X  Trip Mileage: XXXXX/100 nautical miles
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var XXXX=parseInt(parts[2],16)+256*parseInt(parts[3],16)
@@ -34,22 +34,14 @@ module.exports = function (parser, input) {
     path: 'navigation.trip',
     value: utils.transform(utils.float(trip), 'nm', 'km') * 1000
   })
-               
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

@@ -19,13 +19,13 @@
  const utils = require('@signalk/nmea0183-utilities')
 
 /*
-11  01  XX  0Y  Apparent Wind Speed: (XX & 0x7F) + Y/10 Knots 
-                 Units flag: XX&0x80=0    => Display value in Knots 
-                             XX&0x80=0x80 => Display value in Meter/Second 
+11  01  XX  0Y  Apparent Wind Speed: (XX & 0x7F) + Y/10 Knots
+                 Units flag: XX&0x80=0    => Display value in Knots
+                             XX&0x80=0x80 => Display value in Meter/Second
                  Corresponding NMEA sentence: MWV
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var XX=parseInt(parts[2],16)
@@ -37,22 +37,14 @@ module.exports = function (parser, input) {
     path: 'environment.wind.speedApparent',
     value: utils.transform(utils.float(apparentWindSpeed), 'knots', 'ms')
   })
-               
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }

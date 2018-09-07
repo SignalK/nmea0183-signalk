@@ -19,16 +19,16 @@
  const utils = require('@signalk/nmea0183-utilities')
 
 /*
-99  00  XX        Compass variation sent by ST40 compass instrument 
-                     or ST1000, ST2000, ST4000+, E-80 every 10 seconds 
-                     but only if the variation is set on the instrument 
-                     Positive XX values: Variation West, Negative XX values: Variation East 
-                     Examples (XX => variation): 00 => 0, 01 => -1 west, 02 => -2 west ... 
-                                                 FF => +1 east, FE => +2 east ... 
+99  00  XX        Compass variation sent by ST40 compass instrument
+                     or ST1000, ST2000, ST4000+, E-80 every 10 seconds
+                     but only if the variation is set on the instrument
+                     Positive XX values: Variation West, Negative XX values: Variation East
+                     Examples (XX => variation): 00 => 0, 01 => -1 west, 02 => -2 west ...
+                                                 FF => +1 east, FE => +2 east ...
                    Corresponding NMEA sentences: RMC, HDG
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var XX = parseInt(parts[2],16)
@@ -43,22 +43,14 @@ module.exports = function (parser, input) {
     path: 'navigation.magneticVariation',
     value: utils.transform(utils.float(magneticVariation), 'deg', 'rad')
   })
-               
-  try {
 
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ]
   }
 }
