@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-const debug = require("debug")("signalk-parser-nmea0183/KEP")
+const debug = require("debug")("signalk-parser-nmea0183/PNKEP")
 const utils = require("@signalk/nmea0183-utilities")
 
 /*
@@ -71,8 +71,9 @@ function isEmpty(mixed) {
 
 module.exports = function(input) {
   const { id, sentence, parts, tags } = input
+  let values = []
+  let delta = {}
 
-  var delta
   //PNKEP,01
   if (parts[0] === "01") {
     if (parts[1] === "" && parts[3] === "") {
@@ -88,21 +89,10 @@ module.exports = function(input) {
     if (utils.float(parts[1]) > 0 && String(parts[2]).toUpperCase() === "N") {
       targetspeed = utils.transform(utils.float(parts[1]), "knots", "ms")
     }
-
-    delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              path: "performance.targetSpeed",
-              value: targetspeed
-            }
-          ]
-        }
-      ]
-    }
+    values.push({
+      path: "performance.targetSpeed",
+      value: targetspeed
+    })
   }
 
   // PNKEP,02
@@ -117,20 +107,10 @@ module.exports = function(input) {
       nxtcourse = utils.transform(utils.float(parts[1]), "deg", "rad")
     }
 
-    delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              path: "performance.tackMagnetic",
-              value: nxtcourse
-            }
-          ]
-        }
-      ]
-    }
+    values.push({
+      path: "performance.tackMagnetic",
+      value: nxtcourse
+    })
   }
 
   // PNKEP,03
@@ -145,20 +125,18 @@ module.exports = function(input) {
       optcourse = utils.transform(utils.float(parts[1]), "deg", "rad")
     }
 
-    delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              path: "performance.targetAngle",
-              value: optcourse
-            }
-          ]
-        }
-      ]
-    }
+    values.push({
+      path: "performance.targetAngle",
+      value: optcourse
+    })
+  }
+
+  delta = {
+    "updates": [{
+      "source": tags.source,//this.source(input.instrument),
+      "timestamp": tags.timestamp,
+      "values": values
+    }]
   }
 
   return delta
