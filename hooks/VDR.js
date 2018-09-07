@@ -33,29 +33,25 @@ Field Number:
 6 - Checksum
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  try {
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [{
-            "path": "environment.current",
-            "value": {
-              "setTrue": utils.transform(utils.float(parts[0]),'deg', 'rad'), 
-              "setMagnetic": utils.transform(utils.float(parts[2]),'deg', 'rad'),
-              "drift": utils.transform(utils.float(parts[4]), 'knots', 'ms')
-            }
-          }]
-        }
-      ],
-    }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  const delta = {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [{
+          "path": "environment.current",
+          "value": {
+            "setTrue": utils.transform(utils.float(parts[0]),'deg', 'rad'),
+            "setMagnetic": utils.transform(utils.float(parts[2]),'deg', 'rad'),
+            "drift": utils.transform(utils.float(parts[4]), 'knots', 'ms')
+          }
+        }]
+      }
+    ],
   }
+
+  return delta
 }

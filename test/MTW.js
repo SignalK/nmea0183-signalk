@@ -23,17 +23,10 @@ chai.Should()
 chai.use(require('chai-things'))
 
 describe('MTW', () => {
+  it('Converts OK using individual parser', () => {
+    const delta = new Parser().parse('$YXMTW,15.2,C*14')
 
-  it('Converts OK using individual parser', done => {
-    const parser = new Parser
-
-    parser.on('signalk:delta', delta => {
-      delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.water.temperature')
-      delta.updates[0].values[0].value.should.be.closeTo(288.35, 0.005)
-      done()
-    })
-
-    parser.parse('$YXMTW,15.2,C*14').catch(e => done(e))
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.water.temperature')
+    delta.updates[0].values[0].value.should.be.closeTo(288.35, 0.005)
   })
-
 })

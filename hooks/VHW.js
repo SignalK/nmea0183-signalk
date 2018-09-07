@@ -38,7 +38,7 @@ Field Number:
 8. Checksum
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   var velocityValue
   const { id, sentence, parts, tags } = input
   var pathValues = []
@@ -64,19 +64,15 @@ module.exports = function (parser, input) {
 
 
 
-  try {
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  const delta = {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues
+      }
+    ],
   }
+
+  return delta
 }

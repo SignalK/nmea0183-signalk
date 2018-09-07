@@ -27,28 +27,23 @@
 #  astern 4) Status, A means data is valid 5) Checksum
 */
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-
-  try {
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              path: `propulsion.${(parts[0].toUpperCase() === 'S' ? 'shaft' : 'engine')}_${parts[1]}.revolutions`,
-              value: utils.float(parts[2]) / 60
-            }
-          ]
-        }
-      ],
-    }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  const delta = {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [
+          {
+            path: `propulsion.${(parts[0].toUpperCase() === 'S' ? 'shaft' : 'engine')}_${parts[1]}.revolutions`,
+            value: utils.float(parts[2]) / 60
+          }
+        ]
+      }
+    ],
   }
+
+  return delta
 }

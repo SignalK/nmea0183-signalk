@@ -20,28 +20,26 @@ const debug = require('debug')('signalk-parser-nmea0183/DBT')
 const utils = require('@signalk/nmea0183-utilities')
 
 /*
-=== DBT - Depth below transducer ===
+=== DPT - Depth of water ===
 ------------------------------------------------------------------------------
-*******0   1 2   3 4   5 6
-*******|   | |   | |   | |
-$--DBT,x.x,f,x.x,M,x.x,F*hh<CR><LF>
+*******0   1   2
+*******|   |   |
+$--DPT,x.x,x.x*hh<CR><LF>
 ------------------------------------------------------------------------------
 Field Number:
-0. Depth, feet
-1. f = feet
-2. Depth, meters
-3. M = meters
-4. Depth, Fathoms
-5. F = Fathoms
-6. Checksum
+0. Depth, meters
+1. transducer offset, positive means distance from tansducer to water line negative means distance from transducer to keel
+2. Checksum
 */
 
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  if ((typeof parts[2] !== 'string' && typeof parts[2] !== 'number') || (typeof parts[2] === 'string' && parts[2].trim() === '')) {
+  if (((typeof parts[0] !== 'string' || parts[0].trim() == '') && typeof parts[0] !== 'number') ||
+      (typeof parts[1] !== 'string' && typeof parts[1] !== 'number')) {
     return null
   }
+  var depth = utils.float(parts[0])
 
   const delta = {
     updates: [
@@ -51,11 +49,33 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.depth.belowTransducer',
-            value: utils.float(parts[2])
+            value: depth
           }
         ]
       }
     ],
+  }
+
+  var offset = utils.float(parts[1])
+
+  if ( offset > 0 ) {
+    delta.updates[0].values.push({
+      path: 'environment.depth.surfaceToTransducer',
+      value: offset
+    })
+    delta.updates[0].values.push({
+      path: 'environment.depth.belowSurface',
+      value: depth + offset
+    })
+  } else if ( offset < 0 ) {
+    delta.updates[0].values.push({
+      path: 'environment.depth.transducerToKeel',
+      value: offset * -1
+    })
+    delta.updates[0].values.push({
+      path: 'environment.depth.belowKeel',
+      value: depth + offset
+    })
   }
 
   return delta

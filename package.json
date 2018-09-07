@@ -1,6 +1,6 @@
 {
   "name": "@signalk/nmea0183-signalk",
-  "version": "2.2.0",
+  "version": "2.5.0",
   "description": "A node.js/javascript parser for NMEA0183 sentences. Sentences are parsed to Signal K format.",
   "main": "index.js",
   "scripts": {
@@ -23,13 +23,11 @@
   "author": "Fabian Tollenaar <fabian@signalk.org> (http://signalk.org)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@signalk/nmea0183-utilities": "^0.5.0",
+    "@signalk/nmea0183-utilities": "^0.6.0",
     "@signalk/signalk-schema": "1.0.3",
-    "ggencoder": "^0.1.18",
-    "moment": "^2.17.1",
-    "moment-timezone": "^0.5.11",
-    "split": "^1.0.1",
-    "lodash": "^4.17.4"
+    "ggencoder": "^1.0.2",
+    "moment-timezone": "^0.5.21",
+    "split": "^1.0.1"
   },
   "devDependencies": {
     "debug": "^3.1.0",

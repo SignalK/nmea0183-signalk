@@ -37,43 +37,37 @@ $--VWR,x.x,a,x.x,N,x.x,M,x.x,K*hh<CR><LF>
    return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
  }
 
-module.exports = function (parser, input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   const empty = parts.reduce((count, part) => { count += (isEmpty(part) ? 1 : 0); return count; }, 0)
-  if (empty > 3) {
-    return Promise.resolve(null)
+  if (empty > 4) {
+    return null
   }
 
   var rightPositive = 0;
   if (String(parts[1]).toUpperCase() === 'R') {
     rightPositive = 1;
-  }else if (String(parts[1]).toUpperCase() === 'L') {
+  } else if (String(parts[1]).toUpperCase() === 'L') {
     rightPositive = -1;
   }
 
-  try {
-    const delta = {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: [
-            {
-              path: 'environment.wind.angleApparent',
-              value: utils.transform(utils.float(parts[0])*rightPositive, 'deg', 'rad')
-            },
-            {
-              path: 'environment.wind.speedApparent',
-              value: utils.transform(utils.float(parts[2]), 'knots', 'ms')
-            }
-          ]
-        }
-      ],
-    }
-
-    return Promise.resolve({ delta })
-  } catch (e) {
-    return Promise.reject(e)
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [
+          {
+            path: 'environment.wind.angleApparent',
+            value: utils.transform(utils.float(parts[0])*rightPositive, 'deg', 'rad')
+          },
+          {
+            path: 'environment.wind.speedApparent',
+            value: utils.transform(utils.float(parts[2]), 'knots', 'ms')
+          }
+        ]
+      }
+    ],
   }
 }
