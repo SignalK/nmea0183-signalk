@@ -129,16 +129,20 @@ describe('ALK', () => {
     delta.updates[0].values[0].value.should.be.closeTo(2.7576, 0.005)
   })
 
-  it('0x54 time converted', () => {
-    const delta = new Parser().parse(time)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.datetime')
-    delta.updates[0].values[0].value.should.include('17:08:34.000Z')
+  it('0x54 time disabled', () => {
+    should.Throw(() => {
+      new Parser().parse(time)
+      },
+      /Seatalk 0x54 disabled due to incomplete datetime structure/
+    )
   })
 
-  it('0x56 date converted', () => {
-    const delta = new Parser().parse(date)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.datetime')
-    delta.updates[0].values[0].value.should.include('2024-04-04T')
+  it('0x56 time disabled', () => {
+    should.Throw(() => {
+      new Parser().parse(date)
+      },
+      /Seatalk 0x56 disabled due to incomplete datetime structure/
+    )
   })
 
   it('0x57 satelite info converted', () => {

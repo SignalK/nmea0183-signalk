@@ -47,7 +47,8 @@ module.exports = function (input) {
   const ts = d.toISOString();
   var pathValues = []
 
-  pathValues.push({
+  throw new Error('Seatalk 0x54 disabled due to incomplete datetime structure')
+  /*pathValues.push({
     path: 'navigation.datetime',
     value: ts
   })
@@ -59,5 +60,5 @@ module.exports = function (input) {
         values: pathValues
       }
     ]
-  }
+  }*/
 }
