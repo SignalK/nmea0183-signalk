@@ -9,7 +9,7 @@ module.exports = {
   'HDG': require('./HDG.js'),
   'HDM': require('./HDM.js'),
   'HDT': require('./HDT.js'),
-  'KEP': require('./KEP.js'),
+  'PNKEP': require('./proprietary/PNKEP.js'),
   'MTW': require('./MTW.js'),
   'MWV': require('./MWV.js'),
   'RMB': require('./RMB.js'),
