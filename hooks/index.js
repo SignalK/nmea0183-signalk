@@ -2,6 +2,8 @@ module.exports = {
   'ALK': require('./ALK.js'),
   'APB': require('./APB.js'),
   'DBT': require('./DBT.js'),
+  'DBK': require('./DBK.js'),
+  'DBS': require('./DBS.js'),
   'DPT': require('./DPT.js'),
   'DSC': require('./DSC.js'),
   'GGA': require('./GGA.js'),
