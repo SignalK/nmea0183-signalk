@@ -12,6 +12,8 @@
 - [APB - Autopilot Sentence "B"](http://www.catb.org/gpsd/NMEA.html#_apb_autopilot_sentence_b)
 - [BVE - CruzPro Proprietary Sentence (currently only OP30/60 supported)](http://www.cruzpro.com/op60.html)
 - [DBT - Depth Below Transducer](http://www.catb.org/gpsd/NMEA.html#_dbt_depth_below_transducer)
+- [DBS - Depth Below Surface](http://www.catb.org/gpsd/NMEA.html#_dbs_depth_below_surface)
+- [DBK - Depth Below Keel](http://www.catb.org/gpsd/NMEA.html#_dbk_depth_below_keel)
 - [DPT - Depth of Water](http://www.catb.org/gpsd/NMEA.html#_dpt_depth_of_water)
 - [DSC - Digital Selective Calling Class-D Radios](http://continuouswave.com/whaler/reference/DSC_Datagrams.html)
 - [GGA - Global Positioning System Fix Data](http://www.catb.org/gpsd/NMEA.html#_gga_global_positioning_system_fix_data)
