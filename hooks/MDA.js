@@ -30,7 +30,7 @@
   *   3.    Air temperature, deg Celsius
   *   4.    Water temperature, deg Celsius
   *   5.    Relative humidity, percent
-  *   6.    Absolute humidity, percent <-- absolute shoud not be a fraction (something wrong with NMEA definition?! usually this is g/m3, in SI units)
+  *   6.    Absolute humidity, percent <-- absolute is usually density, but NMEA probably using less common mass water per mass atmosphere formulation
   *   7.    Dew point, deg Celsius
   *   8.    Wind direction, degress True
   *   9.    Wind direction, degress Magnetic
