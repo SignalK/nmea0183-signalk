@@ -22,6 +22,7 @@
 - [HDM - Heading - Magnetic](http://www.catb.org/gpsd/NMEA.html#_hdm_heading_magnetic)
 - [HDT - Heading - True](http://www.catb.org/gpsd/NMEA.html#_hdt_heading_true)
 - KEP - NKE Performance data
+- [MDA - Meteorological Composite](http://catb.org/gpsd/NMEA.html#_mda_meteorilogical_composite)
 - [MTW - Mean Temperature of Water](http://catb.org/gpsd/NMEA.html#_mtw_mean_temperature_of_water)
 - [MWV - Wind Speed and Angle](http://www.catb.org/gpsd/NMEA.html#_mwv_wind_speed_and_angle)
 - [RMB - Recommended Minimum Navigation Information](http://www.catb.org/gpsd/NMEA.html#_rmb_recommended_minimum_navigation_information)
