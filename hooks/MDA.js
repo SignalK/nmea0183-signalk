@@ -45,7 +45,6 @@ module.exports = function (input) {
   const values = []
 
   // make SI units override any non-SI units
-  let pressure = null
   if( parts[0] !== '' ) {
     values.push({
       path: 'environment.outside.pressure',
