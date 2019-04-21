@@ -42,63 +42,86 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
+  const values = []
+
   // make SI units override any non-SI units
   let pressure = null
-  if( parts[0] != '' ) pressure = 33.863886666667 * utils.float(parts[0]) // converting inHg -> hPa (SI units)
-  if( parts[2] != '' ) pressure = utils.float(parts[2])*1000.0  // converting from bars to hPa (SI units)
-
-  let temperature = null
-  if( parts[4] != '' ) temperature = utils.transform(utils.float(parts[4]), 'c', 'k') // transform units Celsius to Kelvin (stick to SI units)
-
-  let waterTemperature = null
-  if( parts[6] != '' ) waterTemperature = utils.transform(utils.float(parts[6]), 'c', 'k')
-
-  let humidityRelative = null
-  if( parts[8] != '' ) humidityRelative = utils.float(parts[8])/100.0 // converting from precentage to fraction
-
-  let humidityAbsolute = null
-  if( parts[9] != '' ) humidityAbsolute = utils.float(parts[9])/100.0 // NMEA docs suggest this is a fraction/percentage, so probably they mean mass water per mass atmosphere formulation
-
-  let dewPoint = null
-  if( parts[10] != '') dewPoint = utils.transform(utils.float(parts[10]), 'c', 'k')
-
-  let windDirectionTrue = null
-  if( parts[12] != '') windDirectionTrue = utils.transform(utils.float(parts[12]), 'deg', 'rad')
-
-  let windDirectionMagnetic = null
-  if( parts[14] != '') windDirectionMagnetic = utils.transform(utils.float(parts[14]), 'deg', 'rad')
-
-  let windSpeed = null
-  if( parts[16] != '') windSpeed = utils.transform(utils.float(parts[16]), 'knots', 'ms')
-  if( parts[18] != '') windSpeed = utils.float(parts[18])
+  if( parts[0] !== '' ) {
+    values.push({
+      path: 'environment.outside.pressure',
+      value: 33.863886666667 * utils.float(parts[0]) // converting inHg -> hPa (SI units)
+    });
+  }
+  if( parts[2] !== '' ) {
+    values.push({
+      path: 'environment.outside.pressure',
+      value: utils.float(parts[2])*1000.0  // converting from bars to hPa (SI units)
+    });
+  }
+  if( parts[4] !== '' ) {
+    values.push({
+      path: 'environment.outside.temperature',
+      value: utils.transform(utils.float(parts[4]), 'c', 'k') // transform units Celsius to Kelvin (stick to SI units)
+    });
+  }
+  if( parts[6] !== '' ) {
+    values.push({
+      path: 'environment.water.temperature',
+      value: utils.transform(utils.float(parts[6]), 'c', 'k') // transform units Celsius to Kelvin (stick to SI units)
+    });
+  }
+  if( parts[8] !== '' ) {
+    values.push({
+      path: 'environment.outside.humidity',
+      value: utils.float(parts[8])/100.0 // converting from precentage to fraction
+    });
+  }
+  if( parts[9] !== '' ) {
+    values.push({
+      path: 'environment.outside.humidityAbsolute',
+      value: utils.float(parts[9])/100.0 // NMEA docs suggest this is a fraction/percentage, so probably they mean mass water per mass atmosphere formulation
+    });
+  }
+  if( parts[10] !== '' ) {
+    values.push({
+      path: 'environment.outside.dewPointTemperature',
+      value: utils.transform(utils.float(parts[10]), 'c', 'k')
+    });
+  }
+  if( parts[12] !== '' ) {
+    values.push({
+      path: 'environment.wind.directionTrue',
+      value: utils.transform(utils.float(parts[12]), 'deg', 'rad')
+    });
+  }
+  if( parts[14] !== '' ) {
+    values.push({
+      path: 'environment.wind.directionMagnetic',
+      value: utils.transform(utils.float(parts[14]), 'deg', 'rad')
+    });
+  }
+  if( parts[16] !== '' ) {
+    values.push({
+      path: 'environment.wind.speedOverGround',
+      value: utils.transform(utils.float(parts[16]), 'knots', 'ms')
+    });
+  }
+  if( parts[18] !== '' ) {
+    values.push({
+      path: 'environment.wind.speedOverGround',
+      value: utils.float(parts[18])
+    });
+  }
 
   const delta = {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: []
+        values: values
       }
     ],
   }
 
-  if( pressure != null ) delta.updates[0].values.push( { path: 'environment.outside.pressure',
-                                                         value: pressure } );
-  if( temperature != null ) delta.updates[0].values.push( { path: 'environment.outside.temperature',
-                                                            value: temperature } );
-  if( waterTemperature != null ) delta.updates[0].values.push( { path: 'environment.water.temperature',
-                                                                 value: waterTemperature } );
-  if( humidityRelative != null ) delta.updates[0].values.push( { path: 'environment.outside.humidity',
-                                                                value: humidityRelative } );
-  if( humidityAbsolute != null ) delta.updates[0].values.push( { path: 'environment.outside.humidityAbsolute',
-                                                                value: humidityAbsolute } );
-  if( dewPoint != null ) delta.updates[0].values.push( { path: 'environment.outside.dewPointTemperature',
-                                                                value: dewPoint } );
-  if( windDirectionTrue != null ) delta.updates[0].values.push( { path: 'environment.wind.directionTrue',
-                                                                 value: windDirectionTrue } );
-  if( windDirectionMagnetic != null ) delta.updates[0].values.push( { path: 'environment.wind.directionMagnetic',
-                                                                     value: windDirectionMagnetic } );
-  if( windSpeed != null ) delta.updates[0].values.push( { path: 'environment.wind.speedOverGround',
-                                                         value: windSpeed } );
   return delta
 }
