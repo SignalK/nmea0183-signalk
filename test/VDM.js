@@ -54,6 +54,17 @@ describe('VDM', function() {
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:244670316')
   })
 
+  it('Unavailable values don\'t convert', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,A,33@nwqwP?w<ovH0kOqP>4?wp0000,0*0B\n')
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:219004903')
+
+    let findPath = 
+    should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.headingTrue'}))
+    should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.courseOverGroundTrue'}))
+    should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.speedOverGround'}))
+    should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.state'}))
+  })
+
   it('AtoN converts ok', () => {
     const delta = new Parser().parse('!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n')
     delta.context.should.equal('atons.urn:mrn:imo:mmsi:993672087')

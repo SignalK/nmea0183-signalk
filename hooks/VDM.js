@@ -75,21 +75,21 @@ module.exports = function (input, session) {
     })
   }
 
-  if (typeof data.sog != 'undefined') {
+  if (typeof data.sog != 'undefined' && data.sog != 102.3 ) {
     values.push({
       path: 'navigation.speedOverGround',
       value: utils.transform(data.sog, 'knots', 'ms')
     })
   }
 
-  if (typeof data.cog != 'undefined') {
+  if (typeof data.cog != 'undefined' && data.cog != 360 ) {
     values.push({
       path: 'navigation.courseOverGroundTrue',
       value: utils.transform(data.cog, 'deg', 'rad')
     })
   }
 
-  if (typeof data.hdg != 'undefined') {
+  if (typeof data.hdg != 'undefined' && data.hdg != 511) {
     values.push({
       path: 'navigation.headingTrue',
       value: utils.transform(data.hdg, 'deg', 'rad')
