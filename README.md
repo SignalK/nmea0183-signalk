@@ -39,6 +39,8 @@
 - [VWR - Relative Wind Speed and Angle](http://www.catb.org/gpsd/NMEA.html#_vwr_relative_wind_speed_and_angle)
 - [ZDA - UTC day, month, and year, and local time zone offset](http://www.trimble.com/oem_receiverhelp/v4.44/en/NMEA-0183messages_ZDA.html)
 
+**Note:** *at this time, unknown sentences will be silently discarded.*
+
 ## Usage
 
 ### JavaScript API
