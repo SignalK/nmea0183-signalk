@@ -20,6 +20,7 @@ module.exports = {
   'RMC': require('./RMC.js'),
   'ROT': require('./ROT.js'),
   'RPM': require('./RPM.js'),
+  'RSA': require('./RSA.js'),
   'VDM': require('./VDM.js'),
   'VDO': require('./VDO.js'),
   'VDR': require('./VDR.js'),

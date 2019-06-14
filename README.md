@@ -29,6 +29,7 @@
 - [RMC - Recommended Minimum Navigation Information](http://www.catb.org/gpsd/NMEA.html#_rmc_recommended_minimum_navigation_information)
 - [ROT - Rate of Turn](http://www.catb.org/gpsd/NMEA.html#_rot_rate_of_turn)
 - [RPM - Revolutions](http://www.catb.org/gpsd/NMEA.html#_rpm_revolutions)
+- [RSA - Rudder Sensor Angle](https://gpsd.gitlab.io/gpsd/NMEA.html#_rsa_rudder_sensor_angle)
 - [VDM - AIS Other Vessel Data](http://catb.org/gpsd/AIVDM.html)
 - [VDO - AIS Own Vessel Data](http://catb.org/gpsd/AIVDM.html)
 - [VDR - Set and Drift](http://www.catb.org/gpsd/NMEA.html#_vdr_set_and_drift)
