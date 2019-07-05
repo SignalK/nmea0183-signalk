@@ -45,8 +45,8 @@ describe('PASHR', () => {
 		delta.updates[0].values[2].value.should.deep.equal({ heading: 312.95, true: true });
 		delta.updates[0].values[3].value.should.equal(true);
 		delta.updates[0].values[4].value.should.equal(-0.01);
-		delta.updates[0].values[5].value.should.equal(2);
-		delta.updates[0].values[6].value.should.equal(1);
+		delta.updates[0].values[5].value.should.equal('RTK fixed integer position');
+		delta.updates[0].values[6].value.should.equal('Post-Alignment');
 		toFull(delta).should.be.validSignalK
 	});
 

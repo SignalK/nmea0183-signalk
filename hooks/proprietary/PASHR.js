@@ -64,6 +64,17 @@ module.exports = function(input){
   const time = parts[0].indexOf('.') === -1 ? parts[0] : parts[0].split('.')[0];
   const timestamp = utils.timestamp(time, moment.tz('UTC').format('DDMMYY'));
 
+  const GPSQualityFlags = [
+    'no GPS',
+    'All non-RTK fixed integer positions',
+    'RTK fixed integer position'
+  ];
+
+  const INSStatusFlag = [
+    'Pre-Alignment',
+    'Post-Alignment'
+  ];
+
   const delta = {
     updates: [
       {
@@ -103,12 +114,12 @@ module.exports = function(input){
           },
           {
             path: 'navigation.attitude.aid',
-            value: utils.int(parts[9])
+            value: GPSQualityFlags[utils.int(parts[9])]
           },
 
           {
             path: 'navigation.attitude.status',
-            value: utils.int(parts[10])
+            value: INSStatusFlag[utils.int(parts[10])]
           },
         ]
       }
