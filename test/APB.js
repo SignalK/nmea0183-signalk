@@ -18,18 +18,37 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
-const should = require('chai').Should()
+const should = chai.Should()
 
 chai.Should()
 chai.use(require('chai-things'))
 
 describe('APB', done => {
-  it('Doesn\'t parse APB sentences', () => {
-    should.Throw(() => {
-      new Parser().parse('$GPAPB,A,A,0.10,R,N,V,V,011,M,DEST,011,M,011,M*3C')
-      },
-      /@FIXME: APB hook needs to be rewritten to fit latest version of SK/
-    )
+  it('Converts OK using individual parser', () => {
+    const delta = new Parser().parse('$GPAPB,A,A,0.10,R,N,V,V,011,M,DEST,011,M,011,M*3C')
+    // console.log(JSON.stringify(delta, null, 2))
+
+    delta.should.be.an('object')
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.crossTrackError')
+    delta.updates[0].values.should.contain.an.item.with.property('value', -0.1)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.bearingTrackMagnetic')
+    delta.updates[0].values.should.contain.an.item.with.property('value', 0.19198621776321237)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.bearingOriginToDestinationMagnetic')
+    delta.updates[0].values.should.contain.an.item.with.property('value', 0.19198621776321237)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.bearingToDestinationMagnetic')
+    delta.updates[0].values.should.contain.an.item.with.property('value', 0.19198621776321237)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.ID')
+    delta.updates[0].values.should.contain.an.item.with.property('value', 'DEST')
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.target.headingMagnetic')
+    delta.updates[0].values.should.contain.an.item.with.property('value', 0.19198621776321237)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'notifications.arrivalCircleEntered')
+    delta.updates[0].values.should.contain.an.item.with.property('value', null)
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'notifications.perpendicularPassed')
+    delta.updates[0].values.should.contain.an.item.with.property('value', null)
   })
 
+  it('Doesn\'t choke on an empty sentence', () => {
+    const delta = new Parser().parse('$GPAPB,,,,,,,,,,,,,,*44')
+    should.equal(delta, null)
+  })
 })
