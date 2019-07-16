@@ -42,31 +42,95 @@ where:
 */
 
 module.exports = function (input) {
-  const { id, sentence, parts } = input
+  const { id, sentence, parts, tags } = input
+  const upper = (str) => str.trim().toUpperCase()
 
-  if(parts[0].toUpperCase() == 'V') {
+  debug(`[APBHook] decoding sentence ${id} => ${sentence}`)
+
+  if (upper(parts[0]) === '' || upper(parts[1]) === '' || upper(parts[2]) === '' || upper(parts[3]) === '' || upper(parts[4]) === '') {
+    return null
+  }
+
+  if (parts[0].trim().toUpperCase() === 'V') {
     // Don't parse this sentence as it's void.
     throw new Error('Not parsing sentence for it\'s void (LORAN-C blink/SNR warning)')
   }
 
-  if(parts[1].toUpperCase() == 'V') {
+  if (parts[1].trim().toUpperCase() === 'V') {
     throw new Error('Not parsing sentence for it\'s void (LORAN-C cycle warning)')
   }
 
-  const xte = utils.transform(parts[2], (parts[4].toUpperCase() === 'N' ? 'nm' : 'km'), 'm')
+  // XTE
+  const direction = parts[3].trim().toUpperCase() === 'L' ? 1 : -1
+  const xte = direction * utils.transform(parts[2], (parts[4].trim().toUpperCase() === 'N' ? 'nm' : 'km'), 'm')
 
-  const currentRoute = {
-    source: utils.source(id),
-    timestamp: utils.timestamp(),
-    steer: (parts[3].toUpperCase() == 'R' ? 'right' : 'left'),
-    bearingActual: utils.transform(utils.float(parts[10]), 'deg', 'rad'),
-    bearingDirect: utils.transform(utils.float(parts[7]), 'deg', 'rad'),
-    courseRequired: utils.transform(utils.float(parts[12]), 'deg', 'rad'),
-    waypoint: {
-      next: parts[9],
-      xte: xte
-    }
+  // WP arrival status
+  const arrivalCircleEntered = parts[5].trim().toUpperCase() === 'A'
+  const perpendicularPassed = parts[6].trim().toUpperCase() === 'A'
+
+  // Bearing, origin to destination
+  const bearingOriginToDest = utils.transform(parts[7], 'deg', 'rad')
+  const bearingOriginToDestType = parts[8].trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
+
+  // Destination Waypoint ID
+  const destinationWaypointID = parts[9].trim()
+
+  // Bearing, position to destination
+  const bearingPositionToDest = utils.transform(parts[10], 'deg', 'rad')
+  const bearingPositionToDestType = parts[11].trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
+
+  // Heading to steer
+  const headingToSteer = utils.transform(parts[12], 'deg', 'rad')
+  const headingToSteerType = parts[13].trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
+
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [
+          {
+            path: 'navigation.courseRhumbline.crossTrackError',
+            value: xte
+          },
+          {
+            path: `navigation.courseRhumbline.bearingTrack${bearingOriginToDestType}`,
+            value: bearingOriginToDest
+          },
+          {
+            path: `navigation.courseRhumbline.bearingOriginToDestination${bearingOriginToDestType}`,
+            value: bearingOriginToDest
+          },
+          {
+            path: `navigation.courseRhumbline.bearingToDestination${bearingPositionToDestType}`,
+            value: bearingPositionToDest
+          },
+          {
+            path: 'navigation.courseRhumbline.nextPoint.ID',
+            value: destinationWaypointID
+          },
+          {
+            path: `steering.autopilot.target.heading${headingToSteerType}`,
+            value: headingToSteer
+          },
+          {
+            path: 'notifications.arrivalCircleEntered',
+            value: arrivalCircleEntered === false ? null : {
+              method: ['sound', 'visual'],
+              state: 'alarm',
+              message: 'WP arrival circle entered!'
+            }
+          },
+          {
+            path: 'notifications.perpendicularPassed',
+            value: perpendicularPassed === false ? null : {
+              method: ['sound', 'visual'],
+              state: 'alarm',
+              message: 'Perpendicular passed!'
+            }
+          }
+        ]
+      }
+    ]
   }
-
-  throw new Error('@FIXME: APB hook needs to be rewritten to fit latest version of SK')
 }

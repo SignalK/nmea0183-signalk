@@ -42,5 +42,8 @@
   "bugs": {
     "url": "https://github.com/signalk/signalk-parser-nmea0183/issues"
   },
-  "homepage": "https://github.com/signalk/signalk-parser-nmea0183"
+  "homepage": "https://github.com/signalk/signalk-parser-nmea0183",
+  "standard": {
+    "globals": ["describe", "it"]
+  }
 }
