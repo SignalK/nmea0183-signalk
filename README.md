@@ -10,6 +10,9 @@
 
 - [ALK - Seatalk](https://en.wikipedia.org/wiki/Seatalk)
 - [APB - Autopilot Sentence "B"](http://www.catb.org/gpsd/NMEA.html#_apb_autopilot_sentence_b)
+- [BOD - Bearing Origin to Destination](https://www.tronico.fi/OH6NT/docs/NMEA0183.pdf)
+- [BWC - Bearing & distance - great circle](https://www.tronico.fi/OH6NT/docs/NMEA0183.pdf)
+- [BWR - Bearing & distance - rhumbline](https://www.tronico.fi/OH6NT/docs/NMEA0183.pdf)
 - [BVE - CruzPro Proprietary Sentence (currently only OP30/60 supported)](http://www.cruzpro.com/op60.html)
 - [DBT - Depth Below Transducer](http://www.catb.org/gpsd/NMEA.html#_dbt_depth_below_transducer)
 - [DBS - Depth Below Surface](http://www.catb.org/gpsd/NMEA.html#_dbs_depth_below_surface)
@@ -21,6 +24,7 @@
 - [HDG - Heading - Deviation & Variation](http://www.catb.org/gpsd/NMEA.html#_hdg_heading_deviation_amp_variation)
 - [HDM - Heading - Magnetic](http://www.catb.org/gpsd/NMEA.html#_hdm_heading_magnetic)
 - [HDT - Heading - True](http://www.catb.org/gpsd/NMEA.html#_hdt_heading_true)
+- [HSC - Heading Steering Command](https://www.tronico.fi/OH6NT/docs/NMEA0183.pdf)
 - KEP - NKE Performance data
 - [MDA - Meteorological Composite](http://catb.org/gpsd/NMEA.html#_mda_meteorilogical_composite)
 - [MTW - Mean Temperature of Water](http://catb.org/gpsd/NMEA.html#_mtw_mean_temperature_of_water)
@@ -38,6 +42,7 @@
 - [VPW - Speed - Measured Parallel to Wind](http://www.catb.org/gpsd/NMEA.html#_vpw_speed_measured_parallel_to_wind)
 - [VTG - Track Made Good and Ground Speed](http://www.catb.org/gpsd/NMEA.html#_vtg_track_made_good_and_ground_speed)
 - [VWR - Relative Wind Speed and Angle](http://www.catb.org/gpsd/NMEA.html#_vwr_relative_wind_speed_and_angle)
+- [XTE - Cross-track Error](https://www.tronico.fi/OH6NT/docs/NMEA0183.pdf)
 - [ZDA - UTC day, month, and year, and local time zone offset](http://www.trimble.com/oem_receiverhelp/v4.44/en/NMEA-0183messages_ZDA.html)
 
 **Note:** *at this time, unknown sentences will be silently discarded.*
