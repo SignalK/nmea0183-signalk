@@ -17,6 +17,7 @@
 'use strict'
 
  const utils = require('@signalk/nmea0183-utilities')
+ const position = require('./position.js')
 
 /*
 50  Z2  XX  YY  YY  LAT position: XX degrees, (YYYY & 0x7FFF)/100 minutes
@@ -35,14 +36,16 @@ module.exports = function (input) {
   var s=1;
   if ((YYYY & 0x8000)!=0) { s=-1; }
   var minutes=(YYYY & 0x7FFF)/100.0
-  var latitude=s*(XX+minutes/60);
-
+  position.latitude=s*(XX+minutes/60);
+  
   var pathValues = []
 
-  pathValues.push({
-    path: 'navigation.position.latitude',
-    value: utils.float(latitude)
-  })
+  if (position.latitude!=null && position.longitude!=null) {
+    pathValues.push({
+      path: 'navigation.position',
+      value: { "longitude": utils.float(position.longitude), "latitude": utils.float(position.latitude) }
+    })
+  }
 
   return {
     updates: [
