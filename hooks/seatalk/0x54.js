@@ -17,7 +17,6 @@
 'use strict'
 
  const utils = require('@signalk/nmea0183-utilities')
- const datetime = require('./datetime.js')
 
 /*
 54  T1  RS  HH  GMT-time:
@@ -25,7 +24,7 @@
                                     6 LSBits of RST = seconds =  ST & 0x3F
 */
 
-module.exports = function (input) {
+module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
 
   var T = (parseInt(parts[1],16) & 0xF0) >> 4;
@@ -40,13 +39,17 @@ module.exports = function (input) {
   var second=ST & 0x3F
   var milliSecond=0
 
-  datetime.time={ "hour":hour, "minute":minute, "second":second, "milliSecond": milliSecond }
+  session["time"]={ "hour":hour, "minute":minute, "second":second, "milliSecond": milliSecond }
 
   var pathValues = []
 
-  if (datetime.date != null && datetime.time != null) {
+  if (session.hasOwnProperty('date') && session.hasOwnProperty('time')) {
 
-    const d = new Date(Date.UTC(datetime.date.year, datetime.date.month, datetime.date.day, datetime.time.hour, datetime.time.minute, datetime.time.second, datetime.time.milliSecond ))
+    const d = new Date(
+      Date.UTC(
+        session["date"].year, session["date"].month, session["date"].day,
+        session["time"].hour, session["time"].minute, session["time"].second,
+        session["time"].milliSecond ))
     const ts = d.toISOString();
 
     pathValues.push({

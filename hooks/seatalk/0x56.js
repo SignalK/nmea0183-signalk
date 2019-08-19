@@ -17,13 +17,12 @@
 'use strict'
 
  const utils = require('@signalk/nmea0183-utilities')
- const datetime = require('./datetime.js')
 
 /*
 56  M1  DD  YY  Date: YY year, M month, DD day in month
 */
 
-module.exports = function (input) {
+module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
 
   var M = (parseInt(parts[1],16) & 0xF0) >> 4;
@@ -31,18 +30,22 @@ module.exports = function (input) {
   var YY = parseInt(parts[3],16);
 
   var year=2000+YY
-  var month=M-1
+  var month=M
   var day=DD
 
-  datetime.date={ "year":year, "month":month, "day":day}
+  session["date"]={ "year":year, "month":month, "day":day}
 
   var pathValues = []
 
-  if (datetime.date != null && datetime.time != null) {
-
-    const d = new Date(Date.UTC(datetime.date.year, datetime.date.month, datetime.date.day, datetime.time.hour, datetime.time.minute, datetime.time.second, datetime.time.milliSecond ))
+  if (session.hasOwnProperty('date') && session.hasOwnProperty('time')) {
+    
+    const d = new Date(
+      Date.UTC(
+        session["date"].year, session["date"].month-1, session["date"].day,
+        session["time"].hour, session["time"].minute, session["time"].second,
+        session["time"].milliSecond ))
     const ts = d.toISOString();
-
+    
     pathValues.push({
       path: 'navigation.datetime',
       value: ts
