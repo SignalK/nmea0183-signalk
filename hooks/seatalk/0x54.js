@@ -17,6 +17,7 @@
 'use strict'
 
  const utils = require('@signalk/nmea0183-utilities')
+ const datetime = require('./datetime.js')
 
 /*
 54  T1  RS  HH  GMT-time:
@@ -39,19 +40,20 @@ module.exports = function (input) {
   var second=ST & 0x3F
   var milliSecond=0
 
-  var year=parseInt(tags.timestamp.substr(0,4))
-  var month=parseInt(tags.timestamp.substr(5,2))-1
-  var day=parseInt(tags.timestamp.substr(8,2))
+  datetime.time={ "hour":hour, "minute":minute, "second":second, "milliSecond": milliSecond }
 
-  const d = new Date(Date.UTC(year, month, day, hour, minute, second, milliSecond ))
-  const ts = d.toISOString();
   var pathValues = []
 
-  throw new Error('Seatalk 0x54 disabled due to incomplete datetime structure')
-  /*pathValues.push({
-    path: 'navigation.datetime',
-    value: ts
-  })
+  if (datetime.date != null && datetime.time != null) {
+
+    const d = new Date(Date.UTC(datetime.date.year, datetime.date.month, datetime.date.day, datetime.time.hour, datetime.time.minute, datetime.time.second, datetime.time.milliSecond ))
+    const ts = d.toISOString();
+
+    pathValues.push({
+      path: 'navigation.datetime',
+      value: ts
+    })
+  }
   return {
     updates: [
       {
@@ -60,5 +62,5 @@ module.exports = function (input) {
         values: pathValues
       }
     ]
-  }*/
+  }
 }
