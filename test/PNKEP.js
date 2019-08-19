@@ -15,11 +15,11 @@
  */
 
 const Parser = require('../lib')
+const toFull = require("./toFull")
 const chai = require("chai")
 const should = chai.Should()
-chai.use(require('@signalk/signalk-schema').chaiModule)
-const toFull = require("./toFull")
 
+chai.use(require('@signalk/signalk-schema').chaiModule)
 chai.use(require("chai-things"))
 
 describe("PNKEP", () => {
