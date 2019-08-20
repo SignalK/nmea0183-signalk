@@ -22,7 +22,7 @@
 56  M1  DD  YY  Date: YY year, M month, DD day in month
 */
 
-module.exports = function (input) {
+module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
 
   var M = (parseInt(parts[1],16) & 0xF0) >> 4;
@@ -30,23 +30,28 @@ module.exports = function (input) {
   var YY = parseInt(parts[3],16);
 
   var year=2000+YY
-  var month=M-1
+  var month=M
   var day=DD
 
-  var hour=parseInt(tags.timestamp.substr(11,2))
-  var minute=parseInt(tags.timestamp.substr(14,2))
-  var second=parseInt(tags.timestamp.substr(17,2))
-  var milliSecond=parseInt(tags.timestamp.substr(20,3))
+  session["date"]={ "year":year, "month":month, "day":day}
 
-  const d = new Date(Date.UTC(year, month, day, hour, minute, second, milliSecond ))
-  const ts = d.toISOString();
   var pathValues = []
 
-  throw new Error('Seatalk 0x56 disabled due to incomplete datetime structure')
-  /*pathValues.push({
-    path: 'navigation.datetime',
-    value: ts
-  })
+  if (session.hasOwnProperty('date') && session.hasOwnProperty('time')) {
+    
+    const d = new Date(
+      Date.UTC(
+        session["date"].year, session["date"].month-1, session["date"].day,
+        session["time"].hour, session["time"].minute, session["time"].second,
+        session["time"].milliSecond ))
+    const ts = d.toISOString();
+    
+    pathValues.push({
+      path: 'navigation.datetime',
+      value: ts
+    })
+  }
+
   return {
     updates: [
       {
@@ -55,5 +60,5 @@ module.exports = function (input) {
         values: pathValues
       }
     ]
-  }*/
+  }
 }

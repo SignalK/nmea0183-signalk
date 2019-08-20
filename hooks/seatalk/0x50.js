@@ -26,7 +26,7 @@
                      Corresponding NMEA sentences: RMC, GAA, GLL
 */
 
-module.exports = function (input) {
+module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
 
   var Z = (parseInt(parts[1],16) & 0xF0) >> 4;
@@ -35,14 +35,16 @@ module.exports = function (input) {
   var s=1;
   if ((YYYY & 0x8000)!=0) { s=-1; }
   var minutes=(YYYY & 0x7FFF)/100.0
-  var latitude=s*(XX+minutes/60);
-
+  session['latitude']=s*(XX+minutes/60);
+  
   var pathValues = []
 
-  pathValues.push({
-    path: 'navigation.position.latitude',
-    value: utils.float(latitude)
-  })
+  if (session.hasOwnProperty('latitude') && session.hasOwnProperty('longitude')) {
+    pathValues.push({
+      path: 'navigation.position',
+      value: { "longitude": utils.float(session['longitude']), "latitude": utils.float(session['latitude']) }
+    })
+  }
 
   return {
     updates: [
