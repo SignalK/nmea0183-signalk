@@ -29,13 +29,20 @@ describe('BWC', () => {
     // console.log(JSON.stringify(delta, null, 2))
 
     delta.should.be.an('object')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseGreatCircle.bearingTrackTrue')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.9058258819918839)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseGreatCircle.bearingTrackMagnetic')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.5515240437561374)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseGreatCircle.nextPoint.distance')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 1.3)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseGreatCircle.nextPoint.position')
+    delta.updates[0].values.should.deep.equal([
+      { path: 'navigation.courseGreatCircle.bearingTrackTrue', value: 0.9058258819918839 },
+      { path: 'navigation.courseGreatCircle.bearingTrackMagnetic', value: 0.5515240437561374 },
+      { path: 'navigation.courseGreatCircle.nextPoint.distance', value: 2407.6000020320143 },
+      {
+        path: 'navigation.courseGreatCircle.nextPoint.position',
+        value: {
+          latitude: 49.287333333333336,
+          longitude: -123.1595
+        }
+      }
+    ])
+
+    // delta.updates[0].values.find(x => x.path === 'navigation.courseRhumbline.bearingToDestinationMagnetic').value.should.be.closeTo(0.19198621776321237, 0.000001)
   })
 
   it('Doesn\'t choke on an empty sentence', () => {

@@ -29,13 +29,26 @@ describe('BWR', () => {
     // console.log(JSON.stringify(delta, null, 2))
 
     delta.should.be.an('object')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.bearingTrackTrue')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.9058258819918839)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.bearingTrackMagnetic')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.5515240437561374)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.distance')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 1.3)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.position')
+    delta.updates[0].values.should.deep.equal([
+      {
+        path: 'navigation.courseRhumbline.bearingTrackTrue'
+        , value: 0.9058258819918839
+      },
+      {
+        path: 'navigation.courseRhumbline.bearingTrackMagnetic'
+        , value: 0.5515240437561374
+      },
+      {
+        path: 'navigation.courseRhumbline.nextPoint.distance'
+        , value: 2407.6000020320143
+      },
+      {
+        path: 'navigation.courseRhumbline.nextPoint.position', value: {
+          "latitude": 49.287333333333336,
+          "longitude": -123.1595
+        }
+      }
+    ])
   })
 
   it('Doesn\'t choke on an empty sentence', () => {

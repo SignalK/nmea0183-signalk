@@ -19,6 +19,7 @@
 const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
+const expect = chai.expect
 
 chai.Should()
 chai.use(require('chai-things'))
@@ -29,22 +30,13 @@ describe('APB', done => {
     // console.log(JSON.stringify(delta, null, 2))
 
     delta.should.be.an('object')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.crossTrackError')
-    delta.updates[0].values.should.contain.an.item.with.property('value', -0.1)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.bearingTrackMagnetic')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.19198621776321237)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.bearingOriginToDestinationMagnetic')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.19198621776321237)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.bearingToDestinationMagnetic')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.19198621776321237)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.ID')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 'DEST')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.target.headingMagnetic')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.19198621776321237)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'notifications.arrivalCircleEntered')
-    delta.updates[0].values.should.contain.an.item.with.property('value', null)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'notifications.perpendicularPassed')
-    delta.updates[0].values.should.contain.an.item.with.property('value', null)
+    delta.updates[0].values.find(x => x.path === 'navigation.courseRhumbline.crossTrackError').value.should.be.closeTo(-185.2, 0.001)
+    delta.updates[0].values.find(x => x.path === 'navigation.courseRhumbline.bearingTrackMagnetic').value.should.be.closeTo(0.19198621776321237, 0.000001)
+    delta.updates[0].values.find(x => x.path === 'navigation.courseRhumbline.bearingToDestinationMagnetic').value.should.be.closeTo(0.19198621776321237, 0.000001)
+    delta.updates[0].values.find(x => x.path === 'navigation.courseRhumbline.nextPoint.ID').value.should.equal('DEST')
+    delta.updates[0].values.find(x => x.path === 'steering.autopilot.target.headingMagnetic').value.should.closeTo(0.19198621776321237, 0.0001)
+    expect(delta.updates[0].values.find(x => x.path === 'notifications.arrivalCircleEntered').value).to.be.null
+    expect(delta.updates[0].values.find(x => x.path === 'notifications.perpendicularPassed').value).to.be.null
   })
 
   it('Doesn\'t choke on an empty sentence', () => {

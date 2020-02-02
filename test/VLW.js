@@ -18,6 +18,8 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+const utils = require('@signalk/nmea0183-utilities')
+
 chai.Should()
 
 chai.use(require('chai-things'))
@@ -27,13 +29,13 @@ describe('VLW', () => {
     const delta = new Parser().parse('$IIVLW,10.1,N,3.2,N*7C')
 
     delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.log')
-    delta.updates[0].values[0].value.should.be.equal(10.1)
+    delta.updates[0].values[0].value.should.be.closeTo(10.1 * 1.852 * 1000, 0.001)
   })
 
   it('trip distance', () => {
     const delta = new Parser().parse('$IIVLW,115.2,N,12.3,N*7A')
 
     delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.trip.log')
-    delta.updates[0].values[1].value.should.be.equal(12.3)
+    delta.updates[0].values[1].value.should.be.closeTo(12.3 * 1.852 * 1000, 0.001)
   })
 })
