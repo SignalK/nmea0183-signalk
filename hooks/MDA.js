@@ -48,13 +48,13 @@ module.exports = function (input) {
   if( parts[0] !== '' ) {
     values.push({
       path: 'environment.outside.pressure',
-      value: 33.863886666667 * utils.float(parts[0]) // converting inHg -> hPa (SI units)
+      value: 3386.3886666667 * utils.float(parts[0]) // converting inHg -> Pa (SI units)
     });
   }
   if( parts[2] !== '' ) {
     values.push({
       path: 'environment.outside.pressure',
-      value: utils.float(parts[2])*1000.0  // converting from bars to hPa (SI units)
+      value: utils.float(parts[2])*100000.0  // converting from bars to Pa (SI units)
     });
   }
   if( parts[4] !== '' ) {

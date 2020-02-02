@@ -57,7 +57,7 @@ describe('MDA', () => {
     delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.directionMagnetic')
     delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedOverGround')
 
-    delta.updates[0].values.find(x => x.path === 'environment.outside.pressure').should.contain.property('value', 985)
+    delta.updates[0].values.find(x => x.path === 'environment.outside.pressure').should.contain.property('value', 98500)
     delta.updates[0].values.find(x => x.path === 'environment.outside.temperature').should.contain.property('value', 276.25)
     delta.updates[0].values.find(x => x.path === 'environment.water.temperature').should.contain.property('value', 278.75)
     delta.updates[0].values.find(x => x.path === 'environment.outside.humidity').should.contain.property('value', 0.4)
@@ -81,7 +81,7 @@ describe('MDA', () => {
     delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.directionMagnetic')
     delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedOverGround')
 
-    delta.updates[0].values.find(x => x.path === 'environment.outside.pressure').value.should.be.closeTo(1013.2075, 0.0001)
+    delta.updates[0].values.find(x => x.path === 'environment.outside.pressure').value.should.be.closeTo(101320.75, 0.005)
     delta.updates[0].values.find(x => x.path === 'environment.outside.temperature').should.contain.property('value', 276.25)
     delta.updates[0].values.find(x => x.path === 'environment.water.temperature').should.contain.property('value', 278.75)
     delta.updates[0].values.find(x => x.path === 'environment.outside.humidity').should.contain.property('value', 0.4)
