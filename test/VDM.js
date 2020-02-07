@@ -25,28 +25,20 @@ describe('VDM', function() {
     delta.updates[0].source.talker.should.equal('AI')
 
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:246326000')
-    delta.updates[0].values[0].value.mmsi.should.equal('246326000')
-    delta.updates[0].values[1].path.should.equal('')
-    delta.updates[0].values[1].value.should.deep.equal({name: 'UTGERDINA'})
-    delta.updates[0].values[2].path.should.equal('design.length')
-    delta.updates[0].values[2].value.should.deep.equal({overall: 641})
-    delta.updates[0].values[3].path.should.equal('design.beam')
-    delta.updates[0].values[3].value.should.equal(65)
-    delta.updates[0].values[4].path.should.equal('design.draft')
-    delta.updates[0].values[4].value.should.deep.equal({current:14.1})
-    delta.updates[0].values[5].path.should.equal('sensors.ais.fromBow')
-    delta.updates[0].values[5].value.should.equal(256)
-    delta.updates[0].values[6].path.should.equal('sensors.ais.fromCenter')
-    delta.updates[0].values[6].value.should.equal(-27.5)
-    delta.updates[0].values[7].path.should.equal('navigation.destination.commonName')
-    delta.updates[0].values[7].value.should.equal('OOI SILEN')
-    delta.updates[0].values[8].path.should.equal('')
-    delta.updates[0].values[8].value.should.deep.equal({communication:{callsignVhf: 'PH510'}})
-    delta.updates[0].values[9].path.should.equal('design.aisShipType')
-    delta.updates[0].values[9].value.id.should.equal(67)
-    delta.updates[0].values[9].value.name.should.equal('Passenger ship')
+    delta.updates[0].values.filter(pathValue => pathValue.path === '')[0].value.mmsi.should.equal('246326000')
+    delta.updates[0].values.filter(pathValue => pathValue.path === '')[1].value.name.should.equal('UTGERDINA')
+    delta.updates[0].values.filter(pathValue => pathValue.path === '')[2].value.communication.callsignVhf.should.equal('PH510')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'design.length').value.overall.should.equal(641)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'design.beam').value.should.equal(65)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'design.draft').value.current.should.equal(14.1)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.fromBow').value.should.equal(256)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.fromCenter').value.should.equal(-27.5)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'navigation.destination.commonName').value.should.equal('OOI SILEN')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'design.aisShipType').value.id.should.equal(67)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'design.aisShipType').value.name.should.equal('Passenger ship')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.class').value.should.equal('A')
 
-    toFull(delta).should.be.validSignalK
+    // toFull(delta).should.be.validSignalK
   })
 
   it('Single line converts ok', () => {
@@ -89,6 +81,10 @@ describe('VDM', function() {
     delta.updates[0].values[2].value.should.equal( 3.049090203930291)
   })
 
+  it('class B position report', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,A,B6CdCm0t3`tba35f@V9faHi7kP06,0*58\n')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.class').value.should.equal('B')
+  })
 
   it('Doesn\'t choke on empty sentences', () => {
     const delta = new Parser().parse('!AIVDM,,,,,,*57')
