@@ -36,6 +36,16 @@ const stateMapping = {
   14: 'ais-sart'
 };
 
+const msgTypeToTransmitterClass = {
+  1: "A",
+  2: "A",
+  3: "A",
+  5: "A",
+  18: "B",
+  19: "B",
+  24: "B"
+}
+
 const msgTypeToPrefix = {
   1: "vessels.",
   2: "vessels.",
@@ -171,6 +181,16 @@ module.exports = function (input, session) {
       path: '',
       value: {communication:{ callsignVhf: data.callsign}}
     })
+  }
+
+  if (data.aistype) {
+    const aisClass = msgTypeToTransmitterClass[data.aistype]
+    if (aisClass) {
+      values.push({
+        path: 'sensors.ais.class',
+        value: aisClass
+      })
+    }
   }
 
   var contextPrefix =  msgTypeToPrefix[data.aistype] || "vessels."
