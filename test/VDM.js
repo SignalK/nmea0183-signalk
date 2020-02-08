@@ -81,8 +81,8 @@ describe('VDM', function() {
     delta.updates[0].values[2].value.should.equal( 3.049090203930291)
   })
 
-  it('class B position report', () => {
-    const delta = new Parser().parse('!AIVDM,1,1,,A,B6CdCm0t3`tba35f@V9faHi7kP06,0*58\n')
+  it('class B position report with non-AI talker', () => {
+    const delta = new Parser().parse('!BSVDM,1,1,,A,B6CdCm0t3`tba35f@V9faHi7kP06,0*41\n')
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.class').value.should.equal('B')
   })
 
