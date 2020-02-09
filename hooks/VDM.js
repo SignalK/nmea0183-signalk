@@ -148,7 +148,8 @@ module.exports = function (input, session) {
     })
   }
 
-  if ( data.navstatus ) {
+
+  if ( typeof data.navstatus !== 'undefined' ) {
     var state = stateMapping[data.navstatus]
     if ( typeof state !== 'undefined' ) {
       values.push({

@@ -94,4 +94,10 @@ describe('VDM', function() {
     const delta = new Parser().parse('!AIVDM,,,,,,*57')
     should.equal(delta, null)
   })
+
+  it('class B position report with nav status motoring converts ok', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'navigation.state').value.should.equal('motoring')
+
+   })
 })
