@@ -60,13 +60,15 @@ describe('VDM', function() {
   it('AtoN converts ok', () => {
     const delta = new Parser().parse('!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n')
     delta.context.should.equal('atons.urn:mrn:imo:mmsi:993672087')
-    delta.updates[0].values[1].value.name.should.equal('46')
-    delta.updates[0].values[2].path.should.equal('navigation.position')
-    delta.updates[0].values[2].value.longitude.should.equal(-76.128155)
-    delta.updates[0].values[2].value.latitude.should.equal(39.36828666666667)
-    delta.updates[0].values[3].path.should.equal('atonType')
-    delta.updates[0].values[3].value.name.should.equal('Beacon, Starboard Hand')
-    delta.updates[0].values[3].value.id.should.equal(14)
+    console.log(JSON.stringify(delta, null, 2))
+    delta.updates[0].values.filter(pathValue => pathValue.path === '')[0].value.mmsi.should.equal('993672087')
+    delta.updates[0].values.filter(pathValue => pathValue.path === '')[1].value.name.should.equal('46')
+
+    delta.updates[0].values.find(pathValue => pathValue.path === 'navigation.position').value.longitude.should.equal(-76.128155)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'navigation.position').value.latitude.should.equal(39.36828666666667)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'atonType').value.name.should.equal('Beacon, Starboard Hand')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'atonType').value.id.should.equal(14)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.class').value.should.equal('ATON')
   })
 
   it('SAR aircraft', () => {

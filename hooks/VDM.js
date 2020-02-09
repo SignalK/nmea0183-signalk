@@ -40,9 +40,11 @@ const msgTypeToTransmitterClass = {
   1: "A",
   2: "A",
   3: "A",
+  4: "BASE",
   5: "A",
   18: "B",
   19: "B",
+  21: "ATON",
   24: "B"
 }
 
