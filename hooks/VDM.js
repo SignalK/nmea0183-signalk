@@ -44,8 +44,7 @@ const msgTypeToTransmitterClass = {
   5: "A",
   18: "B",
   19: "B",
-  21: "ATON",
-  24: "B"
+  21: "ATON"
 }
 
 const msgTypeToPrefix = {
