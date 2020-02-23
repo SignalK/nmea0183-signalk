@@ -54,7 +54,6 @@ describe('VDM', function() {
     should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.headingTrue'}))
     should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.courseOverGroundTrue'}))
     should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.speedOverGround'}))
-    should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.state'}))
   })
 
   it('AtoN converts ok', () => {

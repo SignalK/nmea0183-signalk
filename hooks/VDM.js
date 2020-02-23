@@ -33,7 +33,8 @@ const stateMapping = {
   8: 'sailing',
   9: 'hazardous material high speed',
   10: 'hazardous material wing in ground',
-  14: 'ais-sart'
+  14: 'ais-sart',
+  15: 'default'
 };
 
 const msgTypeToTransmitterClass = {
