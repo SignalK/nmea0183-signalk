@@ -60,7 +60,6 @@ describe('VDM', function() {
   it('AtoN converts ok', () => {
     const delta = new Parser().parse('!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n')
     delta.context.should.equal('atons.urn:mrn:imo:mmsi:993672087')
-    console.log(JSON.stringify(delta, null, 2))
     delta.updates[0].values.filter(pathValue => pathValue.path === '')[0].value.mmsi.should.equal('993672087')
     delta.updates[0].values.filter(pathValue => pathValue.path === '')[1].value.name.should.equal('46')
 
@@ -69,6 +68,7 @@ describe('VDM', function() {
     delta.updates[0].values.find(pathValue => pathValue.path === 'atonType').value.name.should.equal('Beacon, Starboard Hand')
     delta.updates[0].values.find(pathValue => pathValue.path === 'atonType').value.id.should.equal(14)
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.class').value.should.equal('ATON')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'offPosition').value.should.equal(false)
   })
 
   it('SAR aircraft', () => {
