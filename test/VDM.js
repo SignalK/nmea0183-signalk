@@ -68,6 +68,7 @@ describe('VDM', function() {
     delta.updates[0].values.find(pathValue => pathValue.path === 'atonType').value.name.should.equal('Beacon, Starboard Hand')
     delta.updates[0].values.find(pathValue => pathValue.path === 'atonType').value.id.should.equal(14)
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.class').value.should.equal('ATON')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'virtual').value.should.equal(false)
   })
 
   it('SAR aircraft', () => {
