@@ -59,6 +59,13 @@ const msgTypeToPrefix = {
   24: "vessels."
 }
 
+const specialManeuverMapping = {
+  0: 'not available',
+  1: 'not engaged',
+  2: 'engaged',
+  3: 'reserved'
+}
+
 module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
   const data = new Decoder(sentence, session)
@@ -216,6 +223,27 @@ module.exports = function (input, session) {
         value: { "id": data.cargo, "name": typeName }
       })
     }
+  }
+
+  if ( typeof data.smi !== 'undefined' ) {
+    values.push({
+      path: 'navigation.specialManeuver',
+      value: specialManeuverMapping[data.smi]
+    })
+  }
+
+  if ( typeof data.dac !== 'undefined' ) {
+    values.push({
+      path: 'sensors.ais.designatedAreaCode',
+      value: data.dac
+    })
+  }
+
+  if ( typeof data.fid !== 'undefined' ) {
+    values.push({
+      path: 'sensors.ais.functionalId',
+      value: data.fid
+    })
   }
 
   if (values.length === 0) {
