@@ -99,6 +99,23 @@ describe('VDM', function() {
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.class').value.should.equal('A')
   })
 
+  it('class A position report with specialManeuver converts ok', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'navigation.specialManeuver').value.should.equal('not engaged')
+  })
+
+  it('class A position report with specialManeuver converts ok', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'navigation.specialManeuver').value.should.equal('not engaged')
+  })
+
+  it('msg type 8 converts ok', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,A,85Mv070j2d>=<e<<=PQhhg`59P00,0*26')
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:366968860')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.designatedAreaCode').value.should.equal(200)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.functionalId').value.should.equal(10)
+   })
+
   it('imo conerts ok', () => {
     const parser = new Parser()
     let delta = parser.parse('!AIVDM,2,1,9,A,54hi<240?JU9`L<f220l4T@DhhF222222222220U5HD2:40Ht90000000000,0*60')
