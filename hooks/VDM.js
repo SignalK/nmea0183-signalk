@@ -201,6 +201,17 @@ module.exports = function (input, session) {
     }
   }
 
+  if ( data.imo ) {
+    values.push({
+      path: '',
+      value: {
+        registrations: {
+          imo: `IMO ${data.imo}`
+        }
+      }
+    })
+  }
+
   var contextPrefix =  msgTypeToPrefix[data.aistype] || "vessels."
 
   if ( data.aidtype ) {

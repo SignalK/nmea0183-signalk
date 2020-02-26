@@ -115,4 +115,15 @@ describe('VDM', function() {
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.designatedAreaCode').value.should.equal(200)
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.functionalId').value.should.equal(10)
    })
+
+  it('imo conerts ok', () => {
+    const parser = new Parser()
+    let delta = parser.parse('!AIVDM,2,1,9,A,54hi<240?JU9`L<f220l4T@DhhF222222222220U5HD2:40Ht90000000000,0*60')
+    should.equal(delta, null)
+
+    delta = parser.parse('!AIVDM,2,2,9,A,00000000002,2*2F')
+
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:319573000')
+    delta.updates[0].values.filter(pathValue => pathValue.path === '')[3].value.registrations.imo.should.equal('IMO 1010258')
+  })
 })
