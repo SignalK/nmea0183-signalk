@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "deploy": "npm test && git tag -a v$npm_package_version -m 'Release v$npm_package_version'; git push --tags; npm publish --access public --scope @signalk ."
+    "deploy": "npm test && npm run release && npm publish --access public --scope @signalk .",
+    "create-release": "github-create-release --owner signalk --repository signalk-parser-nmea0183",
+    "release": "git tag -d v$npm_package_version && git tag v$npm_package_version && git push --tags && git push && npm run create-release",
   },
   "bin": {
     "nmea0183-signalk": "./bin/nmea0183-signalk",
@@ -30,9 +32,10 @@
     "split": "^1.0.1"
   },
   "devDependencies": {
-    "debug": "^4.0.1",
+    "@signalk/github-create-release": "^1.2.0",
     "chai": "^4.1.2",
     "chai-things": "^0.2.0",
+    "debug": "^4.0.1",
     "mocha": "^6.1.3"
   },
   "repository": {
