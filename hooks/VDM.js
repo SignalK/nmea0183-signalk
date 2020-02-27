@@ -33,7 +33,8 @@ const stateMapping = {
   8: 'sailing',
   9: 'hazardous material high speed',
   10: 'hazardous material wing in ground',
-  14: 'ais-sart'
+  14: 'ais-sart',
+  15: 'default'
 };
 
 const msgTypeToTransmitterClass = {
@@ -57,6 +58,13 @@ const msgTypeToPrefix = {
   19: "vessels.",
   21: "atons.",
   24: "vessels."
+}
+
+const specialManeuverMapping = {
+  0: 'not available',
+  1: 'not engaged',
+  2: 'engaged',
+  3: 'reserved'
 }
 
 module.exports = function (input, session) {
@@ -194,6 +202,17 @@ module.exports = function (input, session) {
     }
   }
 
+  if ( data.imo ) {
+    values.push({
+      path: '',
+      value: {
+        registrations: {
+          imo: `IMO ${data.imo}`
+        }
+      }
+    })
+  }
+
   var contextPrefix =  msgTypeToPrefix[data.aistype] || "vessels."
 
   if ( data.aidtype ) {
@@ -222,6 +241,27 @@ module.exports = function (input, session) {
         value: { "id": data.cargo, "name": typeName }
       })
     }
+  }
+
+  if ( typeof data.smi !== 'undefined' ) {
+    values.push({
+      path: 'navigation.specialManeuver',
+      value: specialManeuverMapping[data.smi]
+    })
+  }
+
+  if ( typeof data.dac !== 'undefined' ) {
+    values.push({
+      path: 'sensors.ais.designatedAreaCode',
+      value: data.dac
+    })
+  }
+
+  if ( typeof data.fid !== 'undefined' ) {
+    values.push({
+      path: 'sensors.ais.functionalId',
+      value: data.fid
+    })
   }
 
   if (values.length === 0) {

@@ -54,7 +54,6 @@ describe('VDM', function() {
     should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.headingTrue'}))
     should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.courseOverGroundTrue'}))
     should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.speedOverGround'}))
-    should.not.exist(delta.updates[0].values.find((pv) => { return pv.path === 'navigation.state'}))
   })
 
   it('AtoN converts ok', () => {
@@ -102,5 +101,32 @@ describe('VDM', function() {
   it('Off Position AtoN converts ok', () => {
     const delta = new Parser().parse("!AIVDM,1,1,,A,E>k`sV6rKP00000000000000000=Al7t;A5E800000N@00,0*43\n")
     delta.updates[0].values.find(pathValue => pathValue.path === 'offPosition').value.should.equal(true)
+
+  it('class A position report with specialManeuver converts ok', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'navigation.specialManeuver').value.should.equal('not engaged')
+  })
+
+  it('class A position report with specialManeuver converts ok', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'navigation.specialManeuver').value.should.equal('not engaged')
+  })
+
+  it('msg type 8 converts ok', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,A,85Mv070j2d>=<e<<=PQhhg`59P00,0*26')
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:366968860')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.designatedAreaCode').value.should.equal(200)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.functionalId').value.should.equal(10)
    })
+
+  it('imo conerts ok', () => {
+    const parser = new Parser()
+    let delta = parser.parse('!AIVDM,2,1,9,A,54hi<240?JU9`L<f220l4T@DhhF222222222220U5HD2:40Ht90000000000,0*60')
+    should.equal(delta, null)
+
+    delta = parser.parse('!AIVDM,2,2,9,A,00000000002,2*2F')
+
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:319573000')
+    delta.updates[0].values.filter(pathValue => pathValue.path === '')[3].value.registrations.imo.should.equal('IMO 1010258')
+  })
 })
