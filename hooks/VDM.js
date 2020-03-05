@@ -224,6 +224,12 @@ module.exports = function (input, session) {
         value: { "id": data.aidtype, "name": atonType }
       })
     }
+    if ( typeof data.virtual !== 'undefined' ) {
+      values.push({
+        path: 'virtual',
+        value: data.virtual == 1
+      })
+    }
   }
 
   if ( data.cargo )
