@@ -230,6 +230,12 @@ module.exports = function (input, session) {
         value: data.offpos == 1
       })
     }
+    if ( typeof data.virtual !== 'undefined' ) {
+      values.push({
+        path: 'virtual',
+        value: data.virtual == 1
+      })
+    }
   }
 
   if ( data.cargo )

@@ -68,6 +68,7 @@ describe('VDM', function() {
     delta.updates[0].values.find(pathValue => pathValue.path === 'atonType').value.id.should.equal(14)
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.class').value.should.equal('ATON')
     delta.updates[0].values.find(pathValue => pathValue.path === 'offPosition').value.should.equal(false)
+    delta.updates[0].values.find(pathValue => pathValue.path === 'virtual').value.should.equal(false)
   })
 
   it('SAR aircraft', () => {
@@ -118,6 +119,11 @@ describe('VDM', function() {
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:366968860')
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.designatedAreaCode').value.should.equal(200)
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.functionalId').value.should.equal(10)
+  })
+
+  it('virtual aton converts ok', () => {
+    const delta = new Parser().parse('!AIVDM,1,1,,A,E02E340W6@1WPab3bPa200000000:uoH?9Ur000003v010,4*5C\n')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'virtual').value.should.equal(true)
    })
 
   it('imo conerts ok', () => {
