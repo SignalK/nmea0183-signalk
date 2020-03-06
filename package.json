@@ -7,7 +7,7 @@
     "test": "mocha",
     "deploy": "npm test && npm run release && npm publish --access public --scope @signalk .",
     "create-release": "github-create-release --owner signalk --repository signalk-parser-nmea0183",
-    "release": "git tag -d v$npm_package_version && git tag v$npm_package_version && git push --tags && git push && npm run create-release",
+    "release": "git tag -d v$npm_package_version && git tag v$npm_package_version && git push --tags && git push && npm run create-release"
   },
   "bin": {
     "nmea0183-signalk": "./bin/nmea0183-signalk",
