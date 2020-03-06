@@ -59,7 +59,6 @@ describe('VDM', function() {
   it('AtoN converts ok', () => {
     const delta = new Parser().parse('!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n')
     delta.context.should.equal('atons.urn:mrn:imo:mmsi:993672087')
-    console.log(JSON.stringify(delta, null, 2))
     delta.updates[0].values.filter(pathValue => pathValue.path === '')[0].value.mmsi.should.equal('993672087')
     delta.updates[0].values.filter(pathValue => pathValue.path === '')[1].value.name.should.equal('46')
 
@@ -68,6 +67,7 @@ describe('VDM', function() {
     delta.updates[0].values.find(pathValue => pathValue.path === 'atonType').value.name.should.equal('Beacon, Starboard Hand')
     delta.updates[0].values.find(pathValue => pathValue.path === 'atonType').value.id.should.equal(14)
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.class').value.should.equal('ATON')
+    delta.updates[0].values.find(pathValue => pathValue.path === 'offPosition').value.should.equal(false)
     delta.updates[0].values.find(pathValue => pathValue.path === 'virtual').value.should.equal(false)
   })
 
@@ -97,6 +97,11 @@ describe('VDM', function() {
     const delta = new Parser().parse('!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n')
     delta.updates[0].values.find(pathValue => pathValue.path === 'navigation.state').value.should.equal('motoring')
     delta.updates[0].values.find(pathValue => pathValue.path === 'sensors.ais.class').value.should.equal('A')
+  })
+
+  it('Off Position AtoN converts ok', () => {
+    const delta = new Parser().parse("!AIVDM,1,1,,A,E>k`sV6rKP00000000000000000=Al7t;A5E800000N@00,0*43\n")
+    delta.updates[0].values.find(pathValue => pathValue.path === 'offPosition').value.should.equal(true)
   })
 
   it('class A position report with specialManeuver converts ok', () => {
