@@ -101,6 +101,7 @@ describe('VDM', function() {
   it('Off Position AtoN converts ok', () => {
     const delta = new Parser().parse("!AIVDM,1,1,,A,E>k`sV6rKP00000000000000000=Al7t;A5E800000N@00,0*43\n")
     delta.updates[0].values.find(pathValue => pathValue.path === 'offPosition').value.should.equal(true)
+  })
 
   it('class A position report with specialManeuver converts ok', () => {
     const delta = new Parser().parse('!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n')
