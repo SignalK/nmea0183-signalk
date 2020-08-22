@@ -31,6 +31,7 @@ module.exports = {
   'VPW': require('./VPW.js'),
   'VTG': require('./VTG.js'),
   'VWR': require('./VWR.js'),
+  'VWT': require('./VWT.js'),
   'ZDA': require('./ZDA.js'),
   'XTE': require('./XTE.js'),
   'BOD': require('./BOD.js'),
