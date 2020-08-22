@@ -26,7 +26,7 @@ describe('MTA', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$IIMTA,26.,C*31')
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.air.temperature')
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.outside.temperature')
     delta.updates[0].values[0].value.should.be.closeTo(299.15, 0.005)
   })
 })

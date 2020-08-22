@@ -42,7 +42,7 @@ module.exports = function (input) {
         timestamp: tags.timestamp,
         values: [
           {
-            path: 'environment.air.temperature',
+            path: 'environment.outside.temperature',
             value: utils.transform(utils.float(parts[0]), 'c', 'k')
             //returns raw value, no transformation done
           }
