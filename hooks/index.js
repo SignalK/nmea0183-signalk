@@ -14,6 +14,7 @@ module.exports = {
   'PBVE': require('./proprietary/PBVE.js'),
   'PNKEP': require('./proprietary/PNKEP.js'),
   'MDA': require('./MDA.js'),
+  'MTA': require('./MTA.js'),
   'MTW': require('./MTW.js'),
   'MWV': require('./MWV.js'),
   'RMB': require('./RMB.js'),

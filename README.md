@@ -27,6 +27,7 @@
 - [HSC - Heading Steering Command](https://www.tronico.fi/OH6NT/docs/NMEA0183.pdf)
 - KEP - NKE Performance data
 - [MDA - Meteorological Composite](https://gpsd.gitlab.io/gpsd/NMEA.html#_mda_meteorilogical_composite)
+- [MTA - Mean Temperature of Air](https://www.nmea.org/Assets/100108_nmea_0183_sentences_not_recommended_for_new_designs.pdf)
 - [MTW - Mean Temperature of Water](https://gpsd.gitlab.io/gpsd/NMEA.html#_mtw_mean_temperature_of_water)
 - [MWV - Wind Speed and Angle](https://gpsd.gitlab.io/gpsd/NMEA.html#_mwv_wind_speed_and_angle)
 - [RMB - Recommended Minimum Navigation Information](https://gpsd.gitlab.io/gpsd/NMEA.html#_rmb_recommended_minimum_navigation_information)
