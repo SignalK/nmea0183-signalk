@@ -16,6 +16,7 @@ module.exports = {
   'MDA': require('./MDA.js'),
   'MTA': require('./MTA.js'),
   'MTW': require('./MTW.js'),
+  'MWD': require('./MWD.js'),
   'MWV': require('./MWV.js'),
   'RMB': require('./RMB.js'),
   'RMC': require('./RMC.js'),

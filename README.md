@@ -29,6 +29,7 @@
 - [MDA - Meteorological Composite](https://gpsd.gitlab.io/gpsd/NMEA.html#_mda_meteorilogical_composite)
 - [MTA - Mean Temperature of Air](https://www.nmea.org/Assets/100108_nmea_0183_sentences_not_recommended_for_new_designs.pdf)
 - [MTW - Mean Temperature of Water](https://gpsd.gitlab.io/gpsd/NMEA.html#_mtw_mean_temperature_of_water)
+- [MWD - Wind Speed and Direction](https://lists.nongnu.org/archive/html/gpsd-dev/2012-04/msg00048.html)
 - [MWV - Wind Speed and Angle](https://gpsd.gitlab.io/gpsd/NMEA.html#_mwv_wind_speed_and_angle)
 - [RMB - Recommended Minimum Navigation Information](https://gpsd.gitlab.io/gpsd/NMEA.html#_rmb_recommended_minimum_navigation_information)
 - [RMC - Recommended Minimum Navigation Information](https://gpsd.gitlab.io/gpsd/NMEA.html#_rmc_recommended_minimum_navigation_information)
