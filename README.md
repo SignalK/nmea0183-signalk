@@ -1,4 +1,4 @@
-# signalk-parser-nmea0183
+# @signalk/nmea0183-signalk
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/SignalK/signalk-parser-nmea0183.svg)](https://greenkeeper.io/)
 
