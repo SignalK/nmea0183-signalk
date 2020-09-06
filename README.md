@@ -1,10 +1,6 @@
 # @signalk/nmea0183-signalk
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/SignalK/signalk-parser-nmea0183.svg)](https://greenkeeper.io/)
-
-[![Build Status](https://travis-ci.org/SignalK/signalk-parser-nmea0183.svg?branch=development)](https://travis-ci.org/SignalK/signalk-parser-nmea0183)
-
-> A node.js/javascript parser of NMEA0183 sentences. Sentences are parsed to [Signal K delta](http://signalk.org/specification/master/data_model.html#delta-format) format.
+> A node.js/JavaScript parser of NMEA0183 sentences. Sentences are parsed to [Signal K delta](http://signalk.org/specification/master/data_model.html#delta-format) format.
 
 ## Supported sentences
 
