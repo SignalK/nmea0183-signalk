@@ -57,7 +57,7 @@ module.exports = function(input) {
 	return null;
     }
     var angle = convertToWindAngle(parts[0]);
-    
+
 
     if(!parts[1]) {
 	return null;
@@ -97,6 +97,6 @@ module.exports = function(input) {
 	    }
 	],
     }
-    
+
     return delta
 }
