@@ -25,7 +25,7 @@
   "author": "Fabian Tollenaar <fabian@signalk.org> (http://signalk.org)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@signalk/nmea0183-utilities": "^0.7.0",
+    "@signalk/nmea0183-utilities": "^0.8.0",
     "@signalk/signalk-schema": "^1.1.1",
     "ggencoder": "^1.0.4",
     "moment-timezone": "^0.5.21",
