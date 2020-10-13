@@ -18,15 +18,15 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+const should = chai.Should()
 
-chai.Should()
 chai.use(require('chai-things'))
 
 describe('MTA', () => {
     it('Converts OK using individual parser', () => {
 	const delta = new Parser().parse('$IIMTA,26.,C*31')
 
-	delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.outside.temperature')
+	delta.updates[0].values[0].path.should.equal('environment.outside.temperature')
 	delta.updates[0].values[0].value.should.be.closeTo(299.15, 0.005)
     })
     it('Does not accept units other than Celsius', () => {
