@@ -54,42 +54,36 @@ describe('MWD', () => {
     })
 
     it('missing direction data', () => {
-	var should = chai.should()
 	const delta = new Parser().parse('$IIMWD,,,,,,,5.2,M*3A')
 
 	should.equal(delta,null);
     })
 
     it('missing speed data', () => {
-	var should = chai.should()
 	const delta = new Parser().parse('$IIMWD,,,046.,M,,,,*0F')
 
 	should.equal(delta,null);
     })
 
     it('improper direction designator (#1)', () => {
-	var should = chai.should()
 	const delta = new Parser().parse('$IIMWD,,,046.,T,,,,*16')
 
 	should.equal(delta,null);
     })
 
     it('improper direction designator (#2)', () => {
-	var should = chai.should()
 	const delta = new Parser().parse('$IIMWD,046.,M,,,,,,*0F')
 
 	should.equal(delta,null);
     })
 
     it('improper speed designator (#1)', () => {
-	var should = chai.should()
 	const delta = new Parser().parse('$IIMWD,,,046.,M,10.1,n,,*7F')
 
 	should.equal(delta,null);
     })
 
     it('improper speed designator (#2)', () => {
-	var should = chai.should()
 	const delta = new Parser().parse('$IIMWD,,,046.,M,,,0.0,m*4C')
 
 	should.equal(delta,null);
