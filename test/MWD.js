@@ -24,13 +24,92 @@ chai.use(require('chai-things'))
 
 describe('MWD', () => {
 
-  it('speed & direction data', () => {
-      const delta = new Parser().parse('$IIMWD,,,046.,M,10.1,N,05.2,M*0B')
+    it('speed & direction data (#1)', () => {
+	const delta = new Parser().parse('$IIMWD,,,046.,M,10.1,N,05.2,M*0B')
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedTrue')
-    delta.updates[0].values[1].value.should.be.closeTo(5.19585, 0.00005)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.directionMagnetic')
-    delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
-  })
+	delta.updates[0].values[0].path.should.equal('environment.wind.directionMagnetic')
+	delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
+	delta.updates[0].values[1].path.should.equal('environment.wind.speedTrue')
+	delta.updates[0].values[1].value.should.equal(5.2)
+    })
 
+    it('speed & direction data (#2)', () => {
+	const delta = new Parser().parse('$IIMWD,046.,T,046.,M,10.1,N,,*17')
+
+	delta.updates[0].values[0].path.should.equal('environment.wind.directionTrue')
+	delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
+	delta.updates[0].values[1].path.should.equal('environment.wind.directionMagnetic')
+	delta.updates[0].values[1].value.should.be.closeTo(0.802851, 0.00005)
+	delta.updates[0].values[2].path.should.equal('environment.wind.speedTrue')
+	delta.updates[0].values[2].value.should.be.closeTo(5.2, 0.005)
+    })
+
+    it('speed & direction data (#3)', () => {
+	const delta = new Parser().parse('$IIMWD,046.,T,,,,,5.2,M*72')
+
+	delta.updates[0].values[0].path.should.equal('environment.wind.directionTrue')
+	delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
+	delta.updates[0].values[1].path.should.equal('environment.wind.speedTrue')
+	delta.updates[0].values[1].value.should.be.equal(5.2)
+    })
+
+    it('missing direction data', () => {
+	var should = chai.should()
+	const delta = new Parser().parse('$IIMWD,,,,,,,5.2,M*3A')
+
+	should.equal(delta,null);
+    })
+
+    it('missing speed data', () => {
+	var should = chai.should()
+	const delta = new Parser().parse('$IIMWD,,,046.,M,,,,*0F')
+
+	should.equal(delta,null);
+    })
+
+    it('improper direction designator (#1)', () => {
+	var should = chai.should()
+	const delta = new Parser().parse('$IIMWD,,,046.,T,,,,*16')
+
+	should.equal(delta,null);
+    })
+
+    it('improper direction designator (#2)', () => {
+	var should = chai.should()
+	const delta = new Parser().parse('$IIMWD,046.,M,,,,,,*0F')
+
+	should.equal(delta,null);
+    })
+
+    it('improper speed designator (#1)', () => {
+	var should = chai.should()
+	const delta = new Parser().parse('$IIMWD,,,046.,M,10.1,n,,*7F')
+
+	should.equal(delta,null);
+    })
+
+    it('improper speed designator (#2)', () => {
+	var should = chai.should()
+	const delta = new Parser().parse('$IIMWD,,,046.,M,,,0.0,m*4C')
+
+	should.equal(delta,null);
+    })
+
+    it('improper direction designator for degrees magnetic, using degrees true', () => {
+	const delta = new Parser().parse('$IIMWD,046.,T,0.,m,10.1,N,5.2,M*51')
+
+	delta.updates[0].values[0].path.should.equal('environment.wind.directionTrue')
+	delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
+	delta.updates[0].values[1].path.should.equal('environment.wind.speedTrue')
+	delta.updates[0].values[1].value.should.equal(5.2)
+    })
+
+    it('improper speed designator for m/s, using speed in kn', () => {
+	const delta = new Parser().parse('$IIMWD,,,046.,M,10.1,N,0.0,m*1C')
+
+	delta.updates[0].values[0].path.should.equal('environment.wind.directionMagnetic')
+	delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
+	delta.updates[0].values[1].path.should.equal('environment.wind.speedTrue')
+	delta.updates[0].values[1].value.should.be.closeTo(5.2, 0.005)
+    })
 })

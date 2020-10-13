@@ -35,37 +35,59 @@ const utils = require('@signalk/nmea0183-utilities')
  */
 
 module.exports = function(input) {
-  const { id, sentence, parts, tags } = input
-  var pathValues = []
+    const { id, sentence, parts, tags } = input;
+    var pathValues = [];
 
-  if(parts[0] != ''){
+    // get direction data:
+    // return both, true and magnetic direction, if present in the NMEA sentence
+    var haveDirection = false;
+    if(parts[0] != '' && parts[1] == 'T') {
+	haveDirection = true;
+	pathValues.push({
+	    'path': 'environment.wind.directionTrue',
+	    'value': utils.transform(utils.float(parts[0]), 'deg', 'rad')
+	})
+    }
+    if(parts[2] != '' && parts[3] == 'M') {
+	haveDirection = true;
+	pathValues.push({
+	    'path': 'environment.wind.directionMagnetic',
+	    'value': utils.transform(utils.float(parts[2]), 'deg', 'rad')
+	})
+    }
+    if( !haveDirection ) {
+	return null;
+    }
+    
+    // get speed data:
+    // speed given in kn is used in case no speed in m/s is present in the NMEA sentence
+    var haveSpeed = false;
+    var speed;
+    if(parts[4] != '' && parts[5] == 'N') {
+	haveSpeed = true;
+	speed = utils.transform(utils.float(parts[4]), 'knots', 'ms');
+    }
+    if(parts[6] != '' && parts[7] == 'M') {  
+	haveSpeed = true;
+	speed = utils.float(parts[6]);
+    }
+    if( !haveSpeed ) {
+	return null;
+    }
     pathValues.push({
-      'path': 'environment.wind.directionTrue',
-      'value': utils.transform(utils.float(parts[0]), 'deg', 'rad')
+	'path': 'environment.wind.speedTrue',
+	'value': speed
     })
-  }
-  if(parts[2] != ''){
-    pathValues.push({
-      'path': 'environment.wind.directionMagnetic',
-      'value': utils.transform(utils.float(parts[2]), 'deg', 'rad')
-    })
-  }
-  if(parts[4] != ''){
-    pathValues.push({
-      'path': 'environment.wind.speedTrue',
-      'value': utils.transform(utils.float(parts[4]), 'knots', 'ms')
-    })
-  }
 
-  const delta = {
-    updates: [
-      {
-        source: tags.source,
-        timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ],
-  }
+    const delta = {
+	updates: [
+	    {
+		source: tags.source,
+		timestamp: tags.timestamp,
+		values: pathValues
+	    }
+	],
+    }
 
-  return delta
+    return delta
 }
