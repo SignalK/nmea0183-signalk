@@ -33,8 +33,11 @@
   */
 
 module.exports = function (input) {
-  const { id, sentence, parts, tags } = input
+  const { id, sentence, parts, tags } = input;
 
+  if(parts[1] != 'C') {
+      return null;
+  }
   const delta = {
     updates: [
       {
@@ -44,7 +47,6 @@ module.exports = function (input) {
           {
             path: 'environment.outside.temperature',
             value: utils.transform(utils.float(parts[0]), 'c', 'k')
-            //returns raw value, no transformation done
           }
         ]
       }

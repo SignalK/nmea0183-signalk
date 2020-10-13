@@ -23,10 +23,16 @@ chai.Should()
 chai.use(require('chai-things'))
 
 describe('MTA', () => {
-  it('Converts OK using individual parser', () => {
-    const delta = new Parser().parse('$IIMTA,26.,C*31')
+    it('Converts OK using individual parser', () => {
+	const delta = new Parser().parse('$IIMTA,26.,C*31')
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.outside.temperature')
-    delta.updates[0].values[0].value.should.be.closeTo(299.15, 0.005)
-  })
+	delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.outside.temperature')
+	delta.updates[0].values[0].value.should.be.closeTo(299.15, 0.005)
+    })
+    it('Does not accept units other than Celsius', () => {
+	var should = chai.should();
+	const delta = new Parser().parse('$IIMTA,26.,F*34')
+
+	should.equal(delta,null);
+    })
 })
