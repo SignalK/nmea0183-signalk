@@ -53,16 +53,16 @@ function convertToWindAngle(angle) {
 module.exports = function(input) {
     const { id, sentence, parts, tags } = input;
 
+    // get direction
     if(!parts[0]) {
 	return null;
     }
     var angle = convertToWindAngle(parts[0]);
 
-
     if(!parts[1]) {
 	return null;
     }
-    switch( parts[1].toUpperCase() ) {
+    switch( parts[1] ) {
     case 'L':
 	angle = -1 * utils.transform( angle, 'deg', 'rad');
 	break;
@@ -73,12 +73,26 @@ module.exports = function(input) {
 	return null;
     }
 
-
-    if(!parts[2] || parts[3].toUpperCase() !== "N") {
+    // get speed data:
+    // speed value given in m/s is given precedence if present in the NMEA sentence
+    var haveSpeed = false;
+    var speed;
+    if(parts[2] != '' && parts[3] == 'N') {
+	haveSpeed = true;
+	speed = utils.transform(utils.float(parts[2]), 'knots', 'ms');
+    }
+    if(parts[6] != '' && parts[7] == 'K') {
+	haveSpeed = true;
+	speed = utils.transform(utils.float(parts[6]), 'kph', 'ms');
+    }
+    if(parts[4] != '' && parts[5] == 'M') { // overwrite speed from knots or km/h if present
+	haveSpeed = true;
+	speed = utils.float(parts[4]);
+    }
+    if( !haveSpeed ) {
 	return null;
     }
-    const speed = utils.transform(parts[2], 'knots', 'ms')
-
+		
     const delta = {
 	updates: [
 	    {
