@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const debug = require('debug')('signalk-parser-nmea0183/APB')
+const debug = require('debug')('signalk-parser-nmea0183/BWC')
 const utils = require('@signalk/nmea0183-utilities')
 
 /**
