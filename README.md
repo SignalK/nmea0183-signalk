@@ -23,7 +23,9 @@
 - [HSC - Heading Steering Command](https://www.tronico.fi/OH6NT/docs/NMEA0183.pdf)
 - KEP - NKE Performance data
 - [MDA - Meteorological Composite](https://gpsd.gitlab.io/gpsd/NMEA.html#_mda_meteorilogical_composite)
+- [MTA - Mean Temperature of Air](https://www.nmea.org/Assets/100108_nmea_0183_sentences_not_recommended_for_new_designs.pdf)
 - [MTW - Mean Temperature of Water](https://gpsd.gitlab.io/gpsd/NMEA.html#_mtw_mean_temperature_of_water)
+- [MWD - Wind Speed and Direction](https://lists.nongnu.org/archive/html/gpsd-dev/2012-04/msg00048.html)
 - [MWV - Wind Speed and Angle](https://gpsd.gitlab.io/gpsd/NMEA.html#_mwv_wind_speed_and_angle)
 - [RMB - Recommended Minimum Navigation Information](https://gpsd.gitlab.io/gpsd/NMEA.html#_rmb_recommended_minimum_navigation_information)
 - [RMC - Recommended Minimum Navigation Information](https://gpsd.gitlab.io/gpsd/NMEA.html#_rmc_recommended_minimum_navigation_information)
@@ -38,6 +40,7 @@
 - [VPW - Speed - Measured Parallel to Wind](https://gpsd.gitlab.io/gpsd/NMEA.html#_vpw_speed_measured_parallel_to_wind)
 - [VTG - Track Made Good and Ground Speed](https://gpsd.gitlab.io/gpsd/NMEA.html#_vtg_track_made_good_and_ground_speed)
 - [VWR - Relative Wind Speed and Angle](https://gpsd.gitlab.io/gpsd/NMEA.html#_vwr_relative_wind_speed_and_angle)
+- [VWT - True Wind Angle and Speed](https://lists.nongnu.org/archive/html/gpsd-dev/2012-04/msg00048.html)
 - [ZDA - UTC day, month, and year, and local time zone offset](https://gpsd.gitlab.io/gpsd/NMEA.html#_zda_time_amp_date_utc_day_month_year_and_local_time_zone)
 - [XTE - Cross-track Error](https://www.tronico.fi/OH6NT/docs/NMEA0183.pdf)
 - [ZDA - UTC day, month, and year, and local time zone offset](http://www.trimble.com/oem_receiverhelp/v4.44/en/NMEA-0183messages_ZDA.html)
