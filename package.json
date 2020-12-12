@@ -26,7 +26,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@signalk/nmea0183-utilities": "^0.8.0",
-    "@signalk/signalk-schema": "^1.1.1",
+    "@signalk/signalk-schema": "1.5.0",
     "ggencoder": "^1.0.4",
     "moment-timezone": "^0.5.21",
     "split": "^1.0.1"
