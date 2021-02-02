@@ -13,6 +13,7 @@ module.exports = {
   'HDT': require('./HDT.js'),
   'PBVE': require('./proprietary/PBVE.js'),
   'PNKEP': require('./proprietary/PNKEP.js'),
+  'PSMDST': require('./proprietary/PSMDST.js'),
   'MDA': require('./MDA.js'),
   'MTA': require('./MTA.js'),
   'MTW': require('./MTW.js'),
