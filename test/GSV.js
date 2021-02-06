@@ -46,7 +46,7 @@ describe('GSV', () => {
     r = parser.parse(testData[2])
     expect(r).to.not.be.null
     const pathValue = r.updates[0].values[0]
-    pathValue.path.should.equal('navigation.satellitesInView')
+    pathValue.path.should.equal('navigation.gnss.satellitesInView')
   })
 
   it('GPGSV with not repeated numOfSentences, satsInView converts', () => {
@@ -63,7 +63,7 @@ describe('GSV', () => {
     r = parser.parse(data[2])
     expect(r).to.not.be.null
     const pathValue = r.updates[0].values[0]
-    pathValue.path.should.equal('navigation.satellitesInView')
+    pathValue.path.should.equal('navigation.gnss.satellitesInView')
     pathValue.value.count.should.equal(10)
     pathValue.value.satellites[0].should.eql({
       "SNR": 35,

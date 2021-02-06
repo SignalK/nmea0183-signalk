@@ -116,7 +116,7 @@ module.exports = function (input, session) {
           timestamp: tags.timestamp,
           values: [
             {
-              path: 'navigation.satellitesInView',
+              path: 'navigation.gnss.satellitesInView',
               value: gsvData
             }
           ]
