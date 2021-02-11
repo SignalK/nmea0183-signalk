@@ -1,5 +1,8 @@
 /**
- * Copyright 2016 Signal K <info@signalk.org> and contributors.
+ * Copyright 2021 Signal K <info@signalk.org>
+ * Added from Norbert Walter <norbert-walter@web.de>
+ * This custom centence coming from engine diagnostics device.
+ * Refer: https://open-boat-projects.org/en/diy-motordiagnose/
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,44 +21,48 @@
 
  const utils = require('@signalk/nmea0183-utilities')
 
-/*
-#        0 1 2   3   4 5
-#        | | |   |   | |
-# $--RPM,a,x,x.x,x.x,A*hh<CR><LF> Field Number:
-#  0) Source, S = Shaft, E = Engine 1) Engine or shaft number 2) Speed,
-#  Revolutions per minute 3) Propeller pitch, % of maximum, "-" means
-#  astern 4) Status, A means data is valid 5) Checksum
-*/
+ /*
+  * ELT - Engine Live Time
+  *
+  *        0  1  2 3 4
+  *        |  |  | | |
+  * $PEELT,H,0,x.0,A*hh<CR><LF>
+  *
+  * Field Number:
+  *   0.    Unit H in hours
+  *   1.    Engine ID
+  *   2.    Live time value
+  *   3.    Status, A means is valid
+  *   4.    Chechsum
+  *
+  */
 
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  return {
+  const delta = {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
         meta: [
           {
-            path: `propulsion.engine_${parts[1]}.pitch`,
+            path: 'propulsion.engine_' + parts[1] + '.EngineLifeTime',
             value: {
-              description: `Propeller pitch in [%]`,
-              units: `%`
+              description: 'Engine live time in [h]',
+              units: 'h'
              }
           }
         ],
         values: [
           {
-            path: `propulsion.${(parts[0].toUpperCase() === 'S' ? 'shaft' : 'engine')}_${parts[1]}.revolutions`,
-            value: utils.float(parts[2]) / 60
-          },
-          {
-            path: `propulsion.engine_${parts[1]}.pitch`,
-            value: utils.float(parts[3])
+            path: 'propulsion.engine_' + parts[1] + '.EngineLifeTime',
+            value: utils.float(parts[2])
           }
         ]
       }
-    ]
+    ],
   }
 
+  return delta
 }
