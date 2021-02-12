@@ -47,7 +47,7 @@ module.exports = function (input) {
         timestamp: tags.timestamp,
         meta: [
           {
-            path: 'propulsion.engine_' + parts[1] + '.EngineLifeTime',
+            path: 'propulsion.engine_' + parts[1] + '.engineLifeTime',
             value: {
               description: 'Engine live time in [h]',
               units: 'h'
@@ -56,7 +56,7 @@ module.exports = function (input) {
         ],
         values: [
           {
-            path: 'propulsion.engine_' + parts[1] + '.EngineLifeTime',
+            path: 'propulsion.engine_' + parts[1] + '.engineLifeTime',
             value: utils.float(parts[2])
           }
         ]

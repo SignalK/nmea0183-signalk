@@ -47,7 +47,7 @@ module.exports = function (input) {
         timestamp: tags.timestamp,
         meta: [
           {
-            path: 'propulsion.engine_' + parts[1] + '.CoolingWaterFlow',
+            path: 'propulsion.engine_' + parts[1] + '.coolantWaterFlow',
             value: {
               description: 'Cooling water flow in [l/min]',
               units: 'l/min'
@@ -56,7 +56,7 @@ module.exports = function (input) {
         ],
         values: [
           {
-            path: 'propulsion.engine_' + parts[1] + '.CoolingWaterFlow',
+            path: 'propulsion.engine_' + parts[1] + '.coolantWaterFlow',
             value: utils.float(parts[2])
           }
         ]

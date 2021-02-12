@@ -52,7 +52,7 @@ module.exports = function (input) {
         timestamp: tags.timestamp,
         meta: [
           {
-            path: 'propulsion.engine_' + parts[1] + '.EngineRoomTemp',
+            path: 'environment.inside.engineRoom.temperature',
             value: {
               description: 'Engine room temperature in [K]',
               units: 'K'
@@ -61,7 +61,7 @@ module.exports = function (input) {
         ],
         values: [
           {
-            path: 'propulsion.engine_' + parts[1] + '.EngineRoomTemp',
+            path: 'environment.inside.engineRoom.temperature',
             value: utils.transform(checkValue(inValue), 'C', 'K', 'F')
           }
         ]

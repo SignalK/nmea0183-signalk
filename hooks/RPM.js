@@ -50,7 +50,7 @@ module.exports = function (input) {
             value: utils.float(parts[2]) / 60
           },
           {
-            path: `propulsion.engine_${parts[1]}.pitch`,
+            path: `propulsion.shaft_${parts[1]}.drive.propeller.pitch`,
             value: utils.float(parts[3])
           }
         ]

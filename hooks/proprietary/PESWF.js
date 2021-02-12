@@ -47,7 +47,7 @@ module.exports = function (input) {
         timestamp: tags.timestamp,
         meta: [
           {
-            path: 'propulsion.engine_' + parts[1] + '.SeaWaterFlow',
+            path: 'propulsion.engine_' + parts[1] + '.seaWaterFlow',
             value: {
               description: 'Sea water flow in [l/min]',
               units: 'l/min'
@@ -56,7 +56,7 @@ module.exports = function (input) {
         ],
         values: [
           {
-            path: 'propulsion.engine_' + parts[1] + '.SeaWaterFlow',
+            path: 'propulsion.engine_' + parts[1] + '.seaWaterFlow',
             value: utils.float(parts[2])
           }
         ]
