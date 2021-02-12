@@ -77,8 +77,6 @@ $ echo '$SDDBT,17.0,f,5.1,M,2.8,F*3E' | nmea0183-signalk
 ## NMEA0183v4 tag blocks
 
 This parser has (limited) support of [NMEA0183v4 tag blocks](http://www.nmea.org/Assets/may%2009%20rtcm%200183_v400.pdf) (e.g. `\s:airmar dst800,c:1438489697*13\$SDDBT,17.0,f,5.1,M,2.8,F*3E`).
-Keep in mind that, since NMEA uses the backslash `\` as the start and end character of the tag block, you need to escape these characters *before* parsing them.
-This is necessary because javascript treats the backslash as the escape character causing it not to be included in the resulting string (unless escaped).
 
 Example:
 
@@ -87,6 +85,7 @@ const Parser = require('@signalk/nmea0183-signalk')
 const parser = new Parser()
 
 try {
+  // backslash starts an escape sequence in JavaScript code, so they need to be double in string literals
   const delta = parser.parse('\\s:airmar dst800,c:1438489697*13\\$SDDBT,17.0,f,5.1,M,2.8,F*3E')
   if (delta !== null) {
     console.log(`[delta] ${JSON.stringify(delta, null, 2)}`)
