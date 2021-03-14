@@ -51,3 +51,4 @@ package-lock.json
 *.db
 
 .vscode
+custom-sentence-plugin/package-lock.json

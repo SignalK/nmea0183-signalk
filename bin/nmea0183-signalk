@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 const Parser = require('../lib/index.js')
-const parser = new Parser()
+const parser = new Parser({
+  validateChecksum: false
+})
 
 process.stdin.resume()
 process.stdin.setEncoding('utf8')
