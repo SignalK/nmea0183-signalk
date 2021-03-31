@@ -1,0 +1,14 @@
+{
+  "name": "signalk-nmea0183-custom-sentence-plugin",
+  "version": "1.0.0",
+  "description": "Example of a plugin for Signal K Server that adds a custom sentence to the NMEA0183 parser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "signalk-node-server-plugin"
+  ],
+  "author": "teppo.kurki@iki.fi",
+  "license": "Apache-2.0"
+}

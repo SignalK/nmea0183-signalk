@@ -44,8 +44,17 @@
 - [ZDA - UTC day, month, and year, and local time zone offset](https://gpsd.gitlab.io/gpsd/NMEA.html#_zda_time_amp_date_utc_day_month_year_and_local_time_zone)
 - [XTE - Cross-track Error](https://www.tronico.fi/OH6NT/docs/NMEA0183.pdf)
 - [ZDA - UTC day, month, and year, and local time zone offset](http://www.trimble.com/oem_receiverhelp/v4.44/en/NMEA-0183messages_ZDA.html)
+- [Custom Sentences](#custom-sentences)
 
 **Note:** *at this time, unknown sentences will be silently discarded.*
+
+### Custom Sentences
+
+You can add custom sentence parsers via the [Signal K Server plugin mechanism](https://github.com/SignalK/signalk-server/blob/master/SERVERPLUGINS.md). A plugin can register custom parsers by emitting `nmea0183sentenceParser` PropertyValues with a value that has the properties
+- sentence: the three letter id of the sentence
+- parser: a function with the signature `({ id, sentence, parts, tags }, session) => delta`
+
+See [custom-sentence-plugin](./custom-sentence-plugin) for an example.
 
 ## Usage
 
