@@ -73,7 +73,7 @@ module.exports = function (input) {
     return e
   }, 0)
 
-  if (empty > 3) {
+  if (empty > 4) {
     return null
   }
 
