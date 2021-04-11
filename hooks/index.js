@@ -8,6 +8,7 @@ module.exports = {
   'DSC': require('./DSC.js'),
   'GGA': require('./GGA.js'),
   'GLL': require('./GLL.js'),
+  'GSV': require('./GSV.js'),
   'HDG': require('./HDG.js'),
   'HDM': require('./HDM.js'),
   'HDT': require('./HDT.js'),
