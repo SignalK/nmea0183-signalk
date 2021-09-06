@@ -52,7 +52,7 @@ export interface IParserOptions {
   onPropertyValues?: (
     propertyName: string,
     onPropertyValuesCallback: IParserOptionsOnPropertyValuesCallback,
-  ) => any;
+  ) => void;
   validateChecksum?: boolean;
 }
 
