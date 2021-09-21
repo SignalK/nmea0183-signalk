@@ -33,4 +33,10 @@ describe('ZDA', () => {
     const delta = new Parser().parse(emptyNmeaLine)
     should.equal(delta, null)
   })
+
+  it('Doesn\t choke when the number of seconds is 0', () => {
+    const delta = new Parser().parse("$IIZDA,085400,22,07,2021,,*50")
+    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.datetime')
+    delta.updates[0].values.should.contain.an.item.with.property('value', '2021-07-22T08:54:00.000Z')
+  })
 })
