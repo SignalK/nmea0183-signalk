@@ -38,14 +38,14 @@ describe('RMB', () => {
     delta.updates[0].values[4].value.should.equal(0)
   })
 
-  it('crossTrackError should be positive to steer Right', () => {
+  it('crossTrackError should be negative to steer right', () => {
     const delta = new Parser().parse('$ECRMB,A,0.432,R,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*1F')
-    delta.updates[0].values[4].value.should.be.closeTo(800.064, 0.005)
+    delta.updates[0].values[4].value.should.be.closeTo(-800.064, 0.005)
   })
 
-  it('crossTrackError should be negative to steer left', () => {
+  it('crossTrackError should be positive to steer left', () => {
     const delta = new Parser().parse('$ECRMB,A,0.432,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*01')
-    delta.updates[0].values[4].value.should.be.closeTo(-800.064, 0.005)
+    delta.updates[0].values[4].value.should.be.closeTo(800.064, 0.005)
   })
 
   it('Doesn\'t choke on empty sentences', () => {

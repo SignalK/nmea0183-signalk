@@ -68,7 +68,7 @@ module.exports = function (input) {
   crossTrackError = utils.float(parts[1])
   crossTrackError = (!isNaN(crossTrackError)) ? crossTrackError : 0.0
 
-  crossTrackError = parts[2] == 'R' ? crossTrackError : -crossTrackError;
+  crossTrackError = parts[2] == 'L' ? crossTrackError : -crossTrackError;
 
   const delta = {
     updates: [
