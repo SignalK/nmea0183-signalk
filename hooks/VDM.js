@@ -187,8 +187,8 @@ module.exports = function (input, session) {
 
   if ( data.callsign ) {
     values.push({
-      path: '',
-      value: {communication:{ callsignVhf: data.callsign}}
+      path: 'communication',
+      value: {callsignVhf: data.callsign}
     })
   }
 
@@ -204,12 +204,8 @@ module.exports = function (input, session) {
 
   if ( data.imo ) {
     values.push({
-      path: '',
-      value: {
-        registrations: {
-          imo: `IMO ${data.imo}`
-        }
-      }
+      path: 'registrations',
+      value: {imo: `IMO ${data.imo}`}
     })
   }
 
