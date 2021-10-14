@@ -37,58 +37,61 @@ module.exports = function BWCHook(input) {
 
   debug(`[BWCHook] decoding sentence ${id} => ${sentence}`)
 
-  if (
-    upper(parts[0]) === '' ||
-    upper(parts[1]) === '' ||
-    upper(parts[2]) === '' ||
-    upper(parts[3]) === '' ||
-    upper(parts[4]) === ''
-  ) {
-    return null
-  }
-
-  const timestamp = utils.timestamp(parts[0])
-  const latitude = utils.coordinate(parts[1], parts[2])
-  const longitude = utils.coordinate(parts[3], parts[4])
-  const distance = utils.transform(
-    parts[9],
-    upper(parts[10]) === 'N' ? 'nm' : 'km',
-    'm'
-  )
-
-  const bearingToWaypoint = {}
-  bearingToWaypoint[upper(parts[6]) === 'T' ? 'True' : 'Magnetic'] =
-    utils.transform(parts[5], 'deg', 'rad')
-  bearingToWaypoint[upper(parts[8]) === 'T' ? 'True' : 'Magnetic'] =
-    utils.transform(parts[7], 'deg', 'rad')
-
-  return {
+  const values = []
+  const result = {
     updates: [
       {
-        timestamp,
         source: tags.source,
-        values: [
-          {
-            path: 'navigation.courseGreatCircle.bearingTrackTrue',
-            value: bearingToWaypoint.True || null,
-          },
-          {
-            path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
-            value: bearingToWaypoint.Magnetic || null,
-          },
-          {
-            path: 'navigation.courseGreatCircle.nextPoint.distance',
-            value: distance,
-          },
-          {
-            path: 'navigation.courseGreatCircle.nextPoint.position',
-            value: {
-              longitude,
-              latitude,
-            },
-          },
-        ],
+        values,
       },
     ],
   }
+
+  if (parts[0] !== '') {
+    result.updates[0].timestamp = utils.timestamp(parts[0])
+  }
+
+  if (
+    parts[1] !== '' &&
+    parts[2] !== '' &&
+    parts[3] !== '' &&
+    parts[4] !== ''
+  ) {
+    const latitude = utils.coordinate(parts[1], parts[2])
+    const longitude = utils.coordinate(parts[3], parts[4])
+    values.push({
+      path: 'navigation.courseGreatCircle.nextPoint.position',
+      value: {
+        longitude,
+        latitude,
+      },
+    })
+  }
+
+  if (parts[9] !== '' && parts[10] !== '') {
+    const distance = utils.transform(
+      parts[9],
+      upper(parts[10]) === 'N' ? 'nm' : 'km',
+      'm'
+    )
+    values.push({
+      path: 'navigation.courseGreatCircle.nextPoint.distance',
+      value: distance,
+    })
+  }
+
+  if (parts[6] === 'T' && parts[5] !== '') {
+    values.push({
+      path: 'navigation.courseGreatCircle.bearingTrackTrue',
+      value: utils.transform(parts[5], 'deg', 'rad'),
+    })
+  }
+  if (parts[8] === 'M' && parts[7] !== '') {
+    values.push({
+      path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
+      value: utils.transform(parts[7], 'deg', 'rad'),
+    })
+  }
+
+  return values.length > 0 ? result : undefined
 }
