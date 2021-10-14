@@ -33,6 +33,17 @@ describe('BWC', () => {
     delta.should.be.an('object')
     delta.updates[0].values.should.deep.equal([
       {
+        path: 'navigation.courseGreatCircle.nextPoint.position',
+        value: {
+          latitude: 49.287333333333336,
+          longitude: -123.1595,
+        },
+      },
+      {
+        path: 'navigation.courseGreatCircle.nextPoint.distance',
+        value: 2407.6000020320143,
+      },
+      {
         path: 'navigation.courseGreatCircle.bearingTrackTrue',
         value: 0.9058258819918839,
       },
@@ -40,24 +51,35 @@ describe('BWC', () => {
         path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
         value: 0.5515240437561374,
       },
-      {
-        path: 'navigation.courseGreatCircle.nextPoint.distance',
-        value: 2407.6000020320143,
-      },
-      {
-        path: 'navigation.courseGreatCircle.nextPoint.position',
-        value: {
-          latitude: 49.287333333333336,
-          longitude: -123.1595,
-        },
-      },
     ])
 
     // delta.updates[0].values.find(x => x.path === 'navigation.courseRhumbline.bearingToDestinationMagnetic').value.should.be.closeTo(0.19198621776321237, 0.000001)
   })
 
+  it('Converts also without next position coordinates', () => {
+    const delta = new Parser().parse(
+      '$IIBWC,200321,,,,,119.5,T,129.5,M,22.10,N,1*1E'
+    )
+
+    delta.should.be.an('object')
+    delta.updates[0].values.should.deep.equal([
+      {
+        path: 'navigation.courseGreatCircle.nextPoint.distance',
+        value: 40929.20003454424,
+      },
+      {
+        path: 'navigation.courseGreatCircle.bearingTrackTrue',
+        value: 2.0856684566094437,
+      },
+      {
+        path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
+        value: 2.2602013818487277,
+      },
+    ])
+  })
+
   it("Doesn't choke on an empty sentence", () => {
     const delta = new Parser().parse('$GPBWC,,,,,,,,,,,,*41')
-    should.equal(delta, null)
+    should.equal(delta, undefined)
   })
 })
