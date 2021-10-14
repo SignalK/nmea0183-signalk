@@ -24,15 +24,23 @@ chai.use(require('@signalk/signalk-schema').chaiModule)
 
 describe('GLL', () => {
   it('Converts OK using individual parser', () => {
-    const delta = new Parser().parse('$GPGLL,5958.613,N,02325.928,E,121022,A,D*40')
+    const delta = new Parser().parse(
+      '$GPGLL,5958.613,N,02325.928,E,121022,A,D*40'
+    )
 
     delta.updates[0].values[0].path.should.equal('navigation.position')
-    delta.updates[0].values[0].value.latitude.should.be.closeTo(59.9768833, 0.000005)
-    delta.updates[0].values[0].value.longitude.should.be.closeTo(23.432133, 0.000005)
+    delta.updates[0].values[0].value.latitude.should.be.closeTo(
+      59.9768833,
+      0.000005
+    )
+    delta.updates[0].values[0].value.longitude.should.be.closeTo(
+      23.432133,
+      0.000005
+    )
     // delta.should.be.validSignalKDelta
   })
 
-  it('Doesn\'t choke on empty sentences', () => {
+  it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$GPGLL,,,,,,,*7C')
     should.equal(delta, null)
   })

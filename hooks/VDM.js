@@ -34,37 +34,37 @@ const stateMapping = {
   9: 'hazardous material high speed',
   10: 'hazardous material wing in ground',
   14: 'ais-sart',
-  15: 'default'
-};
+  15: 'default',
+}
 
 const msgTypeToTransmitterClass = {
-  1: "A",
-  2: "A",
-  3: "A",
-  4: "BASE",
-  5: "A",
-  18: "B",
-  19: "B",
-  21: "ATON"
+  1: 'A',
+  2: 'A',
+  3: 'A',
+  4: 'BASE',
+  5: 'A',
+  18: 'B',
+  19: 'B',
+  21: 'ATON',
 }
 
 const msgTypeToPrefix = {
-  1: "vessels.",
-  2: "vessels.",
-  3: "vessels.",
-  5: "vessels.",
-  9: "aircraft.",
-  18: "vessels.",
-  19: "vessels.",
-  21: "atons.",
-  24: "vessels."
+  1: 'vessels.',
+  2: 'vessels.',
+  3: 'vessels.',
+  5: 'vessels.',
+  9: 'aircraft.',
+  18: 'vessels.',
+  19: 'vessels.',
+  21: 'atons.',
+  24: 'vessels.',
 }
 
 const specialManeuverMapping = {
   0: 'not available',
   1: 'not engaged',
   2: 'engaged',
-  3: 'reserved'
+  3: 'reserved',
 }
 
 module.exports = function (input, session) {
@@ -80,8 +80,8 @@ module.exports = function (input, session) {
     values.push({
       path: '',
       value: {
-        mmsi: data.mmsi
-      }
+        mmsi: data.mmsi,
+      },
     })
   }
 
@@ -89,29 +89,29 @@ module.exports = function (input, session) {
     values.push({
       path: '',
       value: {
-        name: data.shipname
-      }
+        name: data.shipname,
+      },
     })
   }
 
-  if (typeof data.sog != 'undefined' && data.sog != 102.3 ) {
+  if (typeof data.sog != 'undefined' && data.sog != 102.3) {
     values.push({
       path: 'navigation.speedOverGround',
-      value: utils.transform(data.sog, 'knots', 'ms')
+      value: utils.transform(data.sog, 'knots', 'ms'),
     })
   }
 
-  if (typeof data.cog != 'undefined' && data.cog != 360 ) {
+  if (typeof data.cog != 'undefined' && data.cog != 360) {
     values.push({
       path: 'navigation.courseOverGroundTrue',
-      value: utils.transform(data.cog, 'deg', 'rad')
+      value: utils.transform(data.cog, 'deg', 'rad'),
     })
   }
 
   if (typeof data.hdg != 'undefined' && data.hdg != 511) {
     values.push({
       path: 'navigation.headingTrue',
-      value: utils.transform(data.hdg, 'deg', 'rad')
+      value: utils.transform(data.hdg, 'deg', 'rad'),
     })
   }
 
@@ -120,75 +120,74 @@ module.exports = function (input, session) {
       path: 'navigation.position',
       value: {
         longitude: data.lon,
-        latitude: data.lat
-      }
+        latitude: data.lat,
+      },
     })
   }
 
-  if ( data.length ) {
+  if (data.length) {
     values.push({
       path: 'design.length',
-      value: {overall: data.length}
+      value: { overall: data.length },
     })
   }
 
-  if ( data.width ) {
+  if (data.width) {
     values.push({
       path: 'design.beam',
-      value: data.width
+      value: data.width,
     })
   }
 
-  if ( data.draught ) {
+  if (data.draught) {
     values.push({
       path: 'design.draft',
-      value: {current: data.draught}
+      value: { current: data.draught },
     })
   }
 
-  if ( data.dimA ) {
+  if (data.dimA) {
     values.push({
       path: 'sensors.ais.fromBow',
-      value: data.dimA
+      value: data.dimA,
     })
   }
 
-  if ( data.dimD && data.width ) {
-    var fromCenter;
+  if (data.dimD && data.width) {
+    var fromCenter
     if (data.dimD > data.width / 2) {
       fromCenter = (data.dimD - data.width / 2) * -1
     } else {
-      fromCenter =  data.width / 2 - data.dimD
+      fromCenter = data.width / 2 - data.dimD
     }
 
     values.push({
       path: 'sensors.ais.fromCenter',
-      value: fromCenter
+      value: fromCenter,
     })
   }
 
-
-  if ( typeof data.navstatus !== 'undefined' ) {
+  if (typeof data.navstatus !== 'undefined') {
     var state = stateMapping[data.navstatus]
-    if ( typeof state !== 'undefined' ) {
+    if (typeof state !== 'undefined') {
       values.push({
         path: 'navigation.state',
-        value: state
+        value: state,
       })
     }
   }
 
-  if ( data.destination ) {
+  if (data.destination) {
     values.push({
       path: 'navigation.destination.commonName',
-      value: data.destination
+      value: data.destination,
     })
   }
 
-  if ( data.callsign ) {
+  if (data.callsign) {
     values.push({
       path: '',
-      value: {communication:{ callsignVhf: data.callsign}}
+      value: { communication: { callsignVhf: data.callsign } },
     })
   }
 
@@ -197,76 +196,75 @@ module.exports = function (input, session) {
     if (aisClass) {
       values.push({
         path: 'sensors.ais.class',
-        value: aisClass
+        value: aisClass,
       })
     }
   }
 
-  if ( data.imo ) {
+  if (data.imo) {
     values.push({
       path: '',
       value: {
         registrations: {
-          imo: `IMO ${data.imo}`
-        }
-      }
+          imo: `IMO ${data.imo}`,
+        },
+      },
     })
   }
 
-  var contextPrefix =  msgTypeToPrefix[data.aistype] || "vessels."
+  var contextPrefix = msgTypeToPrefix[data.aistype] || 'vessels.'
 
-  if ( data.aidtype ) {
-    contextPrefix = "atons."
+  if (data.aidtype) {
+    contextPrefix = 'atons.'
     var atonType = schema.getAtonTypeName(data.aidtype)
-    if ( typeof atonType !== 'undefined' ) {
+    if (typeof atonType !== 'undefined') {
       values.push({
         path: 'atonType',
-        value: { "id": data.aidtype, "name": atonType }
+        value: { id: data.aidtype, name: atonType },
       })
     }
-    if ( typeof data.offpos !== 'undefined' ) {
+    if (typeof data.offpos !== 'undefined') {
       values.push({
         path: 'offPosition',
-        value: data.offpos == 1
+        value: data.offpos == 1,
       })
     }
-    if ( typeof data.virtual !== 'undefined' ) {
+    if (typeof data.virtual !== 'undefined') {
       values.push({
         path: 'virtual',
-        value: data.virtual == 1
+        value: data.virtual == 1,
       })
     }
   }
 
-  if ( data.cargo )
-  {
+  if (data.cargo) {
     var typeName = schema.getAISShipTypeName(data.cargo)
-    if ( typeof typeName !== 'undefined' ) {
+    if (typeof typeName !== 'undefined') {
       values.push({
         path: 'design.aisShipType',
-        value: { "id": data.cargo, "name": typeName }
+        value: { id: data.cargo, name: typeName },
       })
     }
   }
 
-  if ( typeof data.smi !== 'undefined' ) {
+  if (typeof data.smi !== 'undefined') {
     values.push({
       path: 'navigation.specialManeuver',
-      value: specialManeuverMapping[data.smi]
+      value: specialManeuverMapping[data.smi],
     })
   }
 
-  if ( typeof data.dac !== 'undefined' ) {
+  if (typeof data.dac !== 'undefined') {
     values.push({
       path: 'sensors.ais.designatedAreaCode',
-      value: data.dac
+      value: data.dac,
     })
   }
 
-  if ( typeof data.fid !== 'undefined' ) {
+  if (typeof data.fid !== 'undefined') {
     values.push({
       path: 'sensors.ais.functionalId',
-      value: data.fid
+      value: data.fid,
     })
   }
 
@@ -280,8 +278,8 @@ module.exports = function (input, session) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: values
-      }
+        values: values,
+      },
     ],
   }
 

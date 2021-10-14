@@ -23,20 +23,38 @@ chai.use(require('chai-things'))
 describe('HDG', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$SDHDG,181.9,,,0.6,E*32')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-    delta.updates[0].values[0].value.should.be.closeTo((181.9 / 180 * Math.PI), 0.005)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.magneticVariation')
-    delta.updates[0].values[1].value.should.be.closeTo((0.6 / 180 * Math.PI), 0.005)
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.headingMagnetic'
+    )
+    delta.updates[0].values[0].value.should.be.closeTo(
+      (181.9 / 180) * Math.PI,
+      0.005
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.magneticVariation'
+    )
+    delta.updates[0].values[1].value.should.be.closeTo(
+      (0.6 / 180) * Math.PI,
+      0.005
+    )
   })
 
   it('Sentence with just heading works', () => {
     const delta = new Parser().parse('$HCHDG,51.5,,,,*73')
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
-    delta.updates[0].values[0].value.should.be.closeTo((51.5 / 180 * Math.PI), 0.005)
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.headingMagnetic'
+    )
+    delta.updates[0].values[0].value.should.be.closeTo(
+      (51.5 / 180) * Math.PI,
+      0.005
+    )
   })
 
-  it('Doesn\'t choke on empty sentences', () => {
+  it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$SDHDG,,,,,*70')
     should.equal(delta, null)
   })

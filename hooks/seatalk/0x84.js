@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 84  U6  VW  XY 0Z 0M RR SS TT  Compass heading  Autopilot course and
@@ -67,58 +67,61 @@ module.exports = function (input) {
   var TT = parseInt(parts[8], 16)
 
   const inputs = [U, VW, V, XY, Z, M, RR, SS, TT]
-  if (! inputs.every((x) => !isNaN(x))) {
+  if (!inputs.every((x) => !isNaN(x))) {
     return null
   }
 
-  var compassHeading = (U & 0x3) * 90 + (VW & 0x3F) * 2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1) : 0)
-  var apCourse = ((V & 0xC) >> 2) * 90 + XY / 2
+  var compassHeading =
+    (U & 0x3) * 90 +
+    (VW & 0x3f) * 2 +
+    (U & 0xc ? (U & (0xc == 0xc) ? 2 : 1) : 0)
+  var apCourse = ((V & 0xc) >> 2) * 90 + XY / 2
   /*Positive to right*/
   var rudderPos = RR
-  if(rudderPos > 127) {
+  if (rudderPos > 127) {
     rudderPos = rudderPos - 256
   }
 
-  var modeVar = (Z & 0x2)
-  switch(modeVar) {
+  var modeVar = Z & 0x2
+  switch (modeVar) {
     case 0:
-      mode = "standby"
+      mode = 'standby'
       break
     case 2:
-      mode = "auto";
+      mode = 'auto'
       break
     default:
       break
   }
-  if((Z & 0x4) == 4) {
-    mode = "wind"
+  if ((Z & 0x4) == 4) {
+    mode = 'wind'
   }
-  if((Z & 0x8) == 8) {
-    mode = "route"
+  if ((Z & 0x8) == 8) {
+    mode = 'route'
   }
   var pathValues = []
-  if(compassHeading) {
+  if (compassHeading) {
     pathValues.push({
       path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(compassHeading), 'deg', 'rad')
+      value: utils.transform(utils.float(compassHeading), 'deg', 'rad'),
     })
   }
-  if(apCourse) {
+  if (apCourse) {
     pathValues.push({
       path: 'steering.autopilot.target.headingMagnetic',
-      value: utils.transform(utils.float(apCourse), 'deg', 'rad')
+      value: utils.transform(utils.float(apCourse), 'deg', 'rad'),
     })
   }
-  if(rudderPos) {
+  if (rudderPos) {
     pathValues.push({
       path: 'steering.rudderAngle',
-      value: utils.transform(utils.float(rudderPos), 'deg', 'rad')
+      value: utils.transform(utils.float(rudderPos), 'deg', 'rad'),
     })
   }
-  if(mode) {
+  if (mode) {
     pathValues.push({
       path: 'steering.autopilot.state',
-      value: mode
+      value: mode,
     })
   }
 
@@ -127,8 +130,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
+        values: pathValues,
+      },
     ],
   }
 }

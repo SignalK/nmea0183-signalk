@@ -26,7 +26,10 @@ describe('MTW', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$YXMTW,15.2,C*14')
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.water.temperature')
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'environment.water.temperature'
+    )
     delta.updates[0].values[0].value.should.be.closeTo(288.35, 0.005)
   })
 })

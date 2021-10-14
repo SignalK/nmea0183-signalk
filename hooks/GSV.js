@@ -78,15 +78,19 @@ const utils = require('@signalk/nmea0183-utilities')
 module.exports = function (input, session) {
   const { parts, tags } = input
 
-  const gsvData = session.gsvData || (session.gsvData = {
-    nextSentenceNumber: 1,
-    numberOfSentences: Number(parts[NUMBER_OF_SENTENCES]),
-    count: Number(parts[SATS_IN_VIEW]),
-    satellites: []
-  })
+  const gsvData =
+    session.gsvData ||
+    (session.gsvData = {
+      nextSentenceNumber: 1,
+      numberOfSentences: Number(parts[NUMBER_OF_SENTENCES]),
+      count: Number(parts[SATS_IN_VIEW]),
+      satellites: [],
+    })
 
   if (Number(parts[SENTENCE_NUMBER]) !== gsvData.nextSentenceNumber) {
-    debug(`Expected sentence number to be ${gsvData.nextSentenceNumber} but got ${parts}`)
+    debug(
+      `Expected sentence number to be ${gsvData.nextSentenceNumber} but got ${parts}`
+    )
     delete session.gsvData
     return null
   }
@@ -98,9 +102,17 @@ module.exports = function (input, session) {
     if (!isNaN(satPRN)) {
       gsvData.satellites.push({
         id: Number(satPRN),
-        elevation: utils.transform(parts[thisSatDataStart + OFFSET_ELEVATION], 'deg', 'rad'),
-        azimuth: utils.transform(parts[thisSatDataStart + OFFSET_AZIMUTH], 'deg', 'rad'),
-        SNR: Number(parts[thisSatDataStart + OFFSET_SNR])
+        elevation: utils.transform(
+          parts[thisSatDataStart + OFFSET_ELEVATION],
+          'deg',
+          'rad'
+        ),
+        azimuth: utils.transform(
+          parts[thisSatDataStart + OFFSET_AZIMUTH],
+          'deg',
+          'rad'
+        ),
+        SNR: Number(parts[thisSatDataStart + OFFSET_SNR]),
       })
     }
   }
@@ -117,11 +129,11 @@ module.exports = function (input, session) {
           values: [
             {
               path: 'navigation.gnss.satellitesInView',
-              value: gsvData
-            }
-          ]
-        }
-      ]
+              value: gsvData,
+            },
+          ],
+        },
+      ],
     }
   }
 

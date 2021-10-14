@@ -41,15 +41,17 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: [{
-          "path": "environment.current",
-          "value": {
-            "setTrue": utils.transform(utils.float(parts[0]),'deg', 'rad'),
-            "setMagnetic": utils.transform(utils.float(parts[2]),'deg', 'rad'),
-            "drift": utils.transform(utils.float(parts[4]), 'knots', 'ms')
-          }
-        }]
-      }
+        values: [
+          {
+            path: 'environment.current',
+            value: {
+              setTrue: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
+              setMagnetic: utils.transform(utils.float(parts[2]), 'deg', 'rad'),
+              drift: utils.transform(utils.float(parts[4]), 'knots', 'ms'),
+            },
+          },
+        ],
+      },
     ],
   }
 

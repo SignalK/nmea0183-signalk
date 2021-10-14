@@ -34,13 +34,11 @@ Field Number:
 module.exports = function (input) {
   var velocityValue
   const { id, sentence, parts, tags } = input
-  if (parts[2]){
+  if (parts[2]) {
     velocityValue = utils.float(parts[2])
-  }
-  else if (parts[0]){
+  } else if (parts[0]) {
     velocityValue = utils.transform(utils.float(parts[0]), 'knots', 'ms')
-  }
-  else {
+  } else {
     return null
   }
 
@@ -52,10 +50,10 @@ module.exports = function (input) {
         values: [
           {
             path: 'performance.velocityMadeGood',
-            value: velocityValue
-          }
-        ]
-      }
+            value: velocityValue,
+          },
+        ],
+      },
     ],
   }
 }

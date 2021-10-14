@@ -38,7 +38,10 @@ Field Number:
 */
 
 function isEmpty(mixed) {
-  return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+  return (
+    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
+    (typeof mixed === 'string' && mixed.trim() === '')
+  )
 }
 
 module.exports = function (input) {
@@ -70,11 +73,11 @@ module.exports = function (input) {
             path: 'navigation.position',
             value: {
               longitude: utils.coordinate(parts[2], parts[3]),
-              latitude: utils.coordinate(parts[0], parts[1])
-            }
+              latitude: utils.coordinate(parts[0], parts[1]),
+            },
           },
-        ]
-      }
+        ],
+      },
     ],
   }
 

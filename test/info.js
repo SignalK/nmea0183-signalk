@@ -23,25 +23,25 @@ chai.Should()
 chai.use(require('chai-things'))
 
 describe('Package info', () => {
-  it(`Retrieves name "${pkg.name}" successfully`, done => {
+  it(`Retrieves name "${pkg.name}" successfully`, (done) => {
     const data = new Parser().name
     data.should.equal(pkg.name)
     done()
   })
 
-  it(`Retrieves license "${pkg.license}" successfully`, done => {
+  it(`Retrieves license "${pkg.license}" successfully`, (done) => {
     const data = new Parser().license
     data.should.equal(pkg.license)
     done()
   })
 
-  it(`Retrieves version "${pkg.version}" successfully`, done => {
+  it(`Retrieves version "${pkg.version}" successfully`, (done) => {
     const data = new Parser().version
     data.should.equal(pkg.version)
     done()
   })
 
-  it(`Retrieves author "${pkg.author}" successfully`, done => {
+  it(`Retrieves author "${pkg.author}" successfully`, (done) => {
     const data = new Parser().author
     data.should.equal(pkg.author)
     done()

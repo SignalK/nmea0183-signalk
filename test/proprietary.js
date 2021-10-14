@@ -24,7 +24,7 @@ chai.use(require('chai-things'))
 const nmeaLine = '$PMGNST,02.12,3,T,534,05.0,+03327,00*40'
 
 describe('Proprietary sentences', () => {
-  it('Don\'t break the parser', () => {
+  it("Don't break the parser", () => {
     const delta = new Parser().parse(nmeaLine)
     should.equal(delta, null)
   })

@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 25  Z4  XX  YY  UU  VV AW  Total & Trip Log 
@@ -27,26 +27,26 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var Z = (parseInt(parts[1],16) & 0xF0) >> 4;
-  var XX = parseInt(parts[2],16)
-  var YY = parseInt(parts[3],16)
-  var UU = parseInt(parts[4],16)
-  var VV = parseInt(parts[5],16)
-  var W = (parseInt(parts[6],16) & 0x0F);
+  var Z = (parseInt(parts[1], 16) & 0xf0) >> 4
+  var XX = parseInt(parts[2], 16)
+  var YY = parseInt(parts[3], 16)
+  var UU = parseInt(parts[4], 16)
+  var VV = parseInt(parts[5], 16)
+  var W = parseInt(parts[6], 16) & 0x0f
 
-  var total= (XX+YY*256+Z*4096)/10.0
-  var trip = (UU+VV*256+W*65536)/100.0
+  var total = (XX + YY * 256 + Z * 4096) / 10.0
+  var trip = (UU + VV * 256 + W * 65536) / 100.0
 
   var pathValues = []
 
   pathValues.push({
     path: 'navigation.trip',
-    value: utils.transform(utils.float(trip), 'nm', 'km') * 1000
+    value: utils.transform(utils.float(trip), 'nm', 'km') * 1000,
   })
 
   pathValues.push({
     path: 'navigation.log',
-    value: utils.transform(utils.float(total), 'nm', 'km') * 1000
+    value: utils.transform(utils.float(total), 'nm', 'km') * 1000,
   })
 
   return {
@@ -54,8 +54,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

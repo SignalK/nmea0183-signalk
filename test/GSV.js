@@ -29,14 +29,10 @@ const testData = [
   '$GLGSV,3,2,10,78,52,221,38,79,44,310,28,80,00,342,,81,35,261,40,0*7E',
   '$GLGSV,3,3,10,87,41,052,31,88,75,350,33,0*73',
   '$GAGSV,2,1,07,01,37,308,33,03,09,074,35,05,07,025,,13,85,237,31,0*7F',
-  '$GAGSV,2,2,07,15,39,060,33,21,63,228,39,26,30,239,40,0*44'
+  '$GAGSV,2,2,07,15,39,060,33,21,63,228,39,26,30,239,40,0*44',
 ]
 
-
-
-
 describe('GSV', () => {
-
   it('GPGSV converts', () => {
     const parser = new Parser()
     let r = parser.parse(testData[0])
@@ -53,7 +49,7 @@ describe('GSV', () => {
     const data = [
       '$GPGSV,3,1,10,8,13,62,35,13,50,277,39,18,18,324,33,5,53,228,38*48',
       '$GPGSV,,2,,7,43,71,39,30,73,107,38,27,13,26,34,15,14,289,37*7F',
-      '$GPGSV,,3,,14,33,150,40,28,26,155,37*44'
+      '$GPGSV,,3,,14,33,150,40,28,26,155,37*44',
     ]
     const parser = new Parser()
     let r = parser.parse(data[0])
@@ -66,11 +62,10 @@ describe('GSV', () => {
     pathValue.path.should.equal('navigation.gnss.satellitesInView')
     pathValue.value.count.should.equal(10)
     pathValue.value.satellites[0].should.eql({
-      "SNR": 35,
-      "azimuth": 1.0821041364835606,
-      "elevation": 0.22689280281106916,
-      "id": 8
+      SNR: 35,
+      azimuth: 1.0821041364835606,
+      elevation: 0.22689280281106916,
+      id: 8,
     })
   })
-
 })

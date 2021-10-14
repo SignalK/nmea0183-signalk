@@ -29,17 +29,41 @@ describe('BOD', () => {
     // console.log(JSON.stringify(delta, null, 2))
 
     delta.should.be.an('object')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.bearingTrackTrue')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.7853981635767779)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.bearingTrackMagnetic')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.40142572805035315)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.nextPoint.ID')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 'DEST')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseRhumbline.previousPoint.ID')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 'START')
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseRhumbline.bearingTrackTrue'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      0.7853981635767779
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseRhumbline.bearingTrackMagnetic'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      0.40142572805035315
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseRhumbline.nextPoint.ID'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      'DEST'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseRhumbline.previousPoint.ID'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      'START'
+    )
   })
 
-  it('Doesn\'t choke on an empty sentence', () => {
+  it("Doesn't choke on an empty sentence", () => {
     const delta = new Parser().parse('$GPBOD,,,,,,*5E')
     should.equal(delta, null)
   })

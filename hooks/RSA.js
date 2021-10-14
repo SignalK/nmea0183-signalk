@@ -46,13 +46,12 @@ module.exports = function (input) {
         values: [
           {
             path: 'steering.rudderAngle',
-            value: utils.transform(utils.float(parts[0]), 'deg', 'rad')
-          }
-        ]
-      }
+            value: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
+          },
+        ],
+      },
     ],
   }
 
   return delta
 }
-

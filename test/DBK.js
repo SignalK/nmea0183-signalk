@@ -25,11 +25,14 @@ chai.use(require('chai-things'))
 describe('DBK', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$IIDBK,035.53,f,010.83,M,005.85,F*3C')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.depth.belowKeel')
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'environment.depth.belowKeel'
+    )
     delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
   })
 
-  it('Doesn\'t choke on empty sentences', () => {
+  it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$IIDBK,,,,,,*4D')
     should.equal(delta, null)
   })

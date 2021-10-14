@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 99  00  XX        Compass variation sent by ST40 compass instrument
@@ -31,17 +31,19 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var XX = parseInt(parts[2],16)
-  var value=128-(XX & 0x7F)
-  var s=-1
-  if (XX & 0x80!=0) { s=1 }
-  var magneticVariation=s*value
+  var XX = parseInt(parts[2], 16)
+  var value = 128 - (XX & 0x7f)
+  var s = -1
+  if (XX & (0x80 != 0)) {
+    s = 1
+  }
+  var magneticVariation = s * value
 
   var pathValues = []
 
   pathValues.push({
     path: 'navigation.magneticVariation',
-    value: utils.transform(utils.float(magneticVariation), 'deg', 'rad')
+    value: utils.transform(utils.float(magneticVariation), 'deg', 'rad'),
   })
 
   return {
@@ -49,8 +51,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

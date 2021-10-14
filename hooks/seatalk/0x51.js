@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 51  Z2  XX  YY  YY  LON position: XX degrees, (YYYY & 0x7FFF)/100 minutes
@@ -29,20 +29,28 @@
 module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
 
-  var Z = (parseInt(parts[1],16) & 0xF0) >> 4;
-  var XX = parseInt(parts[2],16)
-  var YYYY=parseInt(parts[3],16)+256*parseInt(parts[4],16)
-  var s=1;
-  if ((YYYY & 0x8000)==0) { s=-1; }
-  var minutes=(YYYY & 0x7FFF)/100.0
-  session['longitude']=s*(XX+minutes/60.0);
+  var Z = (parseInt(parts[1], 16) & 0xf0) >> 4
+  var XX = parseInt(parts[2], 16)
+  var YYYY = parseInt(parts[3], 16) + 256 * parseInt(parts[4], 16)
+  var s = 1
+  if ((YYYY & 0x8000) == 0) {
+    s = -1
+  }
+  var minutes = (YYYY & 0x7fff) / 100.0
+  session['longitude'] = s * (XX + minutes / 60.0)
 
   var pathValues = []
 
-  if (session.hasOwnProperty('latitude') && session.hasOwnProperty('longitude')) {
+  if (
+    session.hasOwnProperty('latitude') &&
+    session.hasOwnProperty('longitude')
+  ) {
     pathValues.push({
       path: 'navigation.position',
-      value: { "longitude": utils.float(session['longitude']), "latitude": utils.float(session['latitude']) }
+      value: {
+        longitude: utils.float(session['longitude']),
+        latitude: utils.float(session['latitude']),
+      },
     })
   }
 
@@ -51,8 +59,8 @@ module.exports = function (input, session) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

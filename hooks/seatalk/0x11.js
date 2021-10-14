@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 11  01  XX  0Y  Apparent Wind Speed: (XX & 0x7F) + Y/10 Knots
@@ -28,14 +28,14 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var XX=parseInt(parts[2],16)
-  var Y=parseInt(parts[3],16)
-  var apparentWindSpeed = (XX & 0x7F) + Y/10.0
+  var XX = parseInt(parts[2], 16)
+  var Y = parseInt(parts[3], 16)
+  var apparentWindSpeed = (XX & 0x7f) + Y / 10.0
   var pathValues = []
 
   pathValues.push({
     path: 'environment.wind.speedApparent',
-    value: utils.transform(utils.float(apparentWindSpeed), 'knots', 'ms')
+    value: utils.transform(utils.float(apparentWindSpeed), 'knots', 'ms'),
   })
 
   return {
@@ -43,8 +43,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

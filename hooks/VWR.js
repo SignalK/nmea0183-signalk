@@ -33,23 +33,29 @@ $--VWR,x.x,a,x.x,N,x.x,M,x.x,K*hh<CR><LF>
  8 - Checksum
  */
 
- function isEmpty(mixed) {
-   return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
- }
+function isEmpty(mixed) {
+  return (
+    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
+    (typeof mixed === 'string' && mixed.trim() === '')
+  )
+}
 
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  const empty = parts.reduce((count, part) => { count += (isEmpty(part) ? 1 : 0); return count; }, 0)
+  const empty = parts.reduce((count, part) => {
+    count += isEmpty(part) ? 1 : 0
+    return count
+  }, 0)
   if (empty > 4) {
     return null
   }
 
-  var rightPositive = 0;
+  var rightPositive = 0
   if (String(parts[1]).toUpperCase() === 'R') {
-    rightPositive = 1;
+    rightPositive = 1
   } else if (String(parts[1]).toUpperCase() === 'L') {
-    rightPositive = -1;
+    rightPositive = -1
   }
 
   return {
@@ -60,14 +66,18 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.wind.angleApparent',
-            value: utils.transform(utils.float(parts[0])*rightPositive, 'deg', 'rad')
+            value: utils.transform(
+              utils.float(parts[0]) * rightPositive,
+              'deg',
+              'rad'
+            ),
           },
           {
             path: 'environment.wind.speedApparent',
-            value: utils.transform(utils.float(parts[2]), 'knots', 'ms')
-          }
-        ]
-      }
+            value: utils.transform(utils.float(parts[2]), 'knots', 'ms'),
+          },
+        ],
+      },
     ],
   }
 }

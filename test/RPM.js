@@ -25,8 +25,11 @@ describe('RPM', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(nmeaLine)
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'propulsion.engine_1.revolutions')
-    delta.updates[0].values[0].value.should.be.closeTo(((2418.2 / 60)), 0.0005)
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'propulsion.engine_1.revolutions'
+    )
+    delta.updates[0].values[0].value.should.be.closeTo(2418.2 / 60, 0.0005)
   })
 
   /* FIXME!

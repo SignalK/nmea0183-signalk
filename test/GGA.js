@@ -27,20 +27,46 @@ const toFull = require('./toFull')
 
 describe('GGA', () => {
   it('Converts OK using individual parser', () => {
-    const delta = new Parser().parse('$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F')
+    const delta = new Parser().parse(
+      '$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F'
+    )
 
     should.not.exist(delta.updates[0].source.label)
     delta.updates[0].source.talker.should.equal('GP')
     // Paths
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.position')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.methodQuality')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.satellites')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.antennaAltitude')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.horizontalDilution')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.differentialAge')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.gnss.differentialReference')
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.position'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.methodQuality'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.satellites'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.antennaAltitude'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.horizontalDilution'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.differentialAge'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.differentialReference'
+    )
     // Values
-    delta.updates[0].values[0].value.should.deep.equal({longitude: -122.03782631066667, latitude: 37.39109795066667})
+    delta.updates[0].values[0].value.should.deep.equal({
+      longitude: -122.03782631066667,
+      latitude: 37.39109795066667,
+    })
     delta.updates[0].values[1].value.should.equal('DGNSS fix')
     delta.updates[0].values[2].value.should.equal(6)
     delta.updates[0].values[3].value.should.equal(18)
@@ -50,7 +76,7 @@ describe('GGA', () => {
     toFull(delta).should.be.validSignalK
   })
 
-  it('Doesn\'t choke on empty sentences', () => {
+  it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$GPGGA,,,,,,,,,,,,,,*56')
     should.equal(delta, null)
   })

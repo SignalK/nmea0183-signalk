@@ -16,27 +16,27 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
- /*
-  * MTA - Mean Temperature of Air
-  *
-  *        0   1 2
-  *        |   | |
-  * $--MTA,x.x,C*hh<CR><LF>
-  *
-  * Field Number:
-  *   0.    Degrees
-  *   1.    Unit of Measurement, Celcius
-  *   2.    Checksum
-  *
-  */
+/*
+ * MTA - Mean Temperature of Air
+ *
+ *        0   1 2
+ *        |   | |
+ * $--MTA,x.x,C*hh<CR><LF>
+ *
+ * Field Number:
+ *   0.    Degrees
+ *   1.    Unit of Measurement, Celcius
+ *   2.    Checksum
+ *
+ */
 
 module.exports = function (input) {
-  const { id, sentence, parts, tags } = input;
+  const { id, sentence, parts, tags } = input
 
-  if(parts[1] != 'C') {
-      return null;
+  if (parts[1] != 'C') {
+    return null
   }
   const delta = {
     updates: [
@@ -46,10 +46,10 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.outside.temperature',
-            value: utils.transform(utils.float(parts[0]), 'c', 'k')
-          }
-        ]
-      }
+            value: utils.transform(utils.float(parts[0]), 'c', 'k'),
+          },
+        ],
+      },
     ],
   }
 

@@ -25,7 +25,10 @@ chai.use(require('chai-things'))
 describe('VPW', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(nmeaLine)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'performance.velocityMadeGood')
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'performance.velocityMadeGood'
+    )
     delta.updates[0].values.should.contain.an.item.with.property('value', 6.7)
   })
 })

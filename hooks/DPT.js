@@ -35,8 +35,11 @@ Field Number:
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  if (((typeof parts[0] !== 'string' || parts[0].trim() == '') && typeof parts[0] !== 'number') ||
-      (typeof parts[1] !== 'string' && typeof parts[1] !== 'number')) {
+  if (
+    ((typeof parts[0] !== 'string' || parts[0].trim() == '') &&
+      typeof parts[0] !== 'number') ||
+    (typeof parts[1] !== 'string' && typeof parts[1] !== 'number')
+  ) {
     return null
   }
   var depth = utils.float(parts[0])
@@ -49,32 +52,32 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.depth.belowTransducer',
-            value: depth
-          }
-        ]
-      }
+            value: depth,
+          },
+        ],
+      },
     ],
   }
 
   var offset = utils.float(parts[1])
 
-  if ( offset > 0 ) {
+  if (offset > 0) {
     delta.updates[0].values.push({
       path: 'environment.depth.surfaceToTransducer',
-      value: offset
+      value: offset,
     })
     delta.updates[0].values.push({
       path: 'environment.depth.belowSurface',
-      value: depth + offset
+      value: depth + offset,
     })
-  } else if ( offset < 0 ) {
+  } else if (offset < 0) {
     delta.updates[0].values.push({
       path: 'environment.depth.transducerToKeel',
-      value: offset * -1
+      value: offset * -1,
     })
     delta.updates[0].values.push({
       path: 'environment.depth.belowKeel',
-      value: depth + offset
+      value: depth + offset,
     })
   }
 

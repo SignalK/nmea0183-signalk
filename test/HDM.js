@@ -26,11 +26,14 @@ describe('HDM', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$04HDM,186.5,M*2C')
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingMagnetic')
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.headingMagnetic'
+    )
     delta.updates[0].values[0].value.should.be.closeTo(3.26, 0.005)
   })
 
-  it('Doesn\'t choke on empty sentences', () => {
+  it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$SKHDM,,*59')
     should.equal(delta, null)
   })

@@ -42,23 +42,26 @@ module.exports = function (input) {
   if (Number.isNaN(U) || Number.isNaN(VW) || Number.isNaN(RR)) {
     return null
   }
-  var compassHeading = (U & 0x3) * 90 + (VW & 0x3F) * 2 + (U & 0xC ? (U & 0xC == 0xC ? 2 : 1) : 0);
-  var rudderPos = RR;
-  if(rudderPos > 127) {
+  var compassHeading =
+    (U & 0x3) * 90 +
+    (VW & 0x3f) * 2 +
+    (U & 0xc ? (U & (0xc == 0xc) ? 2 : 1) : 0)
+  var rudderPos = RR
+  if (rudderPos > 127) {
     rudderPos = rudderPos - 256
   }
 
   var pathValues = []
-  if(compassHeading) {
+  if (compassHeading) {
     pathValues.push({
       path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(compassHeading), 'deg', 'rad')
+      value: utils.transform(utils.float(compassHeading), 'deg', 'rad'),
     })
   }
-  if(rudderPos) {
+  if (rudderPos) {
     pathValues.push({
       path: 'steering.rudderAngle',
-      value: utils.transform(utils.float(rudderPos), 'deg', 'rad')
+      value: utils.transform(utils.float(rudderPos), 'deg', 'rad'),
     })
   }
 
@@ -67,8 +70,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

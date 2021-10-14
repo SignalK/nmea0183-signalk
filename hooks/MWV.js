@@ -27,27 +27,27 @@ function convertToWindAngle(angle) {
   return numAngle
 }
 
-module.exports = function(input) {
+module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  if(!parts[4] || parts[4].toUpperCase() !== 'A') {
+  if (!parts[4] || parts[4].toUpperCase() !== 'A') {
     return null
   }
 
   let wsu = parts[3].toUpperCase()
 
   if (wsu === 'K') {
-    wsu = 'kph';
+    wsu = 'kph'
   } else if (wsu === 'N') {
-    wsu = 'knots';
+    wsu = 'knots'
   } else {
-    wsu = 'ms';
+    wsu = 'ms'
   }
 
   const angle = convertToWindAngle(parts[0])
   const speed = utils.transform(parts[2], wsu, 'ms')
-  const valueType = parts[1].toUpperCase() == 'R' ? 'Apparent' : 'True';
-  const angleType = parts[1].toUpperCase() == 'R' ? 'Apparent' : 'TrueWater';
+  const valueType = parts[1].toUpperCase() == 'R' ? 'Apparent' : 'True'
+  const angleType = parts[1].toUpperCase() == 'R' ? 'Apparent' : 'TrueWater'
 
   const delta = {
     updates: [
@@ -57,14 +57,14 @@ module.exports = function(input) {
         values: [
           {
             path: 'environment.wind.speed' + valueType,
-            value: speed
+            value: speed,
           },
           {
             path: 'environment.wind.angle' + angleType,
-            value: utils.transform(angle, 'deg', 'rad')
-          }
-        ]
-      }
+            value: utils.transform(angle, 'deg', 'rad'),
+          },
+        ],
+      },
     ],
   }
 

@@ -32,7 +32,10 @@ Field Number:
 */
 
 function isEmpty(mixed) {
-  return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+  return (
+    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
+    (typeof mixed === 'string' && mixed.trim() === '')
+  )
 }
 
 module.exports = function (input) {
@@ -42,13 +45,15 @@ module.exports = function (input) {
   if (!isEmpty(parts[0])) {
     values.push({
       path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(parts[0]), 'deg', 'rad')
+      value: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
     })
   }
   if (!(isEmpty(parts[3]) || isEmpty(parts[4]))) {
     values.push({
       path: 'navigation.magneticVariation',
-      value: utils.transform(utils.float(parts[3]), 'deg', 'rad') * (parts[4] === 'E' ? 1 : -1)
+      value:
+        utils.transform(utils.float(parts[3]), 'deg', 'rad') *
+        (parts[4] === 'E' ? 1 : -1),
     })
   }
   if (!values.length) {
@@ -60,8 +65,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values
-      }
+        values,
+      },
     ],
   }
 

@@ -26,13 +26,22 @@ describe('VTG', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$GPVTG,0.0,T,359.3,M,0.0,N,0.0,K,A*2F')
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseOverGroundMagnetic')
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseOverGroundMagnetic'
+    )
     delta.updates[0].values[0].value.should.be.closeTo(6.271, 0.005)
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.courseOverGroundTrue')
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseOverGroundTrue'
+    )
     delta.updates[0].values[1].value.should.equal(0)
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.speedOverGround')
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.speedOverGround'
+    )
     delta.updates[0].values[2].value.should.equal(0)
   })
 })

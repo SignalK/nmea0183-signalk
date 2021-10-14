@@ -47,22 +47,38 @@ module.exports = function (input) {
 
   debug(`[APBHook] decoding sentence ${id} => ${sentence}`)
 
-  if (upper(parts[0]) === '' || upper(parts[1]) === '' || upper(parts[2]) === '' || upper(parts[3]) === '' || upper(parts[4]) === '') {
+  if (
+    upper(parts[0]) === '' ||
+    upper(parts[1]) === '' ||
+    upper(parts[2]) === '' ||
+    upper(parts[3]) === '' ||
+    upper(parts[4]) === ''
+  ) {
     return null
   }
 
   if (parts[0].trim().toUpperCase() === 'V') {
     // Don't parse this sentence as it's void.
-    throw new Error('Not parsing sentence for it\'s void (LORAN-C blink/SNR warning)')
+    throw new Error(
+      "Not parsing sentence for it's void (LORAN-C blink/SNR warning)"
+    )
   }
 
   if (parts[1].trim().toUpperCase() === 'V') {
-    throw new Error('Not parsing sentence for it\'s void (LORAN-C cycle warning)')
+    throw new Error(
+      "Not parsing sentence for it's void (LORAN-C cycle warning)"
+    )
   }
 
   // XTE
   const direction = parts[3].trim().toUpperCase() === 'L' ? 1 : -1
-  const xte = direction * utils.transform(parts[2], (parts[4].trim().toUpperCase() === 'N' ? 'nm' : 'km'), 'm')
+  const xte =
+    direction *
+    utils.transform(
+      parts[2],
+      parts[4].trim().toUpperCase() === 'N' ? 'nm' : 'km',
+      'm'
+    )
 
   // WP arrival status
   const arrivalCircleEntered = parts[5].trim().toUpperCase() === 'A'
@@ -70,18 +86,21 @@ module.exports = function (input) {
 
   // Bearing, origin to destination
   const bearingOriginToDest = utils.transform(parts[7], 'deg', 'rad')
-  const bearingOriginToDestType = parts[8].trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
+  const bearingOriginToDestType =
+    parts[8].trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
 
   // Destination Waypoint ID
   const destinationWaypointID = parts[9].trim()
 
   // Bearing, position to destination
   const bearingPositionToDest = utils.transform(parts[10], 'deg', 'rad')
-  const bearingPositionToDestType = parts[11].trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
+  const bearingPositionToDestType =
+    parts[11].trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
 
   // Heading to steer
   const headingToSteer = utils.transform(parts[12], 'deg', 'rad')
-  const headingToSteerType = parts[13].trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
+  const headingToSteerType =
+    parts[13].trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
 
   return {
     updates: [
@@ -91,46 +110,52 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.courseRhumbline.crossTrackError',
-            value: xte
+            value: xte,
           },
           {
             path: `navigation.courseRhumbline.bearingTrack${bearingOriginToDestType}`,
-            value: bearingOriginToDest
+            value: bearingOriginToDest,
           },
           {
             path: `navigation.courseRhumbline.bearingOriginToDestination${bearingOriginToDestType}`,
-            value: bearingOriginToDest
+            value: bearingOriginToDest,
           },
           {
             path: `navigation.courseRhumbline.bearingToDestination${bearingPositionToDestType}`,
-            value: bearingPositionToDest
+            value: bearingPositionToDest,
           },
           {
             path: 'navigation.courseRhumbline.nextPoint.ID',
-            value: destinationWaypointID
+            value: destinationWaypointID,
           },
           {
             path: `steering.autopilot.target.heading${headingToSteerType}`,
-            value: headingToSteer
+            value: headingToSteer,
           },
           {
             path: 'notifications.arrivalCircleEntered',
-            value: arrivalCircleEntered === false ? null : {
-              method: ['sound', 'visual'],
-              state: 'alarm',
-              message: 'WP arrival circle entered!'
-            }
+            value:
+              arrivalCircleEntered === false
+                ? null
+                : {
+                    method: ['sound', 'visual'],
+                    state: 'alarm',
+                    message: 'WP arrival circle entered!',
+                  },
           },
           {
             path: 'notifications.perpendicularPassed',
-            value: perpendicularPassed === false ? null : {
-              method: ['sound', 'visual'],
-              state: 'alarm',
-              message: 'Perpendicular passed!'
-            }
-          }
-        ]
-      }
-    ]
+            value:
+              perpendicularPassed === false
+                ? null
+                : {
+                    method: ['sound', 'visual'],
+                    state: 'alarm',
+                    message: 'Perpendicular passed!',
+                  },
+          },
+        ],
+      },
+    ],
   }
 }
