@@ -186,8 +186,8 @@ module.exports = function (input, session) {
 
   if (data.callsign) {
     values.push({
-      path: '',
-      value: { communication: { callsignVhf: data.callsign } },
+      path: 'communication',
+      value: { callsignVhf: data.callsign },
     })
   }
 
