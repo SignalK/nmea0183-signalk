@@ -26,21 +26,28 @@ const utils = require('@signalk/nmea0183-utilities')
  * 1) T             True
  * 2) 39.11         Heading to steer, degrees magnetic
  * 3) M             Magnetic
-**/
+ **/
 
-module.exports = function HSCHook (input) {
+module.exports = function HSCHook(input) {
   const { id, sentence, parts, tags } = input
   const upper = (str) => str.trim().toUpperCase()
 
   debug(`[HSCHook] decoding sentence ${id} => ${sentence}`)
 
-  if (upper(parts[1]) === '' || upper(parts[3]) === '' || upper(parts[0]) === '' || upper(parts[2]) === '') {
+  if (
+    upper(parts[1]) === '' ||
+    upper(parts[3]) === '' ||
+    upper(parts[0]) === '' ||
+    upper(parts[2]) === ''
+  ) {
     return null
   }
 
   const headingToSteer = {}
-  headingToSteer[upper(parts[1]) === 'T' ? 'True' : 'Magnetic'] = utils.transform(parts[0], 'deg', 'rad')
-  headingToSteer[upper(parts[3]) === 'T' ? 'True' : 'Magnetic'] = utils.transform(parts[2], 'deg', 'rad')
+  headingToSteer[upper(parts[1]) === 'T' ? 'True' : 'Magnetic'] =
+    utils.transform(parts[0], 'deg', 'rad')
+  headingToSteer[upper(parts[3]) === 'T' ? 'True' : 'Magnetic'] =
+    utils.transform(parts[2], 'deg', 'rad')
 
   return {
     updates: [
@@ -50,14 +57,14 @@ module.exports = function HSCHook (input) {
         values: [
           {
             path: 'steering.autopilot.target.headingTrue',
-            value: headingToSteer.True || null
+            value: headingToSteer.True || null,
           },
           {
             path: 'steering.autopilot.target.headingMagnetic',
-            value: headingToSteer.Magnetic || null
-          }
-        ]
-      }
-    ]
+            value: headingToSteer.Magnetic || null,
+          },
+        ],
+      },
+    ],
   }
 }

@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 52  01  XX  XX  Speed over Ground: XXXX/10 Knots
@@ -25,13 +25,13 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var XXXX=parseInt(parts[2],16)+256*parseInt(parts[3],16)
-  var speedOverGround=XXXX/10.0;
+  var XXXX = parseInt(parts[2], 16) + 256 * parseInt(parts[3], 16)
+  var speedOverGround = XXXX / 10.0
   var pathValues = []
 
   pathValues.push({
     path: 'navigation.speedOverGround',
-    value: utils.transform(utils.float(speedOverGround), 'knots', 'ms')
+    value: utils.transform(utils.float(speedOverGround), 'knots', 'ms'),
   })
 
   return {
@@ -39,8 +39,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

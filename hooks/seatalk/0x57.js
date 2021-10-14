@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 57  S0  DD
@@ -26,20 +26,22 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var S = (parseInt(parts[1],16) & 0xF0) >> 4;
-  var DD = parseInt(parts[2],16);
-  if (S==1){DD=0x94};
+  var S = (parseInt(parts[1], 16) & 0xf0) >> 4
+  var DD = parseInt(parts[2], 16)
+  if (S == 1) {
+    DD = 0x94
+  }
 
   var pathValues = []
 
   pathValues.push({
     path: 'navigation.gnss.satellites',
-    value: utils.float(S)
+    value: utils.float(S),
   })
 
   pathValues.push({
     path: 'navigation.gnss.horizontalDilution',
-    value: utils.float(DD)
+    value: utils.float(DD),
   })
 
   return {
@@ -47,8 +49,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

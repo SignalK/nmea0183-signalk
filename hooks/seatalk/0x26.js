@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 26  04  XX  XX  YY  YY DE  Speed through water:
@@ -31,19 +31,19 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var D = (parseInt(parts[6],16) & 0xF0) >> 4
-  var E = (parseInt(parts[6],16) & 0x0F)
-  var XXXX=parseInt(parts[2],16)+256*parseInt(parts[3],16)
-  var YYYY=parseInt(parts[4],16)+256*parseInt(parts[5],16)
+  var D = (parseInt(parts[6], 16) & 0xf0) >> 4
+  var E = parseInt(parts[6], 16) & 0x0f
+  var XXXX = parseInt(parts[2], 16) + 256 * parseInt(parts[3], 16)
+  var YYYY = parseInt(parts[4], 16) + 256 * parseInt(parts[5], 16)
 
-  var value1=XXXX/100.0
-  var value2=YYYY/100.0
+  var value1 = XXXX / 100.0
+  var value2 = YYYY / 100.0
 
   var pathValues = []
 
   // Check if value1 is a valid speedThroughWater
-  if ((D & 4)==4) {
-    var speedThroughWater=value1
+  if ((D & 4) == 4) {
+    var speedThroughWater = value1
     // Check if value2 is a valid speedThroughWater from sensor 2
     /*
     if ((D & 8)==8) {
@@ -53,16 +53,15 @@ module.exports = function (input) {
     */
     pathValues.push({
       path: 'navigation.speedThroughWater',
-      value: utils.transform(utils.float(speedThroughWater), 'knots', 'ms')
+      value: utils.transform(utils.float(speedThroughWater), 'knots', 'ms'),
     })
   }
 
   // Check if value2 is a valid averageSpeedThroughWater
-  if ((D & 8)==0) {
-
+  if ((D & 8) == 0) {
     pathValues.push({
       path: 'navigation.averageSpeedThroughWater',
-      value: utils.transform(utils.float(value2), 'knots', 'ms')
+      value: utils.transform(utils.float(value2), 'knots', 'ms'),
     })
   }
 
@@ -71,8 +70,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

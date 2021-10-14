@@ -60,7 +60,10 @@ Field Number:
 */
 
 function isEmpty(mixed) {
-  return ((typeof mixed !== 'string' && typeof mixed !== 'number') || (typeof mixed === 'string' && mixed.trim() === ''))
+  return (
+    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
+    (typeof mixed === 'string' && mixed.trim() === '')
+  )
 }
 
 module.exports = function (input) {
@@ -90,7 +93,7 @@ module.exports = function (input) {
     'Estimated (DR) mode',
     'Manual input',
     'Simulator mode',
-    'Error'
+    'Error',
   ]
 
   const delta = {
@@ -103,58 +106,63 @@ module.exports = function (input) {
             path: 'navigation.position',
             value: {
               longitude: utils.coordinate(parts[3], parts[4]),
-              latitude: utils.coordinate(parts[1], parts[2])
-            }
+              latitude: utils.coordinate(parts[1], parts[2]),
+            },
           },
           {
             path: 'navigation.gnss.methodQuality',
-            value: quality[utils.int(parts[5])]
+            value: quality[utils.int(parts[5])],
           },
 
           {
             path: 'navigation.gnss.satellites',
-            value: utils.int(parts[6])
+            value: utils.int(parts[6]),
           },
 
           {
             path: 'navigation.gnss.antennaAltitude',
-            value: utils.int(parts[8])
+            value: utils.int(parts[8]),
           },
 
           {
             path: 'navigation.gnss.horizontalDilution',
-            value: utils.int(parts[7])
+            value: utils.int(parts[7]),
           },
 
           {
             path: 'navigation.gnss.geoidalSeparation',
-            value: utils.int(parts[11])
+            value: utils.int(parts[11]),
           },
 
           {
             path: 'navigation.gnss.differentialAge',
-            value: utils.int(parts[12])
+            value: utils.int(parts[12]),
           },
 
           {
             path: 'navigation.gnss.differentialReference',
-            value: Number(parts[13])
-          }
-        ]
-      }
+            value: Number(parts[13]),
+          },
+        ],
+      },
     ],
   }
 
   const toRemove = []
 
   delta.updates[0].values.forEach((update, index) => {
-    if (typeof update.value === 'undefined' || update.value === null || (typeof update.value === 'string' && update.value.trim() === '') || (typeof update.value === 'number' && isNaN(update.value))) {
+    if (
+      typeof update.value === 'undefined' ||
+      update.value === null ||
+      (typeof update.value === 'string' && update.value.trim() === '') ||
+      (typeof update.value === 'number' && isNaN(update.value))
+    ) {
       toRemove.push(index)
     }
   })
 
   if (toRemove.length > 0) {
-    toRemove.forEach(index => {
+    toRemove.forEach((index) => {
       delta.updates[0].values.splice(index, 1)
     })
   }

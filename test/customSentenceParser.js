@@ -20,7 +20,6 @@ const { expect } = require('chai')
 const should = chai.Should()
 chai.use(require('chai-things'))
 
-
 describe('Custom Sentence Parser', () => {
   it('works', () => {
     const TEST_SENTENCE_PARTS = ['1', '2', '3', 'foobar', 'D']
@@ -28,30 +27,30 @@ describe('Custom Sentence Parser', () => {
     const DELTA = {
       updates: [
         {
-          values: [
-            { path: 'a.b.c', value: 3.14 }
-          ]
-        }
-      ]
+          values: [{ path: 'a.b.c', value: 3.14 }],
+        },
+      ],
     }
     let onPropValuesCallCount = 0
     const options = {
       onPropertyValues: (propertyName, cb) => {
         onPropValuesCallCount++
         cb(undefined)
-        cb([{
-          value: {
-            sentence: 'XXX',
-            parser: ({ id, sentence, parts, tags }, session) => {
-              id.should.equal('XXX')
-              sentence.should.equal(TEST_CUSTOM_SENTENCE)
-              parts.should.have.members(TEST_SENTENCE_PARTS)
-              expect(typeof session).to.equal('object')
-              return DELTA
-            }
-          }
-        }])
-      }
+        cb([
+          {
+            value: {
+              sentence: 'XXX',
+              parser: ({ id, sentence, parts, tags }, session) => {
+                id.should.equal('XXX')
+                sentence.should.equal(TEST_CUSTOM_SENTENCE)
+                parts.should.have.members(TEST_SENTENCE_PARTS)
+                expect(typeof session).to.equal('object')
+                return DELTA
+              },
+            },
+          },
+        ])
+      },
     }
     const parser = new Parser(options)
     onPropValuesCallCount.should.equal(1)

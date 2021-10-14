@@ -16,21 +16,21 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
- /*
-  * MTW - Mean Temperature of Water
-  *
-  *        0   1 2
-  *        |   | |
-  * $--MTW,x.x,C*hh<CR><LF>
-  *
-  * Field Number:
-  *   0.    Degrees
-  *   1.    Unit of Measurement, Celcius
-  *   2.    Checksum
-  *
-  */
+/*
+ * MTW - Mean Temperature of Water
+ *
+ *        0   1 2
+ *        |   | |
+ * $--MTW,x.x,C*hh<CR><LF>
+ *
+ * Field Number:
+ *   0.    Degrees
+ *   1.    Unit of Measurement, Celcius
+ *   2.    Checksum
+ *
+ */
 
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
@@ -43,11 +43,11 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.water.temperature',
-            value: utils.transform(utils.float(parts[0]), 'c', 'k')
+            value: utils.transform(utils.float(parts[0]), 'c', 'k'),
             //returns raw value, no transformation done
-          }
-        ]
-      }
+          },
+        ],
+      },
     ],
   }
 

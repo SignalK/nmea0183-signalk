@@ -25,33 +25,36 @@ chai.use(require('chai-things'))
 
 describe('BWR', () => {
   it('Converts OK using individual parser', () => {
-    const delta = new Parser().parse('$GPBWR,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*38')
+    const delta = new Parser().parse(
+      '$GPBWR,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*38'
+    )
     // console.log(JSON.stringify(delta, null, 2))
 
     delta.should.be.an('object')
     delta.updates[0].values.should.deep.equal([
       {
-        path: 'navigation.courseRhumbline.bearingTrackTrue'
-        , value: 0.9058258819918839
+        path: 'navigation.courseRhumbline.bearingTrackTrue',
+        value: 0.9058258819918839,
       },
       {
-        path: 'navigation.courseRhumbline.bearingTrackMagnetic'
-        , value: 0.5515240437561374
+        path: 'navigation.courseRhumbline.bearingTrackMagnetic',
+        value: 0.5515240437561374,
       },
       {
-        path: 'navigation.courseRhumbline.nextPoint.distance'
-        , value: 2407.6000020320143
+        path: 'navigation.courseRhumbline.nextPoint.distance',
+        value: 2407.6000020320143,
       },
       {
-        path: 'navigation.courseRhumbline.nextPoint.position', value: {
-          "latitude": 49.287333333333336,
-          "longitude": -123.1595
-        }
-      }
+        path: 'navigation.courseRhumbline.nextPoint.position',
+        value: {
+          latitude: 49.287333333333336,
+          longitude: -123.1595,
+        },
+      },
     ])
   })
 
-  it('Doesn\'t choke on an empty sentence', () => {
+  it("Doesn't choke on an empty sentence", () => {
     const delta = new Parser().parse('$GPBWR,,,,,,,,,,,,*50')
     should.equal(delta, null)
   })

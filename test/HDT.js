@@ -25,11 +25,14 @@ chai.use(require('chai-things'))
 describe('HDT', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$GPHDT,123.456,T*32')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'navigation.headingTrue')
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.headingTrue'
+    )
     delta.updates[0].values[0].value.should.be.closeTo(2.155, 0.005)
   })
 
-  it('Doesn\'t choke on empty sentences', () => {
+  it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$SKHDT,,*40')
     should.equal(delta, null)
   })

@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 53  U0  VW      Magnetic Course in degrees:
@@ -30,15 +30,15 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var U = (parseInt(parts[1],16) & 0xF0) >> 4;
-  var VW = parseInt(parts[2],16);
-  var magneticCourse=(U & 0x3) * 90.0 + (VW & 0x3F) * 2.0 + (U & 0xC) / 8.0;
+  var U = (parseInt(parts[1], 16) & 0xf0) >> 4
+  var VW = parseInt(parts[2], 16)
+  var magneticCourse = (U & 0x3) * 90.0 + (VW & 0x3f) * 2.0 + (U & 0xc) / 8.0
 
   var pathValues = []
 
   pathValues.push({
     path: 'navigation.courseOverGroundMagnetic',
-    value: utils.transform(utils.float(magneticCourse), 'deg', 'rad')
+    value: utils.transform(utils.float(magneticCourse), 'deg', 'rad'),
   })
 
   return {
@@ -46,8 +46,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

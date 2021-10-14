@@ -23,22 +23,46 @@ describe('VWR', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$IIVWR,75,R,1.0,N,0.51,M,1.85,K*6C')
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 1.30899693929463)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.5144445747704034)
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'environment.wind.angleApparent'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      1.30899693929463
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'environment.wind.speedApparent'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      0.5144445747704034
+    )
   })
 
   it('Handles shorter valid sentences', () => {
     const delta = new Parser().parse('$IIVWR,024,L,018,N,,,,*5e')
 
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.angleApparent')
-    delta.updates[0].values.should.contain.an.item.with.property('value', -0.41887902057428156)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'environment.wind.speedApparent')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 9.260002345867262)
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'environment.wind.angleApparent'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      -0.41887902057428156
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'environment.wind.speedApparent'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      9.260002345867262
+    )
   })
 
-  it('Doesn\'t choke on empty sentences', () => {
+  it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$IIVWR,,,,,,,,*53')
     should.equal(delta, null)
   })

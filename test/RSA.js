@@ -27,7 +27,13 @@ chai.use(require('chai-things'))
 describe('RSA', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(nmeaLine)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.rudderAngle')
-    delta.updates[0].values[0].value.should.be.closeTo((10.5 / 180 * Math.PI), 0.1)
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'steering.rudderAngle'
+    )
+    delta.updates[0].values[0].value.should.be.closeTo(
+      (10.5 / 180) * Math.PI,
+      0.1
+    )
   })
 })

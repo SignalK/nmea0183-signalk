@@ -16,14 +16,11 @@
  * limitations under the License.
  */
 
-
-
 const debug = require('debug')('signalk-parser-nmea0183/PBVE')
 const utils = require('@signalk/nmea0183-utilities')
 const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const schema = {
-
-/*
+  /*
 
 Note: oil pressure calculation formulas are the same for all instruments
 
@@ -78,10 +75,9 @@ CFAA = 37 psi
       backlight: 0,
       zones: [],
       originalValue: null,
-    }
-
-  }, 
-/*
+    },
+  },
+  /*
 
 T30/T60 digital temperature gauge sample NMEA sentence:
 
@@ -130,10 +126,9 @@ ADAB = 259 deg F
       gaugeAlarmOn: false,
       backlight: 0,
       zones: [],
-      originalValue: null
-    }
-  }
-
+      originalValue: null,
+    },
+  },
 }
 
 /*
@@ -141,26 +136,25 @@ ADAB = 259 deg F
  @param alphas String
  @return Array
 */
-function toInts(alphas){
-  let replacement = [];
-  let i;
+function toInts(alphas) {
+  let replacement = []
+  let i
   alphas = alphas.split('')
-  
-  for(i = 0; i < alphas.length; i++){
+
+  for (i = 0; i < alphas.length; i++) {
     replacement.push(alpha.indexOf(alphas[i]))
   }
-  return replacement;
+  return replacement
 }
-
 
 /*
  @function convertToValue
  @param values String
  @return Int
 */
-function convertToValue(values){
+function convertToValue(values) {
   const parts = toInts(values)
-  return (16 * parts[0]) + parts[1] + (4096 * parts[2]) + (256 * parts[3])
+  return 16 * parts[0] + parts[1] + 4096 * parts[2] + 256 * parts[3]
 }
 
 /*
@@ -168,101 +162,103 @@ function convertToValue(values){
  @param values String
  @return Int
 */
-function convertToAlarmValue(values){
+function convertToAlarmValue(values) {
   const parts = toInts(values)
-  return ( (16 * parts[0]) + parts[1] + (256 * parts[2]) )
+  return 16 * parts[0] + parts[1] + 256 * parts[2]
 }
 
-module.exports = function(input) {
+module.exports = function (input) {
   let convertedValue = {}
   let delta = {}
 
   const { id, sentence, parts, tags } = input
   const data = parts[0]
-  const productCode = data.substr(0,1)
+  const productCode = data.substr(0, 1)
 
   //just retun right away if not supported product code
   if (productCode in schema === false) {
     debug('Unsupported product code: ', productCode)
-    return;
+    return
   }
 
-  const backlight = data.substr(8,2)
-  const gaugeUnits = data.substr(15,2)
-  const gaugeAlarmOn = data.substr(17,2)
-  const lower = convertToAlarmValue(data.substr(18,4))
-  const upper =  convertToAlarmValue(data.substr(22,4))
-  const value = convertToValue(data.substr(28,4))
+  const backlight = data.substr(8, 2)
+  const gaugeUnits = data.substr(15, 2)
+  const gaugeAlarmOn = data.substr(17, 2)
+  const lower = convertToAlarmValue(data.substr(18, 4))
+  const upper = convertToAlarmValue(data.substr(22, 4))
+  const value = convertToValue(data.substr(28, 4))
 
-  if (productCode  === 'D') {
-    
-    const conditionalValue = function(derivedValue){
-      return gaugeUnits === 'AA' ? derivedValue * 6894.757 : derivedValue * 100000
+  if (productCode === 'D') {
+    const conditionalValue = function (derivedValue) {
+      return gaugeUnits === 'AA'
+        ? derivedValue * 6894.757
+        : derivedValue * 100000
     }
 
-    convertedValue =  {
+    convertedValue = {
       //convert to pascals from psi/bar
       value: conditionalValue(value),
       path: schema[productCode].path,
-      meta: schema[productCode].meta
+      meta: schema[productCode].meta,
     }
     convertedValue.meta.gaugeUnits = gaugeUnits === 'AA' ? 'psi' : 'bar'
     //TODO: Add warning zone values
-    convertedValue.meta.zones = [ 
+    convertedValue.meta.zones = [
       {
         lower: conditionalValue(lower),
         state: 'alarm',
-        message: 'Engine oil pressure at lowest threshold'
+        message: 'Engine oil pressure at lowest threshold',
       },
       {
         upper: conditionalValue(upper),
         state: 'alarm',
-        message: 'Engine oil pressure at highest threshold'
-      }
+        message: 'Engine oil pressure at highest threshold',
+      },
     ]
-
-  } else if(productCode  === 'E') {
-
-    const conditionalValue = function(derivedValue){
-      return (gaugeUnits === 'AA' ? (derivedValue - 32) * (5/9) + 273.15 : derivedValue + 273.15)
+  } else if (productCode === 'E') {
+    const conditionalValue = function (derivedValue) {
+      return gaugeUnits === 'AA'
+        ? (derivedValue - 32) * (5 / 9) + 273.15
+        : derivedValue + 273.15
     }
 
-    convertedValue =  {
+    convertedValue = {
       //convert to C from F
       value: conditionalValue(value),
       path: schema[productCode].path,
-      meta: schema[productCode].meta
+      meta: schema[productCode].meta,
     }
     convertedValue.meta.gaugeUnits = gaugeUnits === 'AA' ? 'f' : 'c'
     //TODO: Add warning zone values
-    convertedValue.meta.zones = [ 
+    convertedValue.meta.zones = [
       {
         lower: conditionalValue(lower),
         state: 'alarm',
-        message: 'Engine coolant temperature at lowest threshold'
+        message: 'Engine coolant temperature at lowest threshold',
       },
       {
         upper: conditionalValue(upper),
         state: 'alarm',
-        message: 'Engine coolant temperature at highest threshold'
-      }
+        message: 'Engine coolant temperature at highest threshold',
+      },
     ]
-
   }
 
   //baclight is AA, AB, etc so just need second value
   convertedValue.meta.backlight = toInts(backlight)[1]
   // instrument gauge alarm is armed when second value is 1 (A,B)
   convertedValue.meta.gaugeAlarmOn = toInts(gaugeAlarmOn)[1] === 1
-    //store original value in meta
-  convertedValue.meta.originalValue = value;
+  //store original value in meta
+  convertedValue.meta.originalValue = value
 
   delta = {
-    updates: [{
-      source: tags.source,
-      timestamp: tags.timestamp,
-      values: [convertedValue]
-    }]
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [convertedValue],
+      },
+    ],
   }
 
   return delta

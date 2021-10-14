@@ -25,27 +25,38 @@ chai.use(require('chai-things'))
 
 describe('BWC', () => {
   it('Converts OK using individual parser', () => {
-    const delta = new Parser().parse('$GPBWC,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*29')
+    const delta = new Parser().parse(
+      '$GPBWC,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*29'
+    )
     // console.log(JSON.stringify(delta, null, 2))
 
     delta.should.be.an('object')
     delta.updates[0].values.should.deep.equal([
-      { path: 'navigation.courseGreatCircle.bearingTrackTrue', value: 0.9058258819918839 },
-      { path: 'navigation.courseGreatCircle.bearingTrackMagnetic', value: 0.5515240437561374 },
-      { path: 'navigation.courseGreatCircle.nextPoint.distance', value: 2407.6000020320143 },
+      {
+        path: 'navigation.courseGreatCircle.bearingTrackTrue',
+        value: 0.9058258819918839,
+      },
+      {
+        path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
+        value: 0.5515240437561374,
+      },
+      {
+        path: 'navigation.courseGreatCircle.nextPoint.distance',
+        value: 2407.6000020320143,
+      },
       {
         path: 'navigation.courseGreatCircle.nextPoint.position',
         value: {
           latitude: 49.287333333333336,
-          longitude: -123.1595
-        }
-      }
+          longitude: -123.1595,
+        },
+      },
     ])
 
     // delta.updates[0].values.find(x => x.path === 'navigation.courseRhumbline.bearingToDestinationMagnetic').value.should.be.closeTo(0.19198621776321237, 0.000001)
   })
 
-  it('Doesn\'t choke on an empty sentence', () => {
+  it("Doesn't choke on an empty sentence", () => {
     const delta = new Parser().parse('$GPBWC,,,,,,,,,,,,*41')
     should.equal(delta, null)
   })

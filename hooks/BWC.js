@@ -29,26 +29,38 @@ const utils = require('@signalk/nmea0183-utilities')
  * 7,8)   031.6,M       Bearing to waypoint, degrees magnetic
  * 9,10)  001.3,N       Distance to waypoint, Nautical miles
  * 11)    004           Waypoint ID
-**/
+ **/
 
-module.exports = function BWCHook (input) {
+module.exports = function BWCHook(input) {
   const { id, sentence, parts, tags } = input
   const upper = (str) => str.trim().toUpperCase()
 
   debug(`[BWCHook] decoding sentence ${id} => ${sentence}`)
 
-  if (upper(parts[0]) === '' || upper(parts[1]) === '' || upper(parts[2]) === '' || upper(parts[3]) === '' || upper(parts[4]) === '') {
+  if (
+    upper(parts[0]) === '' ||
+    upper(parts[1]) === '' ||
+    upper(parts[2]) === '' ||
+    upper(parts[3]) === '' ||
+    upper(parts[4]) === ''
+  ) {
     return null
   }
 
   const timestamp = utils.timestamp(parts[0])
   const latitude = utils.coordinate(parts[1], parts[2])
   const longitude = utils.coordinate(parts[3], parts[4])
-  const distance = utils.transform(parts[9], (upper(parts[10]) === 'N' ? 'nm' : 'km'), 'm')
+  const distance = utils.transform(
+    parts[9],
+    upper(parts[10]) === 'N' ? 'nm' : 'km',
+    'm'
+  )
 
   const bearingToWaypoint = {}
-  bearingToWaypoint[upper(parts[6]) === 'T' ? 'True' : 'Magnetic'] = utils.transform(parts[5], 'deg', 'rad')
-  bearingToWaypoint[upper(parts[8]) === 'T' ? 'True' : 'Magnetic'] = utils.transform(parts[7], 'deg', 'rad')
+  bearingToWaypoint[upper(parts[6]) === 'T' ? 'True' : 'Magnetic'] =
+    utils.transform(parts[5], 'deg', 'rad')
+  bearingToWaypoint[upper(parts[8]) === 'T' ? 'True' : 'Magnetic'] =
+    utils.transform(parts[7], 'deg', 'rad')
 
   return {
     updates: [
@@ -58,25 +70,25 @@ module.exports = function BWCHook (input) {
         values: [
           {
             path: 'navigation.courseGreatCircle.bearingTrackTrue',
-            value: bearingToWaypoint.True || null
+            value: bearingToWaypoint.True || null,
           },
           {
             path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
-            value: bearingToWaypoint.Magnetic || null
+            value: bearingToWaypoint.Magnetic || null,
           },
           {
             path: 'navigation.courseGreatCircle.nextPoint.distance',
-            value: distance
+            value: distance,
           },
           {
             path: 'navigation.courseGreatCircle.nextPoint.position',
             value: {
               longitude,
-              latitude
-            }
-          }
-        ]
-      }
-    ]
+              latitude,
+            },
+          },
+        ],
+      },
+    ],
   }
 }

@@ -28,22 +28,30 @@ const utils = require('@signalk/nmea0183-utilities')
  * 3) M            Magnetic
  * 4) DEST         destination waypoint ID
  * 5) START        origin waypoint ID
-**/
+ **/
 
-module.exports = function BODHook (input) {
+module.exports = function BODHook(input) {
   const { id, sentence, parts, tags } = input
   const upper = (str) => str.trim().toUpperCase()
 
   debug(`[BODHook] decoding sentence ${id} => ${sentence}`)
 
-  if (upper(parts[0]) === '' || upper(parts[1]) === '' || upper(parts[2]) === '' || upper(parts[3]) === '' || upper(parts[4]) === '') {
+  if (
+    upper(parts[0]) === '' ||
+    upper(parts[1]) === '' ||
+    upper(parts[2]) === '' ||
+    upper(parts[3]) === '' ||
+    upper(parts[4]) === ''
+  ) {
     return null
   }
 
   const bearingOriginToDestination = {}
 
-  bearingOriginToDestination[upper(parts[1]) === 'T' ? 'True' : 'Magnetic'] = utils.transform(parts[0], 'deg', 'rad')
-  bearingOriginToDestination[upper(parts[3]) === 'T' ? 'True' : 'Magnetic'] = utils.transform(parts[2], 'deg', 'rad')
+  bearingOriginToDestination[upper(parts[1]) === 'T' ? 'True' : 'Magnetic'] =
+    utils.transform(parts[0], 'deg', 'rad')
+  bearingOriginToDestination[upper(parts[3]) === 'T' ? 'True' : 'Magnetic'] =
+    utils.transform(parts[2], 'deg', 'rad')
   const destinationWaypointID = parts[4].trim()
   const originWaypointID = parts[5].trim()
 
@@ -55,22 +63,22 @@ module.exports = function BODHook (input) {
         values: [
           {
             path: 'navigation.courseRhumbline.bearingTrackTrue',
-            value: bearingOriginToDestination.True || null
+            value: bearingOriginToDestination.True || null,
           },
           {
             path: 'navigation.courseRhumbline.bearingTrackMagnetic',
-            value: bearingOriginToDestination.Magnetic || null
+            value: bearingOriginToDestination.Magnetic || null,
           },
           {
             path: 'navigation.courseRhumbline.nextPoint.ID',
-            value: destinationWaypointID
+            value: destinationWaypointID,
           },
           {
             path: 'navigation.courseRhumbline.previousPoint.ID',
-            value: originWaypointID
-          }
-        ]
-      }
-    ]
+            value: originWaypointID,
+          },
+        ],
+      },
+    ],
   }
 }

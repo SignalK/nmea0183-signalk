@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
- 'use strict'
+'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
- /*
+/*
  VLW - Distance Traveled through Water
  ------------------------------------------------------------------------------
         0   1 2   3 4
@@ -39,26 +39,26 @@ module.exports = function (input) {
   const { id, sentence, parts, tags } = input
   var pathValues = []
 
-  if(parts[0] != ''){
+  if (parts[0] != '') {
     pathValues.push({
-      'path': 'navigation.log',
-      'value': utils.transform(utils.float(parts[0]), 'nm', 'm')
+      path: 'navigation.log',
+      value: utils.transform(utils.float(parts[0]), 'nm', 'm'),
     })
   }
-  if(parts[2] != ''){
+  if (parts[2] != '') {
     pathValues.push({
-      'path': 'navigation.trip.log',
-      'value': utils.transform(utils.float(parts[2]), 'nm', 'm')
+      path: 'navigation.trip.log',
+      value: utils.transform(utils.float(parts[2]), 'nm', 'm'),
     })
   }
 
   return {
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: pathValues
-        }
-      ],
-    }
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: pathValues,
+      },
+    ],
+  }
 }

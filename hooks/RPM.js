@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 #        0 1 2   3   4 5
@@ -37,11 +37,13 @@ module.exports = function (input) {
         timestamp: tags.timestamp,
         values: [
           {
-            path: `propulsion.${(parts[0].toUpperCase() === 'S' ? 'shaft' : 'engine')}_${parts[1]}.revolutions`,
-            value: utils.float(parts[2]) / 60
-          }
-        ]
-      }
+            path: `propulsion.${
+              parts[0].toUpperCase() === 'S' ? 'shaft' : 'engine'
+            }_${parts[1]}.revolutions`,
+            value: utils.float(parts[2]) / 60,
+          },
+        ],
+      },
     ],
   }
 

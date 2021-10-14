@@ -29,11 +29,13 @@ describe('XTE', () => {
     // console.log(JSON.stringify(delta, null, 2))
 
     delta.should.be.an('object')
-    delta.updates[0].values[0].path.should.equal('navigation.courseRhumbline.crossTrackError')
+    delta.updates[0].values[0].path.should.equal(
+      'navigation.courseRhumbline.crossTrackError'
+    )
     delta.updates[0].values[0].value.should.be.closeTo(1240.84, 0.001)
   })
 
-  it('Doesn\'t choke on an empty sentence', () => {
+  it("Doesn't choke on an empty sentence", () => {
     const delta = new Parser().parse('$GPXTE,,,,,*72')
     should.equal(delta, null)
   })

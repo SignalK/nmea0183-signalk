@@ -31,20 +31,24 @@ const utils = require('@signalk/nmea0183-utilities')
  * 2) Cross track error magnitude
  * 3) Direction to steer, L or R
  * 4) Cross track units. N = Nautical Miles
-**/
+ **/
 
-module.exports = function XTEHook (input) {
+module.exports = function XTEHook(input) {
   const { id, sentence, parts, tags } = input
 
   debug(`[XTEHook] decoding sentence ${id} => ${sentence}`)
 
   if (parts[0].trim().toUpperCase() === 'V') {
     // Don't parse this sentence as it's void.
-    throw new Error('Not parsing sentence for it\'s void (LORAN-C blink/SNR warning)')
+    throw new Error(
+      "Not parsing sentence for it's void (LORAN-C blink/SNR warning)"
+    )
   }
 
   if (parts[1].trim().toUpperCase() === 'V') {
-    throw new Error('Not parsing sentence for it\'s void (LORAN-C cycle warning)')
+    throw new Error(
+      "Not parsing sentence for it's void (LORAN-C cycle warning)"
+    )
   }
 
   if (parts[2].trim() === '' && parts[3].trim() === '') {
@@ -52,7 +56,13 @@ module.exports = function XTEHook (input) {
   }
 
   const direction = parts[3].trim().toUpperCase() === 'L' ? 1 : -1
-  const value = direction * utils.transform(parts[2], (parts[4].trim().toUpperCase() === 'N' ? 'nm' : 'km'), 'm')
+  const value =
+    direction *
+    utils.transform(
+      parts[2],
+      parts[4].trim().toUpperCase() === 'N' ? 'nm' : 'km',
+      'm'
+    )
   const path = 'navigation.courseRhumbline.crossTrackError'
 
   return {
@@ -63,10 +73,10 @@ module.exports = function XTEHook (input) {
         values: [
           {
             path,
-            value
-          }
-        ]
-      }
-    ]
+            value,
+          },
+        ],
+      },
+    ],
   }
 }

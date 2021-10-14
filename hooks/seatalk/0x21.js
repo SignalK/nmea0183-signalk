@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
  21  02  XX  XX  0X  Trip Mileage: XXXXX/100 nautical miles
@@ -25,14 +25,14 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var XXXX=parseInt(parts[2],16)+256*parseInt(parts[3],16)
-  var X=parseInt(parts[4],16) & 0x0F
-  var trip=(XXXX+X*65536)/100.0
+  var XXXX = parseInt(parts[2], 16) + 256 * parseInt(parts[3], 16)
+  var X = parseInt(parts[4], 16) & 0x0f
+  var trip = (XXXX + X * 65536) / 100.0
   var pathValues = []
 
   pathValues.push({
     path: 'navigation.trip',
-    value: utils.transform(utils.float(trip), 'nm', 'km') * 1000
+    value: utils.transform(utils.float(trip), 'nm', 'km') * 1000,
   })
 
   return {
@@ -40,8 +40,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

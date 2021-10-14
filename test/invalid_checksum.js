@@ -25,7 +25,8 @@ const nmeaLine = '$GPROT,35.6,A*FF'
 
 describe('Invalid checksum', () => {
   it('throws exception on invalid checksum', () => {
-    should.Throw(() => { new Parser().parse(nmeaLine) },
-      /is invalid/)
+    should.Throw(() => {
+      new Parser().parse(nmeaLine)
+    }, /is invalid/)
   })
 })

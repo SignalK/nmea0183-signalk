@@ -29,13 +29,25 @@ describe('HSC', () => {
     // console.log(JSON.stringify(delta, null, 2))
 
     delta.should.be.an('object')
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.target.headingTrue')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.7002260960600073)
-    delta.updates[0].values.should.contain.an.item.with.property('path', 'steering.autopilot.target.headingMagnetic')
-    delta.updates[0].values.should.contain.an.item.with.property('value', 0.6825982706108397)
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'steering.autopilot.target.headingTrue'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      0.7002260960600073
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'steering.autopilot.target.headingMagnetic'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      0.6825982706108397
+    )
   })
 
-  it('Doesn\'t choke on an empty sentence', () => {
+  it("Doesn't choke on an empty sentence", () => {
     const delta = new Parser().parse('$FTHSC,,,,*4A')
     should.equal(delta, null)
   })

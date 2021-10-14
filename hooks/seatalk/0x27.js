@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 027  01  XX  XX  Water temperature: (XXXX-100)/10 deg Celsius
@@ -26,14 +26,14 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var XXXX=parseInt(parts[2],16)+256*parseInt(parts[3],16)
-  var waterTemperature=(XXXX-100)/10.0;
+  var XXXX = parseInt(parts[2], 16) + 256 * parseInt(parts[3], 16)
+  var waterTemperature = (XXXX - 100) / 10.0
 
   var pathValues = []
 
   pathValues.push({
     path: 'environment.water.temperature',
-    value: utils.float(waterTemperature)+273.15
+    value: utils.float(waterTemperature) + 273.15,
   })
 
   return {
@@ -41,8 +41,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

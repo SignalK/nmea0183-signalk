@@ -16,7 +16,7 @@
 
 'use strict'
 
- const utils = require('@signalk/nmea0183-utilities')
+const utils = require('@signalk/nmea0183-utilities')
 
 /*
 10  01  XX  YY  Apparent Wind Angle: XXYY/2 degrees right of bow
@@ -27,18 +27,20 @@
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var XX=parseInt(parts[2],16)
-  var YY=parseInt(parts[3],16)
-//  console.log("XX:"+XX)
-//  console.log("YY:"+YY)
-  var apparentWindAngle = (256*XX+YY)/2.0;
-  if (apparentWindAngle>180) { apparentWindAngle=apparentWindAngle-360 }
-//  console.log("apparentWindAngle:"+apparentWindAngle)
+  var XX = parseInt(parts[2], 16)
+  var YY = parseInt(parts[3], 16)
+  //  console.log("XX:"+XX)
+  //  console.log("YY:"+YY)
+  var apparentWindAngle = (256 * XX + YY) / 2.0
+  if (apparentWindAngle > 180) {
+    apparentWindAngle = apparentWindAngle - 360
+  }
+  //  console.log("apparentWindAngle:"+apparentWindAngle)
   var pathValues = []
 
   pathValues.push({
     path: 'environment.wind.angleApparent',
-    value: utils.transform(utils.float(apparentWindAngle), 'deg', 'rad')
+    value: utils.transform(utils.float(apparentWindAngle), 'deg', 'rad'),
   })
 
   return {
@@ -46,8 +48,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
-      }
-    ]
+        values: pathValues,
+      },
+    ],
   }
 }

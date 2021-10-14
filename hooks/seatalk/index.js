@@ -17,5 +17,5 @@ module.exports = {
   '0x56': require('./0x56.js'),
   '0x57': require('./0x57.js'),
   '0x84': require('./0x84.js'),
-  '0x99': require('./0x99.js')
+  '0x99': require('./0x99.js'),
 }
