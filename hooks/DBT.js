@@ -19,6 +19,8 @@
 const debug = require('debug')('signalk-parser-nmea0183/DBT')
 const utils = require('@signalk/nmea0183-utilities')
 
+const FEET_TO_METERS = 0.3048
+
 /*
 === DBT - Depth below transducer ===
 ------------------------------------------------------------------------------
@@ -39,11 +41,14 @@ Field Number:
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  if (
-    (typeof parts[2] !== 'string' && typeof parts[2] !== 'number') ||
-    (typeof parts[2] === 'string' && parts[2].trim() === '')
-  ) {
-    return null
+  let meterValue = parts[2]
+
+  if (hasNoValue(meterValue)) {
+    const feetValue = parts[0]
+    if (hasNoValue(feetValue)) {
+      return null
+    }
+    meterValue = utils.float(feetValue) * FEET_TO_METERS
   }
 
   const delta = {
@@ -54,7 +59,7 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.depth.belowTransducer',
-            value: utils.float(parts[2]),
+            value: utils.float(meterValue),
           },
         ],
       },
@@ -63,3 +68,7 @@ module.exports = function (input) {
 
   return delta
 }
+
+const hasNoValue = (value) =>
+  (typeof value !== 'string' && typeof value !== 'number') ||
+  (typeof value === 'string' && value.trim() === '')

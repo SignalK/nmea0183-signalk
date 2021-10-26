@@ -32,6 +32,20 @@ describe('DBT', () => {
     delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
   })
 
+  it('Converts with only feet in the sentence', () => {
+    const delta = new Parser().parse('$IIDBT,432.8,f,,M,,F*1C')
+    delta.updates.length.should.equal(1)
+    delta.updates[0].values.length.should.equal(1)
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'environment.depth.belowTransducer'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'value',
+      131.91744
+    )
+  })
+
   it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$IIDBT,,,,,,*52')
     should.equal(delta, null)
