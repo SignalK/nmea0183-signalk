@@ -58,7 +58,7 @@ describe('RMC', () => {
     delta.updates[0].values[5].value.should.equal('2014-04-03T08:54:12.000Z')
     delta.updates[0].values[1].value.should.be.closeTo(4.387, 0.005)
     delta.updates[0].values[2].value.should.be.closeTo(0.298, 0.005)
-    delta.updates[0].values[3].value.should.equal(0)
+    delta.updates[0].values[3].value.should.equal(null)
     delta.updates[0].values[4].value.should.equal(1396515252)
   })
 })
