@@ -39,26 +39,23 @@ values:
 module.exports = function (parser, input) {
   const { id, sentence, parts, tags } = input
 
-  let latitude = -1
-  let longitude = -1
-  let speed = 0.0
-  let track = 0.0
-  let variation = 0.0
+  let latitude = null
+  let longitude = null
+  let speed = null
+  let track = null
+  let variation = null
 
   try {
     const timestamp = utils.timestamp(parts[0], parts[8])
     const age = moment.tz(timestamp, 'UTC').unix()
 
-    latitude = utils.coordinate(parts[2], parts[3])
-    longitude = utils.coordinate(parts[4], parts[5])
+    latitude = !isNaN(parseFloat(parts[2])) && isFinite(parts[2]) && "NS".includes(parts[3]) ? utils.coordinate(parts[2], parts[3]) : null
+    longitude =!isNaN(parseFloat(parts[4])) && isFinite(parts[4]) && "EW".includes(parts[5]) ? utils.coordinate(parts[4], parts[5]) : null
 
-    speed = utils.float(parts[6])
-    speed = (!isNaN(speed) && speed > 0) ? speed : 0.0
+    speed = !isNaN(parseFloat(parts[6])) && isFinite(parts[6]) && parts[6] >= 0 ? utils.transform(parts[6], 'knots', 'ms') : null
+    track = !isNaN(parseFloat(parts[7])) && isFinite(parts[7]) ? utils.transform(parts[7], 'deg', 'rad') : null
 
-    track = utils.float(parts[7])
-    track = (!isNaN(track)) ? track : 0.0
-
-    variation = utils.magneticVariaton(parts[9], parts[10])
+    variation = (!isNaN(parseFloat(parts[9])) && isFinite(parts[9]) && "EW".includes(parts[10])) ? utils.transform(utils.magneticVariaton(parts[9], parts[10]), 'deg', 'rad') : null
 
     const delta = {
       updates: [
@@ -76,17 +73,17 @@ module.exports = function (parser, input) {
 
             {
               path: 'navigation.courseOverGroundTrue',
-              value: utils.transform(track, 'deg', 'rad')
+              value: track
             },
 
             {
               path: 'navigation.speedOverGround',
-              value: utils.transform(speed, 'knots', 'ms')
+              value: speed
             },
 
             {
               path: 'navigation.magneticVariation',
-              value: utils.transform(variation, 'deg', 'rad')
+              value: variation
             },
 
             {
