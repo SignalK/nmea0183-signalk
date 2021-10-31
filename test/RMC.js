@@ -25,7 +25,7 @@ chai.use(require('chai-things'))
 describe('RMC', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
-      '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,0.0,E*7D'
+      '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,0.0,E*63'
     )
 
     delta.updates[0].timestamp.should.equal('2014-04-03T08:54:12.000Z')
