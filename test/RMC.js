@@ -25,7 +25,7 @@ chai.use(require('chai-things'))
 describe('RMC', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
-      '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,0.0,E*63'
+      '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,,,A*65'
     )
 
     delta.updates[0].timestamp.should.equal('2014-04-03T08:54:12.000Z')
@@ -58,7 +58,27 @@ describe('RMC', () => {
     delta.updates[0].values[5].value.should.equal('2014-04-03T08:54:12.000Z')
     delta.updates[0].values[1].value.should.be.closeTo(4.387, 0.005)
     delta.updates[0].values[2].value.should.be.closeTo(0.298, 0.005)
-    delta.updates[0].values[3].value.should.equal(0)
+    chai.expect(delta.updates[0].values[3].value).to.be.a('null')
     delta.updates[0].values[4].value.should.equal(1396515252)
+  })
+  it('Converts OK using individual parser, w/ missing SOG/COG values', () => {
+    const delta = new Parser().parse(
+      '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,,,030414,12,E*42'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.speedOverGround'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseOverGroundTrue'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.magneticVariation'
+    )
+    chai.expect(delta.updates[0].values[1].value).to.be.a('null')
+    chai.expect(delta.updates[0].values[2].value).to.be.a('null')
+    delta.updates[0].values[3].value.should.be.closeTo(0.20944,.05)
   })
 })
