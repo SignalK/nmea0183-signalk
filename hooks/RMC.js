@@ -48,14 +48,14 @@ module.exports = function (input) {
   const timestamp = utils.timestamp(parts[0], parts[8])
   const age = moment.tz(timestamp, 'UTC').unix()
 
-  latitude = !isNaN(parseFloat(parts[2])) && isFinite(parts[2]) && "NS".includes(parts[3]) ? utils.coordinate(parts[2], parts[3]) : null
-  longitude =!isNaN(parseFloat(parts[4])) && isFinite(parts[4]) && "EW".includes(parts[5]) ? utils.coordinate(parts[4], parts[5]) : null
+  latitude = parts[2].trim().length > 0 && !isNaN(parts[2]) && "NS".includes(parts[3]) ? utils.coordinate(parts[2], parts[3]) : null
+  longitude = parts[4].trim().length > 0 && !isNaN(parts[4]) && "EW".includes(parts[5]) ? utils.coordinate(parts[4], parts[5]) : null
 
-  speed = !isNaN(parseFloat(parts[6])) && isFinite(parts[6]) && parts[6] >= 0 ? utils.transform(parts[6], 'knots', 'ms') : null
+  speed = parts[6].trim().length > 0 && !isNaN(parts[6]) && parts[6] >= 0 ? utils.transform(parts[6], 'knots', 'ms') : null
 
-  track = !isNaN(parseFloat(parts[7])) && isFinite(parts[7]) ? utils.transform(parts[7], 'deg', 'rad') : null
+  track = parts[7].trim().length > 0 && !isNaN(parts[7]) ? utils.transform(parts[7], 'deg', 'rad') : null
 
-  variation = (!isNaN(parseFloat(parts[9])) && isFinite(parts[9]) && "EW".includes(parts[10])) ? utils.transform(utils.magneticVariaton(parts[9], parts[10]), 'deg', 'rad') : null
+  variation = parts[9].trim().length > 0 && !isNaN(parts[9]) && "EW".includes(parts[10]) ? utils.transform(utils.magneticVariaton(parts[9], parts[10]), 'deg', 'rad') : null
 
   const delta = {
     updates: [
