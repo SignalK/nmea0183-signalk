@@ -39,25 +39,23 @@ values:
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  let latitude = -1
-  let longitude = -1
-  let speed = 0.0
-  let track = 0.0
-  let variation = 0.0
+  let latitude = null
+  let longitude = null
+  let speed = null
+  let track = null
+  let variation = null
 
   const timestamp = utils.timestamp(parts[0], parts[8])
   const age = moment.tz(timestamp, 'UTC').unix()
 
-  latitude = utils.coordinate(parts[2], parts[3])
-  longitude = utils.coordinate(parts[4], parts[5])
+  latitude = parts[2].trim().length > 0 && !isNaN(parts[2]) && "NS".includes(parts[3]) ? utils.coordinate(parts[2], parts[3]) : null
+  longitude = parts[4].trim().length > 0 && !isNaN(parts[4]) && "EW".includes(parts[5]) ? utils.coordinate(parts[4], parts[5]) : null
 
-  speed = utils.float(parts[6])
-  speed = !isNaN(speed) && speed > 0 ? speed : 0.0
+  speed = parts[6].trim().length > 0 && !isNaN(parts[6]) && parts[6] >= 0 ? utils.transform(parts[6], 'knots', 'ms') : null
 
-  track = utils.float(parts[7])
-  track = !isNaN(track) ? track : 0.0
+  track = parts[7].trim().length > 0 && !isNaN(parts[7]) ? utils.transform(parts[7], 'deg', 'rad') : null
 
-  variation = utils.magneticVariaton(parts[9], parts[10])
+  variation = parts[9].trim().length > 0 && !isNaN(parts[9]) && "EW".includes(parts[10]) ? utils.transform(utils.magneticVariaton(parts[9], parts[10]), 'deg', 'rad') : null
 
   const delta = {
     updates: [
@@ -75,17 +73,17 @@ module.exports = function (input) {
 
           {
             path: 'navigation.courseOverGroundTrue',
-            value: utils.transform(track, 'deg', 'rad'),
+            value: track,
           },
 
           {
             path: 'navigation.speedOverGround',
-            value: utils.transform(speed, 'knots', 'ms'),
+            value: speed,
           },
 
           {
             path: 'navigation.magneticVariation',
-            value: utils.transform(variation, 'deg', 'rad'),
+            value: variation,
           },
 
           {
