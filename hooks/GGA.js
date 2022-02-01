@@ -121,22 +121,22 @@ module.exports = function (input) {
 
           {
             path: 'navigation.gnss.antennaAltitude',
-            value: utils.int(parts[8]),
+            value: utils.float(parts[8]),
           },
 
           {
             path: 'navigation.gnss.horizontalDilution',
-            value: utils.int(parts[7]),
+            value: utils.float(parts[7]),
           },
 
           {
             path: 'navigation.gnss.geoidalSeparation',
-            value: utils.int(parts[11]),
+            value: utils.float(parts[11]),
           },
 
           {
             path: 'navigation.gnss.differentialAge',
-            value: utils.int(parts[12]),
+            value: utils.float(parts[12]),
           },
 
           {
