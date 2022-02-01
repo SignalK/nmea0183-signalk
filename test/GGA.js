@@ -69,9 +69,9 @@ describe('GGA', () => {
     })
     delta.updates[0].values[1].value.should.equal('DGNSS fix')
     delta.updates[0].values[2].value.should.equal(6)
-    delta.updates[0].values[3].value.should.equal(18)
-    delta.updates[0].values[4].value.should.equal(1)
-    delta.updates[0].values[5].value.should.equal(2)
+    delta.updates[0].values[3].value.should.equal(18.893)
+    delta.updates[0].values[4].value.should.equal(1.2)
+    delta.updates[0].values[5].value.should.equal(2.0)
     delta.updates[0].values[6].value.should.equal(31)
     toFull(delta).should.be.validSignalK
   })
