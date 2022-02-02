@@ -121,17 +121,17 @@ module.exports = function (input) {
 
           {
             path: 'navigation.gnss.antennaAltitude',
-            value: utils.float(parts[8]),
+            value: Math.round(utils.float(parts[8]) * 10) / 10 ,
           },
 
           {
             path: 'navigation.gnss.horizontalDilution',
-            value: utils.float(parts[7]),
+            value: Math.round(utils.float(parts[7]) * 10) / 10 ,
           },
 
           {
             path: 'navigation.gnss.geoidalSeparation',
-            value: utils.float(parts[11]),
+            value: Math.round(utils.float(parts[11]) * 10) / 10 ,
           },
 
           {
