@@ -64,7 +64,7 @@ describe('VDM', function () {
       .find((pathValue) => pathValue.path === 'sensors.ais.class')
       .value.should.equal('A')
 
-    // toFull(delta).should.be.validSignalK
+    toFull(delta).should.be.validSignalK
   })
 
   it('Single line converts ok', () => {
