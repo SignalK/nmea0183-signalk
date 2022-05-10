@@ -26,9 +26,8 @@ describe('RMB', () => {
     const delta = new Parser().parse(
       '$ECRMB,A,0.000,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*04'
     )
-    delta.updates[0].timestamp.should.match(
-      /[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]*)*Z/
-    )
+    should.equal(delta.updates[0].timestamp, undefined)
+    
     delta.updates[0].values.should.contain.an.item.with.property(
       'path',
       'navigation.courseRhumbline.nextPoint'
