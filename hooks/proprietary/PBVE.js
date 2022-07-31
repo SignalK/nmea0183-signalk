@@ -23,10 +23,11 @@ const schema = {
 
 /*
 Sentence: $PBVE,BJAAAOAAABNCANIIBDAAPHABAAAACCABAAADAAHCJPACDIBOACAAGL
-
+          $PBVE,BJAAAOAAABNCANIIBDAAPHABAAAADLIFACAAADABEHAAAACLCCAAAAJE
 Parse as:
 $PBVE,B,J,AA,AOAA,AB,NCAN,IIBD,AAPH,AB,AAAA,CC,ABAA,ADAA,HC,JP,ACDI,BO,AC,AAGL
 (https://www.electronicspoint.com/forums/threads/engine-hour-meter-with-nmea-output.159207/)
+
 
 0: (0:1)    B    : Product Code =  B = RH30
 1: (1:1)    J    : Software Version # 
@@ -54,6 +55,11 @@ Decode RPM as:
 ADAA = 16*A + D + 4096*A + 256*A
 ADAA = 16*0 + 3 + 4096*0 + 256*0
 ADAA = 3 RPM
+
+Decode Engine Minutes as:
+CC = 16*C + C
+CC = 16*2 + 2
+CC = 32 Engine Minutes
 
 */
   B: {
@@ -217,6 +223,16 @@ function convertToAlarmValue(values) {
   return 16 * parts[0] + parts[1] + 256 * parts[2]
 }
 
+/*
+ @function convertToEngineMinutes
+ @param values String
+ @return Int
+*/
+function convertToEngineMinutes(values) {
+  const parts = toInts(values)
+  return 16 * parts[0] + parts[1]
+}
+
 module.exports = function (input) {
   let convertedValue = {}
   let delta = {}
@@ -234,17 +250,22 @@ module.exports = function (input) {
   if (productCode === 'B') {  
     // const maxRpmSinceReset = convertToValue(data.substr(10,4))/60
     const highRpmAlarm = convertToValue(data.substr(14,4))/60
-    const backlight = convertToValue(data.substr(22,2))
+    // const backlight = convertToValue(data.substr(22,2))
     // const maintCountdown = convertToValue(data.substr(24,2))
-    const engineMinutes = convertToValue(data.substr(28,2))
-    const engineHours = convertToValue(data.substr(30,4))
+    console.log('engineMinutes string', data.substr(28,2))
+    // Engine minutes in seconds
+    const engineMinutes = convertToEngineMinutes(data.substr(28,2)) * 60 
+    console.log('engineMinutes convertedValue', convertToEngineMinutes(data.substr(28,2)))
+    // Engine hours in seconds
+    const engineHours = convertToValue(data.substr(30,4))*3600
     // const rpmCalNumber = convertToValue(data.substr(34,4))
     // const mode = convertToValue(data.substr(38,2))
     const rpm = convertToValue(data.substr(42,4))/60
     // const elapsedSeconds = convertToValue(data.substr(46,2))
     // const elapsedMinutes = convertToValue(data.substr(48,2))
     // const elapsedHours = convertToValue(data.substr(50,4))    
-    const runTime = ((engineHours*3600) + (engineMinutes*60))/3600
+    // const runTime = ((engineHours*3600) + (engineMinutes*60))/3600
+    const runTime = engineHours + engineMinutes
     const gaugeAlarmOn = highRpmAlarm > rpm ? 1 : 0
 
     delta =  {
@@ -256,16 +277,7 @@ module.exports = function (input) {
           path: 'propulsion.0.revolutions',
           meta: {
             description: 'CruzPro RH30/RH60/RH110 Digital RPM',
-            backlight = toInts(backlight)[1],
             units:'hz',
-            gaugeAlarmOn = gaugeAlarmOn
-            zones = [
-              {
-                upper: highRpmAlarm,
-                state: 'alarm',
-                message: 'Engine High RPM alarm',
-              },
-            ]
           }
         },
         {
@@ -273,7 +285,6 @@ module.exports = function (input) {
           path: 'propulsion.0.runTime',
           meta: {
             description: 'CruzPro RH30/RH60/RH110 Engine Hours',
-            backlight = toInts(backlight)[1],
             units:'s'
           }
         }]
