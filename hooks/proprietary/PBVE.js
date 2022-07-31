@@ -21,39 +21,45 @@ const utils = require('@signalk/nmea0183-utilities')
 const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const schema = {
 
-  /*
-$PBVE,BJAAAOAAABNCANIIBDAAPHABAAAACCABAAADAAHCJPACDIBOACAAGL
+/*
+Sentence: $PBVE,BJAAAOAAABNCANIIBDAAPHABAAAACCABAAADAAHCJPACDIBOACAAGL
+
 Parse as:
-      0 1  2  3   4    5    6    7     8   9  10  11    12    13   14  15 16
-      | |  |  |   |    |    |    |     |   |   |   |    |     |    |   |  |    
-$PBVE,x,x,xx,xxxx,xx,xxxx,xxxx,xxxx,xxxx,xxxx,xx,xxxx,xxxx,xxxx,xxxx,xxxx,xx*xx
-
 $PBVE,B,J,AA,AOAA,AB,NCAN,IIBD,AAPH,AB,AAAA,CC,ABAA,ADAA,HC,JP,ACDI,BO,AC,AAGL
+(https://www.electronicspoint.com/forums/threads/engine-hour-meter-with-nmea-output.159207/)
 
-0:1   B    : Product Code =  B = RH30
-1:1   J    : Software Version # 
-2:2   AA   : Spare NMV Byte (Ignore) 
-4:4   AOAA : Display Damping  
-8:2   AB   : Ignore
-10:4  NCAN : Maximum RPM seen from last reset
-14:4  IIBD : High RPM Alarm value
-18:4  AAPH : Clock Speed Calibration #
-22:2  AB   : Backlight Level
-24:4  AAAA : Maintenance count-down alarm
-28:2  CC   : Engine Minutes
-30:4  ABAA : Engine Hours
-34:4  ADAA : RPM Calibration number
-38:2  HC   : Mode
-40:2  JP   : Non voltatile memory checksum
-42:4  ACDI : RPM
-46:2  BO   : Elapsed Seconds
-48:2  AC   : Elapsed Minutes
-50:4  AAGL : Elapsed Hours
+0: (0:1)    B    : Product Code =  B = RH30
+1: (1:1)    J    : Software Version # 
+2: (2:2)    AA   : Spare NMV Byte (Ignore) 
+3: (4:4)    AOAA : Display Damping  
+4: (8:2)    AB   : Ignore
+5: (10:4)   NCAN : Maximum RPM seen from last reset
+6: (14:4)   IIBD : High RPM Alarm value
+7: (18:4)   AAPH : Clock Speed Calibration #
+8: (22:2)   AB   : Backlight Level
+9: (24:4)   AAAA : Maintenance count-down alarm
+10: (28:2)  CC   : Engine Minutes
+11: (30:4)  ABAA : Engine Hours
+12: (34:4)  ADAA : RPM Calibration number
+14: (38:2)  HC   : Mode
+15: (40:2)  JP   : Non voltatile memory checksum
+16: (42:4)  ACDI : RPM
+17: (46:2)  BO   : Elapsed Seconds
+18: (48:2)  AC   : Elapsed Minutes
+19: (50:4)  AAGL : Elapsed Hours.
+
+Where A=0, B=1, C=2, ... , O=14, P=15
+
+Decode RPM as:
+ADAA = 16*A + D + 4096*A + 256*A
+ADAA = 16*0 + 3 + 4096*0 + 256*0
+ADAA = 3 RPM
+
 */
   B: {
     meta: {
       description: 'CruzPro RH30/RH60/RH110 Digital RPM/Engine Hours/Elapsed Time',
-      displayName: 'Engine RPM',
+      displayName: 'Engine RPM/Hours',
       shortName: 'ERPM',
       warnMethod: ['visual'],
       alarmMethod: ['sound'],
@@ -226,19 +232,19 @@ module.exports = function (input) {
   }
 
   if (productCode === 'B') {  
-    const maxRpmSinceReset = convertToValue(data.substr(10,4))/60
+    // const maxRpmSinceReset = convertToValue(data.substr(10,4))/60
     const highRpmAlarm = convertToValue(data.substr(14,4))/60
     const backlight = convertToValue(data.substr(22,2))
-    const maintCountdown = convertToValue(data.substr(24,2))
+    // const maintCountdown = convertToValue(data.substr(24,2))
     const engineMinutes = convertToValue(data.substr(28,2))
     const engineHours = convertToValue(data.substr(30,4))
-    const rpmCalNumber = convertToValue(data.substr(34,4))
-    const mode = convertToValue(data.substr(38,2))
+    // const rpmCalNumber = convertToValue(data.substr(34,4))
+    // const mode = convertToValue(data.substr(38,2))
     const rpm = convertToValue(data.substr(42,4))/60
-    const elapsedSeconds = convertToValue(data.substr(46,2))
-    const elapsedMinutes = convertToValue(data.substr(48,2))
-    const elapsedHours = convertToValue(data.substr(50,4))    
-    const runTime = engineHours + engineMinutes + engineSeconds
+    // const elapsedSeconds = convertToValue(data.substr(46,2))
+    // const elapsedMinutes = convertToValue(data.substr(48,2))
+    // const elapsedHours = convertToValue(data.substr(50,4))    
+    const runTime = ((engineHours*3600) + (engineMinutes*60))/3600
     const gaugeAlarmOn = highRpmAlarm > rpm ? 1 : 0
 
     delta =  {
@@ -250,9 +256,16 @@ module.exports = function (input) {
           path: 'propulsion.0.revolutions',
           meta: {
             description: 'CruzPro RH30/RH60/RH110 Digital RPM',
-            backlight = toInts(backlight)[1]
+            backlight = toInts(backlight)[1],
             units:'hz',
-            gaugeAlarmOn = gaugeAlarmOn 
+            gaugeAlarmOn = gaugeAlarmOn
+            zones = [
+              {
+                upper: highRpmAlarm,
+                state: 'alarm',
+                message: 'Engine High RPM alarm',
+              },
+            ]
           }
         },
         {
@@ -260,7 +273,7 @@ module.exports = function (input) {
           path: 'propulsion.0.runTime',
           meta: {
             description: 'CruzPro RH30/RH60/RH110 Engine Hours',
-            backlight = toInts(backlight)[1]
+            backlight = toInts(backlight)[1],
             units:'s'
           }
         }]
