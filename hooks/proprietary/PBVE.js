@@ -23,7 +23,6 @@ const schema = {
 
 /*
 Sentence: $PBVE,BJAAAOAAABNCANIIBDAAPHABAAAACCABAAADAAHCJPACDIBOACAAGL
-          $PBVE,BJAAAOAAABNCANIIBDAAPHABAAAADLIFACAAADABEHAAAACLCCAAAAJE
 Parse as:
 $PBVE,B,J,AA,AOAA,AB,NCAN,IIBD,AAPH,AB,AAAA,CC,ABAA,ADAA,HC,JP,ACDI,BO,AC,AAGL
 (https://www.electronicspoint.com/forums/threads/engine-hour-meter-with-nmea-output.159207/)
@@ -248,23 +247,12 @@ module.exports = function (input) {
   }
 
   if (productCode === 'B') {  
-    // const maxRpmSinceReset = convertToValue(data.substr(10,4))/60
     const highRpmAlarm = convertToValue(data.substr(14,4))/60
-    // const backlight = convertToValue(data.substr(22,2))
-    // const maintCountdown = convertToValue(data.substr(24,2))
-    console.log('engineMinutes string', data.substr(28,2))
     // Engine minutes in seconds
     const engineMinutes = convertToEngineMinutes(data.substr(28,2)) * 60 
-    console.log('engineMinutes convertedValue', convertToEngineMinutes(data.substr(28,2)))
     // Engine hours in seconds
     const engineHours = convertToValue(data.substr(30,4))*3600
-    // const rpmCalNumber = convertToValue(data.substr(34,4))
-    // const mode = convertToValue(data.substr(38,2))
     const rpm = convertToValue(data.substr(42,4))/60
-    // const elapsedSeconds = convertToValue(data.substr(46,2))
-    // const elapsedMinutes = convertToValue(data.substr(48,2))
-    // const elapsedHours = convertToValue(data.substr(50,4))    
-    // const runTime = ((engineHours*3600) + (engineMinutes*60))/3600
     const runTime = engineHours + engineMinutes
     const gaugeAlarmOn = highRpmAlarm > rpm ? 1 : 0
 
