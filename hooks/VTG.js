@@ -62,9 +62,7 @@ module.exports = function (input) {
 
   if (utils.float(parts[6]) > 0 && String(parts[7]).toUpperCase() === 'K') {
     speed = utils.transform(utils.float(parts[6]), 'kph', 'ms')
-  }
-
-  if (utils.float(parts[4]) > 0 && String(parts[5]).toUpperCase() === 'N') {
+  } else if (utils.float(parts[4]) > 0 && String(parts[5]).toUpperCase() === 'N') {
     speed = utils.transform(utils.float(parts[4]), 'knots', 'ms')
   }
 
