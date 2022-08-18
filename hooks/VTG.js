@@ -76,11 +76,11 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.courseOverGroundMagnetic',
-            value: utils.transform(utils.float(parts[2]), 'deg', 'rad'),
+            value: parts[2].length === 0 ? null : utils.transform(utils.float(parts[2]), 'deg', 'rad'),
           },
           {
             path: 'navigation.courseOverGroundTrue',
-            value: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
+            value: parts[0].length === 0 ? null : utils.transform(utils.float(parts[0]), 'deg', 'rad'),
           },
           {
             path: 'navigation.speedOverGround',
