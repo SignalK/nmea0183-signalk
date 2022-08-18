@@ -18,6 +18,7 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+const expect = chai.expect
 
 chai.Should()
 chai.use(require('chai-things'))
@@ -44,4 +45,27 @@ describe('VTG', () => {
     )
     delta.updates[0].values[2].value.should.equal(0)
   })
+
+  it('Outputs nulls for missing values', () => {
+    const delta = new Parser().parse('$GPVTG,,T,,M,0.102,N,0.190,K,A*28')
+
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseOverGroundMagnetic'
+    )
+    expect(delta.updates[0].values[0].value).to.be.null
+
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseOverGroundTrue'
+    )
+    expect(delta.updates[0].values[1].value).to.be.null
+
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.speedOverGround'
+    )
+    delta.updates[0].values[2].value.should.be.closeTo(0.052, 0.0005)
+  })
+
 })
