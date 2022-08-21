@@ -92,13 +92,13 @@ describe('PBVE', () => {
     toFull(delta).should.be.validSignalK
   })
 
-  it('Should not parse if product code is F, B, or A', () => {
+  it('Should not parse if product code is F or A', () => {
     should.not.exist(new Parser().parse('$PBVE,FGLABCGJAAAHADEE*21'))
-    should.not.exist(
-      new Parser().parse(
-        '$PBVE,BEAAADAAABFKBCIIBDAGOOABAAAAADAAAAOIACAAONFMAKCAADAAAAHG*2A'
-      )
-    )
+    // should.not.exist(
+    //   new Parser().parse(
+    //     '$PBVE,BEAAADAAABFKBCIIBDAGOOABAAAAADAAAAOIACAAONFMAKCAADAAAAHG*2A'
+    //   )
+    // )
     should.not.exist(
       new Parser().parse(
         '$PBVE,AQHKAAAACIAAAAABAAGEDOBCAAAAFLABCKAADIAADIAAAAAANDEN*3F'
