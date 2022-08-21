@@ -20,6 +20,61 @@ const debug = require('debug')('signalk-parser-nmea0183/PBVE')
 const utils = require('@signalk/nmea0183-utilities')
 const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const schema = {
+
+/*
+Sentence: $PBVE,BJAAAOAAABNCANIIBDAAPHABAAAACCABAAADAAHCJPACDIBOACAAGL
+Parse as:
+$PBVE,B,J,AA,AOAA,AB,NCAN,IIBD,AAPH,AB,AAAA,CC,ABAA,ADAA,HC,JP,ACDI,BO,AC,AAGL
+(https://www.electronicspoint.com/forums/threads/engine-hour-meter-with-nmea-output.159207/)
+
+
+0: (0:1)    B    : Product Code =  B = RH30
+1: (1:1)    J    : Software Version # 
+2: (2:2)    AA   : Spare NMV Byte (Ignore) 
+3: (4:4)    AOAA : Display Damping  
+4: (8:2)    AB   : Ignore
+5: (10:4)   NCAN : Maximum RPM seen from last reset
+6: (14:4)   IIBD : High RPM Alarm value
+7: (18:4)   AAPH : Clock Speed Calibration #
+8: (22:2)   AB   : Backlight Level
+9: (24:4)   AAAA : Maintenance count-down alarm
+10: (28:2)  CC   : Engine Minutes
+11: (30:4)  ABAA : Engine Hours
+12: (34:4)  ADAA : RPM Calibration number
+14: (38:2)  HC   : Mode
+15: (40:2)  JP   : Non voltatile memory checksum
+16: (42:4)  ACDI : RPM
+17: (46:2)  BO   : Elapsed Seconds
+18: (48:2)  AC   : Elapsed Minutes
+19: (50:4)  AAGL : Elapsed Hours.
+
+Where A=0, B=1, C=2, ... , O=14, P=15
+
+Decode RPM as:
+ADAA = 16*A + D + 4096*A + 256*A
+ADAA = 16*0 + 3 + 4096*0 + 256*0
+ADAA = 3 RPM
+
+Decode Engine Minutes as:
+CC = 16*C + C
+CC = 16*2 + 2
+CC = 32 Engine Minutes
+
+*/
+  B: {
+    meta: {
+      description: 'CruzPro RH30/RH60/RH110 Digital RPM/Engine Hours/Elapsed Time',
+      displayName: 'Engine RPM/Hours',
+      shortName: 'ERPM',
+      warnMethod: ['visual'],
+      alarmMethod: ['sound'],
+      gaugeAlarmOn: false,
+      backlight: 0,
+      zones: [],
+      originalValue: null,
+  },
+},
+
   /*
 
 Note: oil pressure calculation formulas are the same for all instruments
@@ -167,6 +222,16 @@ function convertToAlarmValue(values) {
   return 16 * parts[0] + parts[1] + 256 * parts[2]
 }
 
+/*
+ @function convertToEngineMinutes
+ @param values String
+ @return Int
+*/
+function convertToEngineMinutes(values) {
+  const parts = toInts(values)
+  return 16 * parts[0] + parts[1]
+}
+
 module.exports = function (input) {
   let convertedValue = {}
   let delta = {}
@@ -181,85 +246,121 @@ module.exports = function (input) {
     return
   }
 
-  const backlight = data.substr(8, 2)
-  const gaugeUnits = data.substr(15, 2)
-  const gaugeAlarmOn = data.substr(17, 2)
-  const lower = convertToAlarmValue(data.substr(18, 4))
-  const upper = convertToAlarmValue(data.substr(22, 4))
-  const value = convertToValue(data.substr(28, 4))
+  if (productCode === 'B') {  
+    const highRpmAlarm = convertToValue(data.substr(14,4))/60
+    // Engine minutes in seconds
+    const engineMinutes = convertToEngineMinutes(data.substr(28,2)) * 60 
+    // Engine hours in seconds
+    const engineHours = convertToValue(data.substr(30,4))*3600
+    const rpm = convertToValue(data.substr(42,4))/60
+    const runTime = engineHours + engineMinutes
+    const gaugeAlarmOn = highRpmAlarm > rpm ? 1 : 0
 
-  if (productCode === 'D') {
-    const conditionalValue = function (derivedValue) {
-      return gaugeUnits === 'AA'
-        ? derivedValue * 6894.757
-        : derivedValue * 100000
-    }
-
-    convertedValue = {
-      //convert to pascals from psi/bar
-      value: conditionalValue(value),
-      path: schema[productCode].path,
-      meta: schema[productCode].meta,
-    }
-    convertedValue.meta.gaugeUnits = gaugeUnits === 'AA' ? 'psi' : 'bar'
-    //TODO: Add warning zone values
-    convertedValue.meta.zones = [
-      {
-        lower: conditionalValue(lower),
-        state: 'alarm',
-        message: 'Engine oil pressure at lowest threshold',
-      },
-      {
-        upper: conditionalValue(upper),
-        state: 'alarm',
-        message: 'Engine oil pressure at highest threshold',
-      },
-    ]
-  } else if (productCode === 'E') {
-    const conditionalValue = function (derivedValue) {
-      return gaugeUnits === 'AA'
-        ? (derivedValue - 32) * (5 / 9) + 273.15
-        : derivedValue + 273.15
-    }
-
-    convertedValue = {
-      //convert to C from F
-      value: conditionalValue(value),
-      path: schema[productCode].path,
-      meta: schema[productCode].meta,
-    }
-    convertedValue.meta.gaugeUnits = gaugeUnits === 'AA' ? 'f' : 'c'
-    //TODO: Add warning zone values
-    convertedValue.meta.zones = [
-      {
-        lower: conditionalValue(lower),
-        state: 'alarm',
-        message: 'Engine coolant temperature at lowest threshold',
-      },
-      {
-        upper: conditionalValue(upper),
-        state: 'alarm',
-        message: 'Engine coolant temperature at highest threshold',
-      },
-    ]
-  }
-
-  //baclight is AA, AB, etc so just need second value
-  convertedValue.meta.backlight = toInts(backlight)[1]
-  // instrument gauge alarm is armed when second value is 1 (A,B)
-  convertedValue.meta.gaugeAlarmOn = toInts(gaugeAlarmOn)[1] === 1
-  //store original value in meta
-  convertedValue.meta.originalValue = value
-
-  delta = {
-    updates: [
-      {
+    delta =  {
+      updates: [{
         source: tags.source,
         timestamp: tags.timestamp,
-        values: [convertedValue],
-      },
-    ],
-  }
+        values: [{
+          value: rpm,
+          path: 'propulsion.0.revolutions',
+          meta: {
+            description: 'CruzPro RH30/RH60/RH110 Digital RPM',
+            units:'hz',
+          }
+        },
+        {
+          value: runTime,
+          path: 'propulsion.0.runTime',
+          meta: {
+            description: 'CruzPro RH30/RH60/RH110 Engine Hours',
+            units:'s'
+          }
+        }]
+      }]
+    }  
+    return delta
+  } else if (productCode  === 'D' || productCode  === 'E') {   
 
-  return delta
+    const backlight = data.substr(8, 2)
+    const gaugeUnits = data.substr(15, 2)
+    const gaugeAlarmOn = data.substr(17, 2)
+    const lower = convertToAlarmValue(data.substr(18, 4))
+    const upper = convertToAlarmValue(data.substr(22, 4))
+    const value = convertToValue(data.substr(28, 4))
+
+    if (productCode === 'D') {
+      const conditionalValue = function (derivedValue) {
+        return gaugeUnits === 'AA'
+          ? derivedValue * 6894.757
+          : derivedValue * 100000
+      }
+
+      convertedValue = {
+        //convert to pascals from psi/bar
+        value: conditionalValue(value),
+        path: schema[productCode].path,
+        meta: schema[productCode].meta,
+      }
+      convertedValue.meta.gaugeUnits = gaugeUnits === 'AA' ? 'psi' : 'bar'
+      //TODO: Add warning zone values
+      convertedValue.meta.zones = [
+        {
+          lower: conditionalValue(lower),
+          state: 'alarm',
+          message: 'Engine oil pressure at lowest threshold',
+        },
+        {
+          upper: conditionalValue(upper),
+          state: 'alarm',
+          message: 'Engine oil pressure at highest threshold',
+        },
+      ]
+    } else if (productCode === 'E') {
+      const conditionalValue = function (derivedValue) {
+        return gaugeUnits === 'AA'
+          ? (derivedValue - 32) * (5 / 9) + 273.15
+          : derivedValue + 273.15
+      }
+
+      convertedValue = {
+        //convert to C from F
+        value: conditionalValue(value),
+        path: schema[productCode].path,
+        meta: schema[productCode].meta,
+      }
+      convertedValue.meta.gaugeUnits = gaugeUnits === 'AA' ? 'f' : 'c'
+      //TODO: Add warning zone values
+      convertedValue.meta.zones = [
+        {
+          lower: conditionalValue(lower),
+          state: 'alarm',
+          message: 'Engine coolant temperature at lowest threshold',
+        },
+        {
+          upper: conditionalValue(upper),
+          state: 'alarm',
+          message: 'Engine coolant temperature at highest threshold',
+        },
+      ]
+    }
+
+    //baclight is AA, AB, etc so just need second value
+    convertedValue.meta.backlight = toInts(backlight)[1]
+    // instrument gauge alarm is armed when second value is 1 (A,B)
+    convertedValue.meta.gaugeAlarmOn = toInts(gaugeAlarmOn)[1] === 1
+    //store original value in meta
+    convertedValue.meta.originalValue = value
+
+    delta = {
+      updates: [
+        {
+          source: tags.source,
+          timestamp: tags.timestamp,
+          values: [convertedValue],
+        },
+      ],
+    }
+
+    return delta
+  }
 }
