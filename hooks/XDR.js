@@ -50,6 +50,6 @@ module.exports = function (input) {
   const { sentence } = input
 
   const delta = xdrParser(sentence, xdrDictionary);
-  console.log(`Parsing ${sentence} >>> ` + JSON.stringify({ delta }, null, 2));
+  console.log(`Parsing 4 ${sentence} >>> ` + JSON.stringify({ delta }, null, 2));
   return delta
 }
