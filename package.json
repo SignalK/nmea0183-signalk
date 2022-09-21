@@ -30,7 +30,8 @@
     "@signalk/signalk-schema": "1.6.0",
     "ggencoder": "^1.0.4",
     "moment-timezone": "^0.5.21",
-    "split": "^1.0.1"
+    "split": "^1.0.1",
+    "xdr-parser-plugin": "^1.0.5"
   },
   "devDependencies": {
     "@signalk/github-create-release": "^1.2.0",
