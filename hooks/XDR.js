@@ -4,18 +4,22 @@ const math = require('math-expression-evaluator');
 const fs = require('fs');
 const xdrDictionary = { definitions: [] };
 
-// Populate a dictionary
-const xdrDictPath = require.resolve('xdr-parser-plugin/xdrDict');
-if (fs.existsSync(xdrDictPath)) {
-  try {
-    const json = JSON.parse(fs.readFileSync(xdrDictPath, 'utf-8'));
+try {
+  // Populate a dictionary
+  const xdrDictPath = require.resolve('xdr-parser-plugin/xdrDict');
+  if (fs.existsSync(xdrDictPath)) {
+    try {
+      const json = JSON.parse(fs.readFileSync(xdrDictPath, 'utf-8'));
 
-    if (json && Array.isArray(json.definitions)) {
-      xdrDictionary.definitions = [ ...json.definitions ];
+      if (json && Array.isArray(json.definitions)) {
+        xdrDictionary.definitions = [ ...json.definitions ];
+      }
+    } catch (err) {
+      console.warn('No dictionary found for xdr-parser-plugin');
     }
-  } catch (err) {
-    console.warn('No dictionary found for xdr-parser-plugin');
   }
+} catch (e) {
+  console.warn('Using default dictionary');
 }
 
 xdrDictionary.definitions = [

@@ -31,8 +31,7 @@
     "ggencoder": "^1.0.4",
     "math-expression-evaluator": "^1.4.0",
     "moment-timezone": "^0.5.21",
-    "split": "^1.0.1",
-    "xdr-parser-plugin": "^1.0.5"
+    "split": "^1.0.1"
   },
   "devDependencies": {
     "@signalk/github-create-release": "^1.2.0",
