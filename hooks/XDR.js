@@ -18,6 +18,18 @@ if (fs.existsSync(xdrDictPath)) {
   }
 }
 
+xdrDictionary.definitions = [
+  ...xdrDictionary.definitions,
+  {
+    type: "Air temperature",
+    data: "temperature",
+    units: "C",
+    name: "AIRTEMP",
+    expression: "(x+273.15)",
+    sk_path: "environment.outside.temperature",
+  }
+]
+
 module.exports = function (input) {
   const { sentence } = input
 
