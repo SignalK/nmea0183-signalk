@@ -27,6 +27,22 @@ xdrDictionary.definitions = [
     name: "AIRTEMP",
     expression: "(x+273.15)",
     sk_path: "environment.outside.temperature",
+  },
+  {
+    type: "Roll",
+    data: "Angles",
+    units: "Deg",
+    name: "HEEL",
+    expression: "(x*pi/180)",
+    sk_path: "navigation.attitude"
+  },
+  {
+    type: "Outside temperature",
+    data: "Angles",
+    units: "Deg",
+    name: "RUDDER",
+    expression: "(x*pi/180)",
+    sk_path: "steering.rudderAngle"
   }
 ]
 
