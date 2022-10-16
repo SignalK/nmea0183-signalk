@@ -46,8 +46,12 @@ describe('DBT', () => {
     )
   })
 
-  it("Doesn't choke on empty sentences", () => {
+  it("Converts empty value to null", () => {
     const delta = new Parser().parse('$IIDBT,,,,,,*52')
-    should.equal(delta, null)
+    delta.updates[0].values.length.should.equal(1)
+    delta.updates[0].values[0].path.should.equal(
+      'environment.depth.belowTransducer'
+    )
+    should.equal(delta.updates[0].values[0].value, null)
   })
 })

@@ -35,14 +35,7 @@ Field Number:
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  if (
-    ((typeof parts[0] !== 'string' || parts[0].trim() == '') &&
-      typeof parts[0] !== 'number') ||
-    (typeof parts[1] !== 'string' && typeof parts[1] !== 'number')
-  ) {
-    return null
-  }
-  var depth = utils.float(parts[0])
+  var depth = parts[0].trim() == '' ? null : utils.float(parts[0])
 
   const delta = {
     updates: [
@@ -66,19 +59,23 @@ module.exports = function (input) {
       path: 'environment.depth.surfaceToTransducer',
       value: offset,
     })
-    delta.updates[0].values.push({
-      path: 'environment.depth.belowSurface',
-      value: depth + offset,
-    })
+    if (depth !== null) {
+      delta.updates[0].values.push({
+        path: 'environment.depth.belowSurface',
+        value: depth + offset,
+      })
+    }
   } else if (offset < 0) {
     delta.updates[0].values.push({
       path: 'environment.depth.transducerToKeel',
       value: offset * -1,
     })
-    delta.updates[0].values.push({
-      path: 'environment.depth.belowKeel',
-      value: depth + offset,
-    })
+    if (depth !== null) {
+      delta.updates[0].values.push({
+        path: 'environment.depth.belowKeel',
+        value: depth + offset,
+      })
+    }
   }
 
   return delta
