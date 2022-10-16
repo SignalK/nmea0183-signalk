@@ -32,8 +32,12 @@ describe('DBS', () => {
     delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
   })
 
-  it("Doesn't choke on empty sentences", () => {
+  it('Converts empty value to null', () => {
     const delta = new Parser().parse('$IIDBS,,,,,,*55')
-    should.equal(delta, null)
+    delta.updates[0].values.length.should.equal(1)
+    delta.updates[0].values[0].path.should.equal(
+      'environment.depth.belowSurface'
+    )
+    should.equal(delta.updates[0].values[0].value, null)
   })
 })

@@ -37,16 +37,8 @@ Field Number:
 */
 
 module.exports = function (input) {
-  const { id, sentence, parts, tags } = input
-
-  if (
-    (typeof parts[2] !== 'string' && typeof parts[2] !== 'number') ||
-    (typeof parts[2] === 'string' && parts[2].trim() === '')
-  ) {
-    return null
-  }
-
-  const delta = {
+  const { parts, tags } = input
+  return {
     updates: [
       {
         source: tags.source,
@@ -54,12 +46,10 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.depth.belowSurface',
-            value: utils.float(parts[2]),
+            value: parts[2].length > 0 ? utils.float(parts[2]) : null,
           },
         ],
       },
     ],
   }
-
-  return delta
 }
