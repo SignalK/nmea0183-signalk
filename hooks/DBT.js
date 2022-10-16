@@ -46,9 +46,12 @@ module.exports = function (input) {
   if (hasNoValue(meterValue)) {
     const feetValue = parts[0]
     if (hasNoValue(feetValue)) {
-      return null
+      meterValue = null
+    } else {
+      meterValue = utils.float(feetValue) * FEET_TO_METERS
     }
-    meterValue = utils.float(feetValue) * FEET_TO_METERS
+  } else {
+    meterValue = utils.float(meterValue)
   }
 
   const delta = {
@@ -59,7 +62,7 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.depth.belowTransducer',
-            value: utils.float(meterValue),
+            value: meterValue,
           },
         ],
       },
