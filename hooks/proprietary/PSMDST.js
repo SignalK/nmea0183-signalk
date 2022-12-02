@@ -17,22 +17,24 @@
 'use strict'
 
 /*
-0  1  2  3
-|  |  |  |
-$PSMDST,xx,yy,nn*CS
+0  1  2  3  4
+|  |  |  |  |
+$PSMDST,Z,xx,yy,nn*CS
 where:
 PSMDST     	Raymarine Seatalk1 datagram sentence
-0 			00-9C       	Datagram type
-1 			hex       	First datagram content
-2 			hex   		Last datagram content
-3 			hex      	Checksum
+0       C/R       R for Recevied messages, C for sent messages
+1 			00-9C     Datagram type
+2 			hex       First datagram content
+3 			hex   		Last datagram content
+4 			hex      	Checksum
 */
 
 const seatalkHooks = require('../seatalk')
 
 module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
-  const key = '0x' + parts[0].toUpperCase()
+  const key = '0x' + parts[1].toUpperCase();
+  input.parts = parts.slice(1, input.parts.length);
   if (typeof seatalkHooks[key] === 'function') {
     return seatalkHooks[key](input, session)
   } else {
