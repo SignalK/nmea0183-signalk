@@ -22,7 +22,7 @@
 $PSMDST,Z,xx,yy,nn*CS
 where:
 PSMDST     	Raymarine Seatalk1 datagram sentence
-0       C/R       R for Recevied messages, C for sent messages
+0       C/R       R for Recevied messages, C for sent messages *Note: This field only exists in later firmware versions of the ShipModul Miniplex
 1 			00-9C     Datagram type
 2 			hex       First datagram content
 3 			hex   		Last datagram content
@@ -33,8 +33,10 @@ const seatalkHooks = require('../seatalk')
 
 module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
-  const key = '0x' + parts[1].toUpperCase();
-  input.parts = parts.slice(1, input.parts.length);
+  if (parts[0].toUpperCase() === 'R') {
+    input.parts = parts.slice(1, input.parts.length);
+  }
+  const key = '0x' + input.parts[0].toUpperCase();
   if (typeof seatalkHooks[key] === 'function') {
     return seatalkHooks[key](input, session)
   } else {
