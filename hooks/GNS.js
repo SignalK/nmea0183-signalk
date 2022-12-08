@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * Copyright 2016 Signal K and Fabian Tollenaar <fabian@signalk.org>.
+ * Copyright 2022 Signal K.
  *
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
@@ -73,9 +73,10 @@ function isEmpty(mixed) {
 }
 
 function indicator(chars, modes) {
-    const systems = ["GPS","GNSS","Galileo","BeiDou","QZSS"]
-    const indications = chars.map(function (val, i) { return `${systems[i]}: ${modes[val]}` })
-    return indications.join(",")
+    const systems = ["GPS","GLONASS","Galileo","BeiDou","QZSS"]
+    const indications = {}
+    chars.forEach(function (val, i) { indications[systems[i]] = modes[val] })
+    return indications
   }
 
 module.exports = function (input) {
@@ -96,22 +97,22 @@ module.exports = function (input) {
   const timestamp = utils.timestamp(time, moment.tz('UTC').format('DDMMYY'))
 
   const mode = {
-    "A": "Autonomous (non-differential)",
-    "D": "Differential mode",
-    "E": "Estimated (dead reckoning) Mode",
+    "A": "Autonomous",
+    "D": "Differential",
+    "E": "Estimated",
     "F": "RTK Float",
-    "M": "Manual Input Mode",
-    "N": "Constellation not in use, or no valid fix",
-    "P": "Precise (no degradation, like Selective Availability, and hires)",
+    "M": "Manual",
+    "N": "No Valid Fix",
+    "P": "Precise",
     "R": "RTK Integer",
-    "S": "Simulator Mode"
+    "S": "Simulator"
   }
 
-  const state = {
+  const status = {
     "S": "Safe",
     "C": "Caution",
     "U": "Unsafe",
-    "V": "Not valid for navigation"
+    "V": "Not Valid"
   }
 
   const delta = {
@@ -162,8 +163,8 @@ module.exports = function (input) {
             value: Number(parts[11]),
           },
           {
-            path: 'navigation.state',
-            value: state[(parts[12])],
+            path: 'navigation.gnss.status',
+            value: status[(parts[12])],
           },
         ],
       },
