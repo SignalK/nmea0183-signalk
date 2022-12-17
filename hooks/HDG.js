@@ -39,21 +39,48 @@ function isEmpty(mixed) {
 }
 
 module.exports = function (input) {
-  const { id, sentence, parts, tags } = input
-
+  const { parts, tags } = input
   const values = []
-  if (!isEmpty(parts[0])) {
+
+  const headingCompass = parts[0]
+  const deviation = parts[1]
+  const deviationDir = parts[2] === 'E' ? 1 : -1
+  const variation = parts[3]
+  const variationDir = parts[4] === 'E' ? 1 : -1
+  if (!isEmpty(headingCompass)) {
+    const effectiveDeviation = !isEmpty(deviation) ? Number(deviation) * deviationDir : 0
     values.push({
       path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
+      value: utils.transform(utils.float(headingCompass) + effectiveDeviation, 'deg', 'rad'),
     })
+    if (!isEmpty(deviation)) {
+      values.push({
+        path: 'navigation.headingCompass',
+        value: utils.transform(utils.float(headingCompass), 'deg', 'rad'),
+      })  
+    }
+    if (!isEmpty(variation)) {
+      const effectiveVariation = variation * variationDir
+      values.push({
+        path: 'navigation.headingTrue',
+        value: utils.transform(utils.float(headingCompass) + effectiveDeviation + effectiveVariation, 'deg', 'rad'),
+      })  
+    }
   }
-  if (!(isEmpty(parts[3]) || isEmpty(parts[4]))) {
+  if (!(isEmpty(variation) || isEmpty(variationDir))) {
     values.push({
       path: 'navigation.magneticVariation',
       value:
-        utils.transform(utils.float(parts[3]), 'deg', 'rad') *
-        (parts[4] === 'E' ? 1 : -1),
+        utils.transform(utils.float(variation), 'deg', 'rad') *
+        variationDir,
+    })
+  }
+  if (!(isEmpty(deviation) || isEmpty(deviationDir))) {
+    values.push({
+      path: 'navigation.magneticDeviation',
+      value:
+        utils.transform(utils.float(deviation), 'deg', 'rad') *
+        deviationDir,
     })
   }
   if (!values.length) {
