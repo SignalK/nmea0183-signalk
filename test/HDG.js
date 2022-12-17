@@ -35,10 +35,9 @@ describe('HDG', () => {
       'path',
       'navigation.magneticVariation'
     )
-    delta.updates[0].values[1].value.should.be.closeTo(
-      (0.6 / 180) * Math.PI,
-      0.005
-    )
+    delta.updates[0].values
+      .find((pv) => pv.path === 'navigation.magneticVariation')
+      .value.should.be.closeTo((0.6 / 180) * Math.PI, 0.005)
   })
 
   it('Sentence with just heading works', () => {
@@ -52,6 +51,26 @@ describe('HDG', () => {
       (51.5 / 180) * Math.PI,
       0.005
     )
+  })
+
+  it('Sentence with all fields converts and applies corrections', () => {
+    const delta = new Parser().parse('$INHDG,180,5,W,10,W*6D')
+
+    delta.updates[0].values
+      .find((pv) => pv.path === 'navigation.headingMagnetic')
+      .value.should.be.closeTo(((180 - 5) / 180) * Math.PI, 0.00001)
+    delta.updates[0].values
+      .find((pv) => pv.path === 'navigation.headingCompass')
+      .value.should.be.closeTo((180 / 180) * Math.PI, 0.00001)
+    delta.updates[0].values
+      .find((pv) => pv.path === 'navigation.magneticVariation')
+      .value.should.be.closeTo((-10 / 180) * Math.PI, 0.00001)
+    delta.updates[0].values
+      .find((pv) => pv.path === 'navigation.magneticDeviation')
+      .value.should.be.closeTo((-5 / 180) * Math.PI, 0.00001)
+    delta.updates[0].values
+      .find((pv) => pv.path === 'navigation.headingTrue')
+      .value.should.be.closeTo(((180 - 5 - 10) / 180) * Math.PI, 0.00001)
   })
 
   it("Doesn't choke on empty sentences", () => {
