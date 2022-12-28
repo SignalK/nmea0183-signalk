@@ -72,12 +72,26 @@ function isEmpty(mixed) {
   )
 }
 
-function indicator(chars, modes) {
-    const systems = ["GPS","GLONASS","Galileo","BeiDou","QZSS"]
-    const indications = {}
-    chars.forEach(function (val, i) { indications[systems[i]] = modes[val] })
-    return indications
-  }
+const MODES = {
+  "A": "Autonomous",
+  "D": "Differential",
+  "E": "Estimated",
+  "F": "RTK Float",
+  "M": "Manual",
+  "N": "No Valid Fix",
+  "P": "Precise",
+  "R": "RTK Integer",
+  "S": "Simulator"
+}
+
+const SYSTEMS = ["GPS","GLONASS","Galileo","BeiDou","QZSS"]
+
+function indicator(chars) {
+  return chars.reduce( (acc, c, i) => {
+    acc[SYSTEMS[i]] = MODES[c]
+    return acc
+  }, {})
+}
 
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
@@ -96,19 +110,7 @@ module.exports = function (input) {
   const time = parts[0].indexOf('.') === -1 ? parts[0] : parts[0].split('.')[0]
   const timestamp = utils.timestamp(time, moment.tz('UTC').format('DDMMYY'))
 
-  const mode = {
-    "A": "Autonomous",
-    "D": "Differential",
-    "E": "Estimated",
-    "F": "RTK Float",
-    "M": "Manual",
-    "N": "No Valid Fix",
-    "P": "Precise",
-    "R": "RTK Integer",
-    "S": "Simulator"
-  }
-
-  const status = {
+  const STATUS = {
     "S": "Safe",
     "C": "Caution",
     "U": "Unsafe",
@@ -130,7 +132,7 @@ module.exports = function (input) {
           },
           {
             path: 'navigation.gnss.methodQuality',
-            value: indicator(parts[5].split(""), mode),
+            value: indicator(parts[5].split("")),
           },
 
           {
@@ -164,7 +166,7 @@ module.exports = function (input) {
           },
           {
             path: 'navigation.gnss.status',
-            value: status[(parts[12])],
+            value: STATUS[(parts[12])],
           },
         ],
       },
