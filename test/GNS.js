@@ -25,7 +25,7 @@ chai.use(require('@signalk/signalk-schema').chaiModule)
 
 const toFull = require('./toFull')
 
-describe('GGA', () => {
+describe('GNS', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
       '$GPGNS,111648.00,0235.0379,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,S*5D'
