@@ -15,6 +15,7 @@
 - [DBK - Depth Below Keel](https://gpsd.gitlab.io/gpsd/NMEA.html#_dbk_depth_below_keel)
 - [DPT - Depth of Water](https://gpsd.gitlab.io/gpsd/NMEA.html#_dpt_depth_of_water)
 - [DSC - Digital Selective Calling Class-D Radios](http://continuouswave.com/whaler/reference/DSC_Datagrams.html)
+- [GNS - Fix Data](https://gpsd.gitlab.io/gpsd/NMEA.html#_gns_fix_data)
 - [GGA - Global Positioning System Fix Data](https://gpsd.gitlab.io/gpsd/NMEA.html#_gga_global_positioning_system_fix_data)
 - [GLL - Geographic Position - Latitude/Longitude](https://gpsd.gitlab.io/gpsd/NMEA.html#_gll_geographic_position_latitude_longitude)
 - [HDG - Heading - Deviation & Variation](https://gpsd.gitlab.io/gpsd/NMEA.html#_hdg_heading_deviation_amp_variation)

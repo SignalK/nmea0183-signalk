@@ -6,6 +6,7 @@ module.exports = {
   DBS: require('./DBS.js'),
   DPT: require('./DPT.js'),
   DSC: require('./DSC.js'),
+  GNS: require('./GNS.js'),
   GGA: require('./GGA.js'),
   GLL: require('./GLL.js'),
   GSV: require('./GSV.js'),
