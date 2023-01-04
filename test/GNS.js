@@ -74,7 +74,7 @@ describe('GNS', () => {
       longitude: -44.369083333333336,
       latitude: -2.583965,
     })
-    delta.updates[0].values[1].value.should.equal({"GPS":"Autonomous","GLONASS":"No Valid Fix","Galileo":"No Valid Fix"})
+    delta.updates[0].values[1].value.should.deep.equal({"GPS":"Autonomous","GLONASS":"No Valid Fix","Galileo":"No Valid Fix"})
     delta.updates[0].values[2].value.should.equal(12)
     delta.updates[0].values[3].value.should.equal(8.5)
     delta.updates[0].values[4].value.should.equal(0.8)
@@ -86,7 +86,7 @@ describe('GNS', () => {
   })
 
   it("Doesn't choke on empty sentences", () => {
-    const delta = new Parser().parse('$GPGNS,,,,,,,,,,,,,S*59')
+    const delta = new Parser().parse('$GPGNS,,,,,,,,,,,,,S*32')
     should.equal(delta, null)
   })
 })
