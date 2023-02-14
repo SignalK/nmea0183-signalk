@@ -17,16 +17,16 @@
 'use strict'
 
 /*
-0  1  2  3  4
-|  |  |  |  |
+0       1 2  3  4  5
+|       | |  |  |  |
 $PSMDST,Z,xx,yy,nn*CS
 where:
-PSMDST     	Raymarine Seatalk1 datagram sentence
-0       C/R       R for Recevied messages, C for sent messages *Note: This field only exists in later firmware versions of the ShipModul Miniplex
-1 			00-9C     Datagram type
-2 			hex       First datagram content
-3 			hex   		Last datagram content
-4 			hex      	Checksum
+0       PSMDST     	Raymarine Seatalk1 datagram sentence
+1       C/R       R for Recevied messages, C for sent messages *Note: This field only exists in later firmware versions of the ShipModul Miniplex
+2 			00-9C     Datagram type
+3 			hex       First datagram content
+4 			hex   		Last datagram content
+5 			hex      	Checksum
 */
 
 const seatalkHooks = require('../seatalk')
