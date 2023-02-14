@@ -52,7 +52,7 @@ module.exports = function (input, session) {
     const d = new Date(
       Date.UTC(
         session['date'].year,
-        session['date'].month,
+        session['date'].month - 1,
         session['date'].day,
         session['time'].hour,
         session['time'].minute,
