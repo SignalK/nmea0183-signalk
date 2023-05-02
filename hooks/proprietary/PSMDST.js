@@ -17,22 +17,26 @@
 'use strict'
 
 /*
-0  1  2  3
-|  |  |  |
-$PSMDST,xx,yy,nn*CS
+0       1 2  3  4  5
+|       | |  |  |  |
+$PSMDST,Z,xx,yy,nn*CS
 where:
-PSMDST     	Raymarine Seatalk1 datagram sentence
-0 			00-9C       	Datagram type
-1 			hex       	First datagram content
-2 			hex   		Last datagram content
-3 			hex      	Checksum
+0       PSMDST     	Raymarine Seatalk1 datagram sentence
+1       C/R       R for Received messages, C for sent messages *Note: This field only exists in later firmware versions of the ShipModul Miniplex
+2 			00-9C     Datagram type
+3 			hex       First datagram content
+4 			hex   		Last datagram content
+5 			hex      	Checksum
 */
 
 const seatalkHooks = require('../seatalk')
 
 module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
-  const key = '0x' + parts[0].toUpperCase()
+  if (parts[0].toUpperCase() === 'R') {
+    input.parts = parts.slice(1, input.parts.length);
+  }
+  const key = '0x' + input.parts[0].toUpperCase();
   if (typeof seatalkHooks[key] === 'function') {
     return seatalkHooks[key](input, session)
   } else {

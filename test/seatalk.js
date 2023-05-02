@@ -53,7 +53,7 @@ const should = chai.Should()
 chai.use(require('chai-things'))
 
 describe('seatalk', () => {
-  ;['$PSMDST,', '$STALK,'].forEach((prefix) => {
+  ;['$PSMDST,', '$PSMDST,R,', '$STALK,'].forEach((prefix) => {
     it(`${prefix} 0x00 depth converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${depthData}`)
       const delta = new Parser().parse(fullSentence)
