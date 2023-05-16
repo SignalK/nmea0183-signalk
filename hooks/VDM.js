@@ -268,6 +268,206 @@ module.exports = function (input, session) {
     })
   }
 
+  if (data.avgwindspd) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.averageWindSpeed',
+      value: data.avgwindspd,
+    })
+  }
+
+  if (data.windgust) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.windGust',
+      value: data.windgust,
+    })
+  }
+
+  if (data.winddir) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.windDirection',
+      value: data.winddir,
+    })
+  }
+
+  if (data.windgustdir) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.windGustDirection',
+      value: data.windgustdir,
+    })
+  }
+
+  if (data.airtemp) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.airTemperature',
+      value: data.airtemp,
+    })
+  }
+
+  if (data.relhumid) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.relativeHumidity',
+      value: data.relhumid,
+    })
+  }
+
+  if (data.dewpoint) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.dewPoint',
+      value: data.dewpoint,
+    })
+  }
+
+  if (data.airpress) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.airPressure',
+      value: data.airpress,
+    })
+  }
+
+  if (data.airpressten) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.airPressureTendency',
+      value: data.airpressten,
+    })
+  }
+
+  if (data.horvisib) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.horizontalVisibility',
+      value: data.horvisib,
+    })
+  }
+
+  if (data.waterlevelten) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.waterLevelTrend',
+      value: data.waterlevelten,
+    })
+  }
+
+  if (data.waterlevel) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.waterLevel',
+      value: data.waterlevel,
+    })
+  }
+
+  if (data.surfcurrspd) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.surfaceCurrentSpeed',
+      value: data.surfcurrspd,
+    })
+  }
+
+  if (data.surfcurrdir) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.surfaceCurrentDirection',
+      value: data.surfcurrdir,
+    })
+  }
+
+  if (data.signwavewhgt) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.significantWaveHeight',
+      value: data.signwavewhgt,
+    })
+  }
+
+  if (data.waveperiod) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.wavePeriod',
+      value: data.waveperiod,
+    })
+  }
+
+  if (data.wavedir) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.waveDirection',
+      value: data.wavedir,
+    })
+  }
+
+  if (data.swellhgt) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.swellHeight',
+      value: data.swellhgt,
+    })
+  }
+
+  if (data.swellperiod) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.swellPeriod',
+      value: data.swellperiod,
+    })
+  }
+
+  if (data.swelldir) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.swellDirection',
+      value: data.swelldir,
+    })
+  }
+
+  if (data.seastate) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.seaState',
+      value: data.seastate,
+    })
+  }
+
+  if (data.watertemp) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.waterTemperature',
+      value: data.watertemp,
+    })
+  }
+
+  if (data.precipitation) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.precipitation',
+      value: data.precipitation,
+    })
+  }
+
+  if (data.salinity) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.salinity',
+      value: data.salinity,
+    })
+  }
+
+  if (data.ice) {
+    contextPrefix = 'atons.'
+    values.push({
+      path: 'environment.ice',
+      value: data.ice,
+    })
+  }
+
   if (values.length === 0) {
     return null
   }
