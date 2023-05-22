@@ -67,6 +67,50 @@ const specialManeuverMapping = {
   3: 'reserved',
 }
 
+const beaufortScale = {
+  0: 'Flat',
+  1: 'Ripples without crests',
+  2: 'Small wavelets. Crests of glassy appearance, not breaking',
+  3: 'Large wavelets. Crests begin to break; scattered whitecaps',
+  4: 'Small waves',
+  5: 'Moderate (1.2 m) longer waves. Some foam and spray',
+  6: 'Large waves with foam crests and some spray',
+  7: 'Sea heaps up and foam begins to streak',
+  8: 'Moderately high waves with breaking crests forming spindrift. Streaks of foam',
+  9: 'High waves (6-7 m) with dense foam. Wave crests start to roll over. Considerable spray',
+  10: 'Very high waves. The sea surface is white and there is considerable tumbling. Visibility is reduced',
+  11: 'Exceptionally high waves',
+  12: 'Huge waves. Air filled with foam and spray. Sea completely white with driving spray. Visibility greatly reduced',
+  13: 'not available',
+  14: 'reserved',
+  15: 'reserved',
+}
+
+const statusTable = {
+  0: 'steady',
+  1: 'decreasing',
+  2: 'increasing',
+  3: 'not available',
+}
+
+const precipitationType = {
+  0: 'reserved',
+  1: 'rain',
+  2: 'thunderstorm',
+  3: 'freezing rain',
+  4: 'mixed/ice',
+  5: 'snow',
+  6: 'reserved',
+  7: 'not available',
+}
+
+const iceTable = {
+  0: 'no',
+  1: 'yes',
+  2: 'reserved',
+  3: 'not available',
+}
+
 module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
   const data = new Decoder(sentence, session)
@@ -270,201 +314,241 @@ module.exports = function (input, session) {
 
   if (data.avgwindspd) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.averageWindSpeed',
-      value: data.avgwindspd,
-    })
+    if (data.avgwindspd < 127) {
+      values.push({
+        path: 'environment.averageWindSpeed',
+        value: utils.transform(data.avgwindspd, 'knots', 'ms'),
+      })
+    } 
   }
 
   if (data.windgust) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.windGust',
-      value: data.windgust,
-    })
+    if (data.avgwindspd < 127) {
+      values.push({
+        path: 'environment.windGust',
+        value: utils.transform(data.windgust, 'knots', 'ms'),
+      })
+    }
   }
 
   if (data.winddir) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.windDirection',
-      value: data.winddir,
-    })
+    if (data.winddir < 360) {
+      values.push({
+        path: 'environment.windDirection',
+        value: utils.transform(data.winddir, 'deg', 'rad'),
+      })
+    }
   }
 
   if (data.windgustdir) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.windGustDirection',
-      value: data.windgustdir,
-    })
+    if (data.windgustdir < 360) {
+      values.push({
+        path: 'environment.windGustDirection',
+        value: utils.transform(data.windgustdir, 'deg', 'rad'),
+      })
+    }
   }
 
   if (data.airtemp) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.airTemperature',
-      value: data.airtemp,
-    })
+    if (data.airtemp > -601 && data.airtemp < 601) {
+      values.push({
+        path: 'environment.airTemperature',
+        value: utils.transform((data.airtemp / 10), 'c', 'k'),
+      })
+    }
   }
 
   if (data.relhumid) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.relativeHumidity',
-      value: data.relhumid,
-    })
+    if (data.relhumid < 101) {
+      values.push({
+        path: 'environment.relativeHumidity',
+        value: data.relhumid,
+      })
+    }
   }
 
   if (data.dewpoint) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.dewPoint',
-      value: data.dewpoint,
-    })
+    if (data.dewpoint > -201 && data.dewpoint < 501) {
+      values.push({
+        path: 'environment.dewPoint',
+        value: utils.transform((data.dewpoint / 10), 'c', 'k'),
+      })
+    }
   }
 
   if (data.airpress) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.airPressure',
-      value: data.airpress,
-    })
+    if (data.airpress < 403) {
+      values.push({
+        path: 'environment.airPressure',
+        value: (data.airpress + 799) * 100,
+      })
+    }
   }
 
   if (data.airpressten) {
     contextPrefix = 'atons.'
     values.push({
       path: 'environment.airPressureTendency',
-      value: data.airpressten,
+      value: statusTable[data.airpressten],
     })
   }
 
   if (data.horvisib) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.horizontalVisibility',
-      value: data.horvisib,
-    })
+    if (data.horvisib < 127) {
+      values.push({
+        path: 'environment.horizontalVisibility',
+        value: utils.transform((data.horvisib /10), 'nm', 'm'),
+      })
+    }
+  }
+
+  if (data.waterlevel) {
+    contextPrefix = 'atons.'
+    if (data.waterlevel < 4001) {
+      values.push({
+        path: 'environment.waterLevel',
+        value: (data.waterlevel / 100) - 10,
+      })
+    }
   }
 
   if (data.waterlevelten) {
     contextPrefix = 'atons.'
     values.push({
       path: 'environment.waterLevelTrend',
-      value: data.waterlevelten,
-    })
-  }
-
-  if (data.waterlevel) {
-    contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.waterLevel',
-      value: data.waterlevel,
+      value: statusTable[data.waterlevelten],
     })
   }
 
   if (data.surfcurrspd) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.surfaceCurrentSpeed',
-      value: data.surfcurrspd,
-    })
+    if (data.surfcurrspd < 252) {
+      values.push({
+        path: 'environment.surfaceCurrentSpeed',
+        value: utils.transform(data.surfcurrspd, 'knots', 'ms'),
+      })
+    }
   }
 
   if (data.surfcurrdir) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.surfaceCurrentDirection',
-      value: data.surfcurrdir,
-    })
+    if (data.surfcurrdir < 360) {
+      values.push({
+        path: 'environment.surfaceCurrentDirection',
+        value: utils.transform(data.surfcurrdir, 'deg', 'rad'),
+      })
+    }
   }
 
   if (data.signwavewhgt) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.significantWaveHeight',
-      value: data.signwavewhgt,
-    })
+    if (data.signwavewhgt < 252) {
+      values.push({
+        path: 'environment.significantWaveHeight',
+        value: data.signwavewhgt / 10,
+      })
+    }
   }
 
   if (data.waveperiod) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.wavePeriod',
-      value: data.waveperiod,
-    })
+    if (data.waveperiod < 61) {
+      values.push({
+        path: 'environment.wavePeriod',
+        value: data.waveperiod,
+      })
+    }
   }
 
   if (data.wavedir) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.waveDirection',
-      value: data.wavedir,
-    })
+    if (data.wavedir < 360) {
+      values.push({
+        path: 'environment.waveDirection',
+        value: utils.transform(data.wavedir, 'deg', 'rad'),
+      })
+    }
   }
 
   if (data.swellhgt) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.swellHeight',
-      value: data.swellhgt,
-    })
+    if (data.swellhgt < 252) {
+      values.push({
+        path: 'environment.swellHeight',
+        value: data.swellhgt / 10,
+      })
+    }
   }
 
   if (data.swellperiod) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.swellPeriod',
-      value: data.swellperiod,
-    })
+    if (data.waveperiod < 61) {
+      values.push({
+        path: 'environment.swellPeriod',
+        value: data.swellperiod,
+      })
+    }
   }
 
   if (data.swelldir) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.swellDirection',
-      value: data.swelldir,
-    })
+    if (data.wavedir < 360) {
+      values.push({
+        path: 'environment.swellDirection',
+        value: utils.transform(data.swelldir, 'deg', 'rad'),
+      })
+    }
   }
 
   if (data.seastate) {
     contextPrefix = 'atons.'
     values.push({
       path: 'environment.seaState',
-      value: data.seastate,
+      value: beaufortScale[data.seastate],
     })
   }
 
   if (data.watertemp) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.waterTemperature',
-      value: data.watertemp,
-    })
+    if (data.watertemp > -101 && data.watertemp < 501) {
+      values.push({
+        path: 'environment.waterTemperature',
+        value: utils.transform((data.watertemp / 10), 'c', 'k'),
+      })
+    }
   }
 
   if (data.precipitation) {
     contextPrefix = 'atons.'
     values.push({
       path: 'environment.precipitation',
-      value: data.precipitation,
+      value: precipitationType[data.precipitation],
     })
   }
 
   if (data.salinity) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.salinity',
-      value: data.salinity,
-    })
+    if (data.salinity < 502) {
+      values.push({
+        path: 'environment.salinity',
+        value: data.salinity / 10,
+      })
+    }
   }
 
   if (data.ice) {
     contextPrefix = 'atons.'
     values.push({
       path: 'environment.ice',
-      value: data.ice,
+      value: beaufortScale[data.ice],
     })
   }
 
