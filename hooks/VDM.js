@@ -548,7 +548,7 @@ module.exports = function (input, session) {
     contextPrefix = 'atons.'
     values.push({
       path: 'environment.ice',
-      value: beaufortScale[data.ice],
+      value: iceTable[data.ice],
     })
   }
 
