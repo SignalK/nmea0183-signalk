@@ -324,7 +324,7 @@ module.exports = function (input, session) {
 
   if (data.windgust) {
     contextPrefix = 'atons.'
-    if (data.avgwindspd < 127) {
+    if (data.windgust < 127) {
       values.push({
         path: 'environment.windGust',
         value: utils.transform(data.windgust, 'knots', 'ms'),
@@ -394,10 +394,12 @@ module.exports = function (input, session) {
 
   if (data.airpressten) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.airPressureTendency',
-      value: statusTable[data.airpressten],
-    })
+    if (data.airpressten < 3) {
+      values.push({
+        path: 'environment.airPressureTendency',
+        value: statusTable[data.airpressten],
+      })
+    }
   }
 
   if (data.horvisib) {
@@ -405,7 +407,7 @@ module.exports = function (input, session) {
     if (data.horvisib < 127) {
       values.push({
         path: 'environment.horizontalVisibility',
-        value: utils.transform((data.horvisib /10), 'nm', 'm'),
+        value: utils.transform((data.horvisib / 10), 'nm', 'm'),
       })
     }
   }
@@ -422,10 +424,12 @@ module.exports = function (input, session) {
 
   if (data.waterlevelten) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.waterLevelTrend',
-      value: statusTable[data.waterlevelten],
-    })
+    if (data.waterlevelten < 3) {
+      values.push({
+        path: 'environment.waterLevelTrend',
+        value: statusTable[data.waterlevelten],
+      })
+    }
   }
 
   if (data.surfcurrspd) {
@@ -433,7 +437,7 @@ module.exports = function (input, session) {
     if (data.surfcurrspd < 252) {
       values.push({
         path: 'environment.surfaceCurrentSpeed',
-        value: utils.transform(data.surfcurrspd, 'knots', 'ms'),
+        value: utils.transform((data.surfcurrspd / 10), 'knots', 'ms'),
       })
     }
   }
@@ -490,7 +494,7 @@ module.exports = function (input, session) {
 
   if (data.swellperiod) {
     contextPrefix = 'atons.'
-    if (data.waveperiod < 61) {
+    if (data.swellperiod < 61) {
       values.push({
         path: 'environment.swellPeriod',
         value: data.swellperiod,
@@ -500,7 +504,7 @@ module.exports = function (input, session) {
 
   if (data.swelldir) {
     contextPrefix = 'atons.'
-    if (data.wavedir < 360) {
+    if (data.swelldir < 360) {
       values.push({
         path: 'environment.swellDirection',
         value: utils.transform(data.swelldir, 'deg', 'rad'),
@@ -510,10 +514,12 @@ module.exports = function (input, session) {
 
   if (data.seastate) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.seaState',
-      value: beaufortScale[data.seastate],
-    })
+    if (data.seastate < 13) {
+      values.push({
+        path: 'environment.seaState',
+        value: beaufortScale[data.seastate],
+      })
+    }
   }
 
   if (data.watertemp) {
@@ -528,10 +534,12 @@ module.exports = function (input, session) {
 
   if (data.precipitation) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.precipitation',
-      value: precipitationType[data.precipitation],
-    })
+    if (data.precipitation < 7) {
+      values.push({
+        path: 'environment.precipitation',
+        value: precipitationType[data.precipitation],
+      })
+    }
   }
 
   if (data.salinity) {
@@ -546,10 +554,12 @@ module.exports = function (input, session) {
 
   if (data.ice) {
     contextPrefix = 'atons.'
-    values.push({
-      path: 'environment.ice',
-      value: iceTable[data.ice],
-    })
+    if (data.ice < 3) {
+      values.push({
+        path: 'environment.ice',
+        value: iceTable[data.ice],
+      })
+    }
   }
 
   if (values.length === 0) {
