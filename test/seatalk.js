@@ -132,7 +132,17 @@ describe('seatalk', () => {
       delta.updates[0].values[0].value.should.be.closeTo(4086808.4, 0.5)
     })
 
-    it(`${prefix} 0x25 trip and log converted`, () => {
+    it(`${prefix} 0x25 trip and log converted 2`, () => {
+      const fullSentence = utils.appendChecksum(`${prefix}25,14,4C,BF,00,00,00}`)
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.log'
+      )
+      delta.updates[0].values[1].value.should.be.closeTo(utils.transform(11450.8, 'nm', 'm'), 0.5)
+    })
+
+    it(`${prefix} 0x25 trip and log converted 1`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${tripAndLogData}`)
       const delta = new Parser().parse(fullSentence)
       delta.updates[0].values.should.contain.an.item.with.property(
@@ -144,7 +154,7 @@ describe('seatalk', () => {
         'path',
         'navigation.log'
       )
-      delta.updates[0].values[1].value.should.be.closeTo(7035562.8, 0.5)
+      delta.updates[0].values[1].value.should.be.closeTo(52550314.8, 0.5)
     })
 
     it(`${prefix} 0x26 STW converted`, () => {
