@@ -313,250 +313,250 @@ module.exports = function (input, session) {
   }
 
   if (data.avgwindspd) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.avgwindspd < 127) {
       values.push({
-        path: 'environment.averageWindSpeed',
+        path: 'environment.observations.wind.averageSpeed',
         value: utils.transform(data.avgwindspd, 'knots', 'ms'),
       })
     } 
   }
 
   if (data.windgust) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.windgust < 127) {
       values.push({
-        path: 'environment.windGust',
+        path: 'environment.observations.wind.gust',
         value: utils.transform(data.windgust, 'knots', 'ms'),
       })
     }
   }
 
   if (data.winddir) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.winddir < 360) {
       values.push({
-        path: 'environment.windDirection',
+        path: 'environment.observations.wind.direction',
         value: utils.transform(data.winddir, 'deg', 'rad'),
       })
     }
   }
 
   if (data.windgustdir) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.windgustdir < 360) {
       values.push({
-        path: 'environment.windGustDirection',
+        path: 'environment.observations.wind.gustDirection',
         value: utils.transform(data.windgustdir, 'deg', 'rad'),
       })
     }
   }
 
   if (data.airtemp) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.airtemp > -601 && data.airtemp < 601) {
       values.push({
-        path: 'environment.airTemperature',
+        path: 'environment.observations.air.temperature',
         value: utils.transform((data.airtemp / 10), 'c', 'k'),
       })
     }
   }
 
   if (data.relhumid) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.relhumid < 101) {
       values.push({
-        path: 'environment.relativeHumidity',
+        path: 'environment.observations.relativeHumidity',
         value: data.relhumid,
       })
     }
   }
 
   if (data.dewpoint) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.dewpoint > -201 && data.dewpoint < 501) {
       values.push({
-        path: 'environment.dewPoint',
+        path: 'environment.observations.dewPoint',
         value: utils.transform((data.dewpoint / 10), 'c', 'k'),
       })
     }
   }
 
   if (data.airpress) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.airpress < 403) {
       values.push({
-        path: 'environment.airPressure',
+        path: 'environment.observations.air.pressure',
         value: (data.airpress + 799) * 100,
       })
     }
   }
 
   if (data.airpressten) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.airpressten < 3) {
       values.push({
-        path: 'environment.airPressureTendency',
+        path: 'environment.observations.air.pressureTendency',
         value: statusTable[data.airpressten],
       })
     }
   }
 
   if (data.horvisib) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.horvisib < 127) {
       values.push({
-        path: 'environment.horizontalVisibility',
+        path: 'environment.observations.horizontalVisibility',
         value: utils.transform((data.horvisib / 10), 'nm', 'm'),
       })
     }
   }
 
   if (data.waterlevel) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.waterlevel < 4001) {
       values.push({
-        path: 'environment.waterLevel',
+        path: 'environment.observations.water.level',
         value: (data.waterlevel / 100) - 10,
       })
     }
   }
 
   if (data.waterlevelten) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.waterlevelten < 3) {
       values.push({
-        path: 'environment.waterLevelTrend',
+        path: 'environment.observations.water.levelTrend',
         value: statusTable[data.waterlevelten],
       })
     }
   }
 
   if (data.surfcurrspd) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.surfcurrspd < 252) {
       values.push({
-        path: 'environment.surfaceCurrentSpeed',
+        path: 'environment.observations.surfaceCurrent.speed',
         value: utils.transform((data.surfcurrspd / 10), 'knots', 'ms'),
       })
     }
   }
 
   if (data.surfcurrdir) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.surfcurrdir < 360) {
       values.push({
-        path: 'environment.surfaceCurrentDirection',
+        path: 'environment.observations.surfaceCurrent.direction',
         value: utils.transform(data.surfcurrdir, 'deg', 'rad'),
       })
     }
   }
 
   if (data.signwavewhgt) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.signwavewhgt < 252) {
       values.push({
-        path: 'environment.significantWaveHeight',
+        path: 'environment.observations.wave.significantHeight',
         value: data.signwavewhgt / 10,
       })
     }
   }
 
   if (data.waveperiod) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.waveperiod < 61) {
       values.push({
-        path: 'environment.wavePeriod',
+        path: 'environment.observations.wave.period',
         value: data.waveperiod,
       })
     }
   }
 
   if (data.wavedir) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.wavedir < 360) {
       values.push({
-        path: 'environment.waveDirection',
+        path: 'environment.observations.wave.direction',
         value: utils.transform(data.wavedir, 'deg', 'rad'),
       })
     }
   }
 
   if (data.swellhgt) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.swellhgt < 252) {
       values.push({
-        path: 'environment.swellHeight',
+        path: 'environment.observations.swell.height',
         value: data.swellhgt / 10,
       })
     }
   }
 
   if (data.swellperiod) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.swellperiod < 61) {
       values.push({
-        path: 'environment.swellPeriod',
+        path: 'environment.observations.swell.period',
         value: data.swellperiod,
       })
     }
   }
 
   if (data.swelldir) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.swelldir < 360) {
       values.push({
-        path: 'environment.swellDirection',
+        path: 'environment.observations.swell.direction',
         value: utils.transform(data.swelldir, 'deg', 'rad'),
       })
     }
   }
 
   if (data.seastate) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.seastate < 13) {
       values.push({
-        path: 'environment.seaState',
+        path: 'environment.observations.seaState',
         value: beaufortScale[data.seastate],
       })
     }
   }
 
   if (data.watertemp) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.watertemp > -101 && data.watertemp < 501) {
       values.push({
-        path: 'environment.waterTemperature',
+        path: 'environment.observations.water.temperature',
         value: utils.transform((data.watertemp / 10), 'c', 'k'),
       })
     }
   }
 
   if (data.precipitation) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.precipitation < 7) {
       values.push({
-        path: 'environment.precipitation',
+        path: 'environment.observations.precipitation',
         value: precipitationType[data.precipitation],
       })
     }
   }
 
   if (data.salinity) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.salinity < 502) {
       values.push({
-        path: 'environment.salinity',
+        path: 'environment.observations.water.salinity',
         value: data.salinity / 10,
       })
     }
   }
 
   if (data.ice) {
-    contextPrefix = 'atons.'
+    contextPrefix = 'meteo.'
     if (data.ice < 3) {
       values.push({
-        path: 'environment.ice',
+        path: 'environment.observations.water.ice',
         value: iceTable[data.ice],
       })
     }
