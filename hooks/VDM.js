@@ -20,6 +20,8 @@ const debug = require('debug')('signalk-parser-nmea0183/VDM')
 const utils = require('@signalk/nmea0183-utilities')
 const Decoder = require('ggencoder').AisDecode
 const schema = require('@signalk/signalk-schema')
+let delta
+let meteoLocation
 
 const stateMapping = {
   0: 'motoring',
@@ -302,7 +304,9 @@ module.exports = function (input, session) {
     })
   }
 
-  const meteoLocation = `${data.lon.toString().replace('.', '_')}__${data.lat.toString().replace('.', '_')}`
+  if (data.lon && data.lat) {
+    meteoLocation = data.lon.toString().replace('.', '_') + "__" + data.lat.toString().replace('.', '_')
+  }
 
   if (data.avgwindspd) {
     contextPrefix = 'meteo.'
@@ -558,27 +562,7 @@ module.exports = function (input, session) {
     return null
   }
 
-  if (contextPrefix !== 'meteo.'){
-    if (data.lon && data.lat) {
-      values.push({
-        path: 'navigation.position',
-        value: {
-          longitude: data.lon,
-          latitude: data.lat,
-        },
-      })
-    }
-    const delta = {
-      context: contextPrefix + `urn:mrn:imo:mmsi:${data.mmsi}`,
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: values,
-        },
-      ],
-    }
-  } else {
+  if (contextPrefix === 'meteo.'){
     if (data.lon && data.lat) {
       values.push({
         path: `environment.observations.${meteoLocation}`,
@@ -588,11 +572,31 @@ module.exports = function (input, session) {
         },
       })
     }
-    const delta = {
+    delta = {
       context: contextPrefix + `urn:mrn:imo:mmsi:${data.mmsi}`,
       updates: [
         {
           $source: `location__${data.lat}__${data.lon}`,
+          timestamp: tags.timestamp,
+          values: values,
+        },
+      ],
+    }
+  } else {
+    if (data.lon && data.lat) {
+      values.push({
+        path: 'navigation.position',
+        value: {
+          longitude: data.lon,
+          latitude: data.lat,
+        },
+      })
+    }
+    delta = {
+      context: contextPrefix + `urn:mrn:imo:mmsi:${data.mmsi}`,
+      updates: [
+        {
+          source: tags.source,
           timestamp: tags.timestamp,
           values: values,
         },
