@@ -1,6 +1,6 @@
 # @signalk/nmea0183-signalk
 
-> A node.js/JavaScript parser of NMEA0183 sentences. Sentences are parsed to [Signal K delta](http://signalk.org/specification/master/data_model.html#delta-format) format.
+> A node.js/JavaScript parser of NMEA0183 sentences. Sentences are parsed to [Signal K delta](http://signalk.org/specification/1.7.0/doc/data_model.html#delta-format) format.
 
 ## Supported sentences
 
@@ -51,7 +51,7 @@
 
 ### Custom Sentences
 
-You can add custom sentence parsers via the [Signal K Server plugin mechanism](https://github.com/SignalK/signalk-server/blob/master/SERVERPLUGINS.md). A plugin can register custom parsers by emitting `nmea0183sentenceParser` PropertyValues with a value that has the properties
+You can add custom sentence parsers via the [Signal K Server plugin mechanism](https://github.com/SignalK/signalk-server/blob/5abe63f1322f7538c9bbb2ec17b22ca52da2bc8a/docs/src/develop/plugins/server_plugin.md). A plugin can register custom parsers by emitting `nmea0183sentenceParser` PropertyValues with a value that has the properties
 - sentence: the three letter id of the sentence
 - parser: a function with the signature `({ id, sentence, parts, tags }, session) => delta`
 
@@ -78,7 +78,7 @@ catch (e) {
 
 ### Command line
 
-In addition to usage in your code, the parser can be used on the command-line if installed globally (`npm install --global`). This allows you to pipe data from one program into the parser directly, without using a Signal K server. The parser holds no Signal K tree in memory (a big change vs. 1.x), so the output will be stringified [Signal K delta](http://signalk.org/specification/master/data_model.html#delta-format) messages.
+In addition to usage in your code, the parser can be used on the command-line if installed globally (`npm install --global`). This allows you to pipe data from one program into the parser directly, without using a Signal K server. The parser holds no Signal K tree in memory (a big change vs. 1.x), so the output will be stringified [Signal K delta](http://signalk.org/specification/1.7.0/doc/data_model.html#delta-format) messages.
 
 ```bash
 $ echo '$SDDBT,17.0,f,5.1,M,2.8,F*3E' | nmea0183-signalk
