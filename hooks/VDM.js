@@ -432,7 +432,7 @@ module.exports = function (input, session) {
     contextPrefix = 'meteo.'
     if (data.surfcurrspd < 252) {
       values.push({
-        path: `environment.observations.${meteoLocation}.surfaceCurrent.speed`,
+        path: `environment.observations.${meteoLocation}.water.surfaceCurrentSpeed`,
         value: utils.transform((data.surfcurrspd / 10), 'knots', 'ms'),
       })
     }
@@ -442,7 +442,7 @@ module.exports = function (input, session) {
     contextPrefix = 'meteo.'
     if (data.surfcurrdir < 360) {
       values.push({
-        path: `environment.observations.${meteoLocation}.surfaceCurrent.direction`,
+        path: `environment.observations.${meteoLocation}.water.surfaceCurrentDirection`,
         value: utils.transform(data.surfcurrdir, 'deg', 'rad'),
       })
     }
