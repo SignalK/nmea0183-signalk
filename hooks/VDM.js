@@ -20,8 +20,6 @@ const debug = require('debug')('signalk-parser-nmea0183/VDM')
 const utils = require('@signalk/nmea0183-utilities')
 const Decoder = require('ggencoder').AisDecode
 const schema = require('@signalk/signalk-schema')
-let delta
-let meteoLocation
 
 const stateMapping = {
   0: 'motoring',
