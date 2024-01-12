@@ -305,303 +305,229 @@ module.exports = function (input, session) {
   }
 
   if (data.lon && data.lat) {
-    meteoLocation = data.lon.toString().replace('.', '_') + "__" + data.lat.toString().replace('.', '_')
+    values.push({
+      path: 'navigation.position',
+      value: {
+        longitude: data.lon,
+        latitude: data.lat,
+      },
+    })
   }
 
   if (data.avgwindspd) {
     contextPrefix = 'meteo.'
-    if (data.avgwindspd < 127) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.windAverageSpeed`,
-        value: utils.transform(data.avgwindspd, 'knots', 'ms'),
-      })
-    } 
+    values.push({
+      path: `environment.air.windAverageSpeed`,
+      value: utils.transform(data.avgwindspd, 'knots', 'ms'),
+    })
   }
 
   if (data.windgust) {
     contextPrefix = 'meteo.'
-    if (data.windgust < 127) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.windGust`,
-        value: utils.transform(data.windgust, 'knots', 'ms'),
-      })
-    }
+    values.push({
+      path: `environment.air.windGust`,
+      value: utils.transform(data.windgust, 'knots', 'ms'),
+    })
   }
 
   if (data.winddir) {
     contextPrefix = 'meteo.'
-    if (data.winddir < 360) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.windDirection`,
-        value: utils.transform(data.winddir, 'deg', 'rad'),
-      })
-    }
+    values.push({
+      path: `environment.air.windDirection`,
+      value: utils.transform(data.winddir, 'deg', 'rad'),
+    })
   }
 
   if (data.windgustdir) {
     contextPrefix = 'meteo.'
-    if (data.windgustdir < 360) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.windGustDirection`,
-        value: utils.transform(data.windgustdir, 'deg', 'rad'),
-      })
-    }
+    values.push({
+      path: `environment.air.windGustDirection`,
+      value: utils.transform(data.windgustdir, 'deg', 'rad'),
+    })
   }
 
   if (data.airtemp) {
     contextPrefix = 'meteo.'
-    if (data.airtemp > -601 && data.airtemp < 601) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.temperature`,
-        value: utils.transform((data.airtemp / 10), 'c', 'k'),
-      })
-    }
+    values.push({
+      path: `environment.air.temperature`,
+      value: utils.transform(data.airtemp, 'c', 'k'),
+    })
   }
 
   if (data.relhumid) {
     contextPrefix = 'meteo.'
-    if (data.relhumid < 101) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.relativeHumidity`,
-        value: data.relhumid,
-      })
-    }
+    values.push({
+      path: `environment.air.relativeHumidity`,
+      value: data.relhumid,
+    })
   }
 
   if (data.dewpoint) {
     contextPrefix = 'meteo.'
-    if (data.dewpoint > -201 && data.dewpoint < 501) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.dewPoint`,
-        value: utils.transform((data.dewpoint / 10), 'c', 'k'),
-      })
-    }
+    values.push({
+      path: `environment.air.dewPoint`,
+      value: utils.transform(data.dewpoint, 'c', 'k'),
+    })
   }
 
   if (data.airpress) {
     contextPrefix = 'meteo.'
-    if (data.airpress < 403) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.pressure`,
-        value: (data.airpress + 799) * 100,
-      })
-    }
+    values.push({
+      path: `environment.air.pressure`,
+      value: data.airpress * 100,
+    })
+
   }
 
   if (data.airpressten) {
     contextPrefix = 'meteo.'
-    if (data.airpressten < 3) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.pressureTendency`,
-        value: statusTable[data.airpressten],
-      })
-    }
+    values.push({
+      path: `environment.air.pressureTendency`,
+      value: statusTable[data.airpressten],
+    })
   }
 
   if (data.horvisib) {
     contextPrefix = 'meteo.'
-    if (data.horvisib < 127) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.horizontalVisibility`,
-        value: utils.transform((data.horvisib / 10), 'nm', 'm'),
-      })
-    }
+    values.push({
+      path: `environment.air.horizontalVisibility`,
+      value: utils.transform(data.horvisib, 'nm', 'm'),
+    })
   }
 
   if (data.waterlevel) {
     contextPrefix = 'meteo.'
-    if (data.waterlevel < 4001) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.level`,
-        value: (data.waterlevel / 100) - 10,
-      })
-    }
+    values.push({
+      path: `environment.water.level`,
+      value: data.waterlevel,
+    })
   }
 
   if (data.waterlevelten) {
     contextPrefix = 'meteo.'
-    if (data.waterlevelten < 3) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.levelTrend`,
-        value: statusTable[data.waterlevelten],
-      })
-    }
+    values.push({
+      path: `environment.water.levelTrend`,
+      value: statusTable[data.waterlevelten],
+    })
   }
 
   if (data.surfcurrspd) {
     contextPrefix = 'meteo.'
-    if (data.surfcurrspd < 252) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.surfaceCurrentSpeed`,
-        value: utils.transform((data.surfcurrspd / 10), 'knots', 'ms'),
-      })
-    }
+    values.push({
+      path: `environment.water.surfaceCurrentSpeed`,
+      value: utils.transform(data.surfcurrspd, 'knots', 'ms'),
+    })
   }
 
   if (data.surfcurrdir) {
     contextPrefix = 'meteo.'
-    if (data.surfcurrdir < 360) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.surfaceCurrentDirection`,
-        value: utils.transform(data.surfcurrdir, 'deg', 'rad'),
-      })
-    }
+    values.push({
+      path: `environment.water.surfaceCurrentDirection`,
+      value: utils.transform(data.surfcurrdir, 'deg', 'rad'),
+    })
   }
 
   if (data.signwavewhgt) {
     contextPrefix = 'meteo.'
-    if (data.signwavewhgt < 252) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.waveSignificantHeight`,
-        value: data.signwavewhgt / 10,
-      })
-    }
+    values.push({
+      path: `environment.water.waveSignificantHeight`,
+      value: data.signwavewhgt,
+    })
   }
 
   if (data.waveperiod) {
     contextPrefix = 'meteo.'
-    if (data.waveperiod < 61) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.wavePeriod`,
-        value: data.waveperiod,
-      })
-    }
+    values.push({
+      path: `environment.water.wavePeriod`,
+      value: data.waveperiod,
+    })
   }
 
   if (data.wavedir) {
     contextPrefix = 'meteo.'
-    if (data.wavedir < 360) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.waveDirection`,
-        value: utils.transform(data.wavedir, 'deg', 'rad'),
-      })
-    }
+    values.push({
+      path: `environment.water.waveDirection`,
+      value: utils.transform(data.wavedir, 'deg', 'rad'),
+    })
   }
 
   if (data.swellhgt) {
     contextPrefix = 'meteo.'
-    if (data.swellhgt < 252) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.swellHeight`,
-        value: data.swellhgt / 10,
-      })
-    }
+    values.push({
+      path: `environment.water.swellHeight`,
+      value: data.swellhgt,
+    })
   }
 
   if (data.swellperiod) {
     contextPrefix = 'meteo.'
-    if (data.swellperiod < 61) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.swellPeriod`,
-        value: data.swellperiod,
-      })
-    }
+    values.push({
+      path: `environment.water.swellPeriod`,
+      value: data.swellperiod,
+    })
   }
 
   if (data.swelldir) {
     contextPrefix = 'meteo.'
-    if (data.swelldir < 360) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.swellDirection`,
-        value: utils.transform(data.swelldir, 'deg', 'rad'),
-      })
-    }
+    values.push({
+      path: `environment.water.swellDirection`,
+      value: utils.transform(data.swelldir, 'deg', 'rad'),
+    })
   }
 
   if (data.seastate) {
     contextPrefix = 'meteo.'
-    if (data.seastate < 13) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.seaState`,
-        value: beaufortScale[data.seastate],
-      })
-    }
+    values.push({
+      path: `environment.water.seaState`,
+      value: beaufortScale[data.seastate],
+    })
   }
 
   if (data.watertemp) {
     contextPrefix = 'meteo.'
-    if (data.watertemp > -101 && data.watertemp < 501) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.temperature`,
-        value: utils.transform((data.watertemp / 10), 'c', 'k'),
-      })
-    }
+    values.push({
+      path: `environment.water.temperature`,
+      value: utils.transform(data.watertemp, 'c', 'k'),
+    })
   }
 
   if (data.precipitation) {
     contextPrefix = 'meteo.'
-    if (data.precipitation < 7) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.air.precipitation`,
-        value: precipitationType[data.precipitation],
-      })
-    }
+    values.push({
+      path: `environment.air.precipitation`,
+      value: precipitationType[data.precipitation],
+    })
   }
 
   if (data.salinity) {
     contextPrefix = 'meteo.'
-    if (data.salinity < 502) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.salinity`,
-        value: data.salinity / 10,
-      })
-    }
+    values.push({
+      path: `environment.water.salinity`,
+      value: data.salinity,
+    })
   }
 
   if (data.ice) {
     contextPrefix = 'meteo.'
-    if (data.ice < 3) {
-      values.push({
-        path: `environment.observations.${meteoLocation}.water.ice`,
-        value: iceTable[data.ice],
-      })
-    }
+    values.push({
+      path: `environment.water.ice`,
+      value: iceTable[data.ice],
+    })
   }
 
   if (values.length === 0) {
     return null
   }
-
-  if (contextPrefix === 'meteo.'){
-    if (data.lon && data.lat) {
-      values.push({
-        path: `environment.observations.${meteoLocation}`,
-        value: {
-          longitude: data.lon,
-          latitude: data.lat,
-        },
-      })
-    }
-    delta = {
-      context: contextPrefix + `urn:mrn:imo:mmsi:${data.mmsi}`,
-      updates: [
-        {
-          $source: `location__${data.lat}__${data.lon}`,
-          timestamp: tags.timestamp,
-          values: values,
-        },
-      ],
-    }
-  } else {
-    if (data.lon && data.lat) {
-      values.push({
-        path: 'navigation.position',
-        value: {
-          longitude: data.lon,
-          latitude: data.lat,
-        },
-      })
-    }
-    delta = {
-      context: contextPrefix + `urn:mrn:imo:mmsi:${data.mmsi}`,
-      updates: [
-        {
-          source: tags.source,
-          timestamp: tags.timestamp,
-          values: values,
-        },
-      ],
-    }
+  
+  delta = {
+    context: contextPrefix + `urn:mrn:imo:mmsi:${data.mmsikey || data.mmsi}`,
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: values,
+      },
+    ],
   }
 
   return delta
