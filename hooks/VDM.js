@@ -20,10 +20,10 @@ const debug = require('debug')('signalk-parser-nmea0183/VDM')
 const utils = require('@signalk/nmea0183-utilities')
 const Decoder = require('ggencoder').AisDecode
 const schema = require('@signalk/signalk-schema')
-const knotsToMs = (v) => utils.transform(v, 'knots', 'ms')
+const knotsToMs = (v) => parseFloat(utils.transform(v, 'knots', 'ms').toFixed(2))
 const degToRad = (v) => utils.transform(v, 'deg', 'rad')
-const cToK = (v) => utils.transform(v, 'c', 'k')
-const nmToM = (v) => utils.transform(v, 'nm', 'm')
+const cToK = (v) => parseFloat(utils.transform(v, 'c', 'k').toFixed(2))
+const nmToM = (v) => parseFloat(utils.transform(v, 'nm', 'm').toFixed(2))
 
 const stateMapping = {
   0: 'motoring',
@@ -300,6 +300,9 @@ module.exports = function (input, session) {
   }
 
   if (typeof data.fid !== 'undefined') {
+    if (data.fid == 31 || data.fid == 11 || data.fid == 33 ){
+      contextPrefix = 'meteo.'
+    }
     values.push({
       path: 'sensors.ais.functionalId',
       value: data.fid,
@@ -349,8 +352,8 @@ module.exports = function (input, session) {
     if (data[propName] !== undefined) {
       contextPrefix = 'meteo.'
       values.push({
-        path,
-        value: f(data[`environment.observation.${propName}`]),
+        path: `environment.observation.` + path,
+        value: f(data[propName]),
       })
     }
   })
