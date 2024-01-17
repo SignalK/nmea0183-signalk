@@ -372,7 +372,7 @@ module.exports = function (input, session) {
     return null
   }
   
-  delta = {
+  const delta = {
     context: contextPrefix + `urn:mrn:imo:mmsi:${data.mmsikey || data.mmsi}`,
     updates: [
       {
