@@ -20,6 +20,10 @@ const debug = require('debug')('signalk-parser-nmea0183/VDM')
 const utils = require('@signalk/nmea0183-utilities')
 const Decoder = require('ggencoder').AisDecode
 const schema = require('@signalk/signalk-schema')
+const knotsToMs = (v) => utils.transform(v, 'knots', 'ms')
+const degToRad = (v) => utils.transform(v, 'deg', 'rad')
+const cToK = (v) => utils.transform(v, 'c', 'k')
+const nmToM = (v) => utils.transform(v, 'nm', 'm')
 
 const stateMapping = {
   0: 'motoring',
@@ -68,19 +72,19 @@ const specialManeuverMapping = {
 }
 
 const beaufortScale = {
-  0: 'Flat',
-  1: 'Ripples without crests',
-  2: 'Small wavelets. Crests of glassy appearance, not breaking',
-  3: 'Large wavelets. Crests begin to break; scattered whitecaps',
-  4: 'Small waves',
-  5: 'Moderate (1.2 m) longer waves. Some foam and spray',
-  6: 'Large waves with foam crests and some spray',
-  7: 'Sea heaps up and foam begins to streak',
-  8: 'Moderately high waves with breaking crests forming spindrift. Streaks of foam',
-  9: 'High waves (6-7 m) with dense foam. Wave crests start to roll over. Considerable spray',
-  10: 'Very high waves. The sea surface is white and there is considerable tumbling. Visibility is reduced',
-  11: 'Exceptionally high waves',
-  12: 'Huge waves. Air filled with foam and spray. Sea completely white with driving spray. Visibility greatly reduced',
+  0: 'Calm, 0–0.2 m/s',
+  1: 'Light air, 0.3–1.5 m/s',
+  2: 'Light breeze, 1.6–3.3 m/s',
+  3: 'Gentle breeze, 3.4–5.4 m/s',
+  4: 'Moderate breeze, 5.5–7.9 m/s',
+  5: 'Fresh breeze, 8–10.7 m/s',
+  6: 'Strong breeze, 10.8–13.8 m/s',
+  7: 'High wind, 13.9–17.1 m/s',
+  8: 'Gale, 17.2–20.7 m/s',
+  9: 'Strong gale, 20.8–24.4 m/s',
+  10: 'Storm, 24.5–28.4 m/s',
+  11: 'Violent storm, 28.5–32.6 m/s',
+  12: 'Hurricane-force, ≥ 32.7 m/s',
   13: 'not available',
   14: 'reserved',
   15: 'reserved',
@@ -312,204 +316,55 @@ module.exports = function (input, session) {
     })
   }
 
-  if (data.avgwindspd) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.air.windAverageSpeed`,
-      value: utils.transform(data.avgwindspd, 'knots', 'ms'),
-    })
-  }
+  [
+    ['avgwindspd', 'wind.averageSpeed', knotsToMs],
+    ['windgust', 'wind.gust', knotsToMs],
+    ['winddir', 'wind.directionTrue', degToRad],
+    ['windgustdir', 'wind.gustDirectionTrue', degToRad],
+    ['airtemp', 'outside.temperature', cToK],
+    ['relhumid', 'outside.relativeHumidity', (v) => v],
+    ['dewpoint', 'outside.dewPointTemperature', cToK],
+    ['airpress', 'outside.pressure', (v) => v * 100],
+    ['airpressten', 'outside.pressureTendency', (v) => v],
+    ['airpressten', 'outside.pressureTendencyType', (v) => statusTable[v]],
+    ['horvisib', 'outside.horizontalVisibility', nmToM],
+    ['waterlevel', 'water.level', (v) => v],
+    ['waterlevelten', 'water.levelTendency', (v) => v],
+    ['waterlevelten', 'water.levelTendencyType', (v) => statusTable[v]],
+    ['signwavewhgt', 'water.waves.significantHeight', (v) => v],
+    ['waveperiod', 'water.waves.period', (v) => v],
+    ['wavedir', 'water.waves.direction', degToRad],
+    ['swellhgt', 'water.swell.height', (v) => v],
+    ['swellperiod', 'water.swell.period', (v) => v],
+    ['swelldir', 'water.swell.directionTrue', degToRad],
+    ['seastate', 'water.seaState', (v) => v],
+    ['seastate', 'water.seaState.beaufortScale', (v) => beaufortScale[v]],
+    ['watertemp', 'water.temperature', cToK],
+    ['precipitation', 'outside.precipitation', (v) => v],
+    ['precipitation', 'outside.precipitationType', (v) => precipitationType[precipitation]],
+    ['salinity', 'water.salinity', (v) => v],
+    ['ice', 'water.ice', (v) => v],
+    ['ice', 'water.iceType', (v) => iceTable[data.ice]],
+  ].forEach(([propName, path, f]) => {
+    if (data[propName] !== undefined) {
+      contextPrefix = 'meteo.'
+      values.push({
+        path,
+        value: f(data[`environment.observation.${propName}`]),
+      })
+    }
+  })
 
-  if (data.windgust) {
+  if (data.surfcurrspd !== undefined || data.surfcurrdir !== undefined) {
     contextPrefix = 'meteo.'
+    const drift = utils.transform(data.surfcurrspd, 'knots', 'ms')
+    const set = utils.transform(data.surfcurrdir, 'deg', 'rad')
     values.push({
-      path: `environment.air.windGust`,
-      value: utils.transform(data.windgust, 'knots', 'ms'),
-    })
-  }
-
-  if (data.winddir) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.air.windDirection`,
-      value: utils.transform(data.winddir, 'deg', 'rad'),
-    })
-  }
-
-  if (data.windgustdir) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.air.windGustDirection`,
-      value: utils.transform(data.windgustdir, 'deg', 'rad'),
-    })
-  }
-
-  if (data.airtemp) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.air.temperature`,
-      value: utils.transform(data.airtemp, 'c', 'k'),
-    })
-  }
-
-  if (data.relhumid) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.air.relativeHumidity`,
-      value: data.relhumid,
-    })
-  }
-
-  if (data.dewpoint) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.air.dewPoint`,
-      value: utils.transform(data.dewpoint, 'c', 'k'),
-    })
-  }
-
-  if (data.airpress) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.air.pressure`,
-      value: data.airpress * 100,
-    })
-
-  }
-
-  if (data.airpressten) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.air.pressureTendency`,
-      value: statusTable[data.airpressten],
-    })
-  }
-
-  if (data.horvisib) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.air.horizontalVisibility`,
-      value: utils.transform(data.horvisib, 'nm', 'm'),
-    })
-  }
-
-  if (data.waterlevel) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.level`,
-      value: data.waterlevel,
-    })
-  }
-
-  if (data.waterlevelten) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.levelTrend`,
-      value: statusTable[data.waterlevelten],
-    })
-  }
-
-  if (data.surfcurrspd) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.surfaceCurrentSpeed`,
-      value: utils.transform(data.surfcurrspd, 'knots', 'ms'),
-    })
-  }
-
-  if (data.surfcurrdir) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.surfaceCurrentDirection`,
-      value: utils.transform(data.surfcurrdir, 'deg', 'rad'),
-    })
-  }
-
-  if (data.signwavewhgt) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.waveSignificantHeight`,
-      value: data.signwavewhgt,
-    })
-  }
-
-  if (data.waveperiod) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.wavePeriod`,
-      value: data.waveperiod,
-    })
-  }
-
-  if (data.wavedir) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.waveDirection`,
-      value: utils.transform(data.wavedir, 'deg', 'rad'),
-    })
-  }
-
-  if (data.swellhgt) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.swellHeight`,
-      value: data.swellhgt,
-    })
-  }
-
-  if (data.swellperiod) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.swellPeriod`,
-      value: data.swellperiod,
-    })
-  }
-
-  if (data.swelldir) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.swellDirection`,
-      value: utils.transform(data.swelldir, 'deg', 'rad'),
-    })
-  }
-
-  if (data.seastate) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.seaState`,
-      value: beaufortScale[data.seastate],
-    })
-  }
-
-  if (data.watertemp) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.temperature`,
-      value: utils.transform(data.watertemp, 'c', 'k'),
-    })
-  }
-
-  if (data.precipitation) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.air.precipitation`,
-      value: precipitationType[data.precipitation],
-    })
-  }
-
-  if (data.salinity) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.salinity`,
-      value: data.salinity,
-    })
-  }
-
-  if (data.ice) {
-    contextPrefix = 'meteo.'
-    values.push({
-      path: `environment.water.ice`,
-      value: iceTable[data.ice],
+      path: 'environment.observations.current',
+      value: {
+        set,
+        drift,
+      },
     })
   }
 
