@@ -328,26 +328,15 @@ module.exports = function (input, session) {
     ['relhumid', 'outside.relativeHumidity', (v) => v],
     ['dewpoint', 'outside.dewPointTemperature', cToK],
     ['airpress', 'outside.pressure', (v) => v * 100],
-    ['airpressten', 'outside.pressureTendency', (v) => v],
-    ['airpressten', 'outside.pressureTendencyType', (v) => statusTable[v]],
-    ['horvisib', 'outside.horizontalVisibility', nmToM],
     ['waterlevel', 'water.level', (v) => v],
-    ['waterlevelten', 'water.levelTendency', (v) => v],
-    ['waterlevelten', 'water.levelTendencyType', (v) => statusTable[v]],
     ['signwavewhgt', 'water.waves.significantHeight', (v) => v],
     ['waveperiod', 'water.waves.period', (v) => v],
     ['wavedir', 'water.waves.direction', degToRad],
     ['swellhgt', 'water.swell.height', (v) => v],
     ['swellperiod', 'water.swell.period', (v) => v],
     ['swelldir', 'water.swell.directionTrue', degToRad],
-    ['seastate', 'water.seaState', (v) => v],
-    ['seastate', 'water.seaState.beaufortScale', (v) => beaufortScale[v]],
     ['watertemp', 'water.temperature', cToK],
-    ['precipitation', 'outside.precipitation', (v) => v],
-    ['precipitation', 'outside.precipitationType', (v) => precipitationType[precipitation]],
     ['salinity', 'water.salinity', (v) => v],
-    ['ice', 'water.ice', (v) => v],
-    ['ice', 'water.iceType', (v) => iceTable[data.ice]],
   ].forEach(([propName, path, f]) => {
     if (data[propName] !== undefined) {
       contextPrefix = 'meteo.'
@@ -358,6 +347,85 @@ module.exports = function (input, session) {
     }
   })
 
+  if (data.ice !== undefined) {
+    contextPrefix = 'meteo.'
+    const ice = data.ice
+    const comment = iceTable[data.ice]
+    values.push({
+      path: 'environment.observations.water',
+      value: {
+        ice,
+        comment,
+      },
+    })
+  }
+
+  if (data.precipitation !== undefined) {
+    contextPrefix = 'meteo.'
+    const precipitation = data.precipitation
+    const comment = precipitationType[data.precipitation]
+    values.push({
+      path: 'environment.observations.outside',
+      value: {
+        precipitation,
+        comment,
+      },
+    })
+  }
+
+  if (data.seastate !== undefined) {
+    contextPrefix = 'meteo.'
+    const seastate = data.seastate
+    const comment = beaufortScale[data.seastate]
+    values.push({
+      path: 'environment.observations.water',
+      value: {
+        seastate,
+        comment,
+      },
+    })
+  }
+
+  if (data.waterlevelten !== undefined) {
+    contextPrefix = 'meteo.'
+    const tendency = data.waterlevelten
+    const comment = statusTable[data.waterlevelten]
+    values.push({
+      path: 'environment.observations.waterlevel',
+      value: {
+        tendency,
+        comment,
+      },
+    })
+  }
+
+  if (data.airpressten !== undefined) {
+    contextPrefix = 'meteo.'
+    const tendency = data.airpressten
+    const comment = statusTable[data.airpressten]
+    values.push({
+      path: 'environment.observations.pressure',
+      value: {
+        tendency,
+        comment,
+      },
+    })
+  }
+
+  if (data.horvisib !== undefined && data.horvisibrange !== undefined) {
+    contextPrefix = 'meteo.'
+    const horizontal = utils.transform(data.horvisib, 'nm', 'm')
+    const comment = data.horvisibrange
+    const raw = data.horvisibraw
+    values.push({
+      path: 'environment.observations.visibility',
+      value: {
+        horizontal,
+        comment,
+      },
+    })
+  }
+
   if (data.surfcurrspd !== undefined || data.surfcurrdir !== undefined) {
     contextPrefix = 'meteo.'
     const drift = utils.transform(data.surfcurrspd, 'knots', 'ms')
@@ -367,6 +435,21 @@ module.exports = function (input, session) {
       value: {
         set,
         drift,
+      },
+    })
+  }
+
+  if (data.utcday !== undefined && data.utchour !== undefined && data.utcminute !== undefined) {
+    contextPrefix = 'meteo.'
+    const utcday = data.utcday
+    const utchour = data.utchour
+    const utcminute = data.utcminute
+    values.push({
+      path: 'environment.observations.date',
+      value: {
+        utcday,
+        utchour,
+        utcminute,
       },
     })
   }
