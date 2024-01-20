@@ -331,7 +331,7 @@ module.exports = function (input, session) {
     ['waterlevel', 'water.level', (v) => v],
     ['signwavewhgt', 'water.waves.significantHeight', (v) => v],
     ['waveperiod', 'water.waves.period', (v) => v],
-    ['wavedir', 'water.waves.direction', degToRad],
+    ['wavedir', 'water.waves.directionTrue', degToRad],
     ['swellhgt', 'water.swell.height', (v) => v],
     ['swellperiod', 'water.swell.period', (v) => v],
     ['swelldir', 'water.swell.directionTrue', degToRad],
