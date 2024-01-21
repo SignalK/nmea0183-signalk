@@ -351,8 +351,8 @@ module.exports = function (input, session) {
     ['ice', 'water.ice', iceTable],
     ['precipitation', 'outside.precipitation', precipitationType],
     ['seastate', 'water.seaState', beaufortScale],
-    ['waterlevelten', 'water.level.tendency', statusTable],
-    ['airpressten', 'outside.pressure.tendency', statusTable],
+    ['waterlevelten', 'water.levelTendency', statusTable],
+    ['airpressten', 'outside.pressureTendency', statusTable],
   ].forEach(([propName, path, f]) => {
     if (data[propName] !== undefined) {
       contextPrefix = 'meteo.'
@@ -384,12 +384,12 @@ module.exports = function (input, session) {
   if (data.horvisib !== undefined && data.horvisibrange !== undefined) {
     contextPrefix = 'meteo.'
     const value = utils.transform(data.horvisib, 'nm', 'm')
-    const comment = data.horvisibrange
+    const overRange = data.horvisibrange
     values.push({
       path: 'environment.observations.horizontalVisibility',
       value: {
         value,
-        comment,
+        overRange,
       },
     })
   }
