@@ -396,16 +396,15 @@ module.exports = function (input, session) {
 
   if (data.utcday !== undefined && data.utchour !== undefined && data.utcminute !== undefined) {
     contextPrefix = 'meteo.'
-    const utcday = data.utcday
-    const utchour = data.utchour
-    const utcminute = data.utcminute
+    const y = new Date().getUTCFullYear();
+    const m = new Date().getUTCMonth() + 1;
+    const d = data.utcday;
+    const h = data.utchour;
+    const min = data.utcminute;
+    const date = `${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}T${h.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:00.000Z`;
     values.push({
       path: 'environment.observations.date',
-      value: {
-        utcday,
-        utchour,
-        utcminute,
-      },
+      value: date,
     })
   }
 
