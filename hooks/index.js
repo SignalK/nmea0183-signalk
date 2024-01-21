@@ -41,4 +41,5 @@ module.exports = {
   BWC: require('./BWC.js'),
   BWR: require('./BWR.js'),
   HSC: require('./HSC.js'),
+  XDR: require('./XDR.js'),
 }
