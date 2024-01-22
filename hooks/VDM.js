@@ -20,7 +20,8 @@ const debug = require('debug')('signalk-parser-nmea0183/VDM')
 const utils = require('@signalk/nmea0183-utilities')
 const Decoder = require('ggencoder').AisDecode
 const schema = require('@signalk/signalk-schema')
-const knotsToMs = (v) => parseFloat(utils.transform(v, 'knots', 'ms').toFixed(2))
+const knotsToMs = (v) =>
+  parseFloat(utils.transform(v, 'knots', 'ms').toFixed(2))
 const degToRad = (v) => utils.transform(v, 'deg', 'rad')
 const cToK = (v) => parseFloat(utils.transform(v, 'c', 'k').toFixed(2))
 const nmToM = (v) => parseFloat(utils.transform(v, 'nm', 'm').toFixed(2))
@@ -72,19 +73,19 @@ const specialManeuverMapping = {
 }
 
 const beaufortScale = {
-  0: 'Calm, 0–0.2 m/s',
-  1: 'Light air, 0.3–1.5 m/s',
-  2: 'Light breeze, 1.6–3.3 m/s',
-  3: 'Gentle breeze, 3.4–5.4 m/s',
-  4: 'Moderate breeze, 5.5–7.9 m/s',
-  5: 'Fresh breeze, 8–10.7 m/s',
-  6: 'Strong breeze, 10.8–13.8 m/s',
-  7: 'High wind, 13.9–17.1 m/s',
-  8: 'Gale, 17.2–20.7 m/s',
-  9: 'Strong gale, 20.8–24.4 m/s',
-  10: 'Storm, 24.5–28.4 m/s',
-  11: 'Violent storm, 28.5–32.6 m/s',
-  12: 'Hurricane-force, ≥ 32.7 m/s',
+  0: 'calm, 0–0.2 m/s',
+  1: 'light air, 0.3–1.5 m/s',
+  2: 'light breeze, 1.6–3.3 m/s',
+  3: 'gentle breeze, 3.4–5.4 m/s',
+  4: 'moderate breeze, 5.5–7.9 m/s',
+  5: 'fresh breeze, 8–10.7 m/s',
+  6: 'strong breeze, 10.8–13.8 m/s',
+  7: 'high wind, 13.9–17.1 m/s',
+  8: 'gale, 17.2–20.7 m/s',
+  9: 'strong gale, 20.8–24.4 m/s',
+  10: 'storm, 24.5–28.4 m/s',
+  11: 'violent storm, 28.5–32.6 m/s',
+  12: 'hurricane-force, ≥ 32.7 m/s',
   13: 'not available',
   14: 'reserved',
   15: 'reserved',
@@ -300,7 +301,7 @@ module.exports = function (input, session) {
   }
 
   if (typeof data.fid !== 'undefined') {
-    if (data.fid == 31 || data.fid == 11 || data.fid == 33 ){
+    if (data.fid == 31 || data.fid == 11 || data.fid == 33) {
       contextPrefix = 'meteo.'
     }
     values.push({
@@ -319,7 +320,7 @@ module.exports = function (input, session) {
     })
   }
 
-  [
+  ;[
     ['avgwindspd', 'wind.averageSpeed', knotsToMs],
     ['windgust', 'wind.gust', knotsToMs],
     ['winddir', 'wind.directionTrue', degToRad],
@@ -345,9 +346,9 @@ module.exports = function (input, session) {
         value: f(data[propName]),
       })
     }
-  });
+  })
 
-  [
+  ;[
     ['ice', 'water.ice', iceTable],
     ['precipitation', 'outside.precipitation', precipitationType],
     ['seastate', 'water.seaState', beaufortScale],
@@ -356,17 +357,17 @@ module.exports = function (input, session) {
   ].forEach(([propName, path, f]) => {
     if (data[propName] !== undefined) {
       contextPrefix = 'meteo.'
-        const comment = f[data[propName]]
-        const value = data[propName]
+      const comment = f[data[propName]]
+      const value = data[propName]
       values.push({
         path: `environment.observation.` + path,
         value: {
           value,
           comment,
-        }
+        },
       })
     }
-  });
+  })
 
   if (data.surfcurrspd !== undefined || data.surfcurrdir !== undefined) {
     contextPrefix = 'meteo.'
@@ -394,14 +395,22 @@ module.exports = function (input, session) {
     })
   }
 
-  if (data.utcday !== undefined && data.utchour !== undefined && data.utcminute !== undefined) {
+  if (
+    data.utcday !== undefined &&
+    data.utchour !== undefined &&
+    data.utcminute !== undefined
+  ) {
     contextPrefix = 'meteo.'
-    const y = new Date().getUTCFullYear();
-    const m = new Date().getUTCMonth() + 1;
-    const d = data.utcday;
-    const h = data.utchour;
-    const min = data.utcminute;
-    const date = `${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}T${h.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:00.000Z`;
+    const y = new Date().getUTCFullYear()
+    const m = new Date().getUTCMonth() + 1
+    const d = data.utcday
+    const h = data.utchour
+    const min = data.utcminute
+    const date = `${y}-${m.toString().padStart(2, '0')}-${d
+      .toString()
+      .padStart(2, '0')}T${h.toString().padStart(2, '0')}:${min
+      .toString()
+      .padStart(2, '0')}:00.000Z`
     values.push({
       path: 'environment.observations.date',
       value: date,
@@ -411,7 +420,7 @@ module.exports = function (input, session) {
   if (values.length === 0) {
     return null
   }
-  
+
   const delta = {
     context: contextPrefix + `urn:mrn:imo:mmsi:${data.mmsikey || data.mmsi}`,
     updates: [
