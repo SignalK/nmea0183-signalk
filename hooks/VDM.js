@@ -73,18 +73,18 @@ const specialManeuverMapping = {
 }
 
 const beaufortScale = {
-  0: 'calm, 0–0.2 m/s',
-  1: 'light air, 0.3–1.5 m/s',
-  2: 'light breeze, 1.6–3.3 m/s',
-  3: 'gentle breeze, 3.4–5.4 m/s',
-  4: 'moderate breeze, 5.5–7.9 m/s',
-  5: 'fresh breeze, 8–10.7 m/s',
-  6: 'strong breeze, 10.8–13.8 m/s',
-  7: 'high wind, 13.9–17.1 m/s',
-  8: 'gale, 17.2–20.7 m/s',
-  9: 'strong gale, 20.8–24.4 m/s',
-  10: 'storm, 24.5–28.4 m/s',
-  11: 'violent storm, 28.5–32.6 m/s',
+  0: 'calm, 0-0.2 m/s',
+  1: 'light air, 0.3-1.5 m/s',
+  2: 'light breeze, 1.6-3.3 m/s',
+  3: 'gentle breeze, 3.4-5.4 m/s',
+  4: 'moderate breeze, 5.5-7.9 m/s',
+  5: 'fresh breeze, 8-10.7 m/s',
+  6: 'strong breeze, 10.8-13.8 m/s',
+  7: 'high wind, 13.9-17.1 m/s',
+  8: 'gale, 17.2-20.7 m/s',
+  9: 'strong gale, 20.8-24.4 m/s',
+  10: 'storm, 24.5-28.4 m/s',
+  11: 'violent storm, 28.5-32.6 m/s',
   12: 'hurricane-force, ≥ 32.7 m/s',
   13: 'not available',
   14: 'reserved',
@@ -338,61 +338,51 @@ module.exports = function (input, session) {
     ['swelldir', 'water.swell.directionTrue', degToRad],
     ['watertemp', 'water.temperature', cToK],
     ['salinity', 'water.salinity', (v) => v],
+    ['surfcurrspd', 'water.current.drift', knotsToMs],
+    ['surfcurrdir', 'water.current.set', degToRad],
   ].forEach(([propName, path, f]) => {
     if (data[propName] !== undefined) {
       contextPrefix = 'meteo.'
       values.push({
-        path: `environment.observation.` + path,
+        path: `environment.` + path,
         value: f(data[propName]),
       })
     }
   })
-
-  ;[
-    ['ice', 'water.ice', iceTable],
-    ['precipitation', 'outside.precipitation', precipitationType],
-    ['seastate', 'water.seaState', beaufortScale],
-    ['waterlevelten', 'water.levelTendency', statusTable],
-    ['airpressten', 'outside.pressureTendency', statusTable],
-  ].forEach(([propName, path, f]) => {
-    if (data[propName] !== undefined) {
-      contextPrefix = 'meteo.'
-      const comment = f[data[propName]]
-      const value = data[propName]
-      values.push({
-        path: `environment.observation.` + path,
-        value: {
-          value,
-          comment,
-        },
-      })
-    }
-  })
-
-  if (data.surfcurrspd !== undefined || data.surfcurrdir !== undefined) {
-    contextPrefix = 'meteo.'
-    const drift = utils.transform(data.surfcurrspd, 'knots', 'ms')
-    const set = utils.transform(data.surfcurrdir, 'deg', 'rad')
-    values.push({
-      path: 'environment.observations.current',
-      value: {
-        set,
-        drift,
-      },
+    ;[
+      ['ice', 'water.ice', iceTable],
+      ['precipitation', 'outside.precipitation', precipitationType],
+      ['seastate', 'water.seaState', beaufortScale],
+      ['waterlevelten', 'water.levelTendency', statusTable],
+      ['airpressten', 'outside.pressureTendency', statusTable],
+    ].forEach(([propName, path, f]) => {
+      if (data[propName] !== undefined) {
+        contextPrefix = 'meteo.'
+        values.push(
+          {
+            path: `environment.` + path,
+            value: f[data[propName]],
+          },
+          {
+            path: `environment.` + path + `Value`,
+            value: data[propName],
+          }
+        )
+      }
     })
-  }
 
   if (data.horvisib !== undefined && data.horvisibrange !== undefined) {
     contextPrefix = 'meteo.'
-    const value = utils.transform(data.horvisib, 'nm', 'm')
-    const overRange = data.horvisibrange
-    values.push({
-      path: 'environment.observations.horizontalVisibility',
-      value: {
-        value,
-        overRange,
+    values.push(
+      {
+        path: 'environment.horizontalVisibility',
+        value: utils.transform(data.horvisib, 'nm', 'm'),
       },
-    })
+      {
+        path: 'environment.horizontalVisibility.overRange',
+        value: data.horvisibrange,
+      }
+    )
   }
 
   if (
@@ -412,7 +402,7 @@ module.exports = function (input, session) {
       .toString()
       .padStart(2, '0')}:00.000Z`
     values.push({
-      path: 'environment.observations.date',
+      path: 'environment.date',
       value: date,
     })
   }
