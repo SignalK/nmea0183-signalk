@@ -375,11 +375,11 @@ module.exports = function (input, session) {
     contextPrefix = 'meteo.'
     values.push(
       {
-        path: 'environment.horizontalVisibility',
+        path: 'environment.outside.horizontalVisibility',
         value: utils.transform(data.horvisib, 'nm', 'm'),
       },
       {
-        path: 'environment.horizontalVisibility.overRange',
+        path: 'environment.outside.horizontalVisibility.overRange',
         value: data.horvisibrange,
       }
     )
