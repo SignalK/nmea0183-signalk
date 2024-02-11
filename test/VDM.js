@@ -242,12 +242,13 @@ describe('VDM', function () {
     const delta = new Parser().parse(
       '!AIVDM,1,1,,A,8@2R5Ph0GhOCT1a2VvkrgwvlFR06EuOwgqrqwnSwe7wvlOwwsAwwnSGmwvwt,0*40'
     )
-    delta.context.should.equal('meteo.urn:mrn:imo:mmsi:002655619.366097')
+    delta.context.should.equal('meteo.urn:mrn:imo:mmsi:002655619:366097')
+    const currentYear = new Date().getFullYear();
     const output = [
       ['environment.water.level', -0.17],
       ['environment.water.levelTendency', 'steady'],
       ['environment.water.levelTendencyValue', 0],
-      ['environment.date', '2024-02-22T15:42:00.000Z']
+      ['environment.date', currentYear + '-02-22T15:42:00.000Z']
     ]
     output.forEach(([path, value]) =>
       delta.updates[0].values
