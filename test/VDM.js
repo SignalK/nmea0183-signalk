@@ -238,7 +238,7 @@ describe('VDM', function () {
       .value.registrations.imo.should.equal('IMO 1010258')
   })
 
-  it('meteo converts ok', () => {
+  it('meteo single sentence converts ok', () => {
     const delta = new Parser().parse(
       '!AIVDM,1,1,,A,8@2R5Ph0GhOCT1a2VvkrgwvlFR06EuOwgqrqwnSwe7wvlOwwsAwwnSGmwvwt,0*40'
     )
@@ -257,4 +257,32 @@ describe('VDM', function () {
     )
   })
 
+  it('meteo dual sentence converts ok', () => {
+    const meteoSentences = [
+      '!AIVDM,2,1,4,A,8@2R5Ph0GhENJAb8wnScjAJ:AB06EuOwgwl?wnSwe7wvlOwwsAwwnSGm,0*15',
+      '!AIVDM,2,2,4,A,wvwt,0*10',
+    ]
+    const parser = new Parser()
+    let delta = parser.parse(meteoSentences[0])
+    should.equal(delta, null)
+    delta = parser.parse(meteoSentences[1])
+    delta.context.should.equal('meteo.urn:mrn:imo:mmsi:002655619:967728')
+    delta.updates[0].values[3].value.longitude.should.equal(11.7283)
+    delta.updates[0].values[3].value.latitude.should.equal(57.9669)
+    const currentYear = new Date().getFullYear()
+    const output = [
+      ['sensors.ais.designatedAreaCode', 1],
+      ['sensors.ais.functionalId', 31],
+      ['environment.wind.averageSpeed', 9.26],
+      ['environment.wind.gust', 11.32],
+      ['environment.wind.directionTrue', 4.817108736604238],
+      ['environment.wind.gustDirectionTrue', 4.817108736604238],
+      ['environment.date', currentYear + '-02-20T14:47:00.000Z'],
+    ]
+    output.forEach(([path, value]) =>
+      delta.updates[0].values
+        .find((pathValue) => pathValue.path === path)
+        .value.should.equal(value)
+    )
+  })
 })
