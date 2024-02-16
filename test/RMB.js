@@ -30,7 +30,7 @@ describe('RMB', () => {
     
     delta.updates[0].values.should.contain.an.item.with.property(
       'path',
-      'navigation.courseRhumbline.nextPoint'
+      'navigation.courseRhumbline.nextPoint.position'
     )
     delta.updates[0].values.should.contain.an.item.with.property(
       'path',
