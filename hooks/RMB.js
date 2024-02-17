@@ -77,7 +77,7 @@ module.exports = function (input) {
         timestamp: tags.timestamp,
         values: [
           {
-            path: 'navigation.courseRhumbline.nextPoint',
+            path: 'navigation.courseRhumbline.nextPoint.position',
             value: {
               longitude,
               latitude,
