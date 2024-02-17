@@ -28,7 +28,7 @@
   "dependencies": {
     "@signalk/nmea0183-utilities": "^0.8.0",
     "@signalk/signalk-schema": "^1.7.1",
-    "ggencoder": "^1.0.4",
+    "ggencoder": "^1.0.8",
     "moment-timezone": "^0.5.21",
     "split": "^1.0.1"
   },
