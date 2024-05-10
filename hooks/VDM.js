@@ -25,6 +25,7 @@ const knotsToMs = (v) =>
 const degToRad = (v) => utils.transform(v, 'deg', 'rad')
 const cToK = (v) => parseFloat(utils.transform(v, 'c', 'k').toFixed(2))
 const nmToM = (v) => parseFloat(utils.transform(v, 'nm', 'm').toFixed(2))
+const percentToRatio = (v) => v / 100
 
 const stateMapping = {
   0: 'motoring',
@@ -326,7 +327,7 @@ module.exports = function (input, session) {
     ['winddir', 'wind.directionTrue', degToRad],
     ['windgustdir', 'wind.gustDirectionTrue', degToRad],
     ['airtemp', 'outside.temperature', cToK],
-    ['relhumid', 'outside.relativeHumidity', (v) => v],
+    ['relhumid', 'outside.relativeHumidity', percentToRatio],
     ['dewpoint', 'outside.dewPointTemperature', cToK],
     ['airpress', 'outside.pressure', (v) => v * 100],
     ['waterlevel', 'water.level', (v) => v],
@@ -337,7 +338,7 @@ module.exports = function (input, session) {
     ['swellperiod', 'water.swell.period', (v) => v],
     ['swelldir', 'water.swell.directionTrue', degToRad],
     ['watertemp', 'water.temperature', cToK],
-    ['salinity', 'water.salinity', (v) => v],
+    ['salinity', 'water.salinity', percentToRatio],
     ['surfcurrspd', 'water.current.drift', knotsToMs],
     ['surfcurrdir', 'water.current.set', degToRad],
   ].forEach(([propName, path, f]) => {
