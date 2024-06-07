@@ -75,6 +75,9 @@ describe('RMB', () => {
 
   it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$ECRMB,,,,,,,,,,,,,*77')
-    should.equal(delta, null)
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseRhumbline.nextPoint.position'
+    )
   })
 })
