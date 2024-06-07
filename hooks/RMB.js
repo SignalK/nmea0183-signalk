@@ -20,7 +20,7 @@ const utils = require('@signalk/nmea0183-utilities')
 const moment = require('moment-timezone')
 
 /*
-RMC Sentence
+RMB Sentence
 $GPRMB,A,0.66,L,003,004,4917.24,N,12309.57,W,001.3,052.5,000.5,V*20
 values:
 
@@ -49,11 +49,17 @@ module.exports = function (input) {
   let vmg = 0.0
   let distance = 0.0
   let crossTrackError = 0.0
+  let position = null
 
   latitude = utils.coordinate(parts[5], parts[6])
   longitude = utils.coordinate(parts[7], parts[8])
   if (isNaN(latitude) || isNaN(longitude)) {
-    return null
+    position = null
+  } else {
+    position = {
+      longitude,
+      latitude
+    }
   }
 
   bearing = utils.float(parts[10])
@@ -78,10 +84,7 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.courseRhumbline.nextPoint.position',
-            value: {
-              longitude,
-              latitude,
-            },
+            value: position,
           },
 
           {
