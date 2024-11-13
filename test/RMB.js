@@ -79,5 +79,10 @@ describe('RMB', () => {
       'path',
       'navigation.courseRhumbline.nextPoint.position'
     )
+    delta.updates[0].values.should.contain.an.item({
+      path: 'navigation.courseRhumbline.nextPoint.position',
+      value: null
+    })
   })
+
 })
