@@ -64,6 +64,10 @@ describe('BWC', () => {
     delta.should.be.an('object')
     delta.updates[0].values.should.deep.equal([
       {
+        path: 'navigation.courseGreatCircle.nextPoint.position',
+        value: null,
+      },
+      {
         path: 'navigation.courseGreatCircle.nextPoint.distance',
         value: 40929.20003454424,
       },
@@ -80,6 +84,12 @@ describe('BWC', () => {
 
   it("Doesn't choke on an empty sentence", () => {
     const delta = new Parser().parse('$GPBWC,,,,,,,,,,,,*41')
-    should.equal(delta, undefined)
+
+    delta.updates[0].values.should.deep.equal([
+      {
+        path: 'navigation.courseGreatCircle.nextPoint.position',
+        value: null,
+      },
+    ])
   })
 })

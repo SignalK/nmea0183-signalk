@@ -66,6 +66,11 @@ module.exports = function BWCHook(input) {
         latitude,
       },
     })
+  } else {
+    values.push({
+      path: 'navigation.courseGreatCircle.nextPoint.position',
+      value: null,
+    })
   }
 
   if (parts[9] !== '' && parts[10] !== '') {

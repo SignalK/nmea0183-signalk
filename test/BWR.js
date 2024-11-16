@@ -56,6 +56,20 @@ describe('BWR', () => {
 
   it("Doesn't choke on an empty sentence", () => {
     const delta = new Parser().parse('$GPBWR,,,,,,,,,,,,*50')
-    should.equal(delta, null)
+    delta.updates[0].values.should.deep.equal([
+      { path: 'navigation.courseRhumbline.bearingTrackTrue', value: null },
+      {
+        path: 'navigation.courseRhumbline.bearingTrackMagnetic',
+        value: null,
+      },
+      {
+        path: 'navigation.courseRhumbline.nextPoint.distance',
+        value: null,
+      },
+      {
+        path: 'navigation.courseRhumbline.nextPoint.position',
+        value: null,
+      },
+    ])
   })
 })

@@ -37,6 +37,11 @@ module.exports = function BWRHook(input) {
 
   debug(`[BWRHook] decoding sentence ${id} => ${sentence}`)
 
+  let timestamp
+  let position
+  let distance
+  const bearingToWaypoint = {}
+
   if (
     upper(parts[0]) === '' ||
     upper(parts[1]) === '' ||
@@ -44,23 +49,25 @@ module.exports = function BWRHook(input) {
     upper(parts[3]) === '' ||
     upper(parts[4]) === ''
   ) {
-    return null
+    timestamp = tags.timestamp
+    position = null
+    distance = null
+  } else {
+    timestamp = utils.timestamp(parts[0])
+    position = {
+      latitude: utils.coordinate(parts[1], parts[2]),
+      longitude: utils.coordinate(parts[3], parts[4]),
+    }
+    distance = utils.transform(
+      parts[9],
+      upper(parts[10]) === 'N' ? 'nm' : 'km',
+      'm'
+    )
+    bearingToWaypoint[upper(parts[6]) === 'T' ? 'True' : 'Magnetic'] =
+      utils.transform(parts[5], 'deg', 'rad')
+    bearingToWaypoint[upper(parts[8]) === 'T' ? 'True' : 'Magnetic'] =
+      utils.transform(parts[7], 'deg', 'rad')
   }
-
-  const timestamp = utils.timestamp(parts[0])
-  const latitude = utils.coordinate(parts[1], parts[2])
-  const longitude = utils.coordinate(parts[3], parts[4])
-  const distance = utils.transform(
-    parts[9],
-    upper(parts[10]) === 'N' ? 'nm' : 'km',
-    'm'
-  )
-
-  const bearingToWaypoint = {}
-  bearingToWaypoint[upper(parts[6]) === 'T' ? 'True' : 'Magnetic'] =
-    utils.transform(parts[5], 'deg', 'rad')
-  bearingToWaypoint[upper(parts[8]) === 'T' ? 'True' : 'Magnetic'] =
-    utils.transform(parts[7], 'deg', 'rad')
 
   return {
     updates: [
@@ -82,10 +89,7 @@ module.exports = function BWRHook(input) {
           },
           {
             path: 'navigation.courseRhumbline.nextPoint.position',
-            value: {
-              longitude,
-              latitude,
-            },
+            value: position,
           },
         ],
       },
