@@ -37,4 +37,13 @@ describe('MTA', () => {
 
     should.equal(delta, null)
   })
+
+  it('Converts empty value to null', () => {
+    const delta = new Parser().parse('$RAMTA,,C*08')
+    delta.updates[0].values.length.should.equal(1)
+    delta.updates[0].values[0].path.should.equal(
+      'environment.outside.temperature'
+    )
+    chai.expect(delta.updates[0].values[0].value).to.be.null
+  })
 })

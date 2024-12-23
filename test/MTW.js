@@ -32,4 +32,13 @@ describe('MTW', () => {
     )
     delta.updates[0].values[0].value.should.be.closeTo(288.35, 0.005)
   })
+
+  it('Converts empty value to null', () => {
+    const delta = new Parser().parse('$RAMTW,,C*1E')
+    delta.updates[0].values.length.should.equal(1)
+    delta.updates[0].values[0].path.should.equal(
+      'environment.water.temperature'
+    )
+    chai.expect(delta.updates[0].values[0].value).to.be.null
+  })
 })
