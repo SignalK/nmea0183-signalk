@@ -27,7 +27,7 @@ const utils = require('@signalk/nmea0183-utilities')
  *
  * Field Number:
  *   0.    Degrees
- *   1.    Unit of Measurement, Celcius
+ *   1.    Unit of Measurement, Celsius
  *   2.    Checksum
  *
  */
@@ -46,7 +46,7 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.outside.temperature',
-            value: utils.transform(utils.float(parts[0]), 'c', 'k'),
+            value: parts.length > 0 && parts[0].trim().length > 0 ? utils.transform(utils.float(parts[0]), 'c', 'k') : null,
           },
         ],
       },
