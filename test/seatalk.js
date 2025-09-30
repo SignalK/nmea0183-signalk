@@ -24,6 +24,7 @@ const depthData = '00,02,41,22,22'
 const apparentWindAngleData = '10,01,01,10'
 const apparentWindSpeedData = '11,01,01,02'
 const speedThroughWaterData = '20,01,22,11'
+const speedThroughWaterDataGthex80 = '20,01,80,01'
 const tripMileageData = '21,02,32,34,02'
 const logData = '22,02,33,56,00'
 const tripAndLogData = '25,44,65,54,43,32,02'
@@ -105,6 +106,21 @@ describe('seatalk', () => {
       )
       delta.updates[0].values[0].value.should.be.closeTo(
         2.6236673313290573,
+        0.0005
+      )
+    })
+
+    it(`${prefix} 0x20 STW converted > 0x80`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${speedThroughWaterDataGthex80}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.speedThroughWater'
+      )
+      delta.updates[0].values[0].value.should.be.closeTo(
+        6.6363350,
         0.0005
       )
     })
