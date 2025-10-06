@@ -53,14 +53,15 @@ describe('RMC', () => {
       'path',
       'navigation.datetime'
     )
-    delta.updates[0].values[0].value.latitude.should.be.closeTo(52.372, 0.005)
-    delta.updates[0].values[0].value.longitude.should.be.closeTo(4.91, 0.005)
-    delta.updates[0].values[5].value.should.equal('2014-04-03T08:54:12.000Z')
-    delta.updates[0].values[1].value.should.be.closeTo(4.387, 0.005)
-    delta.updates[0].values[2].value.should.be.closeTo(0.298, 0.005)
-    chai.expect(delta.updates[0].values[3].value).to.be.a('null')
-    delta.updates[0].values[4].value.should.equal(1396515252)
+    delta.updates[0].values.find(value => value.path === 'navigation.position').value.latitude.should.be.closeTo(52.372, 0.005)
+    delta.updates[0].values.find(value => value.path === 'navigation.position').value.longitude.should.be.closeTo(4.91, 0.005)
+    delta.updates[0].values.find(value => value.path === 'navigation.datetime').value.should.equal('2014-04-03T08:54:12.000Z')
+    delta.updates[0].values.find(value => value.path === 'navigation.courseOverGroundTrue').value.should.be.closeTo(4.387, 0.005)
+    delta.updates[0].values.find(value => value.path === 'navigation.speedOverGround').value.should.be.closeTo(0.298, 0.005)
+    chai.expect(delta.updates[0].values.find(value => value.path === 'navigation.magneticVariation').value).to.be.a('null')
+    delta.updates[0].values.find(value => value.path === 'navigation.magneticVariationAgeOfService').value.should.equal(1396515252)
   })
+
   it('Converts OK using individual parser, w/ missing SOG/COG values', () => {
     const delta = new Parser().parse(
       '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,,,030414,12,E*42'
@@ -77,8 +78,34 @@ describe('RMC', () => {
       'path',
       'navigation.magneticVariation'
     )
-    chai.expect(delta.updates[0].values[1].value).to.be.a('null')
-    chai.expect(delta.updates[0].values[2].value).to.be.a('null')
-    delta.updates[0].values[3].value.should.be.closeTo(0.20944,.05)
+    chai.expect(delta.updates[0].values.find(value => value.path === 'navigation.courseOverGroundTrue').value).to.be.a('null')
+    chai.expect(delta.updates[0].values.find(value => value.path === 'navigation.speedOverGround').value).to.be.a('null')
+    delta.updates[0].values.find(value => value.path === 'navigation.magneticVariation').value.should.be.closeTo(0.20944, 0.05)
+  })
+
+  it('Converts OK using individual parser, w/ invalid lat/lng values', () => {
+    const delta = new Parser().parse(
+      // note that this particular example contains invalid latitude (1547\x0E70800) and invalid datestamp/magvar (110925\f12.49)
+      '$GPRMC,210735.00,A,1547\x0E70800,S,14506.50460,W,0.187,10.33,110925\f12.49,E,A*3E'
+    )
+    delta.updates[0].values.should.not.contain.an.item.with.property(
+      'path',
+      'navigation.position'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.speedOverGround'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.courseOverGroundTrue'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.datetime'
+    )
+    delta.updates[0].values.find(value => value.path === 'navigation.courseOverGroundTrue').value.should.be.closeTo(0.180, 0.005)
+    delta.updates[0].values.find(value => value.path === 'navigation.speedOverGround').value.should.be.closeTo(0.096, 0.005)
+    delta.updates[0].values.find(value => value.path === 'navigation.datetime').value.should.equal('2025-09-11T21:07:35.000Z')
   })
 })

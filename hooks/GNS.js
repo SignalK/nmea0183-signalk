@@ -180,7 +180,9 @@ module.exports = function (input) {
       typeof update.value === 'undefined' ||
       update.value === null ||
       (typeof update.value === 'string' && update.value.trim() === '') ||
-      (typeof update.value === 'number' && isNaN(update.value))
+      (typeof update.value === 'number' && isNaN(update.value)) ||
+      (update.path === 'navigation.position' &&
+        !utils.isValidPosition(update.value.latitude, update.value.longitude))
     ) {
       toRemove.push(index)
     }
