@@ -4,7 +4,9 @@
   "description": "A node.js/javascript parser for NMEA0183 sentences. Sentences are parsed to Signal K format.",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --write test lib hooks index.js",
+    "prettier:check": "prettier --check .",
+    "prettier": "prettier --write .",
+    "format": "npm run prettier",
     "test": "mocha",
     "deploy": "npm test && npm run release && npm publish --access public --scope @signalk .",
     "create-release": "github-create-release --owner signalk --repository nmea0183-signalk",
