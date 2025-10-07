@@ -34,9 +34,9 @@ const seatalkHooks = require('../seatalk')
 module.exports = function (input, session) {
   const { id, sentence, parts, tags } = input
   if (parts[0].toUpperCase() === 'R') {
-    input.parts = parts.slice(1, input.parts.length);
+    input.parts = parts.slice(1, input.parts.length)
   }
-  const key = '0x' + input.parts[0].toUpperCase();
+  const key = '0x' + input.parts[0].toUpperCase()
   if (typeof seatalkHooks[key] === 'function') {
     return seatalkHooks[key](input, session)
   } else {

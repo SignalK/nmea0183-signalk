@@ -18,7 +18,6 @@
 
 const utils = require('@signalk/nmea0183-utilities')
 
-
 /*
 https://github.com/mariokonrad/marnav/blob/01c55205736fcc8157891b84e3efe387a221ff3a/src/marnav/seatalk/message_25.cpp#L21-L26
 25  Z4  XX  YY  UU  VV AW  Total & Trip Log 

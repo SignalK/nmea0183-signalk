@@ -63,23 +63,39 @@ describe('GGA', () => {
       'navigation.gnss.differentialReference'
     )
     // Values
-    delta.updates[0].values.find(value => value.path === 'navigation.position').value.should.deep.equal({
-      longitude: -122.03782631066667,
-      latitude: 37.39109795066667,
-    })
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.methodQuality').value.should.equal('DGNSS fix')
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.satellites').value.should.equal(6)
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.antennaAltitude').value.should.equal(18.893)
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.horizontalDilution').value.should.equal(1.2)
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.geoidalSeparation').value.should.equal(-25.669)
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.differentialAge').value.should.equal(2.0)
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.differentialReference').value.should.equal(31)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.position')
+      .value.should.deep.equal({
+        longitude: -122.03782631066667,
+        latitude: 37.39109795066667,
+      })
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.methodQuality')
+      .value.should.equal('DGNSS fix')
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.satellites')
+      .value.should.equal(6)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.antennaAltitude')
+      .value.should.equal(18.893)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.horizontalDilution')
+      .value.should.equal(1.2)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.geoidalSeparation')
+      .value.should.equal(-25.669)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.differentialAge')
+      .value.should.equal(2.0)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.differentialReference')
+      .value.should.equal(31)
 
     toFull(delta).should.be.validSignalK
   })
 
   it('Converts OK using individual parser with invalid lat/lng', () => {
-    const delta = new Parser({validateChecksum: false}).parse(
+    const delta = new Parser({ validateChecksum: false }).parse(
       // note this malformed lat value is pulled from a real validated malformed RMC example. see test/RMC.js
       '$GPGGA,172814.0,1547\x0E70800,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F'
     )
@@ -115,13 +131,27 @@ describe('GGA', () => {
       'path',
       'navigation.gnss.differentialReference'
     )
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.methodQuality').value.should.equal('DGNSS fix')
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.satellites').value.should.equal(6)
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.antennaAltitude').value.should.equal(18.893)
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.horizontalDilution').value.should.equal(1.2)
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.geoidalSeparation').value.should.equal(-25.669)
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.differentialAge').value.should.equal(2.0)
-    delta.updates[0].values.find(value => value.path === 'navigation.gnss.differentialReference').value.should.equal(31)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.methodQuality')
+      .value.should.equal('DGNSS fix')
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.satellites')
+      .value.should.equal(6)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.antennaAltitude')
+      .value.should.equal(18.893)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.horizontalDilution')
+      .value.should.equal(1.2)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.geoidalSeparation')
+      .value.should.equal(-25.669)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.differentialAge')
+      .value.should.equal(2.0)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.differentialReference')
+      .value.should.equal(31)
     toFull(delta).should.be.validSignalK
   })
 

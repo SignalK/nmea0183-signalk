@@ -350,27 +350,27 @@ module.exports = function (input, session) {
       })
     }
   })
-    ;[
-      ['ice', 'water.ice', iceTable],
-      ['precipitation', 'outside.precipitation', precipitationType],
-      ['seastate', 'water.seaState', beaufortScale],
-      ['waterlevelten', 'water.levelTendency', statusTable],
-      ['airpressten', 'outside.pressureTendency', statusTable],
-    ].forEach(([propName, path, f]) => {
-      if (data[propName] !== undefined) {
-        contextPrefix = 'meteo.'
-        values.push(
-          {
-            path: `environment.` + path,
-            value: f[data[propName]],
-          },
-          {
-            path: `environment.` + path + `Value`,
-            value: data[propName],
-          }
-        )
-      }
-    })
+  ;[
+    ['ice', 'water.ice', iceTable],
+    ['precipitation', 'outside.precipitation', precipitationType],
+    ['seastate', 'water.seaState', beaufortScale],
+    ['waterlevelten', 'water.levelTendency', statusTable],
+    ['airpressten', 'outside.pressureTendency', statusTable],
+  ].forEach(([propName, path, f]) => {
+    if (data[propName] !== undefined) {
+      contextPrefix = 'meteo.'
+      values.push(
+        {
+          path: `environment.` + path,
+          value: f[data[propName]],
+        },
+        {
+          path: `environment.` + path + `Value`,
+          value: data[propName],
+        }
+      )
+    }
+  })
 
   if (data.horvisib !== undefined && data.horvisibrange !== undefined) {
     contextPrefix = 'meteo.'

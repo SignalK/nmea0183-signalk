@@ -47,11 +47,12 @@
 - [ZDA - UTC day, month, and year, and local time zone offset](http://www.trimble.com/oem_receiverhelp/v4.44/en/NMEA-0183messages_ZDA.html)
 - [Custom Sentences](#custom-sentences)
 
-**Note:** *at this time, unknown sentences will be silently discarded.*
+**Note:** _at this time, unknown sentences will be silently discarded._
 
 ### Custom Sentences
 
 You can add custom sentence parsers via the [Signal K Server plugin mechanism](https://github.com/SignalK/signalk-server/blob/5abe63f1322f7538c9bbb2ec17b22ca52da2bc8a/docs/src/develop/plugins/server_plugin.md). A plugin can register custom parsers by emitting `nmea0183sentenceParser` PropertyValues with a value that has the properties
+
 - sentence: the three letter id of the sentence
 - parser: a function with the signature `({ id, sentence, parts, tags }, session) => delta`
 
@@ -70,8 +71,7 @@ try {
   if (delta !== null) {
     console.log(`[delta] ${JSON.stringify(delta, null, 2)}`)
   }
-}
-catch (e) {
+} catch (e) {
   console.error(`[error] ${e.message}`)
 }
 ```
@@ -96,17 +96,19 @@ const parser = new Parser()
 
 try {
   // backslash starts an escape sequence in JavaScript code, so they need to be double in string literals
-  const delta = parser.parse('\\s:airmar dst800,c:1438489697*13\\$SDDBT,17.0,f,5.1,M,2.8,F*3E')
+  const delta = parser.parse(
+    '\\s:airmar dst800,c:1438489697*13\\$SDDBT,17.0,f,5.1,M,2.8,F*3E'
+  )
   if (delta !== null) {
     console.log(`[delta] ${JSON.stringify(delta, null, 2)}`)
   }
-}
-catch (e) {
+} catch (e) {
   console.error(`[error] ${e.message}`)
 }
 ```
 
 Output:
+
 ```json
 [delta] {
   "updates": [
@@ -128,7 +130,7 @@ Output:
 }
 ```
 
-**Note:** *at this time, the checksum of the tag block (`c:1438489697*13`) is not validated.*
+**Note:** *at this time, the checksum of the tag block (`c:1438489697*13`) is not validated.\*
 
 ## License
 

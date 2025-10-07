@@ -243,13 +243,13 @@ describe('VDM', function () {
       '!AIVDM,1,1,,A,8@2R5Ph0GhOCT1a2VvkrgwvlFR06EuOwgqrqwnSwe7wvlOwwsAwwnSGmwvwt,0*40'
     )
     delta.context.should.equal('meteo.urn:mrn:imo:mmsi:002655619:366097')
-    const currentYear = new Date().getFullYear();
-    const currentMonth = ('00' + (new Date().getMonth()+1)).slice(-2);
+    const currentYear = new Date().getFullYear()
+    const currentMonth = ('00' + (new Date().getMonth() + 1)).slice(-2)
     const output = [
       ['environment.water.level', -0.17],
       ['environment.water.levelTendency', 'steady'],
       ['environment.water.levelTendencyValue', 0],
-      ['environment.date', `${currentYear}-${currentMonth}-22T15:42:00.000Z`]
+      ['environment.date', `${currentYear}-${currentMonth}-22T15:42:00.000Z`],
     ]
     output.forEach(([path, value]) =>
       delta.updates[0].values
@@ -271,7 +271,7 @@ describe('VDM', function () {
     delta.updates[0].values[3].value.longitude.should.equal(11.7283)
     delta.updates[0].values[3].value.latitude.should.equal(57.9669)
     const currentYear = new Date().getFullYear()
-    const currentMonth = ('00' + (new Date().getMonth()+1)).slice(-2);
+    const currentMonth = ('00' + (new Date().getMonth() + 1)).slice(-2)
     const output = [
       ['sensors.ais.designatedAreaCode', 1],
       ['sensors.ais.functionalId', 31],

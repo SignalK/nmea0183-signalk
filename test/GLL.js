@@ -41,7 +41,7 @@ describe('GLL', () => {
   })
 
   it('Converts OK using individual parser, invalid lat/lng', () => {
-    const delta = new Parser({validateChecksum: false}).parse(
+    const delta = new Parser({ validateChecksum: false }).parse(
       // note this malformed lat value is pulled from a real validated malformed RMC example. see test/RMC.js
       '$GPGLL,1547\x0E70800,N,02325.928,E,121022,A,D*40'
     )

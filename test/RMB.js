@@ -27,7 +27,7 @@ describe('RMB', () => {
       '$ECRMB,A,0.000,L,001,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*04'
     )
     should.equal(delta.updates[0].timestamp, undefined)
-    
+
     delta.updates[0].values.should.contain.an.item.with.property(
       'path',
       'navigation.courseRhumbline.nextPoint.position'
@@ -81,8 +81,7 @@ describe('RMB', () => {
     )
     delta.updates[0].values.should.contain.an.item({
       path: 'navigation.courseRhumbline.nextPoint.position',
-      value: null
+      value: null,
     })
   })
-
 })

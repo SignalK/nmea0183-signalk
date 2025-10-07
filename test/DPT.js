@@ -77,7 +77,7 @@ describe('DPT', () => {
     delta.updates[0].values[2].value.should.be.closeTo(3.1, 0.1)
   })
 
-  it("Converts empty depth to null", () => {
+  it('Converts empty depth to null', () => {
     const delta = new Parser().parse('$IIDPT,,,*6C')
     delta.updates[0].values[0].path.should.equal(
       'environment.depth.belowTransducer'
@@ -86,7 +86,7 @@ describe('DPT', () => {
     should.equal(delta.updates[0].values[0].value, null)
   })
 
-  it("Converts empty depth to null and still outputs offset", () => {
+  it('Converts empty depth to null and still outputs offset', () => {
     const delta = new Parser().parse('$IIDPT,,0.1*6F')
     delta.updates[0].values.length.should.equal(2)
     delta.updates[0].values[0].path.should.equal(
@@ -98,5 +98,4 @@ describe('DPT', () => {
     )
     should.equal(delta.updates[0].values[1].value, 0.1)
   })
-
 })

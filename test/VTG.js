@@ -67,5 +67,4 @@ describe('VTG', () => {
     )
     delta.updates[0].values[2].value.should.be.closeTo(0.0528, 0.00005)
   })
-
 })

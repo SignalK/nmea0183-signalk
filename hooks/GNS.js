@@ -73,21 +73,21 @@ function isEmpty(mixed) {
 }
 
 const MODES = {
-  "A": "Autonomous",
-  "D": "Differential",
-  "E": "Estimated",
-  "F": "RTK Float",
-  "M": "Manual",
-  "N": "No Valid Fix",
-  "P": "Precise",
-  "R": "RTK Integer",
-  "S": "Simulator"
+  A: 'Autonomous',
+  D: 'Differential',
+  E: 'Estimated',
+  F: 'RTK Float',
+  M: 'Manual',
+  N: 'No Valid Fix',
+  P: 'Precise',
+  R: 'RTK Integer',
+  S: 'Simulator',
 }
 
-const SYSTEMS = ["GPS","GLONASS","Galileo","BeiDou","QZSS"]
+const SYSTEMS = ['GPS', 'GLONASS', 'Galileo', 'BeiDou', 'QZSS']
 
 function indicator(chars) {
-  return chars.reduce( (acc, c, i) => {
+  return chars.reduce((acc, c, i) => {
     acc[SYSTEMS[i]] = MODES[c]
     return acc
   }, {})
@@ -111,10 +111,10 @@ module.exports = function (input) {
   const timestamp = utils.timestamp(time, moment.tz('UTC').format('DDMMYY'))
 
   const STATUS = {
-    "S": "Safe",
-    "C": "Caution",
-    "U": "Unsafe",
-    "V": "Not Valid"
+    S: 'Safe',
+    C: 'Caution',
+    U: 'Unsafe',
+    V: 'Not Valid',
   }
 
   const delta = {
@@ -132,7 +132,7 @@ module.exports = function (input) {
           },
           {
             path: 'navigation.gnss.methodQuality',
-            value: indicator(parts[5].split("")),
+            value: indicator(parts[5].split('')),
           },
 
           {
@@ -166,7 +166,7 @@ module.exports = function (input) {
           },
           {
             path: 'navigation.gnss.status',
-            value: STATUS[(parts[12])],
+            value: STATUS[parts[12]],
           },
         ],
       },

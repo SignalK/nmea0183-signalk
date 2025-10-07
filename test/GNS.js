@@ -53,9 +53,9 @@ describe('GNS', () => {
       'navigation.gnss.horizontalDilution'
     )
     delta.updates[0].values.should.contain.an.item.with.property(
-        'path',
-        'navigation.gnss.geoidalSeparation'
-      )
+      'path',
+      'navigation.gnss.geoidalSeparation'
+    )
     delta.updates[0].values.should.contain.an.item.with.property(
       'path',
       'navigation.gnss.differentialAge'
@@ -65,28 +65,32 @@ describe('GNS', () => {
       'navigation.gnss.differentialReference'
     )
     delta.updates[0].values.should.contain.an.item.with.property(
-        'path',
-        'navigation.gnss.status'
-      )
+      'path',
+      'navigation.gnss.status'
+    )
 
     // Values
     delta.updates[0].values[0].value.should.deep.equal({
       longitude: -44.369083333333336,
       latitude: -2.583965,
     })
-    delta.updates[0].values[1].value.should.deep.equal({"GPS":"Autonomous","GLONASS":"No Valid Fix","Galileo":"No Valid Fix"})
+    delta.updates[0].values[1].value.should.deep.equal({
+      GPS: 'Autonomous',
+      GLONASS: 'No Valid Fix',
+      Galileo: 'No Valid Fix',
+    })
     delta.updates[0].values[2].value.should.equal(12)
     delta.updates[0].values[3].value.should.equal(8.5)
     delta.updates[0].values[4].value.should.equal(0.8)
     delta.updates[0].values[5].value.should.equal(-22.3)
     delta.updates[0].values[6].value.should.equal(0)
     delta.updates[0].values[7].value.should.equal(0)
-    delta.updates[0].values[8].value.should.equal("Safe")
+    delta.updates[0].values[8].value.should.equal('Safe')
     // toFull(delta).should.be.validSignalK
   })
 
   it('Converts OK using individual parser', () => {
-    const delta = new Parser({validateChecksum: false}).parse(
+    const delta = new Parser({ validateChecksum: false }).parse(
       // note this malformed lat value is pulled from a real validated malformed RMC example. see test/RMC.js
       '$GPGNS,111648.00,1547\x0E70800,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,S*5D'
     )
@@ -112,9 +116,9 @@ describe('GNS', () => {
       'navigation.gnss.horizontalDilution'
     )
     delta.updates[0].values.should.contain.an.item.with.property(
-        'path',
-        'navigation.gnss.geoidalSeparation'
-      )
+      'path',
+      'navigation.gnss.geoidalSeparation'
+    )
     delta.updates[0].values.should.contain.an.item.with.property(
       'path',
       'navigation.gnss.differentialAge'
@@ -124,19 +128,23 @@ describe('GNS', () => {
       'navigation.gnss.differentialReference'
     )
     delta.updates[0].values.should.contain.an.item.with.property(
-        'path',
-        'navigation.gnss.status'
-      )
+      'path',
+      'navigation.gnss.status'
+    )
 
     // Values
-    delta.updates[0].values[0].value.should.deep.equal({"GPS":"Autonomous","GLONASS":"No Valid Fix","Galileo":"No Valid Fix"})
+    delta.updates[0].values[0].value.should.deep.equal({
+      GPS: 'Autonomous',
+      GLONASS: 'No Valid Fix',
+      Galileo: 'No Valid Fix',
+    })
     delta.updates[0].values[1].value.should.equal(12)
     delta.updates[0].values[2].value.should.equal(8.5)
     delta.updates[0].values[3].value.should.equal(0.8)
     delta.updates[0].values[4].value.should.equal(-22.3)
     delta.updates[0].values[5].value.should.equal(0)
     delta.updates[0].values[6].value.should.equal(0)
-    delta.updates[0].values[7].value.should.equal("Safe")
+    delta.updates[0].values[7].value.should.equal('Safe')
   })
 
   it("Doesn't choke on empty sentences", () => {

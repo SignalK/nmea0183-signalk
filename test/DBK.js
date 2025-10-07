@@ -35,10 +35,7 @@ describe('DBK', () => {
   it('Converts empty value to null', () => {
     const delta = new Parser().parse('$IIDBK,,,,,,*4D')
     delta.updates[0].values.length.should.equal(1)
-    delta.updates[0].values[0].path.should.equal(
-      'environment.depth.belowKeel'
-    )
+    delta.updates[0].values[0].path.should.equal('environment.depth.belowKeel')
     should.equal(delta.updates[0].values[0].value, null)
   })
-
 })

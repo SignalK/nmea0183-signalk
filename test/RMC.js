@@ -53,13 +53,33 @@ describe('RMC', () => {
       'path',
       'navigation.datetime'
     )
-    delta.updates[0].values.find(value => value.path === 'navigation.position').value.latitude.should.be.closeTo(52.372, 0.005)
-    delta.updates[0].values.find(value => value.path === 'navigation.position').value.longitude.should.be.closeTo(4.91, 0.005)
-    delta.updates[0].values.find(value => value.path === 'navigation.datetime').value.should.equal('2014-04-03T08:54:12.000Z')
-    delta.updates[0].values.find(value => value.path === 'navigation.courseOverGroundTrue').value.should.be.closeTo(4.387, 0.005)
-    delta.updates[0].values.find(value => value.path === 'navigation.speedOverGround').value.should.be.closeTo(0.298, 0.005)
-    chai.expect(delta.updates[0].values.find(value => value.path === 'navigation.magneticVariation').value).to.be.a('null')
-    delta.updates[0].values.find(value => value.path === 'navigation.magneticVariationAgeOfService').value.should.equal(1396515252)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.position')
+      .value.latitude.should.be.closeTo(52.372, 0.005)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.position')
+      .value.longitude.should.be.closeTo(4.91, 0.005)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.datetime')
+      .value.should.equal('2014-04-03T08:54:12.000Z')
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.courseOverGroundTrue')
+      .value.should.be.closeTo(4.387, 0.005)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.speedOverGround')
+      .value.should.be.closeTo(0.298, 0.005)
+    chai
+      .expect(
+        delta.updates[0].values.find(
+          (value) => value.path === 'navigation.magneticVariation'
+        ).value
+      )
+      .to.be.a('null')
+    delta.updates[0].values
+      .find(
+        (value) => value.path === 'navigation.magneticVariationAgeOfService'
+      )
+      .value.should.equal(1396515252)
   })
 
   it('Converts OK using individual parser, w/ missing SOG/COG values', () => {
@@ -78,9 +98,23 @@ describe('RMC', () => {
       'path',
       'navigation.magneticVariation'
     )
-    chai.expect(delta.updates[0].values.find(value => value.path === 'navigation.courseOverGroundTrue').value).to.be.a('null')
-    chai.expect(delta.updates[0].values.find(value => value.path === 'navigation.speedOverGround').value).to.be.a('null')
-    delta.updates[0].values.find(value => value.path === 'navigation.magneticVariation').value.should.be.closeTo(0.20944, 0.05)
+    chai
+      .expect(
+        delta.updates[0].values.find(
+          (value) => value.path === 'navigation.courseOverGroundTrue'
+        ).value
+      )
+      .to.be.a('null')
+    chai
+      .expect(
+        delta.updates[0].values.find(
+          (value) => value.path === 'navigation.speedOverGround'
+        ).value
+      )
+      .to.be.a('null')
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.magneticVariation')
+      .value.should.be.closeTo(0.20944, 0.05)
   })
 
   it('Converts OK using individual parser, w/ invalid lat/lng values', () => {
@@ -104,8 +138,14 @@ describe('RMC', () => {
       'path',
       'navigation.datetime'
     )
-    delta.updates[0].values.find(value => value.path === 'navigation.courseOverGroundTrue').value.should.be.closeTo(0.180, 0.005)
-    delta.updates[0].values.find(value => value.path === 'navigation.speedOverGround').value.should.be.closeTo(0.096, 0.005)
-    delta.updates[0].values.find(value => value.path === 'navigation.datetime').value.should.equal('2025-09-11T21:07:35.000Z')
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.courseOverGroundTrue')
+      .value.should.be.closeTo(0.18, 0.005)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.speedOverGround')
+      .value.should.be.closeTo(0.096, 0.005)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.datetime')
+      .value.should.equal('2025-09-11T21:07:35.000Z')
   })
 })
