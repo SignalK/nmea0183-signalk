@@ -78,8 +78,8 @@ module.exports = function (input) {
           {
             path: 'navigation.position',
             value: {
-              longitude,
-              latitude,
+              longitude: longitude,
+              latitude: latitude,
             },
           },
         ],
