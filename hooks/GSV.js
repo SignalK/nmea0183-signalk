@@ -75,8 +75,16 @@ const OFFSET_SNR = 3
 
 const utils = require('@signalk/nmea0183-utilities')
 
+const TALKER_TO_GNSS = {
+  GP: 'GPS',
+  GL: 'GLONASS',
+  GA: 'GALILEO',
+  GB: 'BEIDOU',
+  GQ: 'QZSS',
+}
+
 module.exports = function (input, session) {
-  const { parts, tags } = input
+  const { parts, tags, talker } = input
 
   const gsvData =
     session.gsvData ||
@@ -85,6 +93,7 @@ module.exports = function (input, session) {
       numberOfSentences: Number(parts[NUMBER_OF_SENTENCES]),
       count: Number(parts[SATS_IN_VIEW]),
       satellites: [],
+      gnss: TALKER_TO_GNSS[talker],
     })
 
   if (Number(parts[SENTENCE_NUMBER]) !== gsvData.nextSentenceNumber) {
@@ -98,10 +107,11 @@ module.exports = function (input, session) {
 
   for (let i = 0; i < 4; i++) {
     const thisSatDataStart = SAT_DATA_BLOCK_START + i * SAT_DATA_LENGTH
-    const satPRN = parts[thisSatDataStart]
-    if (!isNaN(satPRN)) {
+    const _satPRN = parts[thisSatDataStart]
+    if (!isNaN(_satPRN)) {
+      const satPRN = Number(_satPRN)
       gsvData.satellites.push({
-        id: Number(satPRN),
+        id: satPRN >= 64 ? satPRN - 64 : satPRN,
         elevation: utils.transform(
           parts[thisSatDataStart + OFFSET_ELEVATION],
           'deg',
@@ -121,6 +131,7 @@ module.exports = function (input, session) {
     delete session.gsvData
     delete gsvData.nextSentenceNumber
     delete gsvData.numberOfSentences
+    gsvData.satellites = gsvData.satellites.slice(0, gsvData.count)
     return {
       updates: [
         {
