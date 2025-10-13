@@ -33,7 +33,7 @@ const testData = [
 ]
 
 describe('GSV', () => {
-  it('GPGSV converts', () => {
+  it('GPGSV converts to GPS', () => {
     const parser = new Parser()
     let r = parser.parse(testData[0])
     expect(r).to.be.null
@@ -43,6 +43,7 @@ describe('GSV', () => {
     expect(r).to.not.be.null
     const pathValue = r.updates[0].values[0]
     pathValue.path.should.equal('navigation.gnss.satellitesInView')
+    pathValue.value.should.have.property('gnss', 'GPS')
   })
 
   it('GPGSV with not repeated numOfSentences, satsInView converts', () => {
@@ -68,4 +69,54 @@ describe('GSV', () => {
       id: 8,
     })
   })
+
+  it('GLGSV converts to GLONASS', () => {
+    const data = [
+      '$GLGSV,2,1,06,78,55,122,40,77,32,036,37,69,57,298,41,68,66,101,38,1*79',
+      '$GLGSV,2,2,06,85,30,317,27,84,22,262,19,1*72',
+    ]
+    const parser = new Parser()
+    let r = parser.parse(data[0])
+    expect(r).to.be.null
+    r = parser.parse(data[1])
+    expect(r).to.not.be.null
+    const pathValue = r.updates[0].values[0]
+    pathValue.path.should.equal('navigation.gnss.satellitesInView')
+    pathValue.value.gnss.should.equal('GLONASS')
+    pathValue.value.count.should.equal(6)
+    pathValue.value.satellites.length.should.equal(6)
+    pathValue.value.satellites[0].should.eql({
+      id: 78 - 64,
+      elevation: 0.9599310888160619,
+      azimuth: 2.1293016879192646,
+      SNR: 40,
+    })
+  })
+
+  it('GAGSV converts to Galileo', () => {
+    const data = [
+      '$GAGSV,3,1,10,04,27,094,38,05,41,265,39,15,19,332,35,36,19,221,33,7*78',
+      '$GAGSV,3,2,10,06,53,100,36,09,79,122,32,21,09,017,30,34,37,277,35,7*78',
+      '$GAGSV,3,3,10,31,27,125,32,23,34,065,35,7*71',
+    ]
+    const parser = new Parser()
+    let r = parser.parse(data[0])
+    expect(r).to.be.null
+    r = parser.parse(data[1])
+    expect(r).to.be.null
+    r = parser.parse(data[2])
+    expect(r).to.not.be.null
+    const pathValue = r.updates[0].values[0]
+    pathValue.path.should.equal('navigation.gnss.satellitesInView')
+    pathValue.value.gnss.should.equal('GALILEO')
+    pathValue.value.count.should.equal(10)
+    pathValue.value.satellites.length.should.equal(10)
+    pathValue.value.satellites[0].should.eql({
+      id: 4,
+      elevation: 0.47123889814606673,
+      azimuth: 1.6406094972492695,
+      SNR: 38,
+    })
+  })
+
 })
