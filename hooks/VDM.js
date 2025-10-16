@@ -20,6 +20,7 @@ const debug = require('debug')('signalk-parser-nmea0183/VDM')
 const utils = require('@signalk/nmea0183-utilities')
 const Decoder = require('ggencoder').AisDecode
 const schema = require('@signalk/signalk-schema')
+const { getFlagCountry } = require('@signalk/server-api')
 const knotsToMs = (v) =>
   parseFloat(utils.transform(v, 'knots', 'ms').toFixed(2))
 const degToRad = (v) => utils.transform(v, 'deg', 'rad')
@@ -133,6 +134,23 @@ module.exports = function (input, session) {
         mmsi: data.mmsi,
       },
     })
+    if (typeof getFlagCountry === 'function') {
+      const country = getFlagCountry(data.mmsi)
+      if (country) {
+        values.push({
+          path: '',
+          value: {
+            flag: country.alpha2,
+          },
+        })
+        values.push({
+          path: '',
+          value: {
+            port: country.name,
+          },
+        })
+      }
+    }
   }
 
   if (data.shipname) {
@@ -350,27 +368,27 @@ module.exports = function (input, session) {
       })
     }
   })
-    ;[
-      ['ice', 'water.ice', iceTable],
-      ['precipitation', 'outside.precipitation', precipitationType],
-      ['seastate', 'water.seaState', beaufortScale],
-      ['waterlevelten', 'water.levelTendency', statusTable],
-      ['airpressten', 'outside.pressureTendency', statusTable],
-    ].forEach(([propName, path, f]) => {
-      if (data[propName] !== undefined) {
-        contextPrefix = 'meteo.'
-        values.push(
-          {
-            path: `environment.` + path,
-            value: f[data[propName]],
-          },
-          {
-            path: `environment.` + path + `Value`,
-            value: data[propName],
-          }
-        )
-      }
-    })
+  ;[
+    ['ice', 'water.ice', iceTable],
+    ['precipitation', 'outside.precipitation', precipitationType],
+    ['seastate', 'water.seaState', beaufortScale],
+    ['waterlevelten', 'water.levelTendency', statusTable],
+    ['airpressten', 'outside.pressureTendency', statusTable],
+  ].forEach(([propName, path, f]) => {
+    if (data[propName] !== undefined) {
+      contextPrefix = 'meteo.'
+      values.push(
+        {
+          path: `environment.` + path,
+          value: f[data[propName]],
+        },
+        {
+          path: `environment.` + path + `Value`,
+          value: data[propName],
+        }
+      )
+    }
+  })
 
   if (data.horvisib !== undefined && data.horvisibrange !== undefined) {
     contextPrefix = 'meteo.'
