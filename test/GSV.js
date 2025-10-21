@@ -119,4 +119,23 @@ describe('GSV', () => {
     })
   })
 
+  it('GPGSVH converts to GPS, slave antenna', () => {
+    const data = [
+      '$GPGSVH,3,1,10,29,62,223,40,12,33,123,42,25,63,147,41,28,48,263,43,1*21',
+      '$GPGSVH,3,2,10,06,13,035,25,31,35,302,24,04,11,350,19,26,13,295,21,1*2B',
+      '$GPGSVH,3,3,10,21,14,091,25,20,22,094,25,1*2C',
+    ]
+    const parser = new Parser()
+    let r = parser.parse(data[0])
+    expect(r).to.be.null
+    r = parser.parse(data[1])
+    expect(r).to.be.null
+    r = parser.parse(data[2])
+    expect(r).to.not.be.null
+    const pathValue = r.updates[0].values[0]
+    pathValue.path.should.equal('navigation.gnss.satellitesInView')
+    pathValue.value.should.have.property('gnss', 'GPS')
+    pathValue.value.should.have.property('antennaType', 'SLAVE')
+  })
+
 })

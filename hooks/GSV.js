@@ -84,7 +84,7 @@ const TALKER_TO_GNSS = {
 }
 
 module.exports = function (input, session) {
-  const { parts, tags, talker } = input
+  const { id, parts, tags, talker } = input
 
   const gsvData =
     session.gsvData ||
@@ -132,10 +132,19 @@ module.exports = function (input, session) {
     delete gsvData.nextSentenceNumber
     delete gsvData.numberOfSentences
     gsvData.satellites = gsvData.satellites.slice(0, gsvData.count)
+    let source = tags.source
+    if (id === 'GSVH') {
+      // Unicore UM98x slave antenna
+      gsvData.antennaType = 'SLAVE'
+      //no source from tag, append H to create separate source from regular talker
+      if (source === ':') {
+        source = `${talker}-H`
+      }
+    }
     return {
       updates: [
         {
-          source: tags.source,
+          source,
           timestamp: tags.timestamp,
           values: [
             {
