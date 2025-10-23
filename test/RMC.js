@@ -18,6 +18,7 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+const should = chai.Should()
 
 chai.Should()
 chai.use(require('chai-things'))
@@ -122,7 +123,7 @@ describe('RMC', () => {
       // note that this particular example contains invalid latitude (1547\x0E70800) and invalid datestamp/magvar (110925\f12.49)
       '$GPRMC,210735.00,A,1547\x0E70800,S,14506.50460,W,0.187,10.33,110925\f12.49,E,A*3E'
     )
-    delta.updates[0].values.should.not.contain.an.item.with.property(
+    delta.updates[0].values.should.contain.an.item.with.property(
       'path',
       'navigation.position'
     )
@@ -137,6 +138,12 @@ describe('RMC', () => {
     delta.updates[0].values.should.contain.an.item.with.property(
       'path',
       'navigation.datetime'
+    )
+    should.equal(
+      delta.updates[0].values.find(
+        (value) => value.path === 'navigation.position'
+      ).value,
+      null
     )
     delta.updates[0].values
       .find((value) => value.path === 'navigation.courseOverGroundTrue')

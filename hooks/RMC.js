@@ -76,6 +76,15 @@ module.exports = function (input) {
         )
       : null
 
+  let position = null
+
+  if (utils.isValidPosition(latitude, longitude)) {
+    position = {
+      latitude: latitude,
+      longitude: longitude,
+    }
+  }
+
   const delta = {
     updates: [
       {
@@ -83,25 +92,25 @@ module.exports = function (input) {
         timestamp: timestamp,
         values: [
           {
+            path: 'navigation.position',
+            value: position,
+          },
+          {
             path: 'navigation.courseOverGroundTrue',
             value: track,
           },
-
           {
             path: 'navigation.speedOverGround',
             value: speed,
           },
-
           {
             path: 'navigation.magneticVariation',
             value: variation,
           },
-
           {
             path: 'navigation.magneticVariationAgeOfService',
             value: age,
           },
-
           {
             path: 'navigation.datetime',
             value: timestamp,
@@ -109,16 +118,6 @@ module.exports = function (input) {
         ],
       },
     ],
-  }
-
-  if (utils.isValidPosition(latitude, longitude)) {
-    delta.updates[0].values.push({
-      path: 'navigation.position',
-      value: {
-        longitude,
-        latitude,
-      },
-    })
   }
 
   return delta

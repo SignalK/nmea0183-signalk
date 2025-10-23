@@ -46,7 +46,8 @@ describe('GLL', () => {
       '$GPGLL,1547\x0E70800,N,02325.928,E,121022,A,D*40'
     )
 
-    should.equal(delta, null)
+    delta.updates[0].values[0].path.should.equal('navigation.position')
+    should.equal(delta.updates[0].values[0].value, null)
   })
 
   it("Doesn't choke on empty sentences", () => {

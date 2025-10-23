@@ -96,6 +96,17 @@ module.exports = function (input) {
     'Error',
   ]
 
+  const latitude = utils.coordinate(parts[1], parts[2])
+  const longitude = utils.coordinate(parts[3], parts[4])
+  let position = null
+
+  if (utils.isValidPosition(latitude, longitude)) {
+    position = {
+      latitude: latitude,
+      longitude: longitude,
+    }
+  }
+
   const delta = {
     updates: [
       {
@@ -104,10 +115,7 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.position',
-            value: {
-              longitude: utils.coordinate(parts[3], parts[4]),
-              latitude: utils.coordinate(parts[1], parts[2]),
-            },
+            value: position,
           },
           {
             path: 'navigation.gnss.methodQuality',
@@ -146,27 +154,6 @@ module.exports = function (input) {
         ],
       },
     ],
-  }
-
-  const toRemove = []
-
-  delta.updates[0].values.forEach((update, index) => {
-    if (
-      typeof update.value === 'undefined' ||
-      update.value === null ||
-      (typeof update.value === 'string' && update.value.trim() === '') ||
-      (typeof update.value === 'number' && isNaN(update.value)) ||
-      (update.path === 'navigation.position' &&
-        !utils.isValidPosition(update.value.latitude, update.value.longitude))
-    ) {
-      toRemove.push(index)
-    }
-  })
-
-  if (toRemove.length > 0) {
-    toRemove.forEach((index) => {
-      delta.updates[0].values.splice(index, 1)
-    })
   }
 
   return delta

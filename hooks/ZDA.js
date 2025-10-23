@@ -94,24 +94,5 @@ module.exports = function (input) {
     }
   }
 
-  const toRemove = []
-
-  delta.updates[0].values.forEach((update, index) => {
-    if (
-      typeof update.value === 'undefined' ||
-      update.value === null ||
-      (typeof update.value === 'string' && update.value.trim() === '') ||
-      (typeof update.value !== 'string' && isNaN(update.value))
-    ) {
-      toRemove.push(index)
-    }
-  })
-
-  if (toRemove.length > 0) {
-    toRemove.forEach((index) => {
-      delta.updates[0].values.splice(index, 1)
-    })
-  }
-
   return delta
 }
