@@ -9,7 +9,10 @@
 
 module.exports = function (app) {
   const plugin = {}
-  plugin.id = plugin.name = plugin.description = 'signalk-nmea0183-custom-sentence-plugin'
+  plugin.id =
+    plugin.name =
+    plugin.description =
+      'signalk-nmea0183-custom-sentence-plugin'
 
   plugin.start = function () {
     app.emitPropertyValue('nmea0183sentenceParser', {
@@ -19,16 +22,16 @@ module.exports = function (app) {
           updates: [
             {
               values: [
-                { path: 'navigation.speedOverGround', value: Number(parts[0]) }
-              ]
-            }
-          ]
+                { path: 'navigation.speedOverGround', value: Number(parts[0]) },
+              ],
+            },
+          ],
         }
-      }
+      },
     })
   }
 
-  plugin.stop = function () { }
+  plugin.stop = function () {}
   plugin.schema = {}
   return plugin
 }

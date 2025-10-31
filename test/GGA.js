@@ -63,17 +63,102 @@ describe('GGA', () => {
       'navigation.gnss.differentialReference'
     )
     // Values
-    delta.updates[0].values[0].value.should.deep.equal({
-      longitude: -122.03782631066667,
-      latitude: 37.39109795066667,
-    })
-    delta.updates[0].values[1].value.should.equal('DGNSS fix')
-    delta.updates[0].values[2].value.should.equal(6)
-    delta.updates[0].values[3].value.should.equal(18.893)
-    delta.updates[0].values[4].value.should.equal(1.2)
-    delta.updates[0].values[5].value.should.equal(2.0)
-    delta.updates[0].values[6].value.should.equal(31)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.position')
+      .value.should.deep.equal({
+        longitude: -122.03782631066667,
+        latitude: 37.39109795066667,
+      })
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.methodQuality')
+      .value.should.equal('DGNSS fix')
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.satellites')
+      .value.should.equal(6)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.antennaAltitude')
+      .value.should.equal(18.893)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.horizontalDilution')
+      .value.should.equal(1.2)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.geoidalSeparation')
+      .value.should.equal(-25.669)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.differentialAge')
+      .value.should.equal(2.0)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.differentialReference')
+      .value.should.equal(31)
+
     toFull(delta).should.be.validSignalK
+  })
+
+  it('Converts OK using individual parser with invalid lat/lng', () => {
+    const delta = new Parser({ validateChecksum: false }).parse(
+      // note this malformed lat value is pulled from a real validated malformed RMC example. see test/RMC.js
+      '$GPGGA,172814.0,1547\x0E70800,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F'
+    )
+
+    should.not.exist(delta.updates[0].source.label)
+    delta.updates[0].source.talker.should.equal('GP')
+    // Paths
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.position'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.methodQuality'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.satellites'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.antennaAltitude'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.horizontalDilution'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.differentialAge'
+    )
+    delta.updates[0].values.should.contain.an.item.with.property(
+      'path',
+      'navigation.gnss.differentialReference'
+    )
+    should.equal(
+      delta.updates[0].values.find(
+        (value) => value.path === 'navigation.position'
+      ).value,
+      null
+    )
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.methodQuality')
+      .value.should.equal('DGNSS fix')
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.satellites')
+      .value.should.equal(6)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.antennaAltitude')
+      .value.should.equal(18.893)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.horizontalDilution')
+      .value.should.equal(1.2)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.geoidalSeparation')
+      .value.should.equal(-25.669)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.differentialAge')
+      .value.should.equal(2.0)
+    delta.updates[0].values
+      .find((value) => value.path === 'navigation.gnss.differentialReference')
+      .value.should.equal(31)
+    // toFull(delta).should.be.validSignalK
   })
 
   it("Doesn't choke on empty sentences", () => {

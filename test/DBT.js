@@ -46,7 +46,7 @@ describe('DBT', () => {
     )
   })
 
-  it("Converts empty value to null", () => {
+  it('Converts empty value to null', () => {
     const delta = new Parser().parse('$IIDBT,,,,,,*52')
     delta.updates[0].values.length.should.equal(1)
     delta.updates[0].values[0].path.should.equal(

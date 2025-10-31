@@ -46,7 +46,10 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.outside.temperature',
-            value: parts.length > 0 && parts[0].trim().length > 0 ? utils.transform(utils.float(parts[0]), 'c', 'k') : null,
+            value:
+              parts.length > 0 && parts[0].trim().length > 0
+                ? utils.transform(utils.float(parts[0]), 'c', 'k')
+                : null,
           },
         ],
       },

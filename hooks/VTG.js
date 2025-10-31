@@ -62,7 +62,10 @@ module.exports = function (input) {
 
   if (utils.float(parts[6]) > 0 && String(parts[7]).toUpperCase() === 'K') {
     speed = utils.transform(utils.float(parts[6]), 'kph', 'ms')
-  } else if (utils.float(parts[4]) > 0 && String(parts[5]).toUpperCase() === 'N') {
+  } else if (
+    utils.float(parts[4]) > 0 &&
+    String(parts[5]).toUpperCase() === 'N'
+  ) {
     speed = utils.transform(utils.float(parts[4]), 'knots', 'ms')
   }
 
@@ -74,11 +77,17 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.courseOverGroundMagnetic',
-            value: parts[2].length === 0 ? null : utils.transform(utils.float(parts[2]), 'deg', 'rad'),
+            value:
+              parts[2].length === 0
+                ? null
+                : utils.transform(utils.float(parts[2]), 'deg', 'rad'),
           },
           {
             path: 'navigation.courseOverGroundTrue',
-            value: parts[0].length === 0 ? null : utils.transform(utils.float(parts[0]), 'deg', 'rad'),
+            value:
+              parts[0].length === 0
+                ? null
+                : utils.transform(utils.float(parts[0]), 'deg', 'rad'),
           },
           {
             path: 'navigation.speedOverGround',

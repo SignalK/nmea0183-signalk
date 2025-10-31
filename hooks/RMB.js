@@ -58,7 +58,7 @@ module.exports = function (input) {
   } else {
     position = {
       longitude,
-      latitude
+      latitude,
     }
   }
 

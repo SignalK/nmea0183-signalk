@@ -48,14 +48,42 @@ module.exports = function (input) {
   const timestamp = utils.timestamp(parts[0], parts[8])
   const age = moment.tz(timestamp, 'UTC').unix()
 
-  latitude = parts[2].trim().length > 0 && !isNaN(parts[2]) && "NS".includes(parts[3]) ? utils.coordinate(parts[2], parts[3]) : null
-  longitude = parts[4].trim().length > 0 && !isNaN(parts[4]) && "EW".includes(parts[5]) ? utils.coordinate(parts[4], parts[5]) : null
+  latitude =
+    parts[2].trim().length > 0 && !isNaN(parts[2]) && 'NS'.includes(parts[3])
+      ? utils.coordinate(parts[2], parts[3])
+      : null
+  longitude =
+    parts[4].trim().length > 0 && !isNaN(parts[4]) && 'EW'.includes(parts[5])
+      ? utils.coordinate(parts[4], parts[5])
+      : null
 
-  speed = parts[6].trim().length > 0 && !isNaN(parts[6]) && parts[6] >= 0 ? utils.transform(parts[6], 'knots', 'ms') : null
+  speed =
+    parts[6].trim().length > 0 && !isNaN(parts[6]) && parts[6] >= 0
+      ? utils.transform(parts[6], 'knots', 'ms')
+      : null
 
-  track = parts[7].trim().length > 0 && !isNaN(parts[7]) ? utils.transform(parts[7], 'deg', 'rad') : null
+  track =
+    parts[7].trim().length > 0 && !isNaN(parts[7])
+      ? utils.transform(parts[7], 'deg', 'rad')
+      : null
 
-  variation = parts[9].trim().length > 0 && !isNaN(parts[9]) && "EW".includes(parts[10]) ? utils.transform(utils.magneticVariaton(parts[9], parts[10]), 'deg', 'rad') : null
+  variation =
+    parts[9].trim().length > 0 && !isNaN(parts[9]) && 'EW'.includes(parts[10])
+      ? utils.transform(
+          utils.magneticVariaton(parts[9], parts[10]),
+          'deg',
+          'rad'
+        )
+      : null
+
+  let position = null
+
+  if (utils.isValidPosition(latitude, longitude)) {
+    position = {
+      latitude: latitude,
+      longitude: longitude,
+    }
+  }
 
   const delta = {
     updates: [
@@ -65,32 +93,24 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.position',
-            value: {
-              longitude,
-              latitude,
-            },
+            value: position,
           },
-
           {
             path: 'navigation.courseOverGroundTrue',
             value: track,
           },
-
           {
             path: 'navigation.speedOverGround',
             value: speed,
           },
-
           {
             path: 'navigation.magneticVariation',
             value: variation,
           },
-
           {
             path: 'navigation.magneticVariationAgeOfService',
             value: age,
           },
-
           {
             path: 'navigation.datetime',
             value: timestamp,
