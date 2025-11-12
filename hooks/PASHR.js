@@ -62,23 +62,23 @@ module.exports = function PASHRHook(input) {
           },
           {
             path: 'balance.rollAngle',
-            value: utils.transform(utils.float(state.rollAngle), 'deg', 'rad'),
+            value: state.rollAngle ? utils.transform(utils.float(state.rollAngle), 'deg', 'rad') : null,
           },
           {
             path: 'balance.pitchAngle',
-            value: utils.transform(utils.float(state.pitchAngle), 'deg', 'rad'),
+            value: state.pitchAngle ? utils.transform(utils.float(state.pitchAngle), 'deg', 'rad') : null,
           },
           {
             path: 'balance.rollAngleAccuracy',
-            value: utils.transform(utils.float(state.rollAngleAccuracy), 'deg', 'rad'),
+            value: state.rollAngle && state.rollAngleAccuracy ? utils.transform(utils.float(state.rollAngleAccuracy), 'deg', 'rad') : null,
           },
           {
             path: 'balance.pitchAngleAccuracy',
-            value: utils.transform(utils.float(state.pitchAngleAccuracy), 'deg', 'rad'),
+            value: state.pitchAngle && state.pitchAngleAccuracy ? utils.transform(utils.float(state.pitchAngleAccuracy), 'deg', 'rad') : null,
           },
           {
             path: 'navigation.headingTrueAccuracy',
-            value: state.trueHeading ? utils.transform(utils.float(state.trueHeadingAccuracy), 'deg', 'rad') : null,
+            value: state.trueHeading && state.trueHeadingAccuracy ? utils.transform(utils.float(state.trueHeadingAccuracy), 'deg', 'rad') : null,
           }
         ],
       },

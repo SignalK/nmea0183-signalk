@@ -130,6 +130,34 @@ describe('PASHR', () => {
   })
 
 
+      it('Should handle all null values', () => {
+    const delta = new Parser().parse('$PASHR,225444.123,,,,,,,,,,*6b')
+    delta.should.be.an('object')
+
+    testAllKeys(delta)
+
+    // headingTrue
+    expect(delta.updates[0].values[0].value).to.be.null
+
+    // rollAngle
+    expect(delta.updates[0].values[1].value).to.be.null
+
+
+    // pitchAngle
+    expect(delta.updates[0].values[2].value).to.be.null
+
+
+    // rollAngleAccuracy
+    expect(delta.updates[0].values[3].value).to.be.null
+
+
+    // pitchAngleAccuracy
+    expect(delta.updates[0].values[4].value).to.be.null
+
+
+    // headingTrueAccuracy
+        expect(delta.updates[0].values[5].value).to.be.null
+  })
 
 })
 
