@@ -26,25 +26,26 @@ const utils = require('@signalk/nmea0183-utilities')
                      Examples (XX => variation): 00 => 0, 01 => -1 west, 02 => -2 west ...
                                                  FF => +1 east, FE => +2 east ...
                    Corresponding NMEA sentences: RMC, HDG
+   Reference: http://www.thomasknauf.de/rap/seatalk2.htm
 */
 
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  var XX = parseInt(parts[2], 16)
-  var value = 128 - (XX & 0x7f)
-  var s = -1
-  if (XX & (0x80 != 0)) {
-    s = 1
-  }
-  var magneticVariation = s * value
+  // XX is an 8-bit two's complement value. Per the SeaTalk spec, a positive
+  // XX encodes West variation and a negative XX encodes East variation.
+  // Signal K uses the navigation convention (East positive, West negative),
+  // so the decoded byte must be negated.
+  const XX = parseInt(parts[2], 16)
+  const signed = XX > 127 ? XX - 256 : XX
+  const magneticVariation = -signed
 
-  var pathValues = []
-
-  pathValues.push({
-    path: 'navigation.magneticVariation',
-    value: utils.transform(utils.float(magneticVariation), 'deg', 'rad')
-  })
+  const pathValues = [
+    {
+      path: 'navigation.magneticVariation',
+      value: utils.transform(utils.float(magneticVariation), 'deg', 'rad')
+    }
+  ]
 
   return {
     updates: [
