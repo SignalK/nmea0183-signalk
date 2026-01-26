@@ -49,6 +49,16 @@ const compassVariationData = '99,00,43'
 const heading_nineCData = '9C,51,1E,00'
 const empty_nineCData = '9C,,,'
 const empty_eightFourData = '84,,,,,,,,'
+// 0x85 Navigation to waypoint: XTE=1.00nm steer left, bearing=45° magnetic, distance=5.50nm
+const navToWaypointData = '85,06,64,02,05,96,17,00,00'
+// 0x85 Navigation to waypoint with true bearing: XTE=0.50nm steer right, bearing=180° true, distance=12.0nm
+// F=0x07 means XTE present (bit 0), bearing present (bit 1), range present (bit 2)
+// U=0xA means (A & 0x3)*90 = 2*90 = 180° base, and (A & 0x8) = 0x8 so True bearing
+const navToWaypointTrueData = '85,06,32,0A,07,78,07,00,00'
+// 0x82 Waypoint name: "WPT1"
+const waypointNameData = '82,05,57,00,50,00,54,00,31'
+// 0x82 Waypoint name: "AB"
+const waypointNameShortData = '82,05,41,00,42,00,00,00,00'
 
 const should = chai.Should()
 chai.use(require('chai-things'))
@@ -381,6 +391,60 @@ describe('seatalk', () => {
       )
       const delta = new Parser().parse(fullSentence)
       should.equal(delta, null)
+    })
+
+    it(`${prefix} 0x85 navigation to waypoint converted`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${navToWaypointData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.courseRhumbline.crossTrackError'
+      )
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.courseRhumbline.bearingToDestinationMagnetic'
+      )
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.courseRhumbline.nextPoint.distance'
+      )
+    })
+
+    it(`${prefix} 0x85 navigation to waypoint with true bearing converted`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${navToWaypointTrueData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.courseRhumbline.bearingToDestinationTrue'
+      )
+    })
+
+    it(`${prefix} 0x82 waypoint name converted`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${waypointNameData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.courseRhumbline.nextPoint.ID'
+      )
+      delta.updates[0].values[0].value.should.equal('WPT1')
+    })
+
+    it(`${prefix} 0x82 short waypoint name converted`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${waypointNameShortData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.contain.an.item.with.property(
+        'path',
+        'navigation.courseRhumbline.nextPoint.ID'
+      )
+      delta.updates[0].values[0].value.should.equal('AB')
     })
   })
 })
