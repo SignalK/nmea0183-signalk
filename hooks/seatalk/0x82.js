@@ -20,8 +20,14 @@
 82  05  XX  xx  YY  yy  ZZ  zz  Target waypoint name
 
 4-character waypoint ID, transmitted after 0x85 on waypoint change.
-Each pair of bytes represents one character.
-XX/xx, YY/yy, ZZ/zz are character pairs (only first byte of each pair is significant).
+Each data byte is followed by its complement (xx = 0xFF - XX, etc.).
+Takes the last 4 chars of name, assumes upper case only.
+
+Decoding (per Thomas Knauf's SeaTalk Technical Reference):
+  char1 = (XX & 0x3F) + 0x30
+  char2 = ((YY & 0x0F) * 4 + (XX & 0xC0) / 64) + 0x30
+  char3 = ((ZZ & 0x03) * 16 + (YY & 0xF0) / 16) + 0x30
+  char4 = ((ZZ & 0xFC) / 4) + 0x30
 
 References:
 - http://www.thomasknauf.de/rap/seatalk2.htm
@@ -31,48 +37,27 @@ References:
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  if (parts.length < 6) {
+  if (parts.length < 8) {
     return null
   }
 
-  // Parse the waypoint name characters
-  // Format: 82 05 XX xx YY yy ZZ zz
-  // Characters are at positions 2, 4, 6 (and sometimes 8)
-  const chars = []
+  // Parse the 3 data bytes (positions 2, 4, 6)
+  const XX = parseInt(parts[2], 16)
+  const YY = parseInt(parts[4], 16)
+  const ZZ = parseInt(parts[6], 16)
 
-  // Character 1 (byte 2)
-  if (parts[2] && parts[2] !== '00') {
-    const char1 = parseInt(parts[2], 16)
-    if (!isNaN(char1) && char1 > 0) {
-      chars.push(String.fromCharCode(char1))
-    }
+  if (isNaN(XX) || isNaN(YY) || isNaN(ZZ)) {
+    return null
   }
 
-  // Character 2 (byte 4)
-  if (parts.length > 4 && parts[4] && parts[4] !== '00') {
-    const char2 = parseInt(parts[4], 16)
-    if (!isNaN(char2) && char2 > 0) {
-      chars.push(String.fromCharCode(char2))
-    }
-  }
+  // Decode characters per Thomas Knauf's formula
+  const c1 = (XX & 0x3f) + 0x30
+  const c2 = ((YY & 0x0f) * 4 + (XX & 0xc0) / 64) + 0x30
+  const c3 = ((ZZ & 0x03) * 16 + (YY & 0xf0) / 16) + 0x30
+  const c4 = ((ZZ & 0xfc) / 4) + 0x30
 
-  // Character 3 (byte 6)
-  if (parts.length > 6 && parts[6] && parts[6] !== '00') {
-    const char3 = parseInt(parts[6], 16)
-    if (!isNaN(char3) && char3 > 0) {
-      chars.push(String.fromCharCode(char3))
-    }
-  }
-
-  // Character 4 (byte 8, if present)
-  if (parts.length > 8 && parts[8] && parts[8] !== '00') {
-    const char4 = parseInt(parts[8], 16)
-    if (!isNaN(char4) && char4 > 0) {
-      chars.push(String.fromCharCode(char4))
-    }
-  }
-
-  const waypointName = chars.join('').trim()
+  // '0' (0x30) represents empty character positions - strip leading/trailing zeros
+  const waypointName = String.fromCharCode(c1, c2, c3, c4).replace(/^0+|0+$/g, '')
 
   if (waypointName.length === 0) {
     return null
