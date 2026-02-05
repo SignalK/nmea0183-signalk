@@ -12,10 +12,6 @@
     "create-release": "github-create-release --owner signalk --repository nmea0183-signalk",
     "release": "git tag -d v$npm_package_version && git tag v$npm_package_version && git push --tags && git push && npm run create-release"
   },
-  "bin": {
-    "nmea0183-signalk": "./bin/nmea0183-signalk",
-    "nmea2signalk": "./bin/nmea0183-signalk"
-  },
   "keywords": [
     "nmea",
     "0183",
@@ -44,12 +40,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/signalk/signalk-parser-nmea0183"
+    "url": "https://github.com/SignalK/nmea0183-signalk"
   },
   "bugs": {
-    "url": "https://github.com/signalk/signalk-parser-nmea0183/issues"
+    "url": "https://github.com/SignalK/nmea0183-signalk/issues"
   },
-  "homepage": "https://github.com/signalk/signalk-parser-nmea0183",
+  "homepage": "https://github.com/SignalK/nmea0183-signalk",
   "standard": {
     "globals": [
       "describe",
