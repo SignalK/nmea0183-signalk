@@ -50,11 +50,11 @@ const heading_nineCData = '9C,51,1E,00'
 const empty_nineCData = '9C,,,'
 const empty_eightFourData = '84,,,,,,,,'
 // 0x85 Navigation to waypoint: XTE=1.00nm steer left, bearing=45° magnetic, distance=5.50nm
-const navToWaypointData = '85,06,64,02,05,96,17,00,00'
+const navToWaypointData = '85,06,64,A0,65,22,17,00,00'
 // 0x85 Navigation to waypoint with true bearing: XTE=0.50nm steer right, bearing=180° true, distance=12.0nm
 // F=0x07 means XTE present (bit 0), bearing present (bit 1), range present (bit 2)
 // U=0xA means (A & 0x3)*90 = 2*90 = 180° base, and (A & 0x8) = 0x8 so True bearing
-const navToWaypointTrueData = '85,06,32,0A,07,78,07,00,00'
+const navToWaypointTrueData = '85,06,32,0A,80,07,47,00,00'
 // 0x82 Waypoint name: "WPT1" (6-bit encoded, little-endian)
 const waypointNameData = '82,05,27,D8,48,B7,06,F9'
 // 0x82 Waypoint name: "AB" (6-bit encoded, padded with zeros)

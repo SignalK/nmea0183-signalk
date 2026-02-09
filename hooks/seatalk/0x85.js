@@ -102,10 +102,11 @@ module.exports = function (input) {
   }
 
   // Distance to destination
-  // ZZZ is formed from Z_high (high nibble of byte 4) and ZZ (byte 5)
+  // ZZZ is formed from ZZ (byte 5) and Z_high (high nibble of byte 4)
+  // Byte order is low-nibble-last: ZZZ = (ZZ << 4) | Z_high
   const rangePresent = (F & 0x4) === 0x4
   if (rangePresent) {
-    const ZZZ = (Z_high << 8) | ZZ
+    const ZZZ = (ZZ << 4) | Z_high
     // If Y & 1 = 1: ZZZ / 100 nm (0-9.99nm)
     // If Y & 1 = 0: ZZZ / 10 nm (≥10nm)
     const distanceNm = (Y & 0x1) === 0x1 ? ZZZ / 100 : ZZZ / 10
