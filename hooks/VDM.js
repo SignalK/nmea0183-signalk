@@ -224,6 +224,20 @@ module.exports = function (input, session) {
     })
   }
 
+  if (typeof data.etaMo !== 'undefined' ||
+    typeof data.etaDay !== 'undefined' ||
+    typeof data.etaHr !== 'undefined' ||
+    typeof data.etaMin !== 'undefined'
+  ) {
+    const etaIso = toDestinationEtaIso(data.etaMo, data.etaDay, data.etaHr, data.etaMin);
+    if (etaIso) {
+      values.push({
+        path: 'navigation.destination.eta',
+        value: etaIso,
+      })
+    }
+  }
+
   if (data.callsign) {
     values.push({
       path: '',
@@ -424,4 +438,32 @@ module.exports = function (input, session) {
   }
 
   return delta
+}
+
+function toDestinationEtaIso(etaMo, etaDay, etaHr, etaMin) {
+  const month = Number(etaMo)
+  const day = Number(etaDay)
+  const hour = Number(etaHr)
+  const minute = Number(etaMin)
+
+  // AIS message type 5 uses 0/0/24/60 for "not available".
+  if (!Number.isInteger(month) || !Number.isInteger(day) || !Number.isInteger(hour) || !Number.isInteger(minute)) {
+    return undefined
+  }
+
+  if (month < 1 || month > 12 || day < 1 || day > 31 || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+    return undefined
+  }
+
+  const now = new Date()
+  const year = now.getUTCFullYear()
+
+  const currentYearEta = new Date(Date.UTC(year, month - 1, day, hour, minute, 0, 0))
+
+  // ETA has no year in AIS, so roll to next year when current-year date is in the past.
+  if (currentYearEta.getTime() < now.getTime()) {
+    return new Date(Date.UTC(year + 1, month - 1, day, hour, minute, 0, 0)).toISOString()
+  }
+
+  return currentYearEta.toISOString()
 }
