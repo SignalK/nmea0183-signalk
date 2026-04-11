@@ -18,7 +18,6 @@
 
 const debug = require('debug')('signalk-parser-nmea0183/GLL')
 const utils = require('@signalk/nmea0183-utilities')
-const moment = require('moment-timezone')
 
 /*
 === GLL - Geographic Position - Latitude/Longitude ===
@@ -61,7 +60,7 @@ module.exports = function (input) {
   }
 
   const time = parts[4].indexOf('.') === -1 ? parts[4] : parts[4].split('.')[0]
-  const timestamp = utils.timestamp(time, moment.tz('UTC').format('DDMMYY'))
+  const timestamp = utils.timestamp(time)
 
   const latitude = utils.coordinate(parts[0], parts[1])
   const longitude = utils.coordinate(parts[2], parts[3])

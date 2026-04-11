@@ -39,7 +39,6 @@ Field Number:
 */
 const debug = require('debug')('signalk-parser-nmea0183/ZDA')
 const utils = require('@signalk/nmea0183-utilities')
-const moment = require('moment-timezone')
 
 function isEmpty(mixed) {
   return (

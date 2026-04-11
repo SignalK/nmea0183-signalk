@@ -18,7 +18,6 @@
 
 const debug = require('debug')('signalk-parser-nmea0183/GGA')
 const utils = require('@signalk/nmea0183-utilities')
-const moment = require('moment-timezone')
 
 /*
 === GNS - Fix Data ===
@@ -108,7 +107,7 @@ module.exports = function (input) {
   }
 
   const time = parts[0].indexOf('.') === -1 ? parts[0] : parts[0].split('.')[0]
-  const timestamp = utils.timestamp(time, moment.tz('UTC').format('DDMMYY'))
+  const timestamp = utils.timestamp(time)
 
   const STATUS = {
     S: 'Safe',

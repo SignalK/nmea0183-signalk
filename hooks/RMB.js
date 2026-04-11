@@ -17,7 +17,6 @@
 'use strict'
 
 const utils = require('@signalk/nmea0183-utilities')
-const moment = require('moment-timezone')
 
 /*
 RMB Sentence

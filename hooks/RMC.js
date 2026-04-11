@@ -17,7 +17,6 @@
 'use strict'
 
 const utils = require('@signalk/nmea0183-utilities')
-const moment = require('moment-timezone')
 
 /*
 RMC Sentence
@@ -46,7 +45,8 @@ module.exports = function (input) {
   let variation = null
 
   const timestamp = utils.timestamp(parts[0], parts[8])
-  const age = moment.tz(timestamp, 'UTC').unix()
+  // seconds since epoch; Date.parse avoids an extra Date allocation
+  const age = Math.floor(Date.parse(timestamp) / 1000)
 
   latitude =
     parts[2].trim().length > 0 && !isNaN(parts[2]) && 'NS'.includes(parts[3])

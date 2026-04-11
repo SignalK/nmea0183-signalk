@@ -27,7 +27,6 @@
     "@signalk/nmea0183-utilities": "^0.9.0",
     "@signalk/signalk-schema": "^1.7.1",
     "ggencoder": "^1.0.8",
-    "moment-timezone": "^0.5.21",
     "split": "^1.0.1"
   },
   "devDependencies": {
