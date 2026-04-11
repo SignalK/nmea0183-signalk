@@ -153,11 +153,8 @@ describe('GNS', () => {
     should.equal(delta, null)
   })
 
-  // Regression test for the timestamp field contract. GNS sentences only
-  // carry HHMMSS, so the date portion of the emitted ISO timestamp must
-  // come from "today" (UTC) at parse time. See hooks/GGA.js test for the
-  // full rationale; this test is the GNS counterpart.
   it('emits a UTC ISO timestamp matching today and the sentence time', () => {
+    // before/after window tolerates a test run straddling midnight UTC
     const before = new Date().toISOString().slice(0, 10)
     const delta = new Parser().parse(
       '$GPGNS,111648.00,0235.0379,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,S*5D'

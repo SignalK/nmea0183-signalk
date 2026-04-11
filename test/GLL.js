@@ -55,11 +55,8 @@ describe('GLL', () => {
     should.equal(delta, null)
   })
 
-  // Regression test for the timestamp field contract. GLL sentences only
-  // carry HHMMSS, so the date portion of the emitted ISO timestamp must
-  // come from "today" (UTC) at parse time. See hooks/GGA.js test for the
-  // full rationale; this test is the GLL counterpart.
   it('emits a UTC ISO timestamp matching today and the sentence time', () => {
+    // before/after window tolerates a test run straddling midnight UTC
     const before = new Date().toISOString().slice(0, 10)
     const delta = new Parser().parse(
       '$GPGLL,5958.613,N,02325.928,E,121022,A,D*40'
