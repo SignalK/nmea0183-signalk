@@ -165,4 +165,32 @@ describe('GGA', () => {
     const delta = new Parser().parse('$GPGGA,,,,,,,,,,,,,,*56')
     should.equal(delta, null)
   })
+
+  // Regression test for the timestamp field contract. GGA sentences only
+  // carry HHMMSS, so the date portion of the emitted ISO timestamp must
+  // come from "today" (UTC) at parse time. This test locks in:
+  //  1. The field is a string in strict ISO 8601 UTC format
+  //     (YYYY-MM-DDTHH:MM:SS.000Z, no fractional ms).
+  //  2. The time portion equals the sentence's HHMMSS field exactly.
+  //  3. The date portion equals today's UTC date at parse time.
+  //
+  // Passes on both the moment-timezone-based implementation and the
+  // native-Date replacement, proving the contract is stable across the
+  // refactor.
+  it('emits a UTC ISO timestamp matching today and the sentence time', () => {
+    // Capture the UTC date immediately before and after parse() to
+    // tolerate a test run that straddles midnight UTC.
+    const before = new Date().toISOString().slice(0, 10)
+    const delta = new Parser().parse(
+      '$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F'
+    )
+    const after = new Date().toISOString().slice(0, 10)
+
+    const ts = delta.updates[0].timestamp
+    ts.should.be.a('string')
+    ts.should.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.000Z$/)
+    // "172814" -> 17:28:14
+    ts.slice(11, 19).should.equal('17:28:14')
+    ts.slice(0, 10).should.be.oneOf([before, after])
+  })
 })
