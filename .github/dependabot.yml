@@ -11,6 +11,17 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # chai-things (abandoned since 2014) only works with chai 4.x.
+      # Re-enable after migrating test suite off chai-things.
+      - dependency-name: chai
+        update-types:
+          - version-update:semver-major
+      # prettier 3 changes default formatting; needs a tree-wide reformat
+      # commit. Re-enable after that lands.
+      - dependency-name: prettier
+        update-types:
+          - version-update:semver-major
     labels:
       - dependencies
 
