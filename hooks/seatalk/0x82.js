@@ -52,12 +52,15 @@ module.exports = function (input) {
 
   // Decode characters per Thomas Knauf's formula
   const c1 = (XX & 0x3f) + 0x30
-  const c2 = ((YY & 0x0f) * 4 + (XX & 0xc0) / 64) + 0x30
-  const c3 = ((ZZ & 0x03) * 16 + (YY & 0xf0) / 16) + 0x30
-  const c4 = ((ZZ & 0xfc) / 4) + 0x30
+  const c2 = (YY & 0x0f) * 4 + (XX & 0xc0) / 64 + 0x30
+  const c3 = (ZZ & 0x03) * 16 + (YY & 0xf0) / 16 + 0x30
+  const c4 = (ZZ & 0xfc) / 4 + 0x30
 
   // '0' (0x30) represents empty character positions - strip leading/trailing zeros
-  const waypointName = String.fromCharCode(c1, c2, c3, c4).replace(/^0+|0+$/g, '')
+  const waypointName = String.fromCharCode(c1, c2, c3, c4).replace(
+    /^0+|0+$/g,
+    ''
+  )
 
   if (waypointName.length === 0) {
     return null

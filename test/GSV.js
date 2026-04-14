@@ -137,5 +137,4 @@ describe('GSV', () => {
     pathValue.value.should.have.property('gnss', 'GPS')
     pathValue.value.should.have.property('antennaType', 'SLAVE')
   })
-
 })
