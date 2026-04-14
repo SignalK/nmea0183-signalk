@@ -15,7 +15,7 @@ jobs:
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -24,4 +24,4 @@ jobs:
           name: ${{ github.ref_name }}
           body: ${{ steps.github_release.outputs.changelog }}
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
