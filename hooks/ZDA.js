@@ -74,7 +74,7 @@ module.exports = function (input) {
     const second = (parts[0] || '').substring(4, 6)
     const milliSecond = (parts[0].substring(4) % 1) * 1000
     const d = new Date(
-      Date.UTC(year, month, day, hour, minute, second, milliSecond)
+      Date.UTC(year, month, day, hour, minute, second, milliSecond),
     )
     const ts = d.toISOString()
     delta = {

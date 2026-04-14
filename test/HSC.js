@@ -31,19 +31,19 @@ describe('HSC', () => {
     delta.should.be.an('object')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'steering.autopilot.target.headingTrue'
+      'steering.autopilot.target.headingTrue',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      0.7002260960600073
+      0.7002260960600073,
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'steering.autopilot.target.headingMagnetic'
+      'steering.autopilot.target.headingMagnetic',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      0.6825982706108397
+      0.6825982706108397,
     )
   })
 

@@ -27,11 +27,11 @@ describe('ZDA', () => {
     const delta = new Parser().parse(nmeaLine)
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.datetime'
+      'navigation.datetime',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      '2004-03-11T16:00:12.710Z'
+      '2004-03-11T16:00:12.710Z',
     )
   })
 
@@ -44,11 +44,11 @@ describe('ZDA', () => {
     const delta = new Parser().parse('$IIZDA,085400,22,07,2021,,*50')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.datetime'
+      'navigation.datetime',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      '2021-07-22T08:54:00.000Z'
+      '2021-07-22T08:54:00.000Z',
     )
   })
 })

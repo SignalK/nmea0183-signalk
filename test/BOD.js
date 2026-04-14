@@ -31,28 +31,28 @@ describe('BOD', () => {
     delta.should.be.an('object')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseRhumbline.bearingTrackTrue'
+      'navigation.courseRhumbline.bearingTrackTrue',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      0.7853981635767779
+      0.7853981635767779,
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseRhumbline.bearingTrackMagnetic'
+      'navigation.courseRhumbline.bearingTrackMagnetic',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      0.40142572805035315
+      0.40142572805035315,
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseRhumbline.nextPoint.ID'
+      'navigation.courseRhumbline.nextPoint.ID',
     )
     delta.updates[0].values.should.containItemWithProperty('value', 'DEST')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseRhumbline.previousPoint.ID'
+      'navigation.courseRhumbline.previousPoint.ID',
     )
     delta.updates[0].values.should.containItemWithProperty('value', 'START')
   })

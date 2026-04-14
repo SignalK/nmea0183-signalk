@@ -25,15 +25,15 @@ describe('HDG', () => {
     const delta = new Parser().parse('$SDHDG,181.9,,,0.6,E*32')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.headingMagnetic'
+      'navigation.headingMagnetic',
     )
     delta.updates[0].values[0].value.should.be.closeTo(
       (181.9 / 180) * Math.PI,
-      0.005
+      0.005,
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.magneticVariation'
+      'navigation.magneticVariation',
     )
     delta.updates[0].values
       .find((pv) => pv.path === 'navigation.magneticVariation')
@@ -45,11 +45,11 @@ describe('HDG', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.headingMagnetic'
+      'navigation.headingMagnetic',
     )
     delta.updates[0].values[0].value.should.be.closeTo(
       (51.5 / 180) * Math.PI,
-      0.005
+      0.005,
     )
   })
 

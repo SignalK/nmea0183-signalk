@@ -98,7 +98,7 @@ module.exports = function (input, session) {
 
   if (Number(parts[SENTENCE_NUMBER]) !== gsvData.nextSentenceNumber) {
     debug(
-      `Expected sentence number to be ${gsvData.nextSentenceNumber} but got ${parts}`
+      `Expected sentence number to be ${gsvData.nextSentenceNumber} but got ${parts}`,
     )
     delete session.gsvData
     return null
@@ -115,12 +115,12 @@ module.exports = function (input, session) {
         elevation: utils.transform(
           parts[thisSatDataStart + OFFSET_ELEVATION],
           'deg',
-          'rad'
+          'rad',
         ),
         azimuth: utils.transform(
           parts[thisSatDataStart + OFFSET_AZIMUTH],
           'deg',
-          'rad'
+          'rad',
         ),
         SNR: Number(parts[thisSatDataStart + OFFSET_SNR]),
       })

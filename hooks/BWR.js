@@ -61,7 +61,7 @@ module.exports = function BWRHook(input) {
     distance = utils.transform(
       parts[9],
       upper(parts[10]) === 'N' ? 'nm' : 'km',
-      'm'
+      'm',
     )
     bearingToWaypoint[upper(parts[6]) === 'T' ? 'True' : 'Magnetic'] =
       utils.transform(parts[5], 'deg', 'rad')

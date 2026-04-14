@@ -57,8 +57,8 @@ module.exports = function (input, session) {
         session['time'].hour,
         session['time'].minute,
         session['time'].second,
-        session['time'].milliSecond
-      )
+        session['time'].milliSecond,
+      ),
     )
     const ts = d.toISOString()
 

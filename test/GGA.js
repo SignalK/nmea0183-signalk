@@ -28,7 +28,7 @@ const toFull = require('./toFull')
 describe('GGA', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
-      '$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F'
+      '$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F',
     )
 
     should.not.exist(delta.updates[0].source.label)
@@ -36,31 +36,31 @@ describe('GGA', () => {
     // Paths
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.position'
+      'navigation.position',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.methodQuality'
+      'navigation.gnss.methodQuality',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.satellites'
+      'navigation.gnss.satellites',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.antennaAltitude'
+      'navigation.gnss.antennaAltitude',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.horizontalDilution'
+      'navigation.gnss.horizontalDilution',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.differentialAge'
+      'navigation.gnss.differentialAge',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.differentialReference'
+      'navigation.gnss.differentialReference',
     )
     // Values
     delta.updates[0].values
@@ -97,7 +97,7 @@ describe('GGA', () => {
   it('Converts OK using individual parser with invalid lat/lng', () => {
     const delta = new Parser({ validateChecksum: false }).parse(
       // note this malformed lat value is pulled from a real validated malformed RMC example. see test/RMC.js
-      '$GPGGA,172814.0,1547\x0E70800,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F'
+      '$GPGGA,172814.0,1547\x0E70800,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F',
     )
 
     should.not.exist(delta.updates[0].source.label)
@@ -105,37 +105,37 @@ describe('GGA', () => {
     // Paths
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.position'
+      'navigation.position',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.methodQuality'
+      'navigation.gnss.methodQuality',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.satellites'
+      'navigation.gnss.satellites',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.antennaAltitude'
+      'navigation.gnss.antennaAltitude',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.horizontalDilution'
+      'navigation.gnss.horizontalDilution',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.differentialAge'
+      'navigation.gnss.differentialAge',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.differentialReference'
+      'navigation.gnss.differentialReference',
     )
     should.equal(
       delta.updates[0].values.find(
-        (value) => value.path === 'navigation.position'
+        (value) => value.path === 'navigation.position',
       ).value,
-      null
+      null,
     )
     delta.updates[0].values
       .find((value) => value.path === 'navigation.gnss.methodQuality')
@@ -170,7 +170,7 @@ describe('GGA', () => {
     // before/after window tolerates a test run straddling midnight UTC
     const before = new Date().toISOString().slice(0, 10)
     const delta = new Parser().parse(
-      '$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F'
+      '$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F',
     )
     const after = new Date().toISOString().slice(0, 10)
 

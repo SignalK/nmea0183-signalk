@@ -28,45 +28,45 @@ const toFull = require('./toFull')
 describe('GNS', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
-      '$GPGNS,111648.00,0235.0379,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,S*5D'
+      '$GPGNS,111648.00,0235.0379,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,S*5D',
     )
 
     // Paths
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.position'
+      'navigation.position',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.methodQuality'
+      'navigation.gnss.methodQuality',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.satellites'
+      'navigation.gnss.satellites',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.antennaAltitude'
+      'navigation.gnss.antennaAltitude',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.horizontalDilution'
+      'navigation.gnss.horizontalDilution',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.geoidalSeparation'
+      'navigation.gnss.geoidalSeparation',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.differentialAge'
+      'navigation.gnss.differentialAge',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.differentialReference'
+      'navigation.gnss.differentialReference',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.status'
+      'navigation.gnss.status',
     )
 
     // Values
@@ -92,44 +92,44 @@ describe('GNS', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser({ validateChecksum: false }).parse(
       // note this malformed lat value is pulled from a real validated malformed RMC example. see test/RMC.js
-      '$GPGNS,111648.00,1547\x0E70800,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,S*5D'
+      '$GPGNS,111648.00,1547\x0E70800,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,S*5D',
     )
     // Paths
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.position'
+      'navigation.position',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.methodQuality'
+      'navigation.gnss.methodQuality',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.satellites'
+      'navigation.gnss.satellites',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.antennaAltitude'
+      'navigation.gnss.antennaAltitude',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.horizontalDilution'
+      'navigation.gnss.horizontalDilution',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.geoidalSeparation'
+      'navigation.gnss.geoidalSeparation',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.differentialAge'
+      'navigation.gnss.differentialAge',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.differentialReference'
+      'navigation.gnss.differentialReference',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.gnss.status'
+      'navigation.gnss.status',
     )
 
     // Values
@@ -157,7 +157,7 @@ describe('GNS', () => {
     // before/after window tolerates a test run straddling midnight UTC
     const before = new Date().toISOString().slice(0, 10)
     const delta = new Parser().parse(
-      '$GPGNS,111648.00,0235.0379,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,S*5D'
+      '$GPGNS,111648.00,0235.0379,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,S*5D',
     )
     const after = new Date().toISOString().slice(0, 10)
 

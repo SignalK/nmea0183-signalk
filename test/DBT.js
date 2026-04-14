@@ -27,7 +27,7 @@ describe('DBT', () => {
     const delta = new Parser().parse('$IIDBT,035.53,f,010.83,M,005.85,F*23')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.depth.belowTransducer'
+      'environment.depth.belowTransducer',
     )
     delta.updates[0].values.should.containItemWithProperty('value', 10.83)
   })
@@ -38,7 +38,7 @@ describe('DBT', () => {
     delta.updates[0].values.length.should.equal(1)
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.depth.belowTransducer'
+      'environment.depth.belowTransducer',
     )
     delta.updates[0].values.should.containItemWithProperty('value', 131.91744)
   })
@@ -47,7 +47,7 @@ describe('DBT', () => {
     const delta = new Parser().parse('$IIDBT,,,,,,*52')
     delta.updates[0].values.length.should.equal(1)
     delta.updates[0].values[0].path.should.equal(
-      'environment.depth.belowTransducer'
+      'environment.depth.belowTransducer',
     )
     should.equal(delta.updates[0].values[0].value, null)
   })

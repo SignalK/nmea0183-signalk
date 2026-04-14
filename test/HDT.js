@@ -27,7 +27,7 @@ describe('HDT', () => {
     const delta = new Parser().parse('$GPHDT,123.456,T*32')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.headingTrue'
+      'navigation.headingTrue',
     )
     delta.updates[0].values[0].value.should.be.closeTo(2.155, 0.005)
   })

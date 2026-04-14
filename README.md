@@ -101,7 +101,7 @@ const parser = new Parser()
 try {
   // backslash starts an escape sequence in JavaScript code, so they need to be double in string literals
   const delta = parser.parse(
-    '\\s:airmar dst800,c:1438489697*13\\$SDDBT,17.0,f,5.1,M,2.8,F*3E'
+    '\\s:airmar dst800,c:1438489697*13\\$SDDBT,17.0,f,5.1,M,2.8,F*3E',
   )
   if (delta !== null) {
     console.log(`[delta] ${JSON.stringify(delta, null, 2)}`)

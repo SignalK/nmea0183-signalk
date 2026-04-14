@@ -25,7 +25,7 @@ chai.Should()
 describe('BWC', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
-      '$GPBWC,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*29'
+      '$GPBWC,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*29',
     )
     // console.log(JSON.stringify(delta, null, 2))
 
@@ -57,7 +57,7 @@ describe('BWC', () => {
 
   it('Converts also without next position coordinates', () => {
     const delta = new Parser().parse(
-      '$IIBWC,200321,,,,,119.5,T,129.5,M,22.10,N,1*1E'
+      '$IIBWC,200321,,,,,119.5,T,129.5,M,22.10,N,1*1E',
     )
 
     delta.should.be.an('object')

@@ -25,7 +25,7 @@ describe('MTA', () => {
     const delta = new Parser().parse('$IIMTA,26.,C*31')
 
     delta.updates[0].values[0].path.should.equal(
-      'environment.outside.temperature'
+      'environment.outside.temperature',
     )
     delta.updates[0].values[0].value.should.be.closeTo(299.15, 0.005)
   })
@@ -40,7 +40,7 @@ describe('MTA', () => {
     const delta = new Parser().parse('$RAMTA,,C*08')
     delta.updates[0].values.length.should.equal(1)
     delta.updates[0].values[0].path.should.equal(
-      'environment.outside.temperature'
+      'environment.outside.temperature',
     )
     chai.expect(delta.updates[0].values[0].value).to.be.null
   })

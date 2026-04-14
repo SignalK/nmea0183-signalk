@@ -27,7 +27,7 @@ describe('DBK', () => {
     const delta = new Parser().parse('$IIDBK,035.53,f,010.83,M,005.85,F*3C')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.depth.belowKeel'
+      'environment.depth.belowKeel',
     )
     delta.updates[0].values.should.containItemWithProperty('value', 10.83)
   })

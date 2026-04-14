@@ -26,33 +26,33 @@ chai.use(require('./helpers/chai-has-item'))
 describe('RMC', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
-      '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,,,A*65'
+      '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,,,A*65',
     )
 
     delta.updates[0].timestamp.should.equal('2014-04-03T08:54:12.000Z')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.position'
+      'navigation.position',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseOverGroundTrue'
+      'navigation.courseOverGroundTrue',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.speedOverGround'
+      'navigation.speedOverGround',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.magneticVariation'
+      'navigation.magneticVariation',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.magneticVariationAgeOfService'
+      'navigation.magneticVariationAgeOfService',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.datetime'
+      'navigation.datetime',
     )
     delta.updates[0].values
       .find((value) => value.path === 'navigation.position')
@@ -72,45 +72,45 @@ describe('RMC', () => {
     chai
       .expect(
         delta.updates[0].values.find(
-          (value) => value.path === 'navigation.magneticVariation'
-        ).value
+          (value) => value.path === 'navigation.magneticVariation',
+        ).value,
       )
       .to.be.a('null')
     delta.updates[0].values
       .find(
-        (value) => value.path === 'navigation.magneticVariationAgeOfService'
+        (value) => value.path === 'navigation.magneticVariationAgeOfService',
       )
       .value.should.equal(1396515252)
   })
 
   it('Converts OK using individual parser, w/ missing SOG/COG values', () => {
     const delta = new Parser().parse(
-      '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,,,030414,12,E*42'
+      '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,,,030414,12,E*42',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.speedOverGround'
+      'navigation.speedOverGround',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseOverGroundTrue'
+      'navigation.courseOverGroundTrue',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.magneticVariation'
+      'navigation.magneticVariation',
     )
     chai
       .expect(
         delta.updates[0].values.find(
-          (value) => value.path === 'navigation.courseOverGroundTrue'
-        ).value
+          (value) => value.path === 'navigation.courseOverGroundTrue',
+        ).value,
       )
       .to.be.a('null')
     chai
       .expect(
         delta.updates[0].values.find(
-          (value) => value.path === 'navigation.speedOverGround'
-        ).value
+          (value) => value.path === 'navigation.speedOverGround',
+        ).value,
       )
       .to.be.a('null')
     delta.updates[0].values
@@ -121,29 +121,29 @@ describe('RMC', () => {
   it('Converts OK using individual parser, w/ invalid lat/lng values', () => {
     const delta = new Parser().parse(
       // note that this particular example contains invalid latitude (1547\x0E70800) and invalid datestamp/magvar (110925\f12.49)
-      '$GPRMC,210735.00,A,1547\x0E70800,S,14506.50460,W,0.187,10.33,110925\f12.49,E,A*3E'
+      '$GPRMC,210735.00,A,1547\x0E70800,S,14506.50460,W,0.187,10.33,110925\f12.49,E,A*3E',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.position'
+      'navigation.position',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.speedOverGround'
+      'navigation.speedOverGround',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseOverGroundTrue'
+      'navigation.courseOverGroundTrue',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.datetime'
+      'navigation.datetime',
     )
     should.equal(
       delta.updates[0].values.find(
-        (value) => value.path === 'navigation.position'
+        (value) => value.path === 'navigation.position',
       ).value,
-      null
+      null,
     )
     delta.updates[0].values
       .find((value) => value.path === 'navigation.courseOverGroundTrue')

@@ -25,7 +25,7 @@ chai.Should()
 describe('BWR', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
-      '$GPBWR,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*38'
+      '$GPBWR,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*38',
     )
     // console.log(JSON.stringify(delta, null, 2))
 

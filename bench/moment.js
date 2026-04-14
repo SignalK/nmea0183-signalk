@@ -50,16 +50,16 @@ function bench(label, sentence) {
   console.log(
     `${label.padEnd(4)}  min ${min.toFixed(0).padStart(6)} ns/op   ` +
       `median ${med.toFixed(0).padStart(6)} ns/op   ` +
-      `(${trials.map((t) => t.toFixed(0)).join(', ')})`
+      `(${trials.map((t) => t.toFixed(0)).join(', ')})`,
   )
   return { min, med, trials }
 }
 
 console.log(
-  `node ${process.version}  platform ${process.platform}/${process.arch}`
+  `node ${process.version}  platform ${process.platform}/${process.arch}`,
 )
 console.log(
-  `iterations per trial: ${ITERATIONS}   trials: ${TRIALS}   warmup: ${WARMUP}`
+  `iterations per trial: ${ITERATIONS}   trials: ${TRIALS}   warmup: ${WARMUP}`,
 )
 console.log('')
 const results = {}

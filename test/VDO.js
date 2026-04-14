@@ -25,7 +25,7 @@ describe('VDO', function () {
 
   it('Single line converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n'
+      '!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n',
     )
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:244670316')
   })

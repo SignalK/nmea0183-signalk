@@ -26,7 +26,7 @@ chai.Should()
 describe('APB', (done) => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
-      '$GPAPB,A,A,0.10,R,N,V,V,011,M,DEST,011,M,011,M*3C'
+      '$GPAPB,A,A,0.10,R,N,V,V,011,M,DEST,011,M,011,M*3C',
     )
     // console.log(JSON.stringify(delta, null, 2))
 
@@ -40,7 +40,7 @@ describe('APB', (done) => {
     delta.updates[0].values
       .find(
         (x) =>
-          x.path === 'navigation.courseRhumbline.bearingToDestinationMagnetic'
+          x.path === 'navigation.courseRhumbline.bearingToDestinationMagnetic',
       )
       .value.should.be.closeTo(0.19198621776321237, 0.000001)
     delta.updates[0].values
@@ -51,13 +51,13 @@ describe('APB', (done) => {
       .value.should.closeTo(0.19198621776321237, 0.0001)
     expect(
       delta.updates[0].values.find(
-        (x) => x.path === 'notifications.arrivalCircleEntered'
-      ).value
+        (x) => x.path === 'notifications.arrivalCircleEntered',
+      ).value,
     ).to.be.null
     expect(
       delta.updates[0].values.find(
-        (x) => x.path === 'notifications.perpendicularPassed'
-      ).value
+        (x) => x.path === 'notifications.perpendicularPassed',
+      ).value,
     ).to.be.null
   })
 

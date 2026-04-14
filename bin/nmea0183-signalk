@@ -2,13 +2,13 @@
 
 const Parser = require('../lib/index.js')
 const parser = new Parser({
-  validateChecksum: false
+  validateChecksum: false,
 })
 
 process.stdin.resume()
 process.stdin.setEncoding('utf8')
 
-process.stdin.pipe(require('split')()).on('data', data => {
+process.stdin.pipe(require('split')()).on('data', (data) => {
   if (typeof data !== 'string') {
     return
   }
@@ -18,13 +18,12 @@ process.stdin.pipe(require('split')()).on('data', data => {
     if (delta !== null) {
       console.log(JSON.stringify(delta))
     }
-  }
-  catch(e) {
-      console.error('Encountered an error:', e.message)
+  } catch (e) {
+    console.error('Encountered an error:', e.message)
   }
 })
 
-process.stdin.on('error', err => {
+process.stdin.on('error', (err) => {
   console.error('Encountered an input error:', err.message)
   process.exit(1)
 })
