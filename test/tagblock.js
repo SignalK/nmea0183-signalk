@@ -33,7 +33,7 @@ describe('NMEA0183v4 tag block', () => {
     delta.updates[0].timestamp.should.equal('2015-08-02T04:28:17.000Z')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.depth.belowTransducer',
+      'environment.depth.belowTransducer'
     )
   })
 })

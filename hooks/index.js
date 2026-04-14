@@ -40,5 +40,5 @@ module.exports = {
   BOD: require('./BOD.js'),
   BWC: require('./BWC.js'),
   BWR: require('./BWR.js'),
-  HSC: require('./HSC.js'),
+  HSC: require('./HSC.js')
 }

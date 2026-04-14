@@ -47,12 +47,12 @@ module.exports = function (input) {
             value: {
               setTrue: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
               setMagnetic: utils.transform(utils.float(parts[2]), 'deg', 'rad'),
-              drift: utils.transform(utils.float(parts[4]), 'knots', 'ms'),
-            },
-          },
-        ],
-      },
-    ],
+              drift: utils.transform(utils.float(parts[4]), 'knots', 'ms')
+            }
+          }
+        ]
+      }
+    ]
   }
 
   return delta

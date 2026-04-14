@@ -32,7 +32,7 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'navigation.speedThroughWater',
-    value: utils.transform(utils.float(speedThroughWater), 'knots', 'ms'),
+    value: utils.transform(utils.float(speedThroughWater), 'knots', 'ms')
   })
 
   return {
@@ -40,8 +40,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

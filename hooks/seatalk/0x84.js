@@ -103,25 +103,25 @@ module.exports = function (input) {
   if (compassHeading) {
     pathValues.push({
       path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(compassHeading), 'deg', 'rad'),
+      value: utils.transform(utils.float(compassHeading), 'deg', 'rad')
     })
   }
   if (apCourse) {
     pathValues.push({
       path: 'steering.autopilot.target.headingMagnetic',
-      value: utils.transform(utils.float(apCourse), 'deg', 'rad'),
+      value: utils.transform(utils.float(apCourse), 'deg', 'rad')
     })
   }
   if (rudderPos) {
     pathValues.push({
       path: 'steering.rudderAngle',
-      value: utils.transform(utils.float(rudderPos), 'deg', 'rad'),
+      value: utils.transform(utils.float(rudderPos), 'deg', 'rad')
     })
   }
   if (mode) {
     pathValues.push({
       path: 'steering.autopilot.state',
-      value: mode,
+      value: mode
     })
   }
 
@@ -130,8 +130,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

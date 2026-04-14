@@ -63,22 +63,22 @@ module.exports = function BODHook(input) {
         values: [
           {
             path: 'navigation.courseRhumbline.bearingTrackTrue',
-            value: bearingOriginToDestination.True || null,
+            value: bearingOriginToDestination.True || null
           },
           {
             path: 'navigation.courseRhumbline.bearingTrackMagnetic',
-            value: bearingOriginToDestination.Magnetic || null,
+            value: bearingOriginToDestination.Magnetic || null
           },
           {
             path: 'navigation.courseRhumbline.nextPoint.ID',
-            value: destinationWaypointID,
+            value: destinationWaypointID
           },
           {
             path: 'navigation.courseRhumbline.previousPoint.ID',
-            value: originWaypointID,
-          },
-        ],
-      },
-    ],
+            value: originWaypointID
+          }
+        ]
+      }
+    ]
   }
 }

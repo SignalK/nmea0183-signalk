@@ -68,7 +68,7 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'environment.depth.belowTransducer',
-    value: depthbelowtransducer,
+    value: depthbelowtransducer
   })
 
   return {
@@ -76,8 +76,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

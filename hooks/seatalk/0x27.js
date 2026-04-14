@@ -33,7 +33,7 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'environment.water.temperature',
-    value: utils.float(waterTemperature) + 273.15,
+    value: utils.float(waterTemperature) + 273.15
   })
 
   return {
@@ -41,8 +41,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

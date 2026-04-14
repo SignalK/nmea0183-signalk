@@ -92,7 +92,7 @@ module.exports = function (input) {
     'Estimated (DR) mode',
     'Manual input',
     'Simulator mode',
-    'Error',
+    'Error'
   ]
 
   const latitude = utils.coordinate(parts[1], parts[2])
@@ -102,7 +102,7 @@ module.exports = function (input) {
   if (utils.isValidPosition(latitude, longitude)) {
     position = {
       latitude: latitude,
-      longitude: longitude,
+      longitude: longitude
     }
   }
 
@@ -114,45 +114,45 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.position',
-            value: position,
+            value: position
           },
           {
             path: 'navigation.gnss.methodQuality',
-            value: quality[utils.int(parts[5])],
+            value: quality[utils.int(parts[5])]
           },
 
           {
             path: 'navigation.gnss.satellites',
-            value: utils.int(parts[6]),
+            value: utils.int(parts[6])
           },
 
           {
             path: 'navigation.gnss.antennaAltitude',
-            value: utils.float(parts[8]),
+            value: utils.float(parts[8])
           },
 
           {
             path: 'navigation.gnss.horizontalDilution',
-            value: utils.float(parts[7]),
+            value: utils.float(parts[7])
           },
 
           {
             path: 'navigation.gnss.geoidalSeparation',
-            value: utils.float(parts[10]),
+            value: utils.float(parts[10])
           },
 
           {
             path: 'navigation.gnss.differentialAge',
-            value: utils.float(parts[12]),
+            value: utils.float(parts[12])
           },
 
           {
             path: 'navigation.gnss.differentialReference',
-            value: Number(parts[13]),
-          },
-        ],
-      },
-    ],
+            value: Number(parts[13])
+          }
+        ]
+      }
+    ]
   }
 
   return delta

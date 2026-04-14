@@ -80,7 +80,7 @@ const MODES = {
   N: 'No Valid Fix',
   P: 'Precise',
   R: 'RTK Integer',
-  S: 'Simulator',
+  S: 'Simulator'
 }
 
 const SYSTEMS = ['GPS', 'GLONASS', 'Galileo', 'BeiDou', 'QZSS']
@@ -113,7 +113,7 @@ module.exports = function (input) {
     S: 'Safe',
     C: 'Caution',
     U: 'Unsafe',
-    V: 'Not Valid',
+    V: 'Not Valid'
   }
 
   const latitude = utils.coordinate(parts[1], parts[2])
@@ -123,7 +123,7 @@ module.exports = function (input) {
   if (utils.isValidPosition(latitude, longitude)) {
     position = {
       latitude: latitude,
-      longitude: longitude,
+      longitude: longitude
     }
   }
 
@@ -135,49 +135,49 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.position',
-            value: position,
+            value: position
           },
           {
             path: 'navigation.gnss.methodQuality',
-            value: indicator(parts[5].split('')),
+            value: indicator(parts[5].split(''))
           },
 
           {
             path: 'navigation.gnss.satellites',
-            value: utils.int(parts[6]),
+            value: utils.int(parts[6])
           },
 
           {
             path: 'navigation.gnss.antennaAltitude',
-            value: utils.float(parts[8]),
+            value: utils.float(parts[8])
           },
 
           {
             path: 'navigation.gnss.horizontalDilution',
-            value: utils.float(parts[7]),
+            value: utils.float(parts[7])
           },
 
           {
             path: 'navigation.gnss.geoidalSeparation',
-            value: utils.float(parts[9]),
+            value: utils.float(parts[9])
           },
 
           {
             path: 'navigation.gnss.differentialAge',
-            value: utils.float(parts[10]),
+            value: utils.float(parts[10])
           },
 
           {
             path: 'navigation.gnss.differentialReference',
-            value: Number(parts[11]),
+            value: Number(parts[11])
           },
           {
             path: 'navigation.gnss.status',
-            value: STATUS[parts[12]],
-          },
-        ],
-      },
-    ],
+            value: STATUS[parts[12]]
+          }
+        ]
+      }
+    ]
   }
 
   return delta

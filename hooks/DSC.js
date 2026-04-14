@@ -167,17 +167,16 @@ module.exports = function (input) {
       path: 'navigation.position',
       value: {
         latitude: position.latitude,
-        longitude: position.longitude,
-      },
+        longitude: position.longitude
+      }
     })
   }
   if (distress) {
     values.push({
       path: 'notifications.' + distress_nature,
       value: {
-        message:
-          'DSC Distress Recieved! Nature of distress: ' + distress_nature,
-      },
+        message: 'DSC Distress Recieved! Nature of distress: ' + distress_nature
+      }
     })
   }
   if (!handled) {
@@ -185,8 +184,8 @@ module.exports = function (input) {
     values.push({
       path: 'notifications.dsc_parser',
       value: {
-        message: 'DSC Message Not Handled: ' + line,
-      },
+        message: 'DSC Message Not Handled: ' + line
+      }
     })
   }
   if (values.length > 0) {
@@ -197,10 +196,10 @@ module.exports = function (input) {
         {
           source: tags.source, //this.source(input.instrument),
           timestamp: tags.timestamp,
-          values: values,
-        },
+          values: values
+        }
       ],
-      context: 'vessels.urn:mrn:imo:mmsi:' + mmsi,
+      context: 'vessels.urn:mrn:imo:mmsi:' + mmsi
     }
   }
   return delta

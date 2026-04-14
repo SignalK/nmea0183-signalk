@@ -53,7 +53,7 @@ module.exports = function (input) {
     */
     pathValues.push({
       path: 'navigation.speedThroughWater',
-      value: utils.transform(utils.float(speedThroughWater), 'knots', 'ms'),
+      value: utils.transform(utils.float(speedThroughWater), 'knots', 'ms')
     })
   }
 
@@ -61,7 +61,7 @@ module.exports = function (input) {
   if ((D & 8) == 0) {
     pathValues.push({
       path: 'navigation.averageSpeedThroughWater',
-      value: utils.transform(utils.float(value2), 'knots', 'ms'),
+      value: utils.transform(utils.float(value2), 'knots', 'ms')
     })
   }
 
@@ -70,8 +70,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

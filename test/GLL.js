@@ -24,17 +24,17 @@ chai.use(require('@signalk/signalk-schema').chaiModule)
 describe('GLL', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
-      '$GPGLL,5958.613,N,02325.928,E,121022,A,D*40',
+      '$GPGLL,5958.613,N,02325.928,E,121022,A,D*40'
     )
 
     delta.updates[0].values[0].path.should.equal('navigation.position')
     delta.updates[0].values[0].value.latitude.should.be.closeTo(
       59.9768833,
-      0.000005,
+      0.000005
     )
     delta.updates[0].values[0].value.longitude.should.be.closeTo(
       23.432133,
-      0.000005,
+      0.000005
     )
     // delta.should.be.validSignalKDelta
   })
@@ -42,7 +42,7 @@ describe('GLL', () => {
   it('Converts OK using individual parser, invalid lat/lng', () => {
     const delta = new Parser({ validateChecksum: false }).parse(
       // note this malformed lat value is pulled from a real validated malformed RMC example. see test/RMC.js
-      '$GPGLL,1547\x0E70800,N,02325.928,E,121022,A,D*40',
+      '$GPGLL,1547\x0E70800,N,02325.928,E,121022,A,D*40'
     )
 
     delta.updates[0].values[0].path.should.equal('navigation.position')
@@ -58,7 +58,7 @@ describe('GLL', () => {
     // before/after window tolerates a test run straddling midnight UTC
     const before = new Date().toISOString().slice(0, 10)
     const delta = new Parser().parse(
-      '$GPGLL,5958.613,N,02325.928,E,121022,A,D*40',
+      '$GPGLL,5958.613,N,02325.928,E,121022,A,D*40'
     )
     const after = new Date().toISOString().slice(0, 10)
 

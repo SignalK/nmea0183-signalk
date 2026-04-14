@@ -91,7 +91,7 @@ module.exports = function (input) {
     }
     values.push({
       path: 'performance.targetSpeed',
-      value: targetspeed,
+      value: targetspeed
     })
   }
 
@@ -109,7 +109,7 @@ module.exports = function (input) {
 
     values.push({
       path: 'performance.tackMagnetic',
-      value: nxtcourse,
+      value: nxtcourse
     })
   }
 
@@ -127,7 +127,7 @@ module.exports = function (input) {
 
     values.push({
       path: 'performance.targetAngle',
-      value: optcourse,
+      value: optcourse
     })
   }
 
@@ -136,9 +136,9 @@ module.exports = function (input) {
       {
         source: tags.source, //this.source(input.instrument),
         timestamp: tags.timestamp,
-        values: values,
-      },
-    ],
+        values: values
+      }
+    ]
   }
 
   return delta

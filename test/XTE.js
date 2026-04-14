@@ -29,7 +29,7 @@ describe('XTE', () => {
 
     delta.should.be.an('object')
     delta.updates[0].values[0].path.should.equal(
-      'navigation.courseRhumbline.crossTrackError',
+      'navigation.courseRhumbline.crossTrackError'
     )
     delta.updates[0].values[0].value.should.be.closeTo(1240.84, 0.001)
   })

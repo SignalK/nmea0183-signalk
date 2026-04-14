@@ -80,21 +80,21 @@ module.exports = function (input) {
             value:
               parts[2].length === 0
                 ? null
-                : utils.transform(utils.float(parts[2]), 'deg', 'rad'),
+                : utils.transform(utils.float(parts[2]), 'deg', 'rad')
           },
           {
             path: 'navigation.courseOverGroundTrue',
             value:
               parts[0].length === 0
                 ? null
-                : utils.transform(utils.float(parts[0]), 'deg', 'rad'),
+                : utils.transform(utils.float(parts[0]), 'deg', 'rad')
           },
           {
             path: 'navigation.speedOverGround',
-            value: speed,
-          },
-        ],
-      },
-    ],
+            value: speed
+          }
+        ]
+      }
+    ]
   }
 }

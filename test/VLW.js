@@ -30,11 +30,11 @@ describe('VLW', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.log',
+      'navigation.log'
     )
     delta.updates[0].values[0].value.should.be.closeTo(
       10.1 * 1.852 * 1000,
-      0.001,
+      0.001
     )
   })
 
@@ -43,11 +43,11 @@ describe('VLW', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.trip.log',
+      'navigation.trip.log'
     )
     delta.updates[0].values[1].value.should.be.closeTo(
       12.3 * 1.852 * 1000,
-      0.001,
+      0.001
     )
   })
 })

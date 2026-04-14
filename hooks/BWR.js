@@ -56,12 +56,12 @@ module.exports = function BWRHook(input) {
     timestamp = utils.timestamp(parts[0])
     position = {
       latitude: utils.coordinate(parts[1], parts[2]),
-      longitude: utils.coordinate(parts[3], parts[4]),
+      longitude: utils.coordinate(parts[3], parts[4])
     }
     distance = utils.transform(
       parts[9],
       upper(parts[10]) === 'N' ? 'nm' : 'km',
-      'm',
+      'm'
     )
     bearingToWaypoint[upper(parts[6]) === 'T' ? 'True' : 'Magnetic'] =
       utils.transform(parts[5], 'deg', 'rad')
@@ -77,22 +77,22 @@ module.exports = function BWRHook(input) {
         values: [
           {
             path: 'navigation.courseRhumbline.bearingTrackTrue',
-            value: bearingToWaypoint.True || null,
+            value: bearingToWaypoint.True || null
           },
           {
             path: 'navigation.courseRhumbline.bearingTrackMagnetic',
-            value: bearingToWaypoint.Magnetic || null,
+            value: bearingToWaypoint.Magnetic || null
           },
           {
             path: 'navigation.courseRhumbline.nextPoint.distance',
-            value: distance,
+            value: distance
           },
           {
             path: 'navigation.courseRhumbline.nextPoint.position',
-            value: position,
-          },
-        ],
-      },
-    ],
+            value: position
+          }
+        ]
+      }
+    ]
   }
 }

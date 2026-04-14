@@ -40,7 +40,7 @@ const stateMapping = {
   9: 'hazardous material high speed',
   10: 'hazardous material wing in ground',
   14: 'ais-sart',
-  15: 'default',
+  15: 'default'
 }
 
 const msgTypeToTransmitterClass = {
@@ -51,7 +51,7 @@ const msgTypeToTransmitterClass = {
   5: 'A',
   18: 'B',
   19: 'B',
-  21: 'ATON',
+  21: 'ATON'
 }
 
 const msgTypeToPrefix = {
@@ -63,14 +63,14 @@ const msgTypeToPrefix = {
   18: 'vessels.',
   19: 'vessels.',
   21: 'atons.',
-  24: 'vessels.',
+  24: 'vessels.'
 }
 
 const specialManeuverMapping = {
   0: 'not available',
   1: 'not engaged',
   2: 'engaged',
-  3: 'reserved',
+  3: 'reserved'
 }
 
 const beaufortScale = {
@@ -89,14 +89,14 @@ const beaufortScale = {
   12: 'hurricane-force, ≥ 32.7 m/s',
   13: 'not available',
   14: 'reserved',
-  15: 'reserved',
+  15: 'reserved'
 }
 
 const statusTable = {
   0: 'steady',
   1: 'decreasing',
   2: 'increasing',
-  3: 'not available',
+  3: 'not available'
 }
 
 const precipitationType = {
@@ -107,14 +107,14 @@ const precipitationType = {
   4: 'mixed/ice',
   5: 'snow',
   6: 'reserved',
-  7: 'not available',
+  7: 'not available'
 }
 
 const iceTable = {
   0: 'no',
   1: 'yes',
   2: 'reserved',
-  3: 'not available',
+  3: 'not available'
 }
 
 module.exports = function (input, session) {
@@ -130,8 +130,8 @@ module.exports = function (input, session) {
     values.push({
       path: '',
       value: {
-        mmsi: data.mmsi,
-      },
+        mmsi: data.mmsi
+      }
     })
   }
 
@@ -139,57 +139,57 @@ module.exports = function (input, session) {
     values.push({
       path: '',
       value: {
-        name: data.shipname,
-      },
+        name: data.shipname
+      }
     })
   }
 
   if (typeof data.sog != 'undefined' && data.sog != 102.3) {
     values.push({
       path: 'navigation.speedOverGround',
-      value: utils.transform(data.sog, 'knots', 'ms'),
+      value: utils.transform(data.sog, 'knots', 'ms')
     })
   }
 
   if (typeof data.cog != 'undefined' && data.cog != 360) {
     values.push({
       path: 'navigation.courseOverGroundTrue',
-      value: utils.transform(data.cog, 'deg', 'rad'),
+      value: utils.transform(data.cog, 'deg', 'rad')
     })
   }
 
   if (typeof data.hdg != 'undefined' && data.hdg != 511) {
     values.push({
       path: 'navigation.headingTrue',
-      value: utils.transform(data.hdg, 'deg', 'rad'),
+      value: utils.transform(data.hdg, 'deg', 'rad')
     })
   }
 
   if (data.length) {
     values.push({
       path: 'design.length',
-      value: { overall: data.length },
+      value: { overall: data.length }
     })
   }
 
   if (data.width) {
     values.push({
       path: 'design.beam',
-      value: data.width,
+      value: data.width
     })
   }
 
   if (data.draught) {
     values.push({
       path: 'design.draft',
-      value: { current: data.draught },
+      value: { current: data.draught }
     })
   }
 
   if (data.dimA) {
     values.push({
       path: 'sensors.ais.fromBow',
-      value: data.dimA,
+      value: data.dimA
     })
   }
 
@@ -203,7 +203,7 @@ module.exports = function (input, session) {
 
     values.push({
       path: 'sensors.ais.fromCenter',
-      value: fromCenter,
+      value: fromCenter
     })
   }
 
@@ -212,7 +212,7 @@ module.exports = function (input, session) {
     if (typeof state !== 'undefined') {
       values.push({
         path: 'navigation.state',
-        value: state,
+        value: state
       })
     }
   }
@@ -220,14 +220,14 @@ module.exports = function (input, session) {
   if (data.destination) {
     values.push({
       path: 'navigation.destination.commonName',
-      value: data.destination,
+      value: data.destination
     })
   }
 
   if (data.callsign) {
     values.push({
       path: '',
-      value: { communication: { callsignVhf: data.callsign } },
+      value: { communication: { callsignVhf: data.callsign } }
     })
   }
 
@@ -236,7 +236,7 @@ module.exports = function (input, session) {
     if (aisClass) {
       values.push({
         path: 'sensors.ais.class',
-        value: aisClass,
+        value: aisClass
       })
     }
   }
@@ -246,9 +246,9 @@ module.exports = function (input, session) {
       path: '',
       value: {
         registrations: {
-          imo: `IMO ${data.imo}`,
-        },
-      },
+          imo: `IMO ${data.imo}`
+        }
+      }
     })
   }
 
@@ -260,19 +260,19 @@ module.exports = function (input, session) {
     if (typeof atonType !== 'undefined') {
       values.push({
         path: 'atonType',
-        value: { id: data.aidtype, name: atonType },
+        value: { id: data.aidtype, name: atonType }
       })
     }
     if (typeof data.offpos !== 'undefined') {
       values.push({
         path: 'offPosition',
-        value: data.offpos == 1,
+        value: data.offpos == 1
       })
     }
     if (typeof data.virtual !== 'undefined') {
       values.push({
         path: 'virtual',
-        value: data.virtual == 1,
+        value: data.virtual == 1
       })
     }
   }
@@ -282,7 +282,7 @@ module.exports = function (input, session) {
     if (typeof typeName !== 'undefined') {
       values.push({
         path: 'design.aisShipType',
-        value: { id: data.cargo, name: typeName },
+        value: { id: data.cargo, name: typeName }
       })
     }
   }
@@ -290,14 +290,14 @@ module.exports = function (input, session) {
   if (typeof data.smi !== 'undefined') {
     values.push({
       path: 'navigation.specialManeuver',
-      value: specialManeuverMapping[data.smi],
+      value: specialManeuverMapping[data.smi]
     })
   }
 
   if (typeof data.dac !== 'undefined') {
     values.push({
       path: 'sensors.ais.designatedAreaCode',
-      value: data.dac,
+      value: data.dac
     })
   }
 
@@ -307,7 +307,7 @@ module.exports = function (input, session) {
     }
     values.push({
       path: 'sensors.ais.functionalId',
-      value: data.fid,
+      value: data.fid
     })
   }
 
@@ -316,8 +316,8 @@ module.exports = function (input, session) {
       path: 'navigation.position',
       value: {
         longitude: data.lon,
-        latitude: data.lat,
-      },
+        latitude: data.lat
+      }
     })
   }
 
@@ -340,13 +340,13 @@ module.exports = function (input, session) {
     ['watertemp', 'water.temperature', cToK],
     ['salinity', 'water.salinity', percentToRatio],
     ['surfcurrspd', 'water.current.drift', knotsToMs],
-    ['surfcurrdir', 'water.current.set', degToRad],
+    ['surfcurrdir', 'water.current.set', degToRad]
   ].forEach(([propName, path, f]) => {
     if (data[propName] !== undefined) {
       contextPrefix = 'meteo.'
       values.push({
         path: `environment.` + path,
-        value: f(data[propName]),
+        value: f(data[propName])
       })
     }
   })
@@ -355,19 +355,19 @@ module.exports = function (input, session) {
     ['precipitation', 'outside.precipitation', precipitationType],
     ['seastate', 'water.seaState', beaufortScale],
     ['waterlevelten', 'water.levelTendency', statusTable],
-    ['airpressten', 'outside.pressureTendency', statusTable],
+    ['airpressten', 'outside.pressureTendency', statusTable]
   ].forEach(([propName, path, f]) => {
     if (data[propName] !== undefined) {
       contextPrefix = 'meteo.'
       values.push(
         {
           path: `environment.` + path,
-          value: f[data[propName]],
+          value: f[data[propName]]
         },
         {
           path: `environment.` + path + `Value`,
-          value: data[propName],
-        },
+          value: data[propName]
+        }
       )
     }
   })
@@ -377,12 +377,12 @@ module.exports = function (input, session) {
     values.push(
       {
         path: 'environment.outside.horizontalVisibility',
-        value: utils.transform(data.horvisib, 'nm', 'm'),
+        value: utils.transform(data.horvisib, 'nm', 'm')
       },
       {
         path: 'environment.outside.horizontalVisibility.overRange',
-        value: data.horvisibrange,
-      },
+        value: data.horvisibrange
+      }
     )
   }
 
@@ -404,7 +404,7 @@ module.exports = function (input, session) {
       .padStart(2, '0')}:00.000Z`
     values.push({
       path: 'environment.date',
-      value: date,
+      value: date
     })
   }
 
@@ -418,9 +418,9 @@ module.exports = function (input, session) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: values,
-      },
-    ],
+        values: values
+      }
+    ]
   }
 
   return delta

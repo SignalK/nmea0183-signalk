@@ -25,7 +25,7 @@ describe('MWD', () => {
     const delta = new Parser().parse('$IIMWD,,,046.,M,10.1,N,05.2,M*0B')
 
     delta.updates[0].values[0].path.should.equal(
-      'environment.wind.directionMagnetic',
+      'environment.wind.directionMagnetic'
     )
     delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
     delta.updates[0].values[1].path.should.equal('environment.wind.speedTrue')
@@ -36,11 +36,11 @@ describe('MWD', () => {
     const delta = new Parser().parse('$IIMWD,046.,T,046.,M,10.1,N,,*17')
 
     delta.updates[0].values[0].path.should.equal(
-      'environment.wind.directionTrue',
+      'environment.wind.directionTrue'
     )
     delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.directionMagnetic',
+      'environment.wind.directionMagnetic'
     )
     delta.updates[0].values[1].value.should.be.closeTo(0.802851, 0.00005)
     delta.updates[0].values[2].path.should.equal('environment.wind.speedTrue')
@@ -51,7 +51,7 @@ describe('MWD', () => {
     const delta = new Parser().parse('$IIMWD,046.,T,,,,,5.2,M*72')
 
     delta.updates[0].values[0].path.should.equal(
-      'environment.wind.directionTrue',
+      'environment.wind.directionTrue'
     )
     delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
     delta.updates[0].values[1].path.should.equal('environment.wind.speedTrue')
@@ -98,7 +98,7 @@ describe('MWD', () => {
     const delta = new Parser().parse('$IIMWD,046.,T,0.,m,10.1,N,5.2,M*51')
 
     delta.updates[0].values[0].path.should.equal(
-      'environment.wind.directionTrue',
+      'environment.wind.directionTrue'
     )
     delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
     delta.updates[0].values[1].path.should.equal('environment.wind.speedTrue')
@@ -109,7 +109,7 @@ describe('MWD', () => {
     const delta = new Parser().parse('$IIMWD,,,046.,M,10.1,N,0.0,m*1C')
 
     delta.updates[0].values[0].path.should.equal(
-      'environment.wind.directionMagnetic',
+      'environment.wind.directionMagnetic'
     )
     delta.updates[0].values[0].value.should.be.closeTo(0.802851, 0.00005)
     delta.updates[0].values[1].path.should.equal('environment.wind.speedTrue')

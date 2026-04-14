@@ -6,7 +6,7 @@ const should = chai.Should()
 
 const sentences = [
   '!AIVDM,2,1,0,A,53brRt4000010SG700iE@LE8@Tp4000000000153P615t0Ht0SCkjH4jC1C,0*25\n',
-  '!AIVDM,2,2,0,A,`0000000001,2*75\n',
+  '!AIVDM,2,2,0,A,`0000000001,2*75\n'
 ]
 
 // FIXME: This is testing VDM - not VDO
@@ -25,7 +25,7 @@ describe('VDO', function () {
 
   it('Single line converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n',
+      '!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n'
     )
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:244670316')
   })

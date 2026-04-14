@@ -40,7 +40,7 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'environment.wind.angleApparent',
-    value: utils.transform(utils.float(apparentWindAngle), 'deg', 'rad'),
+    value: utils.transform(utils.float(apparentWindAngle), 'deg', 'rad')
   })
 
   return {
@@ -48,8 +48,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

@@ -80,7 +80,7 @@ const TALKER_TO_GNSS = {
   GL: 'GLONASS',
   GA: 'GALILEO',
   GB: 'BEIDOU',
-  GQ: 'QZSS',
+  GQ: 'QZSS'
 }
 
 module.exports = function (input, session) {
@@ -93,12 +93,12 @@ module.exports = function (input, session) {
       numberOfSentences: Number(parts[NUMBER_OF_SENTENCES]),
       count: Number(parts[SATS_IN_VIEW]),
       satellites: [],
-      gnss: TALKER_TO_GNSS[talker],
+      gnss: TALKER_TO_GNSS[talker]
     })
 
   if (Number(parts[SENTENCE_NUMBER]) !== gsvData.nextSentenceNumber) {
     debug(
-      `Expected sentence number to be ${gsvData.nextSentenceNumber} but got ${parts}`,
+      `Expected sentence number to be ${gsvData.nextSentenceNumber} but got ${parts}`
     )
     delete session.gsvData
     return null
@@ -115,14 +115,14 @@ module.exports = function (input, session) {
         elevation: utils.transform(
           parts[thisSatDataStart + OFFSET_ELEVATION],
           'deg',
-          'rad',
+          'rad'
         ),
         azimuth: utils.transform(
           parts[thisSatDataStart + OFFSET_AZIMUTH],
           'deg',
-          'rad',
+          'rad'
         ),
-        SNR: Number(parts[thisSatDataStart + OFFSET_SNR]),
+        SNR: Number(parts[thisSatDataStart + OFFSET_SNR])
       })
     }
   }
@@ -149,11 +149,11 @@ module.exports = function (input, session) {
           values: [
             {
               path: 'navigation.gnss.satellitesInView',
-              value: gsvData,
-            },
-          ],
-        },
-      ],
+              value: gsvData
+            }
+          ]
+        }
+      ]
     }
   }
 

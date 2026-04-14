@@ -40,11 +40,11 @@ module.exports = function (input) {
             path: `propulsion.${
               parts[0].toUpperCase() === 'S' ? 'shaft' : 'engine'
             }_${parts[1]}.revolutions`,
-            value: utils.float(parts[2]) / 60,
-          },
-        ],
-      },
-    ],
+            value: utils.float(parts[2]) / 60
+          }
+        ]
+      }
+    ]
   }
 
   return delta

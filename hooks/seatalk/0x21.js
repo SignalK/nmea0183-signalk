@@ -32,7 +32,7 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'navigation.trip',
-    value: utils.transform(utils.float(trip), 'nm', 'km') * 1000,
+    value: utils.transform(utils.float(trip), 'nm', 'km') * 1000
   })
 
   return {
@@ -40,8 +40,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

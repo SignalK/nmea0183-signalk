@@ -69,15 +69,15 @@ module.exports = function (input) {
             value: utils.transform(
               utils.float(parts[0]) * rightPositive,
               'deg',
-              'rad',
-            ),
+              'rad'
+            )
           },
           {
             path: 'environment.wind.speedApparent',
-            value: utils.transform(utils.float(parts[2]), 'knots', 'ms'),
-          },
-        ],
-      },
-    ],
+            value: utils.transform(utils.float(parts[2]), 'knots', 'ms')
+          }
+        ]
+      }
+    ]
   }
 }

@@ -45,14 +45,14 @@ module.exports = function (input) {
     haveDirection = true
     pathValues.push({
       path: 'environment.wind.directionTrue',
-      value: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
+      value: utils.transform(utils.float(parts[0]), 'deg', 'rad')
     })
   }
   if (parts[2] != '' && parts[3] == 'M') {
     haveDirection = true
     pathValues.push({
       path: 'environment.wind.directionMagnetic',
-      value: utils.transform(utils.float(parts[2]), 'deg', 'rad'),
+      value: utils.transform(utils.float(parts[2]), 'deg', 'rad')
     })
   }
   if (!haveDirection) {
@@ -76,7 +76,7 @@ module.exports = function (input) {
   }
   pathValues.push({
     path: 'environment.wind.speedTrue',
-    value: speed,
+    value: speed
   })
 
   const delta = {
@@ -84,9 +84,9 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 
   return delta

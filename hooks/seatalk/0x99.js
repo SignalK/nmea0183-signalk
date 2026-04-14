@@ -43,7 +43,7 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'navigation.magneticVariation',
-    value: utils.transform(utils.float(magneticVariation), 'deg', 'rad'),
+    value: utils.transform(utils.float(magneticVariation), 'deg', 'rad')
   })
 
   return {
@@ -51,8 +51,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

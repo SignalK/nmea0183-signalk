@@ -46,19 +46,19 @@ module.exports = function (input) {
   if (parts[0] != '') {
     pathValues.push({
       path: 'navigation.headingTrue',
-      value: utils.transform(utils.float(parts[0]), 'deg', 'rad'),
+      value: utils.transform(utils.float(parts[0]), 'deg', 'rad')
     })
   }
   if (parts[2] != '') {
     pathValues.push({
       path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(parts[2]), 'deg', 'rad'),
+      value: utils.transform(utils.float(parts[2]), 'deg', 'rad')
     })
   }
   if (parts[4] != '') {
     pathValues.push({
       path: 'navigation.speedThroughWater',
-      value: utils.transform(utils.float(parts[4]), 'knots', 'ms'),
+      value: utils.transform(utils.float(parts[4]), 'knots', 'ms')
     })
   }
 
@@ -67,9 +67,9 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 
   return delta

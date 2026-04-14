@@ -71,8 +71,8 @@ CC = 32 Engine Minutes
       gaugeAlarmOn: false,
       backlight: 0,
       zones: [],
-      originalValue: null,
-    },
+      originalValue: null
+    }
   },
 
   /*
@@ -129,8 +129,8 @@ CFAA = 37 psi
       gaugeAlarmOn: false,
       backlight: 0,
       zones: [],
-      originalValue: null,
-    },
+      originalValue: null
+    }
   },
   /*
 
@@ -181,9 +181,9 @@ ADAB = 259 deg F
       gaugeAlarmOn: false,
       backlight: 0,
       zones: [],
-      originalValue: null,
-    },
-  },
+      originalValue: null
+    }
+  }
 }
 
 /*
@@ -267,20 +267,20 @@ module.exports = function (input) {
               path: 'propulsion.0.revolutions',
               meta: {
                 description: 'CruzPro RH30/RH60/RH110 Digital RPM',
-                units: 'hz',
-              },
+                units: 'hz'
+              }
             },
             {
               value: runTime,
               path: 'propulsion.0.runTime',
               meta: {
                 description: 'CruzPro RH30/RH60/RH110 Engine Hours',
-                units: 's',
-              },
-            },
-          ],
-        },
-      ],
+                units: 's'
+              }
+            }
+          ]
+        }
+      ]
     }
     return delta
   } else if (productCode === 'D' || productCode === 'E') {
@@ -302,7 +302,7 @@ module.exports = function (input) {
         //convert to pascals from psi/bar
         value: conditionalValue(value),
         path: schema[productCode].path,
-        meta: schema[productCode].meta,
+        meta: schema[productCode].meta
       }
       convertedValue.meta.gaugeUnits = gaugeUnits === 'AA' ? 'psi' : 'bar'
       //TODO: Add warning zone values
@@ -310,13 +310,13 @@ module.exports = function (input) {
         {
           lower: conditionalValue(lower),
           state: 'alarm',
-          message: 'Engine oil pressure at lowest threshold',
+          message: 'Engine oil pressure at lowest threshold'
         },
         {
           upper: conditionalValue(upper),
           state: 'alarm',
-          message: 'Engine oil pressure at highest threshold',
-        },
+          message: 'Engine oil pressure at highest threshold'
+        }
       ]
     } else if (productCode === 'E') {
       const conditionalValue = function (derivedValue) {
@@ -329,7 +329,7 @@ module.exports = function (input) {
         //convert to C from F
         value: conditionalValue(value),
         path: schema[productCode].path,
-        meta: schema[productCode].meta,
+        meta: schema[productCode].meta
       }
       convertedValue.meta.gaugeUnits = gaugeUnits === 'AA' ? 'f' : 'c'
       //TODO: Add warning zone values
@@ -337,13 +337,13 @@ module.exports = function (input) {
         {
           lower: conditionalValue(lower),
           state: 'alarm',
-          message: 'Engine coolant temperature at lowest threshold',
+          message: 'Engine coolant temperature at lowest threshold'
         },
         {
           upper: conditionalValue(upper),
           state: 'alarm',
-          message: 'Engine coolant temperature at highest threshold',
-        },
+          message: 'Engine coolant temperature at highest threshold'
+        }
       ]
     }
 
@@ -359,9 +359,9 @@ module.exports = function (input) {
         {
           source: tags.source,
           timestamp: tags.timestamp,
-          values: [convertedValue],
-        },
-      ],
+          values: [convertedValue]
+        }
+      ]
     }
 
     return delta

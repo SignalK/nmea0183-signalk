@@ -42,13 +42,13 @@ module.exports = function (input) {
   if (parts[0] != '') {
     pathValues.push({
       path: 'navigation.log',
-      value: utils.transform(utils.float(parts[0]), 'nm', 'm'),
+      value: utils.transform(utils.float(parts[0]), 'nm', 'm')
     })
   }
   if (parts[2] != '') {
     pathValues.push({
       path: 'navigation.trip.log',
-      value: utils.transform(utils.float(parts[2]), 'nm', 'm'),
+      value: utils.transform(utils.float(parts[2]), 'nm', 'm')
     })
   }
 
@@ -57,8 +57,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

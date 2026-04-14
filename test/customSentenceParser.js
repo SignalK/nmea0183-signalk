@@ -26,9 +26,9 @@ describe('Custom Sentence Parser', () => {
     const DELTA = {
       updates: [
         {
-          values: [{ path: 'a.b.c', value: 3.14 }],
-        },
-      ],
+          values: [{ path: 'a.b.c', value: 3.14 }]
+        }
+      ]
     }
     let onPropValuesCallCount = 0
     const options = {
@@ -45,11 +45,11 @@ describe('Custom Sentence Parser', () => {
                 parts.should.have.members(TEST_SENTENCE_PARTS)
                 expect(typeof session).to.equal('object')
                 return DELTA
-              },
-            },
-          },
+              }
+            }
+          }
         ])
-      },
+      }
     }
     const parser = new Parser(options)
     onPropValuesCallCount.should.equal(1)

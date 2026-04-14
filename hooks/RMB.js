@@ -57,7 +57,7 @@ module.exports = function (input) {
   } else {
     position = {
       longitude,
-      latitude,
+      latitude
     }
   }
 
@@ -83,31 +83,31 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.courseRhumbline.nextPoint.position',
-            value: position,
+            value: position
           },
 
           {
             path: 'navigation.courseRhumbline.nextPoint.bearingTrue',
-            value: utils.transform(bearing, 'deg', 'rad'),
+            value: utils.transform(bearing, 'deg', 'rad')
           },
 
           {
             path: 'navigation.courseRhumbline.nextPoint.velocityMadeGood',
-            value: utils.transform(vmg, 'knots', 'ms'),
+            value: utils.transform(vmg, 'knots', 'ms')
           },
 
           {
             path: 'navigation.courseRhumbline.nextPoint.distance',
-            value: utils.transform(distance, 'nm', 'km') * 1000,
+            value: utils.transform(distance, 'nm', 'km') * 1000
           },
 
           {
             path: 'navigation.courseRhumbline.crossTrackError',
-            value: utils.transform(crossTrackError, 'nm', 'km') * 1000,
-          },
-        ],
-      },
-    ],
+            value: utils.transform(crossTrackError, 'nm', 'km') * 1000
+          }
+        ]
+      }
+    ]
   }
 
   return delta

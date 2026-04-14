@@ -47,11 +47,11 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.rateOfTurn',
-            value: utils.transform(utils.float(parts[0]), 'deg', 'rad') / 60,
-          },
-        ],
-      },
-    ],
+            value: utils.transform(utils.float(parts[0]), 'deg', 'rad') / 60
+          }
+        ]
+      }
+    ]
   }
 
   return delta
