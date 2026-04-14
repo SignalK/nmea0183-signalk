@@ -4,17 +4,17 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('MWV', () => {
   it('True wind converts ok', () => {
     const delta = new Parser().parse('$IIMWV,074,T,05.85,N,A*2E')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.wind.angleTrueWater'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       1.2915436467707015
     )
@@ -23,11 +23,11 @@ describe('MWV', () => {
   it('Apparent wind converts ok', () => {
     const delta = new Parser().parse('$IIMWV,336,R,13.41,N,A*22')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.wind.angleApparent'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       -0.41887902057428156
     )

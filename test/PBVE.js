@@ -15,7 +15,9 @@
  */
 
 const Parser = require('../lib')
-const should = require('chai').Should()
+const chai = require('chai')
+const should = chai.Should()
+chai.use(require('./helpers/chai-has-item'))
 const toFull = require('./toFull')
 
 describe('PBVE', () => {
@@ -23,7 +25,7 @@ describe('PBVE', () => {
     const delta = new Parser().parse(
       '$PBVE,DGOIADNNACAEACAAABBLAAEBAACMCFAAEPAIKI*37'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'propulsion.0.oilPressure'
     )
@@ -59,7 +61,7 @@ describe('PBVE', () => {
     const delta = new Parser().parse(
       '$PBVE,EDOIADOKACABABAAAACAPPCMABCGADABDOAEGL*20'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'propulsion.0.coolantTemperature'
     )

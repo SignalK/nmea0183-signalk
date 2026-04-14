@@ -21,25 +21,25 @@ const chai = require('chai')
 const expect = chai.expect
 
 chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('VTG', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$GPVTG,0.0,T,359.3,M,0.0,N,0.0,K,A*2F')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseOverGroundMagnetic'
     )
     delta.updates[0].values[0].value.should.be.closeTo(6.271, 0.005)
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseOverGroundTrue'
     )
     delta.updates[0].values[1].value.should.equal(0)
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.speedOverGround'
     )
@@ -49,19 +49,19 @@ describe('VTG', () => {
   it('Outputs nulls for missing values', () => {
     const delta = new Parser().parse('$GPVTG,,T,,M,0.102,N,0.190,K,A*28')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseOverGroundMagnetic'
     )
     expect(delta.updates[0].values[0].value).to.be.null
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseOverGroundTrue'
     )
     expect(delta.updates[0].values[1].value).to.be.null
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.speedOverGround'
     )

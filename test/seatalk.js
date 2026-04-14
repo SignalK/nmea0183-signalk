@@ -61,14 +61,14 @@ const waypointNameData = '82,05,27,D8,48,B7,06,F9'
 const waypointNameShortData = '82,05,91,6E,04,FB,00,FF'
 
 const should = chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('seatalk', () => {
   ;['$PSMDST,', '$PSMDST,R,', '$STALK,'].forEach((prefix) => {
     it(`${prefix} 0x00 depth converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${depthData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'environment.depth.belowTransducer'
       )
@@ -80,7 +80,7 @@ describe('seatalk', () => {
         `${prefix}${apparentWindAngleData}`
       )
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'environment.wind.angleApparent'
       )
@@ -95,7 +95,7 @@ describe('seatalk', () => {
         `${prefix}${apparentWindSpeedData}`
       )
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'environment.wind.speedApparent'
       )
@@ -110,7 +110,7 @@ describe('seatalk', () => {
         `${prefix}${speedThroughWaterData}`
       )
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.speedThroughWater'
       )
@@ -125,7 +125,7 @@ describe('seatalk', () => {
         `${prefix}${speedThroughWaterDataGthex80}`
       )
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.speedThroughWater'
       )
@@ -135,7 +135,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x21 Trip converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${tripMileageData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.trip'
       )
@@ -148,7 +148,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x22 Total log converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${logData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.log'
       )
@@ -160,7 +160,7 @@ describe('seatalk', () => {
         `${prefix}25,14,4C,BF,00,00,00}`
       )
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.log'
       )
@@ -173,12 +173,12 @@ describe('seatalk', () => {
     it(`${prefix} 0x25 trip and log converted 1`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${tripAndLogData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.trip'
       )
       delta.updates[0].values[0].value.should.be.closeTo(2665750.28, 0.5)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.log'
       )
@@ -190,7 +190,7 @@ describe('seatalk', () => {
         `${prefix}${averageSpeedThroughWaterData}`
       )
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.averageSpeedThroughWater'
       )
@@ -202,7 +202,7 @@ describe('seatalk', () => {
         `${prefix}${waterTemperatureData}`
       )
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'environment.water.temperature'
       )
@@ -217,7 +217,7 @@ describe('seatalk', () => {
 
       fullSentence = utils.appendChecksum(`${prefix}${longitudeData}`)
       delta = parser.parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.position'
       )
@@ -228,7 +228,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x52 SOG converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${sogData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.speedOverGround'
       )
@@ -238,7 +238,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x53 COG converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${cogData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.courseOverGroundMagnetic'
       )
@@ -256,7 +256,7 @@ describe('seatalk', () => {
         dateTag + utils.appendChecksum(`${prefix}${dateData}`)
       const delta = parser.parse(fullSentence)
 
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.datetime'
       )
@@ -266,7 +266,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x57 satelite info converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${satInfoData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.gnss.satellites'
       )
@@ -276,7 +276,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x84 heading converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${headingData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.headingMagnetic'
       )
@@ -289,7 +289,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x84 ap mode: standby converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${standbyData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'steering.autopilot.state'
       )
@@ -299,7 +299,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x84 ap mode: auto converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${autoData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'steering.autopilot.target.headingMagnetic'
       )
@@ -308,7 +308,7 @@ describe('seatalk', () => {
         0.0005
       )
 
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'steering.autopilot.state'
       )
@@ -318,7 +318,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x84 ap mode: wind converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${windData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'steering.autopilot.state'
       )
@@ -328,7 +328,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x84 ap mode: route converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${routeData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'steering.autopilot.state'
       )
@@ -338,7 +338,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x84 rudder angle converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${rudderData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'steering.rudderAngle'
       )
@@ -353,7 +353,7 @@ describe('seatalk', () => {
         `${prefix}${compassVariationData}`
       )
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.magneticVariation'
       )
@@ -366,7 +366,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x9C ap target heading  converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${heading_nineCData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.headingMagnetic'
       )
@@ -393,15 +393,15 @@ describe('seatalk', () => {
     it(`${prefix} 0x85 navigation to waypoint converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${navToWaypointData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.courseRhumbline.crossTrackError'
       )
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.courseRhumbline.bearingToDestinationMagnetic'
       )
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.courseRhumbline.nextPoint.distance'
       )
@@ -412,7 +412,7 @@ describe('seatalk', () => {
         `${prefix}${navToWaypointTrueData}`
       )
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.courseRhumbline.bearingToDestinationTrue'
       )
@@ -421,7 +421,7 @@ describe('seatalk', () => {
     it(`${prefix} 0x82 waypoint name converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${waypointNameData}`)
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.courseRhumbline.nextPoint.ID'
       )
@@ -433,7 +433,7 @@ describe('seatalk', () => {
         `${prefix}${waypointNameShortData}`
       )
       const delta = new Parser().parse(fullSentence)
-      delta.updates[0].values.should.contain.an.item.with.property(
+      delta.updates[0].values.should.containItemWithProperty(
         'path',
         'navigation.courseRhumbline.nextPoint.ID'
       )

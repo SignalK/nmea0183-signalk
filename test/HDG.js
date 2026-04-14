@@ -18,12 +18,12 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('HDG', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$SDHDG,181.9,,,0.6,E*32')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.headingMagnetic'
     )
@@ -31,7 +31,7 @@ describe('HDG', () => {
       (181.9 / 180) * Math.PI,
       0.005
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.magneticVariation'
     )
@@ -43,7 +43,7 @@ describe('HDG', () => {
   it('Sentence with just heading works', () => {
     const delta = new Parser().parse('$HCHDG,51.5,,,,*73')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.headingMagnetic'
     )

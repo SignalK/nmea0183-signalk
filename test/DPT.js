@@ -20,16 +20,16 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('DPT', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$IIDPT,4.1,0.0*45')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.depth.belowTransducer'
     )
-    delta.updates[0].values.should.contain.an.item.with.property('value', 4.1)
+    delta.updates[0].values.should.containItemWithProperty('value', 4.1)
   })
 
   it('Converts OK with missing offset', () => {
@@ -43,11 +43,11 @@ describe('DPT', () => {
   it('Converts OK with positive offset', () => {
     const delta = new Parser().parse('$IIDPT,4.1,1.0*44')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.depth.belowTransducer'
     )
-    delta.updates[0].values.should.contain.an.item.with.property('value', 4.1)
+    delta.updates[0].values.should.containItemWithProperty('value', 4.1)
 
     delta.updates[0].values[1].path.should.equal(
       'environment.depth.surfaceToTransducer'

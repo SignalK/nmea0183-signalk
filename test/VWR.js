@@ -17,25 +17,25 @@
 const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('VWR', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$IIVWR,75,R,1.0,N,0.51,M,1.85,K*6C')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.wind.angleApparent'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       1.30899693929463
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.wind.speedApparent'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       0.5144445747704034
     )
@@ -44,19 +44,19 @@ describe('VWR', () => {
   it('Handles shorter valid sentences', () => {
     const delta = new Parser().parse('$IIVWR,024,L,018,N,,,,*5e')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.wind.angleApparent'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       -0.41887902057428156
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.wind.speedApparent'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       9.260002345867262
     )

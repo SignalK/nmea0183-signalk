@@ -21,7 +21,7 @@ const chai = require('chai')
 const should = chai.Should()
 
 chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('HSC', () => {
   it('Converts OK using individual parser', () => {
@@ -29,19 +29,19 @@ describe('HSC', () => {
     // console.log(JSON.stringify(delta, null, 2))
 
     delta.should.be.an('object')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'steering.autopilot.target.headingTrue'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       0.7002260960600073
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'steering.autopilot.target.headingMagnetic'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       0.6825982706108397
     )

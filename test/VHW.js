@@ -20,13 +20,13 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('VHW', () => {
   it('speed data only', () => {
     const delta = new Parser().parse('$IIVHW,,T,,M,06.12,N,11.33,K*50')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.speedThroughWater'
     )
@@ -36,12 +36,12 @@ describe('VHW', () => {
   it('speed & direction data', () => {
     const delta = new Parser().parse('$SDVHW,182.5,T,181.8,M,0.0,N,0.0,K*4C')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.speedThroughWater'
     )
     delta.updates[0].values[2].value.should.be.closeTo(0, 0.00005)
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.headingMagnetic'
     )
@@ -49,7 +49,7 @@ describe('VHW', () => {
       3.1730085801256913,
       0.00005
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.headingTrue'
     )

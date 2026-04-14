@@ -1,7 +1,7 @@
 const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 const nmeaLinePos = '$CDDSC,20,3381581370,00,21,26,1423108312,1902,,,B,E*7B'
 const nmeaLineDistress =
@@ -12,7 +12,7 @@ describe('DSC', () => {
   it('Position converts ok', () => {
     const delta = new Parser().parse(nmeaLinePos)
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.position'
     )
@@ -22,11 +22,11 @@ describe('DSC', () => {
   it('Distress converts ok', () => {
     const delta = new Parser().parse(nmeaLineDistress)
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.position'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'notifications.adrift'
     )

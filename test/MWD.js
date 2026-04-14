@@ -20,8 +20,6 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
-
 describe('MWD', () => {
   it('speed & direction data (#1)', () => {
     const delta = new Parser().parse('$IIMWD,,,046.,M,10.1,N,05.2,M*0B')

@@ -4,8 +4,6 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
-
 const sentences = [
   '!AIVDM,2,1,0,A,53brRt4000010SG700iE@LE8@Tp4000000000153P615t0Ht0SCkjH4jC1C,0*25\n',
   '!AIVDM,2,2,0,A,`0000000001,2*75\n',

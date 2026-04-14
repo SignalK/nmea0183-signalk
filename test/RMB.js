@@ -18,7 +18,7 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 chai.use(require('@signalk/signalk-schema').chaiModule)
 
 describe('RMB', () => {
@@ -28,23 +28,23 @@ describe('RMB', () => {
     )
     should.equal(delta.updates[0].timestamp, undefined)
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseRhumbline.nextPoint.position'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseRhumbline.nextPoint.distance'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseRhumbline.nextPoint.bearingTrue'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseRhumbline.nextPoint.velocityMadeGood'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseRhumbline.crossTrackError'
     )
@@ -75,11 +75,11 @@ describe('RMB', () => {
 
   it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$ECRMB,,,,,,,,,,,,,*77')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseRhumbline.nextPoint.position'
     )
-    delta.updates[0].values.should.contain.an.item({
+    delta.updates[0].values.should.containItemMatching({
       path: 'navigation.courseRhumbline.nextPoint.position',
       value: null,
     })

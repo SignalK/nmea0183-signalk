@@ -20,12 +20,12 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('HDT', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$GPHDT,123.456,T*32')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.headingTrue'
     )

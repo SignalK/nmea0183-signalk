@@ -22,13 +22,13 @@ const utils = require('@signalk/nmea0183-utilities')
 
 chai.Should()
 
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('VLW', () => {
   it('total cumulative distance', () => {
     const delta = new Parser().parse('$IIVLW,10.1,N,3.2,N*7C')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.log'
     )
@@ -41,7 +41,7 @@ describe('VLW', () => {
   it('trip distance', () => {
     const delta = new Parser().parse('$IIVLW,115.2,N,12.3,N*7A')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.trip.log'
     )

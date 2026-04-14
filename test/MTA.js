@@ -20,8 +20,6 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
-
 describe('MTA', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$IIMTA,26.,C*31')

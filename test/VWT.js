@@ -4,8 +4,6 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
-
 describe('VWT', () => {
   it('speed & direction data (#1)', () => {
     const delta = new Parser().parse('$IIVWT,030.,R,10.1,N,05.2,M,018.7,K*75')
