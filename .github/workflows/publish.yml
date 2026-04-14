@@ -1,19 +1,41 @@
 name: Publish to npm
 
 on:
-  release:
-    types: [created]
-
-permissions:
-  id-token: write # OIDC trusted publishing
-  contents: read
+  push:
+    tags:
+      - 'v*'
 
 concurrency:
   group: publish-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
+  release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body: ${{ steps.github_release.outputs.changelog }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   publish:
+    needs: release
+    permissions:
+      id-token: write # OIDC trusted publishing
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -21,11 +43,16 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
 
       - run: npm ci
 
-      - run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to npm
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+          if [[ "$tag" == *beta* ]]; then
+            npm publish --provenance --access public --tag beta
+          else
+            npm publish --provenance --access public
+          fi
