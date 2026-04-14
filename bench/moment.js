@@ -55,8 +55,12 @@ function bench(label, sentence) {
   return { min, med, trials }
 }
 
-console.log(`node ${process.version}  platform ${process.platform}/${process.arch}`)
-console.log(`iterations per trial: ${ITERATIONS}   trials: ${TRIALS}   warmup: ${WARMUP}`)
+console.log(
+  `node ${process.version}  platform ${process.platform}/${process.arch}`
+)
+console.log(
+  `iterations per trial: ${ITERATIONS}   trials: ${TRIALS}   warmup: ${WARMUP}`
+)
 console.log('')
 const results = {}
 for (const [label, sentence] of Object.entries(SAMPLES)) {

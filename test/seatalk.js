@@ -129,10 +129,7 @@ describe('seatalk', () => {
         'path',
         'navigation.speedThroughWater'
       )
-      delta.updates[0].values[0].value.should.be.closeTo(
-        6.6363350,
-        0.0005
-      )
+      delta.updates[0].values[0].value.should.be.closeTo(6.636335, 0.0005)
     })
 
     it(`${prefix} 0x21 Trip converted`, () => {
@@ -394,9 +391,7 @@ describe('seatalk', () => {
     })
 
     it(`${prefix} 0x85 navigation to waypoint converted`, () => {
-      const fullSentence = utils.appendChecksum(
-        `${prefix}${navToWaypointData}`
-      )
+      const fullSentence = utils.appendChecksum(`${prefix}${navToWaypointData}`)
       const delta = new Parser().parse(fullSentence)
       delta.updates[0].values.should.contain.an.item.with.property(
         'path',
@@ -424,9 +419,7 @@ describe('seatalk', () => {
     })
 
     it(`${prefix} 0x82 waypoint name converted`, () => {
-      const fullSentence = utils.appendChecksum(
-        `${prefix}${waypointNameData}`
-      )
+      const fullSentence = utils.appendChecksum(`${prefix}${waypointNameData}`)
       const delta = new Parser().parse(fullSentence)
       delta.updates[0].values.should.contain.an.item.with.property(
         'path',

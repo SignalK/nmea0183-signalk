@@ -27,7 +27,7 @@ module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
   var speedThroughWater =
-    ((parseInt(parts[2], 16)) + parseInt(parts[3], 16)) / 10.0
+    (parseInt(parts[2], 16) + parseInt(parts[3], 16)) / 10.0
   var pathValues = []
 
   pathValues.push({
