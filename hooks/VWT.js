@@ -101,15 +101,15 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.wind.speedTrue',
-            value: speed,
+            value: speed
           },
           {
             path: 'environment.wind.angleTrueWater',
-            value: angle,
-          },
-        ],
-      },
-    ],
+            value: angle
+          }
+        ]
+      }
+    ]
   }
 
   return delta

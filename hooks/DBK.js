@@ -46,10 +46,10 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.depth.belowKeel',
-            value: parts[2].length > 0 ? utils.float(parts[2]) : null,
-          },
-        ],
-      },
-    ],
+            value: parts[2].length > 0 ? utils.float(parts[2]) : null
+          }
+        ]
+      }
+    ]
   }
 }

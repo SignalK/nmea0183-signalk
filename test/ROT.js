@@ -29,11 +29,11 @@ describe('ROT', () => {
     const delta = new Parser().parse(nmeaLine)
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.rateOfTurn',
+      'navigation.rateOfTurn'
     )
     delta.updates[0].values[0].value.should.be.closeTo(
       ((35.6 / 180) * Math.PI) / 60,
-      0.0005,
+      0.0005
     )
   })
 })

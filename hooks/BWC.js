@@ -42,9 +42,9 @@ module.exports = function BWCHook(input) {
     updates: [
       {
         source: tags.source,
-        values,
-      },
-    ],
+        values
+      }
+    ]
   }
 
   if (parts[0] !== '') {
@@ -63,13 +63,13 @@ module.exports = function BWCHook(input) {
       path: 'navigation.courseGreatCircle.nextPoint.position',
       value: {
         longitude,
-        latitude,
-      },
+        latitude
+      }
     })
   } else {
     values.push({
       path: 'navigation.courseGreatCircle.nextPoint.position',
-      value: null,
+      value: null
     })
   }
 
@@ -77,24 +77,24 @@ module.exports = function BWCHook(input) {
     const distance = utils.transform(
       parts[9],
       upper(parts[10]) === 'N' ? 'nm' : 'km',
-      'm',
+      'm'
     )
     values.push({
       path: 'navigation.courseGreatCircle.nextPoint.distance',
-      value: distance,
+      value: distance
     })
   }
 
   if (parts[6] === 'T' && parts[5] !== '') {
     values.push({
       path: 'navigation.courseGreatCircle.bearingTrackTrue',
-      value: utils.transform(parts[5], 'deg', 'rad'),
+      value: utils.transform(parts[5], 'deg', 'rad')
     })
   }
   if (parts[8] === 'M' && parts[7] !== '') {
     values.push({
       path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
-      value: utils.transform(parts[7], 'deg', 'rad'),
+      value: utils.transform(parts[7], 'deg', 'rad')
     })
   }
 

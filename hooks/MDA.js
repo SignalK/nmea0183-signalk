@@ -48,67 +48,67 @@ module.exports = function (input) {
   if (parts[0] !== '') {
     values.push({
       path: 'environment.outside.pressure',
-      value: 3386.3886666667 * utils.float(parts[0]), // converting inHg -> Pa (SI units)
+      value: 3386.3886666667 * utils.float(parts[0]) // converting inHg -> Pa (SI units)
     })
   }
   if (parts[2] !== '') {
     values.push({
       path: 'environment.outside.pressure',
-      value: utils.float(parts[2]) * 100000.0, // converting from bars to Pa (SI units)
+      value: utils.float(parts[2]) * 100000.0 // converting from bars to Pa (SI units)
     })
   }
   if (parts[4] !== '') {
     values.push({
       path: 'environment.outside.temperature',
-      value: utils.transform(utils.float(parts[4]), 'c', 'k'), // transform units Celsius to Kelvin (stick to SI units)
+      value: utils.transform(utils.float(parts[4]), 'c', 'k') // transform units Celsius to Kelvin (stick to SI units)
     })
   }
   if (parts[6] !== '') {
     values.push({
       path: 'environment.water.temperature',
-      value: utils.transform(utils.float(parts[6]), 'c', 'k'), // transform units Celsius to Kelvin (stick to SI units)
+      value: utils.transform(utils.float(parts[6]), 'c', 'k') // transform units Celsius to Kelvin (stick to SI units)
     })
   }
   if (parts[8] !== '') {
     values.push({
       path: 'environment.outside.humidity',
-      value: utils.float(parts[8]) / 100.0, // converting from precentage to fraction
+      value: utils.float(parts[8]) / 100.0 // converting from precentage to fraction
     })
   }
   if (parts[9] !== '') {
     values.push({
       path: 'environment.outside.humidityAbsolute',
-      value: utils.float(parts[9]) / 100.0, // NMEA docs suggest this is a fraction/percentage, so probably they mean mass water per mass atmosphere formulation
+      value: utils.float(parts[9]) / 100.0 // NMEA docs suggest this is a fraction/percentage, so probably they mean mass water per mass atmosphere formulation
     })
   }
   if (parts[10] !== '') {
     values.push({
       path: 'environment.outside.dewPointTemperature',
-      value: utils.transform(utils.float(parts[10]), 'c', 'k'),
+      value: utils.transform(utils.float(parts[10]), 'c', 'k')
     })
   }
   if (parts[12] !== '') {
     values.push({
       path: 'environment.wind.directionTrue',
-      value: utils.transform(utils.float(parts[12]), 'deg', 'rad'),
+      value: utils.transform(utils.float(parts[12]), 'deg', 'rad')
     })
   }
   if (parts[14] !== '') {
     values.push({
       path: 'environment.wind.directionMagnetic',
-      value: utils.transform(utils.float(parts[14]), 'deg', 'rad'),
+      value: utils.transform(utils.float(parts[14]), 'deg', 'rad')
     })
   }
   if (parts[16] !== '') {
     values.push({
       path: 'environment.wind.speedOverGround',
-      value: utils.transform(utils.float(parts[16]), 'knots', 'ms'),
+      value: utils.transform(utils.float(parts[16]), 'knots', 'ms')
     })
   }
   if (parts[18] !== '') {
     values.push({
       path: 'environment.wind.speedOverGround',
-      value: utils.float(parts[18]),
+      value: utils.float(parts[18])
     })
   }
 
@@ -117,9 +117,9 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: values,
-      },
-    ],
+        values: values
+      }
+    ]
   }
 
   return delta

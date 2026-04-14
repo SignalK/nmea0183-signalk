@@ -25,7 +25,7 @@ chai.Should()
 describe('BWC', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(
-      '$GPBWC,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*29',
+      '$GPBWC,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*29'
     )
     // console.log(JSON.stringify(delta, null, 2))
 
@@ -35,21 +35,21 @@ describe('BWC', () => {
         path: 'navigation.courseGreatCircle.nextPoint.position',
         value: {
           latitude: 49.287333333333336,
-          longitude: -123.1595,
-        },
+          longitude: -123.1595
+        }
       },
       {
         path: 'navigation.courseGreatCircle.nextPoint.distance',
-        value: 2407.6000020320143,
+        value: 2407.6000020320143
       },
       {
         path: 'navigation.courseGreatCircle.bearingTrackTrue',
-        value: 0.9058258819918839,
+        value: 0.9058258819918839
       },
       {
         path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
-        value: 0.5515240437561374,
-      },
+        value: 0.5515240437561374
+      }
     ])
 
     // delta.updates[0].values.find(x => x.path === 'navigation.courseRhumbline.bearingToDestinationMagnetic').value.should.be.closeTo(0.19198621776321237, 0.000001)
@@ -57,27 +57,27 @@ describe('BWC', () => {
 
   it('Converts also without next position coordinates', () => {
     const delta = new Parser().parse(
-      '$IIBWC,200321,,,,,119.5,T,129.5,M,22.10,N,1*1E',
+      '$IIBWC,200321,,,,,119.5,T,129.5,M,22.10,N,1*1E'
     )
 
     delta.should.be.an('object')
     delta.updates[0].values.should.deep.equal([
       {
         path: 'navigation.courseGreatCircle.nextPoint.position',
-        value: null,
+        value: null
       },
       {
         path: 'navigation.courseGreatCircle.nextPoint.distance',
-        value: 40929.20003454424,
+        value: 40929.20003454424
       },
       {
         path: 'navigation.courseGreatCircle.bearingTrackTrue',
-        value: 2.0856684566094437,
+        value: 2.0856684566094437
       },
       {
         path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
-        value: 2.2602013818487277,
-      },
+        value: 2.2602013818487277
+      }
     ])
   })
 
@@ -87,8 +87,8 @@ describe('BWC', () => {
     delta.updates[0].values.should.deep.equal([
       {
         path: 'navigation.courseGreatCircle.nextPoint.position',
-        value: null,
-      },
+        value: null
+      }
     ])
   })
 })

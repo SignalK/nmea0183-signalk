@@ -45,11 +45,11 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.depth.belowTransducer',
-            value: depth,
-          },
-        ],
-      },
-    ],
+            value: depth
+          }
+        ]
+      }
+    ]
   }
 
   var offset = utils.float(parts[1])
@@ -57,23 +57,23 @@ module.exports = function (input) {
   if (offset > 0) {
     delta.updates[0].values.push({
       path: 'environment.depth.surfaceToTransducer',
-      value: offset,
+      value: offset
     })
     if (depth !== null) {
       delta.updates[0].values.push({
         path: 'environment.depth.belowSurface',
-        value: depth + offset,
+        value: depth + offset
       })
     }
   } else if (offset < 0) {
     delta.updates[0].values.push({
       path: 'environment.depth.transducerToKeel',
-      value: offset * -1,
+      value: offset * -1
     })
     if (depth !== null) {
       delta.updates[0].values.push({
         path: 'environment.depth.belowKeel',
-        value: depth + offset,
+        value: depth + offset
       })
     }
   }

@@ -59,7 +59,7 @@ module.exports = function (input) {
   // '0' (0x30) represents empty character positions - strip leading/trailing zeros
   const waypointName = String.fromCharCode(c1, c2, c3, c4).replace(
     /^0+|0+$/g,
-    '',
+    ''
   )
 
   if (waypointName.length === 0) {
@@ -74,10 +74,10 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.courseRhumbline.nextPoint.ID',
-            value: waypointName,
-          },
-        ],
-      },
-    ],
+            value: waypointName
+          }
+        ]
+      }
+    ]
   }
 }

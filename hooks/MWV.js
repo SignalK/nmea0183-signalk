@@ -57,15 +57,15 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.wind.speed' + valueType,
-            value: speed,
+            value: speed
           },
           {
             path: 'environment.wind.angle' + angleType,
-            value: utils.transform(angle, 'deg', 'rad'),
-          },
-        ],
-      },
-    ],
+            value: utils.transform(angle, 'deg', 'rad')
+          }
+        ]
+      }
+    ]
   }
 
   return delta

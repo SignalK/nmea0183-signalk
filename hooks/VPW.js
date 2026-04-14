@@ -50,10 +50,10 @@ module.exports = function (input) {
         values: [
           {
             path: 'performance.velocityMadeGood',
-            value: velocityValue,
-          },
-        ],
-      },
-    ],
+            value: velocityValue
+          }
+        ]
+      }
+    ]
   }
 }

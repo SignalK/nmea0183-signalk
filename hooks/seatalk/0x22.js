@@ -33,7 +33,7 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'navigation.log',
-    value: utils.float(totalMileage),
+    value: utils.float(totalMileage)
   })
 
   return {
@@ -41,8 +41,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

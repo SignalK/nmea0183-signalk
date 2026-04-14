@@ -22,12 +22,12 @@ module.exports = function (app) {
           updates: [
             {
               values: [
-                { path: 'navigation.speedOverGround', value: Number(parts[0]) },
-              ],
-            },
-          ],
+                { path: 'navigation.speedOverGround', value: Number(parts[0]) }
+              ]
+            }
+          ]
         }
-      },
+      }
     })
   }
 

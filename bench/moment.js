@@ -20,7 +20,7 @@ const SAMPLES = {
   GLL: '$GPGLL,5057.970,N,00146.110,E,142451,A*27',
   GNS: '$GNGNS,014035.00,4332.69262,S,17235.48549,E,RR,13,0.9,25.63,11.24,,*70',
   RMC: '$GPRMC,085412.000,A,5222.3198,N,00454.5784,E,0.58,251.34,030414,,,A*65',
-  TAG: '\\s:compass,c:1438489697*13\\$IIDBT,035.53,f,010.83,M,005.85,F*23',
+  TAG: '\\s:compass,c:1438489697*13\\$IIDBT,035.53,f,010.83,M,005.85,F*23'
 }
 
 const ITERATIONS = parseInt(process.argv[2], 10) || 200000
@@ -50,16 +50,16 @@ function bench(label, sentence) {
   console.log(
     `${label.padEnd(4)}  min ${min.toFixed(0).padStart(6)} ns/op   ` +
       `median ${med.toFixed(0).padStart(6)} ns/op   ` +
-      `(${trials.map((t) => t.toFixed(0)).join(', ')})`,
+      `(${trials.map((t) => t.toFixed(0)).join(', ')})`
   )
   return { min, med, trials }
 }
 
 console.log(
-  `node ${process.version}  platform ${process.platform}/${process.arch}`,
+  `node ${process.version}  platform ${process.platform}/${process.arch}`
 )
 console.log(
-  `iterations per trial: ${ITERATIONS}   trials: ${TRIALS}   warmup: ${WARMUP}`,
+  `iterations per trial: ${ITERATIONS}   trials: ${TRIALS}   warmup: ${WARMUP}`
 )
 console.log('')
 const results = {}

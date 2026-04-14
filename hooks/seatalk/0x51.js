@@ -49,8 +49,8 @@ module.exports = function (input, session) {
       path: 'navigation.position',
       value: {
         longitude: utils.float(session['longitude']),
-        latitude: utils.float(session['latitude']),
-      },
+        latitude: utils.float(session['latitude'])
+      }
     })
   }
 
@@ -59,8 +59,8 @@ module.exports = function (input, session) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

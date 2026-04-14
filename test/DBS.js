@@ -27,7 +27,7 @@ describe('DBS', () => {
     const delta = new Parser().parse('$IIDBS,035.53,f,010.83,M,005.85,F*24')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.depth.belowSurface',
+      'environment.depth.belowSurface'
     )
     delta.updates[0].values.should.containItemWithProperty('value', 10.83)
   })
@@ -36,7 +36,7 @@ describe('DBS', () => {
     const delta = new Parser().parse('$IIDBS,,,,,,*55')
     delta.updates[0].values.length.should.equal(1)
     delta.updates[0].values[0].path.should.equal(
-      'environment.depth.belowSurface',
+      'environment.depth.belowSurface'
     )
     should.equal(delta.updates[0].values[0].value, null)
   })

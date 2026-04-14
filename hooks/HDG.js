@@ -56,13 +56,13 @@ module.exports = function (input) {
       value: utils.transform(
         utils.float(headingCompass) + effectiveDeviation,
         'deg',
-        'rad',
-      ),
+        'rad'
+      )
     })
     if (!isEmpty(deviation)) {
       values.push({
         path: 'navigation.headingCompass',
-        value: utils.transform(utils.float(headingCompass), 'deg', 'rad'),
+        value: utils.transform(utils.float(headingCompass), 'deg', 'rad')
       })
     }
     if (!isEmpty(variation)) {
@@ -72,8 +72,8 @@ module.exports = function (input) {
         value: utils.transform(
           utils.float(headingCompass) + effectiveDeviation + effectiveVariation,
           'deg',
-          'rad',
-        ),
+          'rad'
+        )
       })
     }
   }
@@ -81,14 +81,14 @@ module.exports = function (input) {
     values.push({
       path: 'navigation.magneticVariation',
       value:
-        utils.transform(utils.float(variation), 'deg', 'rad') * variationDir,
+        utils.transform(utils.float(variation), 'deg', 'rad') * variationDir
     })
   }
   if (!(isEmpty(deviation) || isEmpty(deviationDir))) {
     values.push({
       path: 'navigation.magneticDeviation',
       value:
-        utils.transform(utils.float(deviation), 'deg', 'rad') * deviationDir,
+        utils.transform(utils.float(deviation), 'deg', 'rad') * deviationDir
     })
   }
   if (!values.length) {
@@ -100,9 +100,9 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values,
-      },
-    ],
+        values
+      }
+    ]
   }
 
   return delta

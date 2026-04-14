@@ -28,7 +28,7 @@ describe('VHW', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.speedThroughWater',
+      'navigation.speedThroughWater'
     )
     delta.updates[0].values[0].value.should.be.closeTo(3.148400797594869, 0.005)
   })
@@ -38,24 +38,24 @@ describe('VHW', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.speedThroughWater',
+      'navigation.speedThroughWater'
     )
     delta.updates[0].values[2].value.should.be.closeTo(0, 0.00005)
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.headingMagnetic',
+      'navigation.headingMagnetic'
     )
     delta.updates[0].values[1].value.should.be.closeTo(
       3.1730085801256913,
-      0.00005,
+      0.00005
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.headingTrue',
+      'navigation.headingTrue'
     )
     delta.updates[0].values[0].value.should.be.closeTo(
       3.1852258848896517,
-      0.00005,
+      0.00005
     )
   })
 

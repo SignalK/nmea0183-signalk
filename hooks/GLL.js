@@ -69,7 +69,7 @@ module.exports = function (input) {
   if (utils.isValidPosition(latitude, longitude)) {
     position = {
       latitude: latitude,
-      longitude: longitude,
+      longitude: longitude
     }
   }
 
@@ -81,11 +81,11 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.position',
-            value: position,
-          },
-        ],
-      },
-    ],
+            value: position
+          }
+        ]
+      }
+    ]
   }
 
   return delta

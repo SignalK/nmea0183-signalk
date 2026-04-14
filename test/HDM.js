@@ -28,7 +28,7 @@ describe('HDM', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.headingMagnetic',
+      'navigation.headingMagnetic'
     )
     delta.updates[0].values[0].value.should.be.closeTo(3.26, 0.005)
   })

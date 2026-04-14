@@ -25,19 +25,19 @@ describe('VWR', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.angleApparent',
+      'environment.wind.angleApparent'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      1.30899693929463,
+      1.30899693929463
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.speedApparent',
+      'environment.wind.speedApparent'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      0.5144445747704034,
+      0.5144445747704034
     )
   })
 
@@ -46,19 +46,19 @@ describe('VWR', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.angleApparent',
+      'environment.wind.angleApparent'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      -0.41887902057428156,
+      -0.41887902057428156
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.speedApparent',
+      'environment.wind.speedApparent'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      9.260002345867262,
+      9.260002345867262
     )
   })
 

@@ -36,12 +36,12 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'navigation.gnss.satellites',
-    value: utils.float(S),
+    value: utils.float(S)
   })
 
   pathValues.push({
     path: 'navigation.gnss.horizontalDilution',
-    value: utils.float(DD),
+    value: utils.float(DD)
   })
 
   return {
@@ -49,8 +49,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

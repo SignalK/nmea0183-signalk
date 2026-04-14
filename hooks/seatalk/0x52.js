@@ -31,7 +31,7 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'navigation.speedOverGround',
-    value: utils.transform(utils.float(speedOverGround), 'knots', 'ms'),
+    value: utils.transform(utils.float(speedOverGround), 'knots', 'ms')
   })
 
   return {
@@ -39,8 +39,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

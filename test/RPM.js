@@ -27,7 +27,7 @@ describe('RPM', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'propulsion.engine_1.revolutions',
+      'propulsion.engine_1.revolutions'
     )
     delta.updates[0].values[0].value.should.be.closeTo(2418.2 / 60, 0.0005)
   })

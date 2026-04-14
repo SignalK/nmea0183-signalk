@@ -35,7 +35,7 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'environment.wind.speedApparent',
-    value: utils.transform(utils.float(apparentWindSpeed), 'knots', 'ms'),
+    value: utils.transform(utils.float(apparentWindSpeed), 'knots', 'ms')
   })
 
   return {
@@ -43,8 +43,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

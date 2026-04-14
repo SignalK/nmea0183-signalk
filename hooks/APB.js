@@ -60,13 +60,13 @@ module.exports = function (input) {
   if (parts[0].trim().toUpperCase() === 'V') {
     // Don't parse this sentence as it's void.
     throw new Error(
-      "Not parsing sentence for it's void (LORAN-C blink/SNR warning)",
+      "Not parsing sentence for it's void (LORAN-C blink/SNR warning)"
     )
   }
 
   if (parts[1].trim().toUpperCase() === 'V') {
     throw new Error(
-      "Not parsing sentence for it's void (LORAN-C cycle warning)",
+      "Not parsing sentence for it's void (LORAN-C cycle warning)"
     )
   }
 
@@ -77,7 +77,7 @@ module.exports = function (input) {
     utils.transform(
       parts[2],
       parts[4].trim().toUpperCase() === 'N' ? 'nm' : 'km',
-      'm',
+      'm'
     )
 
   // WP arrival status
@@ -110,27 +110,27 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.courseRhumbline.crossTrackError',
-            value: xte,
+            value: xte
           },
           {
             path: `navigation.courseRhumbline.bearingTrack${bearingOriginToDestType}`,
-            value: bearingOriginToDest,
+            value: bearingOriginToDest
           },
           {
             path: `navigation.courseRhumbline.bearingOriginToDestination${bearingOriginToDestType}`,
-            value: bearingOriginToDest,
+            value: bearingOriginToDest
           },
           {
             path: `navigation.courseRhumbline.bearingToDestination${bearingPositionToDestType}`,
-            value: bearingPositionToDest,
+            value: bearingPositionToDest
           },
           {
             path: 'navigation.courseRhumbline.nextPoint.ID',
-            value: destinationWaypointID,
+            value: destinationWaypointID
           },
           {
             path: `steering.autopilot.target.heading${headingToSteerType}`,
-            value: headingToSteer,
+            value: headingToSteer
           },
           {
             path: 'notifications.arrivalCircleEntered',
@@ -140,8 +140,8 @@ module.exports = function (input) {
                 : {
                     method: ['sound', 'visual'],
                     state: 'alarm',
-                    message: 'WP arrival circle entered!',
-                  },
+                    message: 'WP arrival circle entered!'
+                  }
           },
           {
             path: 'notifications.perpendicularPassed',
@@ -151,11 +151,11 @@ module.exports = function (input) {
                 : {
                     method: ['sound', 'visual'],
                     state: 'alarm',
-                    message: 'Perpendicular passed!',
-                  },
-          },
-        ],
-      },
-    ],
+                    message: 'Perpendicular passed!'
+                  }
+          }
+        ]
+      }
+    ]
   }
 }

@@ -14,7 +14,7 @@ describe('DSC', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.position',
+      'navigation.position'
     )
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338158137')
   })
@@ -24,11 +24,11 @@ describe('DSC', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.position',
+      'navigation.position'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'notifications.adrift',
+      'notifications.adrift'
     )
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')
   })

@@ -32,12 +32,12 @@ describe('VDR', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.current',
+      'environment.current'
     )
     delta.updates[0].values[0].value.should.deep.equal({
       setTrue: 0.1762782544916768,
       setMagnetic: 0.21467549804431932,
-      drift: 0.6173334897244841,
+      drift: 0.6173334897244841
     })
     toFull(delta).should.be.validSignalK
   })

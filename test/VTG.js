@@ -29,19 +29,19 @@ describe('VTG', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseOverGroundMagnetic',
+      'navigation.courseOverGroundMagnetic'
     )
     delta.updates[0].values[0].value.should.be.closeTo(6.271, 0.005)
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseOverGroundTrue',
+      'navigation.courseOverGroundTrue'
     )
     delta.updates[0].values[1].value.should.equal(0)
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.speedOverGround',
+      'navigation.speedOverGround'
     )
     delta.updates[0].values[2].value.should.equal(0)
   })
@@ -51,19 +51,19 @@ describe('VTG', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseOverGroundMagnetic',
+      'navigation.courseOverGroundMagnetic'
     )
     expect(delta.updates[0].values[0].value).to.be.null
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.courseOverGroundTrue',
+      'navigation.courseOverGroundTrue'
     )
     expect(delta.updates[0].values[1].value).to.be.null
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'navigation.speedOverGround',
+      'navigation.speedOverGround'
     )
     delta.updates[0].values[2].value.should.be.closeTo(0.0528, 0.00005)
   })

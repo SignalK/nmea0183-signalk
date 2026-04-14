@@ -43,7 +43,7 @@ module.exports = function (input, session) {
     hour: hour,
     minute: minute,
     second: second,
-    milliSecond: milliSecond,
+    milliSecond: milliSecond
   }
 
   var pathValues = []
@@ -57,14 +57,14 @@ module.exports = function (input, session) {
         session['time'].hour,
         session['time'].minute,
         session['time'].second,
-        session['time'].milliSecond,
-      ),
+        session['time'].milliSecond
+      )
     )
     const ts = d.toISOString()
 
     pathValues.push({
       path: 'navigation.datetime',
-      value: ts,
+      value: ts
     })
   }
   return {
@@ -72,8 +72,8 @@ module.exports = function (input, session) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

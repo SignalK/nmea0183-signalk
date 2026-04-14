@@ -29,11 +29,11 @@ describe('RSA', () => {
     const delta = new Parser().parse(nmeaLine)
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'steering.rudderAngle',
+      'steering.rudderAngle'
     )
     delta.updates[0].values[0].value.should.be.closeTo(
       (10.5 / 180) * Math.PI,
-      0.1,
+      0.1
     )
   })
 })

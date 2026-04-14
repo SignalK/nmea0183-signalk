@@ -72,7 +72,7 @@ module.exports = function (input) {
       ? utils.transform(
           utils.magneticVariaton(parts[9], parts[10]),
           'deg',
-          'rad',
+          'rad'
         )
       : null
 
@@ -81,7 +81,7 @@ module.exports = function (input) {
   if (utils.isValidPosition(latitude, longitude)) {
     position = {
       latitude: latitude,
-      longitude: longitude,
+      longitude: longitude
     }
   }
 
@@ -93,31 +93,31 @@ module.exports = function (input) {
         values: [
           {
             path: 'navigation.position',
-            value: position,
+            value: position
           },
           {
             path: 'navigation.courseOverGroundTrue',
-            value: track,
+            value: track
           },
           {
             path: 'navigation.speedOverGround',
-            value: speed,
+            value: speed
           },
           {
             path: 'navigation.magneticVariation',
-            value: variation,
+            value: variation
           },
           {
             path: 'navigation.magneticVariationAgeOfService',
-            value: age,
+            value: age
           },
           {
             path: 'navigation.datetime',
-            value: timestamp,
-          },
-        ],
-      },
-    ],
+            value: timestamp
+          }
+        ]
+      }
+    ]
   }
 
   return delta

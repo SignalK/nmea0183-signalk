@@ -57,14 +57,14 @@ module.exports = function HSCHook(input) {
         values: [
           {
             path: 'steering.autopilot.target.headingTrue',
-            value: headingToSteer.True || null,
+            value: headingToSteer.True || null
           },
           {
             path: 'steering.autopilot.target.headingMagnetic',
-            value: headingToSteer.Magnetic || null,
-          },
-        ],
-      },
-    ],
+            value: headingToSteer.Magnetic || null
+          }
+        ]
+      }
+    ]
   }
 }

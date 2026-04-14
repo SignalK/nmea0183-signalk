@@ -75,7 +75,7 @@ module.exports = function (input) {
     const xteValue = steerRight ? -xteNm : xteNm
     pathValues.push({
       path: 'navigation.courseRhumbline.crossTrackError',
-      value: utils.transform(xteValue, 'nm', 'm'),
+      value: utils.transform(xteValue, 'nm', 'm')
     })
   }
 
@@ -91,12 +91,12 @@ module.exports = function (input) {
     if (isTrue) {
       pathValues.push({
         path: 'navigation.courseRhumbline.bearingToDestinationTrue',
-        value: bearingRad,
+        value: bearingRad
       })
     } else {
       pathValues.push({
         path: 'navigation.courseRhumbline.bearingToDestinationMagnetic',
-        value: bearingRad,
+        value: bearingRad
       })
     }
   }
@@ -112,7 +112,7 @@ module.exports = function (input) {
     const distanceNm = (Y & 0x1) === 0x1 ? ZZZ / 100 : ZZZ / 10
     pathValues.push({
       path: 'navigation.courseRhumbline.nextPoint.distance',
-      value: utils.transform(distanceNm, 'nm', 'm'),
+      value: utils.transform(distanceNm, 'nm', 'm')
     })
   }
 
@@ -125,8 +125,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

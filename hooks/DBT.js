@@ -62,11 +62,11 @@ module.exports = function (input) {
         values: [
           {
             path: 'environment.depth.belowTransducer',
-            value: meterValue,
-          },
-        ],
-      },
-    ],
+            value: meterValue
+          }
+        ]
+      }
+    ]
   }
 
   return delta

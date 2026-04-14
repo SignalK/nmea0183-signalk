@@ -38,7 +38,7 @@ module.exports = function (input) {
 
   pathValues.push({
     path: 'navigation.courseOverGroundMagnetic',
-    value: utils.transform(utils.float(magneticCourse), 'deg', 'rad'),
+    value: utils.transform(utils.float(magneticCourse), 'deg', 'rad')
   })
 
   return {
@@ -46,8 +46,8 @@ module.exports = function (input) {
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues,
-      },
-    ],
+        values: pathValues
+      }
+    ]
   }
 }

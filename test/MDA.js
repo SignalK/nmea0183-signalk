@@ -46,44 +46,44 @@ chai.use(require('./helpers/chai-has-item'))
 describe('MDA', () => {
   it('check parsing with barometric pressure and wind speed in knots', () => {
     const delta = new Parser().parse(
-      '$WIMDA,,I,+0.985,B,+03.1,C,+5.6,C,40.0,3.0,+3.4,C,90.0,T,85.0,M,10.0,N,,M*1A',
+      '$WIMDA,,I,+0.985,B,+03.1,C,+5.6,C,40.0,3.0,+3.4,C,90.0,T,85.0,M,10.0,N,,M*1A'
     )
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.outside.pressure',
+      'environment.outside.pressure'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.outside.temperature',
+      'environment.outside.temperature'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.water.temperature',
+      'environment.water.temperature'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.outside.humidity',
+      'environment.outside.humidity'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.outside.humidityAbsolute',
+      'environment.outside.humidityAbsolute'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.outside.dewPointTemperature',
+      'environment.outside.dewPointTemperature'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.directionTrue',
+      'environment.wind.directionTrue'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.directionMagnetic',
+      'environment.wind.directionMagnetic'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.speedOverGround',
+      'environment.wind.speedOverGround'
     )
 
     delta.updates[0].values
@@ -117,44 +117,44 @@ describe('MDA', () => {
 
   it('check parsing with inHg pressure and wind speed in m/s', () => {
     const delta = new Parser().parse(
-      '$WIMDA,29.92,I,,B,+03.1,C,+5.6,C,40.0,3.0,+3.4,C,90.0,T,85.0,M,,N,5.0,M*01',
+      '$WIMDA,29.92,I,,B,+03.1,C,+5.6,C,40.0,3.0,+3.4,C,90.0,T,85.0,M,,N,5.0,M*01'
     )
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.outside.pressure',
+      'environment.outside.pressure'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.outside.temperature',
+      'environment.outside.temperature'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.water.temperature',
+      'environment.water.temperature'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.outside.humidity',
+      'environment.outside.humidity'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.outside.humidityAbsolute',
+      'environment.outside.humidityAbsolute'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.outside.dewPointTemperature',
+      'environment.outside.dewPointTemperature'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.directionTrue',
+      'environment.wind.directionTrue'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.directionMagnetic',
+      'environment.wind.directionMagnetic'
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.speedOverGround',
+      'environment.wind.speedOverGround'
     )
 
     delta.updates[0].values
