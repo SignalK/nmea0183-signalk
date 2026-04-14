@@ -27,11 +27,11 @@ describe('PNKEP', () => {
     const delta = new Parser().parse('$PNKEP,01,8.3,N,15.5,K*52')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'performance.targetSpeed'
+      'performance.targetSpeed',
     )
     delta.updates[0].values[0].value.should.be.closeTo(
       4.269889970594349,
-      0.0005
+      0.0005,
     )
     toFull(delta).should.be.validSignalK
   })
@@ -41,7 +41,7 @@ describe('PNKEP', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'performance.tackMagnetic'
+      'performance.tackMagnetic',
     )
     delta.updates[0].values[0].value.should.be.closeTo(6.0109139439, 0.00005)
     toFull(delta).should.be.validSignalK
@@ -52,7 +52,7 @@ describe('PNKEP', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'performance.targetAngle'
+      'performance.targetAngle',
     )
     delta.updates[0].values[0].value.should.be.closeTo(2.652900463, 0.00005)
     toFull(delta).should.be.validSignalK

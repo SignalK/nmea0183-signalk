@@ -50,7 +50,7 @@ describe('VDM', function () {
       .value.should.equal(-27.5)
     delta.updates[0].values
       .find(
-        (pathValue) => pathValue.path === 'navigation.destination.commonName'
+        (pathValue) => pathValue.path === 'navigation.destination.commonName',
       )
       .value.should.equal('OOI SILEN')
     delta.updates[0].values
@@ -68,37 +68,37 @@ describe('VDM', function () {
 
   it('Single line converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n'
+      '!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n',
     )
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:244670316')
   })
 
   it("Unavailable values don't convert", () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,A,33@nwqwP?w<ovH0kOqP>4?wp0000,0*0B\n'
+      '!AIVDM,1,1,,A,33@nwqwP?w<ovH0kOqP>4?wp0000,0*0B\n',
     )
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:219004903')
 
     let findPath = should.not.exist(
       delta.updates[0].values.find((pv) => {
         return pv.path === 'navigation.headingTrue'
-      })
+      }),
     )
     should.not.exist(
       delta.updates[0].values.find((pv) => {
         return pv.path === 'navigation.courseOverGroundTrue'
-      })
+      }),
     )
     should.not.exist(
       delta.updates[0].values.find((pv) => {
         return pv.path === 'navigation.speedOverGround'
-      })
+      }),
     )
   })
 
   it('AtoN converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n'
+      '!AIVDM,1,1,,A,E>k`sUoJK@@@@@@@@@@@@@@@@@@MAhJS;@neP00000N000,0*0D\n',
     )
     delta.context.should.equal('atons.urn:mrn:imo:mmsi:993672087')
     delta.updates[0].values
@@ -133,7 +133,7 @@ describe('VDM', function () {
 
   it('SAR aircraft', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,A,91b4uGhW1>QjIv@RMAgFlwh20<2L,0*72\n'
+      '!AIVDM,1,1,,A,91b4uGhW1>QjIv@RMAgFlwh20<2L,0*72\n',
     )
     delta.context.should.equal('aircraft.urn:mrn:imo:mmsi:111230303')
     delta.updates[0].values[3].path.should.equal('navigation.position')
@@ -142,14 +142,14 @@ describe('VDM', function () {
     delta.updates[0].values[1].path.should.equal('navigation.speedOverGround')
     delta.updates[0].values[1].value.should.equal(40.12667683209147)
     delta.updates[0].values[2].path.should.equal(
-      'navigation.courseOverGroundTrue'
+      'navigation.courseOverGroundTrue',
     )
     delta.updates[0].values[2].value.should.equal(3.049090203930291)
   })
 
   it('class B position report with non-AI talker', () => {
     const delta = new Parser().parse(
-      '!BSVDM,1,1,,A,B6CdCm0t3`tba35f@V9faHi7kP06,0*41\n'
+      '!BSVDM,1,1,,A,B6CdCm0t3`tba35f@V9faHi7kP06,0*41\n',
     )
     delta.updates[0].values
       .find((pathValue) => pathValue.path === 'sensors.ais.class')
@@ -163,7 +163,7 @@ describe('VDM', function () {
 
   it('class A position report with nav status motoring converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n'
+      '!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n',
     )
     delta.updates[0].values
       .find((pathValue) => pathValue.path === 'navigation.state')
@@ -175,7 +175,7 @@ describe('VDM', function () {
 
   it('Off Position AtoN converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,A,E>k`sV6rKP00000000000000000=Al7t;A5E800000N@00,0*43\n'
+      '!AIVDM,1,1,,A,E>k`sV6rKP00000000000000000=Al7t;A5E800000N@00,0*43\n',
     )
     delta.updates[0].values
       .find((pathValue) => pathValue.path === 'offPosition')
@@ -184,7 +184,7 @@ describe('VDM', function () {
 
   it('class A position report with specialManeuver converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n'
+      '!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n',
     )
     delta.updates[0].values
       .find((pathValue) => pathValue.path === 'navigation.specialManeuver')
@@ -193,7 +193,7 @@ describe('VDM', function () {
 
   it('class A position report with specialManeuver converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n'
+      '!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n',
     )
     delta.updates[0].values
       .find((pathValue) => pathValue.path === 'navigation.specialManeuver')
@@ -202,7 +202,7 @@ describe('VDM', function () {
 
   it('msg type 8 converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,A,85Mv070j2d>=<e<<=PQhhg`59P00,0*26'
+      '!AIVDM,1,1,,A,85Mv070j2d>=<e<<=PQhhg`59P00,0*26',
     )
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:366968860')
     delta.updates[0].values
@@ -215,7 +215,7 @@ describe('VDM', function () {
 
   it('virtual aton converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,A,E02E340W6@1WPab3bPa200000000:uoH?9Ur000003v010,4*5C\n'
+      '!AIVDM,1,1,,A,E02E340W6@1WPab3bPa200000000:uoH?9Ur000003v010,4*5C\n',
     )
     delta.updates[0].values
       .find((pathValue) => pathValue.path === 'virtual')
@@ -225,7 +225,7 @@ describe('VDM', function () {
   it('imo conerts ok', () => {
     const parser = new Parser()
     let delta = parser.parse(
-      '!AIVDM,2,1,9,A,54hi<240?JU9`L<f220l4T@DhhF222222222220U5HD2:40Ht90000000000,0*60'
+      '!AIVDM,2,1,9,A,54hi<240?JU9`L<f220l4T@DhhF222222222220U5HD2:40Ht90000000000,0*60',
     )
     should.equal(delta, null)
 
@@ -239,7 +239,7 @@ describe('VDM', function () {
 
   it('meteo single sentence converts ok', () => {
     const delta = new Parser().parse(
-      '!AIVDM,1,1,,A,8@2R5Ph0GhOCT1a2VvkrgwvlFR06EuOwgqrqwnSwe7wvlOwwsAwwnSGmwvwt,0*40'
+      '!AIVDM,1,1,,A,8@2R5Ph0GhOCT1a2VvkrgwvlFR06EuOwgqrqwnSwe7wvlOwwsAwwnSGmwvwt,0*40',
     )
     delta.context.should.equal('meteo.urn:mrn:imo:mmsi:002655619:366097')
     const currentYear = new Date().getFullYear()
@@ -253,7 +253,7 @@ describe('VDM', function () {
     output.forEach(([path, value]) =>
       delta.updates[0].values
         .find((pathValue) => pathValue.path === path)
-        .value.should.equal(value)
+        .value.should.equal(value),
     )
   })
 
@@ -283,7 +283,7 @@ describe('VDM', function () {
     output.forEach(([path, value]) =>
       delta.updates[0].values
         .find((pathValue) => pathValue.path === path)
-        .value.should.equal(value)
+        .value.should.equal(value),
     )
   })
 })

@@ -23,11 +23,11 @@ const toFull = require('./toFull')
 describe('PBVE', () => {
   it('Converts engine oil pressure using individual parser', () => {
     const delta = new Parser().parse(
-      '$PBVE,DGOIADNNACAEACAAABBLAAEBAACMCFAAEPAIKI*37'
+      '$PBVE,DGOIADNNACAEACAAABBLAAEBAACMCFAAEPAIKI*37',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'propulsion.0.oilPressure'
+      'propulsion.0.oilPressure',
     )
     delta.updates[0].values[0].value.should.equal(255106.009)
     delta.updates[0].values[0].meta.should.deep.equal({
@@ -59,11 +59,11 @@ describe('PBVE', () => {
   })
   it('Converts engine coolant temperature using individual parser', () => {
     const delta = new Parser().parse(
-      '$PBVE,EDOIADOKACABABAAAACAPPCMABCGADABDOAEGL*20'
+      '$PBVE,EDOIADOKACABABAAAACAPPCMABCGADABDOAEGL*20',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'propulsion.0.coolantTemperature'
+      'propulsion.0.coolantTemperature',
     )
     delta.updates[0].values[0].value.should.equal(399.26111111111106)
     delta.updates[0].values[0].meta.should.deep.equal({
@@ -103,8 +103,8 @@ describe('PBVE', () => {
     // )
     should.not.exist(
       new Parser().parse(
-        '$PBVE,AQHKAAAACIAAAAABAAGEDOBCAAAAFLABCKAADIAADIAAAAAANDEN*3F'
-      )
+        '$PBVE,AQHKAAAACIAAAAABAAGEDOBCAAAAFLABCKAADIAADIAAAAAANDEN*3F',
+      ),
     )
   })
 })

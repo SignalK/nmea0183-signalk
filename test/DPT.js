@@ -27,7 +27,7 @@ describe('DPT', () => {
     const delta = new Parser().parse('$IIDPT,4.1,0.0*45')
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.depth.belowTransducer'
+      'environment.depth.belowTransducer',
     )
     delta.updates[0].values.should.containItemWithProperty('value', 4.1)
   })
@@ -35,7 +35,7 @@ describe('DPT', () => {
   it('Converts OK with missing offset', () => {
     const delta = new Parser().parse('$IIDPT,4.1,*6B')
     delta.updates[0].values[0].path.should.equal(
-      'environment.depth.belowTransducer'
+      'environment.depth.belowTransducer',
     )
     delta.updates[0].values[0].value.should.equal(4.1)
   })
@@ -45,17 +45,17 @@ describe('DPT', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.depth.belowTransducer'
+      'environment.depth.belowTransducer',
     )
     delta.updates[0].values.should.containItemWithProperty('value', 4.1)
 
     delta.updates[0].values[1].path.should.equal(
-      'environment.depth.surfaceToTransducer'
+      'environment.depth.surfaceToTransducer',
     )
     delta.updates[0].values[1].value.should.equal(1)
 
     delta.updates[0].values[2].path.should.equal(
-      'environment.depth.belowSurface'
+      'environment.depth.belowSurface',
     )
     delta.updates[0].values[2].value.should.equal(5.1)
   })
@@ -64,12 +64,12 @@ describe('DPT', () => {
     const delta = new Parser().parse('$IIDPT,4.1,-1.0*69')
 
     delta.updates[0].values[0].path.should.equal(
-      'environment.depth.belowTransducer'
+      'environment.depth.belowTransducer',
     )
     delta.updates[0].values[0].value.should.be.closeTo(4.1, 0.1)
 
     delta.updates[0].values[1].path.should.equal(
-      'environment.depth.transducerToKeel'
+      'environment.depth.transducerToKeel',
     )
     delta.updates[0].values[1].value.should.equal(1)
 
@@ -80,7 +80,7 @@ describe('DPT', () => {
   it('Converts empty depth to null', () => {
     const delta = new Parser().parse('$IIDPT,,,*6C')
     delta.updates[0].values[0].path.should.equal(
-      'environment.depth.belowTransducer'
+      'environment.depth.belowTransducer',
     )
     delta.updates[0].values.length.should.equal(1)
     should.equal(delta.updates[0].values[0].value, null)
@@ -90,11 +90,11 @@ describe('DPT', () => {
     const delta = new Parser().parse('$IIDPT,,0.1*6F')
     delta.updates[0].values.length.should.equal(2)
     delta.updates[0].values[0].path.should.equal(
-      'environment.depth.belowTransducer'
+      'environment.depth.belowTransducer',
     )
     should.equal(delta.updates[0].values[0].value, null)
     delta.updates[0].values[1].path.should.equal(
-      'environment.depth.surfaceToTransducer'
+      'environment.depth.surfaceToTransducer',
     )
     should.equal(delta.updates[0].values[1].value, 0.1)
   })

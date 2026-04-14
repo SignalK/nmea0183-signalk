@@ -11,7 +11,7 @@ describe('VWT', () => {
     delta.updates[0].values[0].path.should.equal('environment.wind.speedTrue')
     delta.updates[0].values[0].value.should.equal(5.2)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values[1].value.should.be.closeTo(0.523599, 0.005)
   })
@@ -22,7 +22,7 @@ describe('VWT', () => {
     delta.updates[0].values[0].path.should.equal('environment.wind.speedTrue')
     delta.updates[0].values[0].value.should.equal(5.2)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values[1].value.should.be.closeTo(3.1415, 0.005)
   })
@@ -34,7 +34,7 @@ describe('VWT', () => {
     delta.updates[0].values[0].path.should.equal('environment.wind.speedTrue')
     delta.updates[0].values[0].value.should.equal(5.2)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values[1].value.should.be.closeTo(-2.967, 0.005)
   })
@@ -45,7 +45,7 @@ describe('VWT', () => {
     delta.updates[0].values[0].path.should.equal('environment.wind.speedTrue')
     delta.updates[0].values[0].value.should.equal(5.2)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values[1].value.should.be.closeTo(-2.967, 0.005)
   })
@@ -57,7 +57,7 @@ describe('VWT', () => {
     delta.updates[0].values[0].path.should.equal('environment.wind.speedTrue')
     delta.updates[0].values[0].value.should.equal(5.2)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values[1].value.should.be.closeTo(-2.967, 0.005)
   })
@@ -68,7 +68,7 @@ describe('VWT', () => {
     delta.updates[0].values[0].path.should.equal('environment.wind.speedTrue')
     delta.updates[0].values[0].value.should.equal(5.2)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values[1].value.should.be.closeTo(0.523599, 0.005)
   })
@@ -79,7 +79,7 @@ describe('VWT', () => {
     delta.updates[0].values[0].path.should.equal('environment.wind.speedTrue')
     delta.updates[0].values[0].value.should.be.closeTo(5.2, 0.05)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values[1].value.should.be.closeTo(0.523599, 0.005)
   })
@@ -90,7 +90,7 @@ describe('VWT', () => {
     delta.updates[0].values[0].path.should.equal('environment.wind.speedTrue')
     delta.updates[0].values[0].value.should.be.closeTo(5.2, 0.05)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values[1].value.should.be.closeTo(0.523599, 0.005)
   })
@@ -119,7 +119,7 @@ describe('VWT', () => {
     delta.updates[0].values[0].path.should.equal('environment.wind.speedTrue')
     delta.updates[0].values[0].value.should.equal(5.2)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values[1].value.should.be.closeTo(0.523599, 0.005)
   })
@@ -130,7 +130,7 @@ describe('VWT', () => {
     delta.updates[0].values[0].path.should.equal('environment.wind.speedTrue')
     delta.updates[0].values[0].value.should.be.closeTo(5.2, 0.05)
     delta.updates[0].values[1].path.should.equal(
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values[1].value.should.be.closeTo(0.523599, 0.005)
   })

@@ -11,12 +11,6 @@ updates:
         update-types:
           - minor
           - patch
-    ignore:
-      # prettier 3 changes default formatting; needs a tree-wide reformat
-      # commit. Re-enable after that lands.
-      - dependency-name: prettier
-        update-types:
-          - version-update:semver-major
     labels:
       - dependencies
 

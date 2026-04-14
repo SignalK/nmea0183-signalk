@@ -69,7 +69,7 @@ module.exports = function (input) {
             value: utils.transform(
               utils.float(parts[0]) * rightPositive,
               'deg',
-              'rad'
+              'rad',
             ),
           },
           {

@@ -367,7 +367,7 @@ module.exports = function (input, session) {
         {
           path: `environment.` + path + `Value`,
           value: data[propName],
-        }
+        },
       )
     }
   })
@@ -382,7 +382,7 @@ module.exports = function (input, session) {
       {
         path: 'environment.outside.horizontalVisibility.overRange',
         value: data.horvisibrange,
-      }
+      },
     )
   }
 

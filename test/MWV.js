@@ -12,11 +12,11 @@ describe('MWV', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.angleTrueWater'
+      'environment.wind.angleTrueWater',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      1.2915436467707015
+      1.2915436467707015,
     )
   })
 
@@ -25,11 +25,11 @@ describe('MWV', () => {
 
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'environment.wind.angleApparent'
+      'environment.wind.angleApparent',
     )
     delta.updates[0].values.should.containItemWithProperty(
       'value',
-      -0.41887902057428156
+      -0.41887902057428156,
     )
   })
 

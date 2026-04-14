@@ -42,7 +42,7 @@ module.exports = function chaiHasItem(chai, utils) {
         (checkValue ? ' = ' + JSON.stringify(value) : ''),
       value,
       undefined,
-      true
+      true,
     )
   })
 
@@ -66,7 +66,7 @@ module.exports = function chaiHasItem(chai, utils) {
         JSON.stringify(partial),
       partial,
       undefined,
-      true
+      true,
     )
   })
 }

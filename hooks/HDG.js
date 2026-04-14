@@ -56,7 +56,7 @@ module.exports = function (input) {
       value: utils.transform(
         utils.float(headingCompass) + effectiveDeviation,
         'deg',
-        'rad'
+        'rad',
       ),
     })
     if (!isEmpty(deviation)) {
@@ -72,7 +72,7 @@ module.exports = function (input) {
         value: utils.transform(
           utils.float(headingCompass) + effectiveDeviation + effectiveVariation,
           'deg',
-          'rad'
+          'rad',
         ),
       })
     }

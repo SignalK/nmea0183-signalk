@@ -27,7 +27,7 @@ describe('VPW', () => {
     const delta = new Parser().parse(nmeaLine)
     delta.updates[0].values.should.containItemWithProperty(
       'path',
-      'performance.velocityMadeGood'
+      'performance.velocityMadeGood',
     )
     delta.updates[0].values.should.containItemWithProperty('value', 6.7)
   })

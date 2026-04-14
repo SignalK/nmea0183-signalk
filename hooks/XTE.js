@@ -41,13 +41,13 @@ module.exports = function XTEHook(input) {
   if (parts[0].trim().toUpperCase() === 'V') {
     // Don't parse this sentence as it's void.
     throw new Error(
-      "Not parsing sentence for it's void (LORAN-C blink/SNR warning)"
+      "Not parsing sentence for it's void (LORAN-C blink/SNR warning)",
     )
   }
 
   if (parts[1].trim().toUpperCase() === 'V') {
     throw new Error(
-      "Not parsing sentence for it's void (LORAN-C cycle warning)"
+      "Not parsing sentence for it's void (LORAN-C cycle warning)",
     )
   }
 
@@ -61,7 +61,7 @@ module.exports = function XTEHook(input) {
     utils.transform(
       parts[2],
       parts[4].trim().toUpperCase() === 'N' ? 'nm' : 'km',
-      'm'
+      'm',
     )
   const path = 'navigation.courseRhumbline.crossTrackError'
 

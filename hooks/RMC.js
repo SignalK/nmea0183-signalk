@@ -72,7 +72,7 @@ module.exports = function (input) {
       ? utils.transform(
           utils.magneticVariaton(parts[9], parts[10]),
           'deg',
-          'rad'
+          'rad',
         )
       : null
 

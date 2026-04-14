@@ -77,7 +77,7 @@ module.exports = function BWCHook(input) {
     const distance = utils.transform(
       parts[9],
       upper(parts[10]) === 'N' ? 'nm' : 'km',
-      'm'
+      'm',
     )
     values.push({
       path: 'navigation.courseGreatCircle.nextPoint.distance',
