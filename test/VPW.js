@@ -20,15 +20,15 @@ const nmeaLine = '$IIVPW,4.5,N,6.7,M*52'
 const nmeaLineKnots = '$IIVPW,4.5,N,,*30' // FIXME: add a test for knots?
 
 chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('VPW', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(nmeaLine)
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'performance.velocityMadeGood'
     )
-    delta.updates[0].values.should.contain.an.item.with.property('value', 6.7)
+    delta.updates[0].values.should.containItemWithProperty('value', 6.7)
   })
 })

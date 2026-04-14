@@ -22,7 +22,6 @@ const should = chai.Should()
 const expect = chai.expect
 
 chai.Should()
-chai.use(require('chai-things'))
 
 describe('APB', (done) => {
   it('Converts OK using individual parser', () => {

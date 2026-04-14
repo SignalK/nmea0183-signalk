@@ -20,7 +20,6 @@ const Parser = require('../lib')
 const chai = require('chai')
 const pkg = require('../package.json')
 chai.Should()
-chai.use(require('chai-things'))
 
 describe('Package info', () => {
   it(`Retrieves name "${pkg.name}" successfully`, (done) => {

@@ -20,7 +20,7 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 chai.use(require('@signalk/signalk-schema').chaiModule)
 
 const toFull = require('./toFull')
@@ -34,31 +34,31 @@ describe('GGA', () => {
     should.not.exist(delta.updates[0].source.label)
     delta.updates[0].source.talker.should.equal('GP')
     // Paths
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.position'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.methodQuality'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.satellites'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.antennaAltitude'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.horizontalDilution'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.differentialAge'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.differentialReference'
     )
@@ -103,31 +103,31 @@ describe('GGA', () => {
     should.not.exist(delta.updates[0].source.label)
     delta.updates[0].source.talker.should.equal('GP')
     // Paths
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.position'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.methodQuality'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.satellites'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.antennaAltitude'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.horizontalDilution'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.differentialAge'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.gnss.differentialReference'
     )

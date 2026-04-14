@@ -19,7 +19,7 @@
 const Parser = require('../lib')
 const chai = require('chai')
 chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 const nmeaLine =
   '\\s:compass,c:1438489697*13\\$IIDBT,035.53,f,010.83,M,005.85,F*23'
@@ -31,7 +31,7 @@ describe('NMEA0183v4 tag block', () => {
     delta.updates[0].source.should.be.an('object')
     delta.updates[0].source.talker.should.equal('compass')
     delta.updates[0].timestamp.should.equal('2015-08-02T04:28:17.000Z')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.depth.belowTransducer'
     )

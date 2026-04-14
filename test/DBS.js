@@ -20,16 +20,16 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('DBS', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$IIDBS,035.53,f,010.83,M,005.85,F*24')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.depth.belowSurface'
     )
-    delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
+    delta.updates[0].values.should.containItemWithProperty('value', 10.83)
   })
 
   it('Converts empty value to null', () => {

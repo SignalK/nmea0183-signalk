@@ -17,7 +17,7 @@
 const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 const nmeaLine = '$GPZDA,160012.71,11,03,2004,-1,00*7D'
 const emptyNmeaLine = '$GPZDA,,,,,,*48'
@@ -25,11 +25,11 @@ const emptyNmeaLine = '$GPZDA,,,,,,*48'
 describe('ZDA', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(nmeaLine)
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.datetime'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       '2004-03-11T16:00:12.710Z'
     )
@@ -42,11 +42,11 @@ describe('ZDA', () => {
 
   it('Doesn\t choke when the number of seconds is 0', () => {
     const delta = new Parser().parse('$IIZDA,085400,22,07,2021,,*50')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.datetime'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       '2021-07-22T08:54:00.000Z'
     )

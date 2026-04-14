@@ -21,7 +21,7 @@ const chai = require('chai')
 const should = chai.Should()
 
 chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('BOD', () => {
   it('Converts OK using individual parser', () => {
@@ -29,38 +29,32 @@ describe('BOD', () => {
     // console.log(JSON.stringify(delta, null, 2))
 
     delta.should.be.an('object')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseRhumbline.bearingTrackTrue'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       0.7853981635767779
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseRhumbline.bearingTrackMagnetic'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'value',
       0.40142572805035315
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseRhumbline.nextPoint.ID'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
-      'value',
-      'DEST'
-    )
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty('value', 'DEST')
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.courseRhumbline.previousPoint.ID'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
-      'value',
-      'START'
-    )
+    delta.updates[0].values.should.containItemWithProperty('value', 'START')
   })
 
   it("Doesn't choke on an empty sentence", () => {

@@ -21,7 +21,6 @@ const chai = require('chai')
 const should = chai.Should()
 
 chai.Should()
-chai.use(require('chai-things'))
 
 describe('BWR', () => {
   it('Converts OK using individual parser', () => {

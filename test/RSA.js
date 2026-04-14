@@ -22,12 +22,12 @@ const chai = require('chai')
 const nmeaLine = '$IIRSA,10.5,A,,V*4D'
 
 chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('RSA', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(nmeaLine)
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'steering.rudderAngle'
     )

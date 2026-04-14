@@ -20,30 +20,27 @@ const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
 
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('DBT', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse('$IIDBT,035.53,f,010.83,M,005.85,F*23')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.depth.belowTransducer'
     )
-    delta.updates[0].values.should.contain.an.item.with.property('value', 10.83)
+    delta.updates[0].values.should.containItemWithProperty('value', 10.83)
   })
 
   it('Converts with only feet in the sentence', () => {
     const delta = new Parser().parse('$IIDBT,432.8,f,,M,,F*1C')
     delta.updates.length.should.equal(1)
     delta.updates[0].values.length.should.equal(1)
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'environment.depth.belowTransducer'
     )
-    delta.updates[0].values.should.contain.an.item.with.property(
-      'value',
-      131.91744
-    )
+    delta.updates[0].values.should.containItemWithProperty('value', 131.91744)
   })
 
   it('Converts empty value to null', () => {

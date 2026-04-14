@@ -17,7 +17,7 @@
 const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 const nmeaLine = '$IIRPM,E,1,2418.2,10.5,A*5F'
 
@@ -25,7 +25,7 @@ describe('RPM', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(nmeaLine)
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'propulsion.engine_1.revolutions'
     )

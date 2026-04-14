@@ -20,12 +20,12 @@ const chai = require('chai')
 const should = chai.Should()
 
 chai.use(require('@signalk/signalk-schema').chaiModule)
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('PNKEP', () => {
   it('Polarspeed data ', () => {
     const delta = new Parser().parse('$PNKEP,01,8.3,N,15.5,K*52')
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'performance.targetSpeed'
     )
@@ -39,7 +39,7 @@ describe('PNKEP', () => {
   it('Course on next track data', () => {
     const delta = new Parser().parse('$PNKEP,02,344.4*6B')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'performance.tackMagnetic'
     )
@@ -50,7 +50,7 @@ describe('PNKEP', () => {
   it('Direction data', () => {
     const delta = new Parser().parse('$PNKEP,03,152.0,55.2,67.1*69')
 
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'performance.targetAngle'
     )

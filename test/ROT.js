@@ -22,12 +22,12 @@ const chai = require('chai')
 const nmeaLine = '$GPROT,35.6,A*01'
 
 chai.Should()
-chai.use(require('chai-things'))
+chai.use(require('./helpers/chai-has-item'))
 
 describe('ROT', () => {
   it('Converts OK using individual parser', () => {
     const delta = new Parser().parse(nmeaLine)
-    delta.updates[0].values.should.contain.an.item.with.property(
+    delta.updates[0].values.should.containItemWithProperty(
       'path',
       'navigation.rateOfTurn'
     )

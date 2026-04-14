@@ -18,7 +18,6 @@ const Parser = require('../lib')
 const chai = require('chai')
 const { expect } = require('chai')
 const should = chai.Should()
-chai.use(require('chai-things'))
 
 describe('Custom Sentence Parser', () => {
   it('works', () => {

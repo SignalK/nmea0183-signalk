@@ -19,7 +19,6 @@
 const Parser = require('../lib')
 const chai = require('chai')
 const should = chai.Should()
-chai.use(require('chai-things'))
 
 const nmeaLine = '$PMGNST,02.12,3,T,534,05.0,+03327,00*40'
 
