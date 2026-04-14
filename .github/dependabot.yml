@@ -1,6 +1,30 @@
 version: 2
 updates:
-  - package-ecosystem: 'npm'
-    directory: '/'
+  # npm: weekly bumps, groups minor+patch into one PR, majors individual
+  - package-ecosystem: npm
+    directory: "/"
     schedule:
-      interval: 'daily'
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    labels:
+      - dependencies
+
+  # GitHub Actions: monthly, one grouped PR for everything
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        update-types:
+          - minor
+          - patch
+          - major
+    labels:
+      - dependencies
