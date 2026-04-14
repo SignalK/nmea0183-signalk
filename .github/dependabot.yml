@@ -25,11 +25,11 @@ updates:
     labels:
       - dependencies
 
-  # GitHub Actions: monthly, one grouped PR for everything
+  # GitHub Actions: weekly, one grouped PR for everything
   - package-ecosystem: github-actions
     directory: '/'
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 5
     groups:
       actions:
