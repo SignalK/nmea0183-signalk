@@ -1,5 +1,9 @@
 # @signalk/nmea0183-signalk
 
+[![CI](https://github.com/SignalK/nmea0183-signalk/actions/workflows/ci.yml/badge.svg)](https://github.com/SignalK/nmea0183-signalk/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/@signalk/nmea0183-signalk.svg)](https://www.npmjs.com/package/@signalk/nmea0183-signalk)
+[![License](https://img.shields.io/npm/l/@signalk/nmea0183-signalk.svg)](https://github.com/SignalK/nmea0183-signalk/blob/master/LICENSE)
+
 > A node.js/JavaScript parser of NMEA0183 sentences. Sentences are parsed to [Signal K delta](http://signalk.org/specification/1.7.0/doc/data_model.html#delta-format) format.
 
 ## Supported sentences

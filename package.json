@@ -8,6 +8,7 @@
     "prettier": "prettier --write .",
     "format": "npm run prettier",
     "test": "mocha",
+    "coverage": "c8 --reporter=text --reporter=lcov npm test",
     "deploy": "npm test && npm run release && npm publish --access public --scope @signalk .",
     "create-release": "github-create-release --owner signalk --repository nmea0183-signalk",
     "release": "git tag -d v$npm_package_version && git tag v$npm_package_version && git push --tags && git push && npm run create-release"
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@signalk/github-create-release": "^1.2.0",
+    "c8": "^11.0.0",
     "chai": "^4.1.2",
     "chai-things": "^0.2.0",
     "debug": "^4.0.1",
@@ -49,6 +51,21 @@
     "globals": [
       "describe",
       "it"
+    ]
+  },
+  "c8": {
+    "include": [
+      "index.js",
+      "lib/**",
+      "hooks/**",
+      "codecs/**"
+    ],
+    "exclude": [
+      "test/**",
+      "bench/**",
+      "bin/**",
+      "coverage/**",
+      "**/*.test.js"
     ]
   }
 }
