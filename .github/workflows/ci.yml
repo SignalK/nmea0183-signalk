@@ -65,7 +65,7 @@ jobs:
 
       - name: Upload coverage (lcov) as artifact
         if: matrix.node-version == '24.x'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-lcov
           path: coverage/lcov.info
