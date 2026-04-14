@@ -35,7 +35,7 @@
     "chai-things": "^0.2.0",
     "debug": "^4.0.1",
     "mocha": "^9.1.2",
-    "prettier": "^2.4.1"
+    "prettier": "^3.8.2"
   },
   "repository": {
     "type": "git",
