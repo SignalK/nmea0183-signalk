@@ -66,6 +66,53 @@ describe('VDM', function () {
     toFull(delta).should.be.validSignalK
   })
 
+  it('AIS type 5 with valid ETA produces navigation.destination.eta', () => {
+    // Type 5 encoded with etaMo=6, etaDay=15, etaHr=10, etaMin=30.
+    const delta = new Parser().parse(
+      '!AIVDM,1,1,,A,51mg=5D0Bm`L<4hh001@E=A<PU00000000000016<Pj:51WbN=kV@h00000000000000000,2*70\n'
+    )
+    const etaValue = delta.updates[0].values.find(
+      (pv) => pv.path === 'navigation.destination.eta'
+    ).value
+
+    // AIS ETA has no year: current year when still upcoming, else next year.
+    const now = new Date()
+    const currentYearEta = new Date(
+      Date.UTC(now.getUTCFullYear(), 5, 15, 10, 30, 0, 0)
+    )
+    const expectedYear =
+      currentYearEta.getTime() < now.getTime()
+        ? now.getUTCFullYear() + 1
+        : now.getUTCFullYear()
+    const expected = new Date(
+      Date.UTC(expectedYear, 5, 15, 10, 30, 0, 0)
+    ).toISOString()
+    etaValue.should.equal(expected)
+  })
+
+  it("AIS type 5 with 'not available' ETA sentinels omits ETA", () => {
+    // Type 5 encoded with etaMo=0, etaDay=0, etaHr=24, etaMin=60.
+    const delta = new Parser().parse(
+      '!AIVDM,1,1,,A,51mg=5D0Bm`L<4hh001@E=@p4000000000000016<Pj:500Ht=kSkQ@0000000000000000,2*2D\n'
+    )
+    should.not.exist(
+      delta.updates[0].values.find(
+        (pv) => pv.path === 'navigation.destination.eta'
+      )
+    )
+  })
+
+  it('AIS non-type-5 message does not include ETA', () => {
+    const delta = new Parser().parse(
+      '!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E\n'
+    )
+    should.not.exist(
+      delta.updates[0].values.find(
+        (pv) => pv.path === 'navigation.destination.eta'
+      )
+    )
+  })
+
   it('Single line converts ok', () => {
     const delta = new Parser().parse(
       '!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26\n'
