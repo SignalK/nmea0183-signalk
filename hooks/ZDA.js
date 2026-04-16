@@ -66,17 +66,6 @@ module.exports = function (input) {
 
   var delta = {}
   if (time.length >= 6 && date.length === 6 && empty < 3) {
-    const year = parts[3]
-    const month = parts[2] - 1
-    const day = parts[1]
-    const hour = (parts[0] || '').substring(0, 2)
-    const minute = (parts[0] || '').substring(2, 4)
-    const second = (parts[0] || '').substring(4, 6)
-    const milliSecond = (parts[0].substring(4) % 1) * 1000
-    const d = new Date(
-      Date.UTC(year, month, day, hour, minute, second, milliSecond)
-    )
-    const ts = d.toISOString()
     delta = {
       updates: [
         {
@@ -85,7 +74,7 @@ module.exports = function (input) {
           values: [
             {
               path: 'navigation.datetime',
-              value: ts
+              value: utils.timestamp(time, date)
             }
           ]
         }

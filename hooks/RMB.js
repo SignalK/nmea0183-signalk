@@ -50,11 +50,9 @@ module.exports = function (input) {
   let crossTrackError = 0.0
   let position = null
 
-  latitude = utils.coordinate(parts[5], parts[6])
-  longitude = utils.coordinate(parts[7], parts[8])
-  if (isNaN(latitude) || isNaN(longitude)) {
-    position = null
-  } else {
+  if (parts[5].trim() !== '' && parts[7].trim() !== '') {
+    latitude = utils.coordinate(parts[5], parts[6])
+    longitude = utils.coordinate(parts[7], parts[8])
     position = {
       longitude,
       latitude
