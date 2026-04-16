@@ -73,37 +73,56 @@ module.exports = function (input) {
 
   crossTrackError = parts[2] == 'L' ? crossTrackError : -crossTrackError
 
+  const originWaypointID = (parts[3] || '').trim()
+  const destinationWaypointID = (parts[4] || '').trim()
+
+  const values = [
+    {
+      path: 'navigation.courseRhumbline.nextPoint.position',
+      value: position
+    },
+
+    {
+      path: 'navigation.courseRhumbline.nextPoint.bearingTrue',
+      value: utils.transform(bearing, 'deg', 'rad')
+    },
+
+    {
+      path: 'navigation.courseRhumbline.nextPoint.velocityMadeGood',
+      value: utils.transform(vmg, 'knots', 'ms')
+    },
+
+    {
+      path: 'navigation.courseRhumbline.nextPoint.distance',
+      value: utils.transform(distance, 'nm', 'km') * 1000
+    },
+
+    {
+      path: 'navigation.courseRhumbline.crossTrackError',
+      value: utils.transform(crossTrackError, 'nm', 'km') * 1000
+    }
+  ]
+
+  if (destinationWaypointID) {
+    values.push({
+      path: 'navigation.courseRhumbline.nextPoint.ID',
+      value: destinationWaypointID
+    })
+  }
+
+  if (originWaypointID) {
+    values.push({
+      path: 'navigation.courseRhumbline.previousPoint.ID',
+      value: originWaypointID
+    })
+  }
+
   const delta = {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: [
-          {
-            path: 'navigation.courseRhumbline.nextPoint.position',
-            value: position
-          },
-
-          {
-            path: 'navigation.courseRhumbline.nextPoint.bearingTrue',
-            value: utils.transform(bearing, 'deg', 'rad')
-          },
-
-          {
-            path: 'navigation.courseRhumbline.nextPoint.velocityMadeGood',
-            value: utils.transform(vmg, 'knots', 'ms')
-          },
-
-          {
-            path: 'navigation.courseRhumbline.nextPoint.distance',
-            value: utils.transform(distance, 'nm', 'km') * 1000
-          },
-
-          {
-            path: 'navigation.courseRhumbline.crossTrackError',
-            value: utils.transform(crossTrackError, 'nm', 'km') * 1000
-          }
-        ]
+        values
       }
     ]
   }
