@@ -57,6 +57,15 @@ describe('RMB', () => {
     delta.updates[0].values[2].value.should.be.closeTo(0, 0.005)
     delta.updates[0].values[3].value.should.be.closeTo(4639.26, 0.005)
     delta.updates[0].values[4].value.should.equal(0)
+
+    delta.updates[0].values.should.containItemMatching({
+      path: 'navigation.courseRhumbline.nextPoint.ID',
+      value: '002'
+    })
+    delta.updates[0].values.should.containItemMatching({
+      path: 'navigation.courseRhumbline.previousPoint.ID',
+      value: '001'
+    })
   })
 
   it('crossTrackError should be negative to steer right', () => {
@@ -73,15 +82,47 @@ describe('RMB', () => {
     delta.updates[0].values[4].value.should.be.closeTo(800.064, 0.005)
   })
 
+  it('omits waypoint IDs when fields are empty', () => {
+    const delta = new Parser().parse(
+      '$ECRMB,A,0.000,L,,,4653.550,N,07115.984,W,2.505,334.205,0.000,V*07'
+    )
+    const paths = delta.updates[0].values.map((v) => v.path)
+    paths.should.not.include('navigation.courseRhumbline.nextPoint.ID')
+    paths.should.not.include('navigation.courseRhumbline.previousPoint.ID')
+  })
+
+  it('includes only destination ID when origin is empty', () => {
+    const delta = new Parser().parse(
+      '$ECRMB,A,0.000,L,,002,4653.550,N,07115.984,W,2.505,334.205,0.000,V*35'
+    )
+    delta.updates[0].values.should.containItemMatching({
+      path: 'navigation.courseRhumbline.nextPoint.ID',
+      value: '002'
+    })
+    const paths = delta.updates[0].values.map((v) => v.path)
+    paths.should.not.include('navigation.courseRhumbline.previousPoint.ID')
+  })
+
+  it('includes only origin ID when destination is empty', () => {
+    const delta = new Parser().parse(
+      '$ECRMB,A,0.000,L,001,,4653.550,N,07115.984,W,2.505,334.205,0.000,V*36'
+    )
+    delta.updates[0].values.should.containItemMatching({
+      path: 'navigation.courseRhumbline.previousPoint.ID',
+      value: '001'
+    })
+    const paths = delta.updates[0].values.map((v) => v.path)
+    paths.should.not.include('navigation.courseRhumbline.nextPoint.ID')
+  })
+
   it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$ECRMB,,,,,,,,,,,,,*77')
-    delta.updates[0].values.should.containItemWithProperty(
-      'path',
-      'navigation.courseRhumbline.nextPoint.position'
-    )
     delta.updates[0].values.should.containItemMatching({
       path: 'navigation.courseRhumbline.nextPoint.position',
       value: null
     })
+    const paths = delta.updates[0].values.map((v) => v.path)
+    paths.should.not.include('navigation.courseRhumbline.nextPoint.ID')
+    paths.should.not.include('navigation.courseRhumbline.previousPoint.ID')
   })
 })
