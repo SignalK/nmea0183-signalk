@@ -45,7 +45,14 @@ const autoData = '84,56,5E,79,02,00,00,00,08'
 const windData = '84,06,00,00,04,00,00,00,00'
 const routeData = '84,06,00,00,08,00,00,00,00'
 const rudderData = '84,06,00,00,08,00,FE,00,00'
-const compassVariationData = '99,00,43'
+// 0x99 compass variation: XX is 8-bit two's complement, positive = West, negative = East.
+// Signal K uses East-positive convention, so the decoded byte is negated.
+const compassVariationData = '99,00,43' // XX=0x43 (67) -> 67° West -> -67°
+const compassVariationZeroData = '99,00,00' // XX=0x00 -> 0°
+const compassVariationWest1Data = '99,00,01' // XX=0x01 -> 1° West -> -1°
+const compassVariationEast1Data = '99,00,FF' // XX=0xFF (-1) -> 1° East -> +1°
+const compassVariationMaxWestData = '99,00,7F' // XX=0x7F (127) -> 127° West -> -127°
+const compassVariationMaxEastData = '99,00,80' // XX=0x80 (-128) -> 128° East -> +128°
 const heading_nineCData = '9C,51,1E,00'
 const empty_nineCData = '9C,,,'
 const empty_eightFourData = '84,,,,,,,,'
@@ -348,7 +355,7 @@ describe('seatalk', () => {
       )
     })
 
-    it(`${prefix} 0x99 compass variation converted`, () => {
+    it(`${prefix} 0x99 compass variation converted (West)`, () => {
       const fullSentence = utils.appendChecksum(
         `${prefix}${compassVariationData}`
       )
@@ -357,8 +364,85 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
+      // 67° West -> -67° -> -1.16937 rad
       delta.updates[0].values[0].value.should.be.closeTo(
-        1.0646508439596323,
+        -1.1693705988362009,
+        0.0005
+      )
+    })
+
+    it(`${prefix} 0x99 compass variation zero`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${compassVariationZeroData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.magneticVariation'
+      )
+      delta.updates[0].values[0].value.should.be.closeTo(0, 0.0005)
+    })
+
+    it(`${prefix} 0x99 compass variation 1° West`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${compassVariationWest1Data}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.magneticVariation'
+      )
+      // -1° -> -0.01745 rad
+      delta.updates[0].values[0].value.should.be.closeTo(
+        -0.017453292519943295,
+        0.0005
+      )
+    })
+
+    it(`${prefix} 0x99 compass variation 1° East (high bit set)`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${compassVariationEast1Data}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.magneticVariation'
+      )
+      // +1° -> +0.01745 rad; exercises the XX > 127 branch
+      delta.updates[0].values[0].value.should.be.closeTo(
+        0.017453292519943295,
+        0.0005
+      )
+    })
+
+    it(`${prefix} 0x99 compass variation max West boundary`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${compassVariationMaxWestData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.magneticVariation'
+      )
+      // 127° West -> -127° -> -2.21657 rad
+      delta.updates[0].values[0].value.should.be.closeTo(
+        -2.2165681500327987,
+        0.0005
+      )
+    })
+
+    it(`${prefix} 0x99 compass variation max East boundary`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${compassVariationMaxEastData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.magneticVariation'
+      )
+      // XX=0x80 -> signed=-128 -> +128° -> 2.23402 rad
+      delta.updates[0].values[0].value.should.be.closeTo(
+        2.234021442552742,
         0.0005
       )
     })
