@@ -34,10 +34,7 @@ $--VWR,x.x,a,x.x,N,x.x,M,x.x,K*hh<CR><LF>
  */
 
 function isEmpty(mixed) {
-  return (
-    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
-    (typeof mixed === 'string' && mixed.trim() === '')
-  )
+  return typeof mixed !== 'string' || mixed.trim() === ''
 }
 
 module.exports = function (input) {

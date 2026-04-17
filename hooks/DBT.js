@@ -72,6 +72,4 @@ module.exports = function (input) {
   return delta
 }
 
-const hasNoValue = (value) =>
-  (typeof value !== 'string' && typeof value !== 'number') ||
-  (typeof value === 'string' && value.trim() === '')
+const hasNoValue = (value) => typeof value !== 'string' || value.trim() === ''

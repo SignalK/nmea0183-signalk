@@ -40,6 +40,18 @@ describe('ZDA', () => {
     should.equal(delta, null)
   })
 
+  it('Returns empty delta when time is missing but date is present', () => {
+    const delta = new Parser().parse('$GPZDA,,11,03,2004,,*4D')
+    // time fails the length >= 6 check -> delta stays as an empty object
+    delta.should.deep.equal({})
+  })
+
+  it('Returns empty delta when year is missing', () => {
+    // Time + day + month present, year/tz empty -> date length 4, not 6.
+    const delta = new Parser().parse('$GPZDA,160012,11,03,,,*4F')
+    delta.should.deep.equal({})
+  })
+
   it('Doesn\t choke when the number of seconds is 0', () => {
     const delta = new Parser().parse('$IIZDA,085400,22,07,2021,,*50')
     delta.updates[0].values.should.containItemWithProperty(

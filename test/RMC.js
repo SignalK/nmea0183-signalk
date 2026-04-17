@@ -118,6 +118,17 @@ describe('RMC', () => {
       .value.should.be.closeTo(0.20944, 0.05)
   })
 
+  it('Emits null position when longitude direction is invalid', () => {
+    const delta = new Parser().parse(
+      '$GPRMC,085412.000,A,5222.3198,N,00454.5784,Q,0.58,251.34,030414,,,A*71'
+    )
+    should.equal(
+      delta.updates[0].values.find((v) => v.path === 'navigation.position')
+        .value,
+      null
+    )
+  })
+
   it('Converts OK using individual parser, w/ invalid lat/lng values', () => {
     const delta = new Parser().parse(
       // note that this particular example contains invalid latitude (1547\x0E70800) and invalid datestamp/magvar (110925\f12.49)

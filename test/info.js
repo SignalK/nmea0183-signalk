@@ -45,4 +45,9 @@ describe('Package info', () => {
     data.should.equal(pkg.author)
     done()
   })
+
+  it('Tolerates a non-object options argument', () => {
+    const parser = new Parser('not-an-object')
+    parser.options.validateChecksum.should.equal(true)
+  })
 })

@@ -54,6 +54,20 @@ describe('GLL', () => {
     should.equal(delta, null)
   })
 
+  it('Accepts time with fractional seconds', () => {
+    const delta = new Parser().parse(
+      '$GPGLL,5958.613,N,02325.928,E,121022.5,A,D*5B'
+    )
+    delta.updates[0].timestamp.slice(11, 19).should.equal('12:10:22')
+  })
+
+  it('Returns null when status is V (invalid)', () => {
+    const delta = new Parser().parse(
+      '$GPGLL,5958.613,N,02325.928,E,121022,V,D*57'
+    )
+    should.equal(delta, null)
+  })
+
   it('emits a UTC ISO timestamp matching today and the sentence time', () => {
     // before/after window tolerates a test run straddling midnight UTC
     const before = new Date().toISOString().slice(0, 10)

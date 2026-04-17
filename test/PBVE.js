@@ -107,4 +107,37 @@ describe('PBVE', () => {
       )
     )
   })
+
+  it('Oil pressure in bar (non-AA gaugeUnits) converts without psi factor', () => {
+    const delta = new Parser().parse(
+      '$PBVE,DGOIADNNACAEACAABBBLAAEBAACMCFAAEPAIKI*34'
+    )
+    const pressure = delta.updates[0].values[0]
+    // bar branch: value * 100000
+    pressure.meta.gaugeUnits.should.equal('bar')
+    pressure.value.should.equal(37 * 100000)
+  })
+
+  it('Coolant temperature in Celsius (non-AA gaugeUnits)', () => {
+    const delta = new Parser().parse(
+      '$PBVE,EDOIADOKACABABAABACAPPCMABCGADABDOAEGL*23'
+    )
+    const temp = delta.updates[0].values[0]
+    // C branch: value + 273.15
+    temp.meta.gaugeUnits.should.equal('c')
+    temp.value.should.be.closeTo(259 + 273.15, 0.1)
+  })
+
+  it('Converts CruzPro RH30 engine RPM/hours (product code B)', () => {
+    const delta = new Parser().parse(
+      '$PBVE,BJAAAOAAABNCANIIBDAAPHABAAAACCABAAADAAHCJPACDIBOACAAGL*2B'
+    )
+    const values = delta.updates[0].values
+    values.should.containItemWithProperty('path', 'propulsion.0.revolutions')
+    values.should.containItemWithProperty('path', 'propulsion.0.runTime')
+    const rpm = values.find((v) => v.path === 'propulsion.0.revolutions').value
+    const runTime = values.find((v) => v.path === 'propulsion.0.runTime').value
+    rpm.should.be.a('number')
+    runTime.should.be.a('number')
+  })
 })

@@ -66,6 +66,53 @@ const navToWaypointTrueData = '85,06,32,0A,80,07,47,00,00'
 const waypointNameData = '82,05,27,D8,48,B7,06,F9'
 // 0x82 Waypoint name: "AB" (6-bit encoded, padded with zeros)
 const waypointNameShortData = '82,05,91,6E,04,FB,00,FF'
+// 0x82 short sentence (fewer than 8 parts) -> null
+const waypointNameShortSentenceData = '82,05,27,D8,48,B7'
+// 0x82 non-hex payload -> null
+const waypointNameBadHexData = '82,05,ZZ,D8,48,B7,06,F9'
+// 0x82 all-zero decoded name -> null (all chars = 0x30 stripped)
+const waypointNameAllZeroData = '82,05,00,FF,00,FF,00,FF'
+
+// 0x85 short sentence (fewer than 9 parts) -> null
+const navToWaypointShortData = '85,06,64,A0,65,22,17,00'
+// 0x85 non-hex payload -> null
+const navToWaypointBadHexData = '85,06,64,A0,65,ZZ,17,00,00'
+// 0x85 with all flags = 0 -> pathValues empty -> null
+const navToWaypointNoFlagsData = '85,06,64,A0,65,22,10,00,00'
+
+// 0x84 short sentence (fewer than 9 parts) -> null
+const eightFourShortData = '84,06,00,00,04,00,00,00'
+// 0x84 non-hex payload -> null (bad hex in VW position)
+const eightFourBadHexData = '84,06,ZZ,00,04,00,00,00,00'
+
+// 0x10 Apparent Wind Angle > 180 (wraps to negative)
+// XX=0x01, YY=0x20: (256+32)/2 = 144  (still <= 180)
+// Use XX=0x02, YY=0x00: (512+0)/2 = 256 -> -104 deg
+const apparentWindAngleOver180Data = '10,01,02,00'
+// AWA exactly 180 deg (boundary): 256*1 + 104 = 360 -> 360/2 = 180, stays 180
+const apparentWindAngle180Data = '10,01,01,68'
+
+// 0x26 Speed through water with D&4=4 (valid value1)
+// We need parts[6] with D bits set: e.g. parts[6]='41' -> D=4, E=1
+const averageSpeedWithValidSTWData = '26,04,12,11,10,11,41'
+
+// 0x50 Latitude in southern hemisphere (YYYY high bit set)
+// parts[1]='A2' (Z=A), parts[2]='21' (XX=0x21=33 degrees), parts[3]='01', parts[4]='80' -> YYYY = 0x01 + 0x80*256 = 0x8001
+const southernLatitudeData = '50,A2,21,01,80'
+
+// 0x54 time, run AFTER date was set so the emission block fires
+// Using a session-shared Parser, date first (0x56), then time (0x54)
+
+// 0x57 sat info with S=1 (triggers DD=0x94 assignment)
+const satInfoS1Data = '57,10,AB'
+
+// 0x9C rudder position > 127 (negative after two's complement adjustment)
+const nineCNegativeRudderData = '9C,51,1E,FE'
+// 0x9C compass heading branches:
+// U=0: outer (U & 0xc) is zero -> adds 0
+const nineCUzeroData = '9C,01,1E,10'
+// U=4: outer true (U & 0xc != 0), inner (U & 1) is zero -> adds 1
+const nineCUfourData = '9C,41,1E,10'
 
 const should = chai.Should()
 chai.use(require('./helpers/chai-has-item'))
@@ -522,6 +569,177 @@ describe('seatalk', () => {
         'navigation.courseRhumbline.nextPoint.ID'
       )
       delta.updates[0].values[0].value.should.equal('AB')
+    })
+
+    it(`${prefix} 0x82 short sentence returns null`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${waypointNameShortSentenceData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      should.equal(delta, null)
+    })
+
+    it(`${prefix} 0x82 non-hex payload returns null`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${waypointNameBadHexData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      should.equal(delta, null)
+    })
+
+    it(`${prefix} 0x82 all-zero name returns null`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${waypointNameAllZeroData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      should.equal(delta, null)
+    })
+
+    it(`${prefix} 0x85 short sentence returns null`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${navToWaypointShortData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      should.equal(delta, null)
+    })
+
+    it(`${prefix} 0x85 non-hex payload returns null`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${navToWaypointBadHexData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      should.equal(delta, null)
+    })
+
+    it(`${prefix} 0x85 all-flags-zero returns null`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${navToWaypointNoFlagsData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      should.equal(delta, null)
+    })
+
+    it(`${prefix} 0x84 short sentence returns null`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${eightFourShortData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      should.equal(delta, null)
+    })
+
+    it(`${prefix} 0x84 non-hex payload returns null`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${eightFourBadHexData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      should.equal(delta, null)
+    })
+
+    it(`${prefix} 0x10 AWA > 180 wraps to negative`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${apparentWindAngleOver180Data}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'environment.wind.angleApparent'
+      )
+      delta.updates[0].values[0].value.should.be.lessThan(0)
+    })
+
+    it(`${prefix} 0x10 AWA exactly 180 stays positive (boundary)`, () => {
+      // AWA = 180 should NOT wrap (check uses > 180, not >= 180)
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${apparentWindAngle180Data}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values[0].value.should.be.closeTo(Math.PI, 0.0005)
+    })
+
+    it(`${prefix} 0x26 speedThroughWater when D&4=4`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${averageSpeedWithValidSTWData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.speedThroughWater'
+      )
+    })
+
+    it(`${prefix} 0x50 south latitude negates value`, () => {
+      const session = new Parser()
+      session.parse(utils.appendChecksum(`${prefix}${longitudeData}`))
+      const delta = session.parse(
+        utils.appendChecksum(`${prefix}${southernLatitudeData}`)
+      )
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.position'
+      )
+      delta.updates[0].values[0].value.latitude.should.be.lessThan(0)
+    })
+
+    it(`${prefix} 0x54 emits datetime when date already set`, () => {
+      const session = new Parser()
+      session.parse(dateTag + utils.appendChecksum(`${prefix}${dateData}`))
+      const delta = session.parse(
+        timeTag + utils.appendChecksum(`${prefix}${timeData}`)
+      )
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.datetime'
+      )
+    })
+
+    it(`${prefix} 0x57 S=1 branch sets DD=0x94`, () => {
+      const fullSentence = utils.appendChecksum(`${prefix}${satInfoS1Data}`)
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.gnss.horizontalDilution'
+      )
+      delta.updates[0].values
+        .find((v) => v.path === 'navigation.gnss.horizontalDilution')
+        .value.should.equal(0x94)
+    })
+
+    it(`${prefix} unknown seatalk datagram returns null`, () => {
+      const fullSentence = utils.appendChecksum(`${prefix}EE,01,02`)
+      const delta = new Parser().parse(fullSentence)
+      should.equal(delta, null)
+    })
+
+    it(`${prefix} 0x9C U=0 branch (no carry)`, () => {
+      const fullSentence = utils.appendChecksum(`${prefix}${nineCUzeroData}`)
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.headingMagnetic'
+      )
+    })
+
+    it(`${prefix} 0x9C U=4 branch (outer true, inner false)`, () => {
+      const fullSentence = utils.appendChecksum(`${prefix}${nineCUfourData}`)
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'navigation.headingMagnetic'
+      )
+    })
+
+    it(`${prefix} 0x9C rudder position > 127 goes negative`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}${nineCNegativeRudderData}`
+      )
+      const delta = new Parser().parse(fullSentence)
+      delta.updates[0].values.should.containItemWithProperty(
+        'path',
+        'steering.rudderAngle'
+      )
+      delta.updates[0].values
+        .find((v) => v.path === 'steering.rudderAngle')
+        .value.should.be.lessThan(0)
     })
   })
 })

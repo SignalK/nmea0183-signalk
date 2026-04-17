@@ -247,14 +247,12 @@ module.exports = function (input) {
   }
 
   if (productCode === 'B') {
-    const highRpmAlarm = convertToValue(data.substr(14, 4)) / 60
     // Engine minutes in seconds
     const engineMinutes = convertToEngineMinutes(data.substr(28, 2)) * 60
     // Engine hours in seconds
     const engineHours = convertToValue(data.substr(30, 4)) * 3600
     const rpm = convertToValue(data.substr(42, 4)) / 60
     const runTime = engineHours + engineMinutes
-    const gaugeAlarmOn = highRpmAlarm > rpm ? 1 : 0
 
     delta = {
       updates: [

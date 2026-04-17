@@ -91,4 +91,84 @@ describe('BWC', () => {
       }
     ])
   })
+
+  it('Omits timestamp when parts[0] is empty', () => {
+    const delta = new Parser().parse(
+      '$GPBWC,,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*28'
+    )
+    should.equal(delta.updates[0].timestamp, undefined)
+    delta.updates[0].values
+      .map((v) => v.path)
+      .should.include('navigation.courseGreatCircle.nextPoint.position')
+  })
+
+  // Each individual coordinate field going empty must collapse position to
+  // null; locks the AND-chain at the top.
+  ;[
+    [
+      'latitude value empty',
+      '$GPBWC,225444,,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*0A'
+    ],
+    [
+      'latitude hemisphere empty',
+      '$GPBWC,225444,4917.24,,12309.57,W,051.9,T,031.6,M,001.3,N,004*67'
+    ],
+    [
+      'longitude value empty',
+      '$GPBWC,225444,4917.24,N,,W,051.9,T,031.6,M,001.3,N,004*3C'
+    ],
+    [
+      'longitude hemisphere empty',
+      '$GPBWC,225444,4917.24,N,12309.57,,051.9,T,031.6,M,001.3,N,004*7E'
+    ]
+  ].forEach(([label, sentence]) => {
+    it(`Emits null position when ${label}`, () => {
+      const delta = new Parser().parse(sentence)
+      should.equal(
+        delta.updates[0].values.find(
+          (v) => v.path === 'navigation.courseGreatCircle.nextPoint.position'
+        ).value,
+        null
+      )
+    })
+  })
+
+  it('Skips bearingTrackTrue when parts[6] is not "T"', () => {
+    // parts[6]='', so no True bearing emitted
+    const delta = new Parser().parse(
+      '$GPBWC,225444,4917.24,N,12309.57,W,051.9,,031.6,M,001.3,N,004*7D'
+    )
+    const paths = delta.updates[0].values.map((v) => v.path)
+    paths.should.not.include('navigation.courseGreatCircle.bearingTrackTrue')
+    paths.should.include('navigation.courseGreatCircle.bearingTrackMagnetic')
+  })
+
+  it('Skips bearingTrackMagnetic when parts[8] is not "M"', () => {
+    const delta = new Parser().parse(
+      '$GPBWC,225444,4917.24,N,12309.57,W,051.9,T,031.6,,001.3,N,004*64'
+    )
+    const paths = delta.updates[0].values.map((v) => v.path)
+    paths.should.not.include(
+      'navigation.courseGreatCircle.bearingTrackMagnetic'
+    )
+    paths.should.include('navigation.courseGreatCircle.bearingTrackTrue')
+  })
+
+  it('Skips distance when parts[9] or parts[10] is empty', () => {
+    const delta = new Parser().parse(
+      '$GPBWC,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,,N,004*05'
+    )
+    const paths = delta.updates[0].values.map((v) => v.path)
+    paths.should.not.include('navigation.courseGreatCircle.nextPoint.distance')
+  })
+
+  it('Uses km when distance unit is K', () => {
+    const delta = new Parser().parse(
+      '$IIBWC,200321,4917.24,N,12309.57,W,119.5,T,129.5,M,22.10,K,1*34'
+    )
+    const distance = delta.updates[0].values.find(
+      (v) => v.path === 'navigation.courseGreatCircle.nextPoint.distance'
+    ).value
+    distance.should.be.closeTo(22100, 0.5)
+  })
 })

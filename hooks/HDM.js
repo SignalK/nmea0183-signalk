@@ -35,10 +35,7 @@ const utils = require('@signalk/nmea0183-utilities')
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  if (
-    (typeof parts[0] !== 'string' && typeof parts[0] !== 'number') ||
-    (typeof parts[0] === 'string' && parts[0].trim() === '')
-  ) {
+  if (typeof parts[0] !== 'string' || parts[0].trim() === '') {
     return null
   }
 

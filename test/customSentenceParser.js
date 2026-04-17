@@ -20,6 +20,30 @@ const { expect } = require('chai')
 const should = chai.Should()
 
 describe('Custom Sentence Parser', () => {
+  it('logs when an entry is invalid and does not register it', () => {
+    const errors = []
+    const origError = console.error
+    console.error = (msg) => errors.push(msg)
+    try {
+      const options = {
+        onPropertyValues: (_name, cb) => {
+          cb([
+            { value: { sentence: 42, parser: () => null } },
+            { value: { sentence: 'OK', parser: 'not-a-function' } }
+          ])
+        }
+      }
+      const parser = new Parser(options)
+      errors.length.should.equal(2)
+      errors[0].should.match(/Invalid sentence parser entry/)
+      // The invalid entries should not land in hooks
+      expect(parser.hooks[42]).to.be.undefined
+      expect(parser.hooks['OK']).to.be.undefined
+    } finally {
+      console.error = origError
+    }
+  })
+
   it('works', () => {
     const TEST_SENTENCE_PARTS = ['1', '2', '3', 'foobar', 'D']
     const TEST_CUSTOM_SENTENCE = `$IIXXX,${TEST_SENTENCE_PARTS.join(',')}*17`

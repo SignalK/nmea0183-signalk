@@ -36,4 +36,9 @@ describe('RSA', () => {
       0.1
     )
   })
+
+  it('Returns null when status is V (invalid)', () => {
+    const delta = new Parser().parse('$RIRSA,10.0,V*12')
+    ;(delta === null).should.equal(true)
+  })
 })

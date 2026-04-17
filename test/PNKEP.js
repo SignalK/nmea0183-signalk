@@ -57,4 +57,24 @@ describe('PNKEP', () => {
     delta.updates[0].values[0].value.should.be.closeTo(2.652900463, 0.00005)
     toFull(delta).should.be.validSignalK
   })
+
+  it('Returns null when 01 has no speed data', () => {
+    const delta = new Parser().parse('$PNKEP,01,,N,,K*68')
+    should.equal(delta, null)
+  })
+
+  it('Uses knots when kph is zero for 01', () => {
+    const delta = new Parser().parse('$PNKEP,01,8.3,N,0,K*7D')
+    delta.updates[0].values[0].value.should.be.closeTo(4.269889970594349, 0.001)
+  })
+
+  it('Returns null when 02 has no course', () => {
+    const delta = new Parser().parse('$PNKEP,02,*42')
+    should.equal(delta, null)
+  })
+
+  it('Returns null when 03 has no angle', () => {
+    const delta = new Parser().parse('$PNKEP,03,*43')
+    should.equal(delta, null)
+  })
 })

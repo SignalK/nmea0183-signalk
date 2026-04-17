@@ -66,6 +66,28 @@ describe('VDM', function () {
     toFull(delta).should.be.validSignalK
   })
 
+  it('AIS type 5 with past-year ETA rolls forward to next year', () => {
+    // ETA month=1, day=1: unless run on Jan 1 UTC, this is already past in
+    // the current year and should roll to next year.
+    const delta = new Parser().parse(
+      '!AIVDM,1,1,,A,51mg=5D0?JU905=@=<105=@p4lD0000000000016<PjDN0@P0JD0Dm81E0H11Dm00000000,2*32\n'
+    )
+    const eta = delta.updates[0].values.find(
+      (pv) => pv.path === 'navigation.destination.eta'
+    )
+    const now = new Date()
+    const currentYearEta = new Date(
+      Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0)
+    )
+    const expectedYear =
+      currentYearEta.getTime() < now.getTime()
+        ? now.getUTCFullYear() + 1
+        : now.getUTCFullYear()
+    eta.value.should.equal(
+      new Date(Date.UTC(expectedYear, 0, 1, 0, 0, 0, 0)).toISOString()
+    )
+  })
+
   it('AIS type 5 with valid ETA produces navigation.destination.eta', () => {
     // Type 5 encoded with etaMo=6, etaDay=15, etaHr=10, etaMin=30.
     const delta = new Parser().parse(

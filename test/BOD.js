@@ -61,4 +61,83 @@ describe('BOD', () => {
     const delta = new Parser().parse('$GPBOD,,,,,,*5E')
     should.equal(delta, null)
   })
+
+  it('Emits null for the axis that is not provided', () => {
+    // Both parts declare True: Magnetic stays undefined, should emit null.
+    const delta = new Parser().parse('$GPBOD,045.,T,023.,T,DEST,START*18')
+    should.equal(
+      delta.updates[0].values.find(
+        (x) => x.path === 'navigation.courseRhumbline.bearingTrackMagnetic'
+      ).value,
+      null
+    )
+  })
+
+  // Each of parts[0..4] being individually empty must short-circuit to null.
+  // This locks the guard at the top of the hook against accidental loosening.
+  ;[
+    ['parts[0] empty', '$GPBOD,,T,023.,M,DEST,START*1E'],
+    ['parts[1] empty', '$GPBOD,045.,,023.,M,DEST,START*55'],
+    ['parts[2] empty', '$GPBOD,045.,T,,M,DEST,START*1E'],
+    ['parts[3] empty', '$GPBOD,045.,T,023.,,DEST,START*4C'],
+    ['parts[4] empty', '$GPBOD,045.,T,023.,M,,START*07']
+  ].forEach(([label, sentence]) => {
+    it(`Returns null when ${label}`, () => {
+      should.equal(new Parser().parse(sentence), null)
+    })
+  })
+
+  it('Exact deep.equal of full parse to lock paths, values and types', () => {
+    const delta = new Parser().parse('$GPBOD,045.,T,023.,M,DEST,START*01')
+    delta.updates[0].values.should.deep.include.members([
+      {
+        path: 'navigation.courseRhumbline.bearingTrackTrue',
+        value: 0.7853981635767779
+      },
+      {
+        path: 'navigation.courseRhumbline.bearingTrackMagnetic',
+        value: 0.40142572805035315
+      },
+      { path: 'navigation.courseRhumbline.nextPoint.ID', value: 'DEST' },
+      { path: 'navigation.courseRhumbline.previousPoint.ID', value: 'START' }
+    ])
+  })
+
+  it('Trims whitespace in waypoint IDs', () => {
+    const delta = new Parser().parse('$GPBOD,045.,T,023.,M, DEST , START *01')
+    delta.updates[0].values
+      .find((v) => v.path === 'navigation.courseRhumbline.nextPoint.ID')
+      .value.should.equal('DEST')
+    delta.updates[0].values
+      .find((v) => v.path === 'navigation.courseRhumbline.previousPoint.ID')
+      .value.should.equal('START')
+  })
+
+  it('Emits null when True bearing is absent (both axes Magnetic)', () => {
+    const delta = new Parser().parse('$GPBOD,045.,M,023.,M,DEST,START*18')
+    should.equal(
+      delta.updates[0].values.find(
+        (x) => x.path === 'navigation.courseRhumbline.bearingTrackTrue'
+      ).value,
+      null
+    )
+  })
+
+  it('Handles Magnetic-first / True-second ordering', () => {
+    const delta = new Parser().parse('$GPBOD,045.,M,023.,T,DEST,START*01')
+    delta.updates[0].values.should.containItemWithProperty(
+      'path',
+      'navigation.courseRhumbline.bearingTrackMagnetic'
+    )
+    delta.updates[0].values.should.containItemWithProperty(
+      'path',
+      'navigation.courseRhumbline.bearingTrackTrue'
+    )
+    delta.updates[0].values
+      .find((x) => x.path === 'navigation.courseRhumbline.bearingTrackMagnetic')
+      .value.should.be.closeTo(0.7853981635767779, 0.000001)
+    delta.updates[0].values
+      .find((x) => x.path === 'navigation.courseRhumbline.bearingTrackTrue')
+      .value.should.be.closeTo(0.40142572805035315, 0.000001)
+  })
 })

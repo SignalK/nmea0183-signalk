@@ -153,6 +153,33 @@ describe('GNS', () => {
     should.equal(delta, null)
   })
 
+  it('Accepts a sentence with exactly 4 empty fields (boundary)', () => {
+    // Guard is `empty > 4`, so empty=4 must still produce a delta.
+    const delta = new Parser().parse(
+      '$GPGNS,111648.00,0235.0379,S,04422.1450,W,AN,12,0.8,8.5,,,,S*23'
+    )
+    delta.should.be.an('object')
+    delta.updates[0].values.should.containItemWithProperty(
+      'path',
+      'navigation.position'
+    )
+  })
+
+  it('Returns null once 5 or more fields are empty', () => {
+    const delta = new Parser().parse(
+      '$GPGNS,111648.00,0235.0379,S,04422.1450,W,,,,,,,,S*2A'
+    )
+    should.equal(delta, null)
+  })
+
+  it('Accepts time without decimal fraction', () => {
+    const delta = new Parser().parse(
+      '$GPGNS,111648,0235.0379,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,S*73'
+    )
+    const ts = delta.updates[0].timestamp
+    ts.slice(11, 19).should.equal('11:16:48')
+  })
+
   it('emits a UTC ISO timestamp matching today and the sentence time', () => {
     // before/after window tolerates a test run straddling midnight UTC
     const before = new Date().toISOString().slice(0, 10)

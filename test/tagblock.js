@@ -36,4 +36,19 @@ describe('NMEA0183v4 tag block', () => {
       'environment.depth.belowTransducer'
     )
   })
+
+  it('Accepts a tag block in front of an AIS "!" sentence', () => {
+    const line =
+      '\\s:ais,c:1438489697*20\\!AIVDM,1,1,,B,13aGra0P00PHid>NK9<2FOvHR624,0*3E'
+    const delta = new Parser().parse(line)
+    delta.updates[0].source.talker.should.equal('ais')
+    delta.updates[0].timestamp.should.equal('2015-08-02T04:28:17.000Z')
+  })
+
+  it('Second-millennium 10-digit epoch tags convert to seconds', () => {
+    // 10-digit epoch (seconds, not ms) should be multiplied by 1000
+    const line = '\\c:1438489697*5F\\$IIDBT,035.53,f,010.83,M,005.85,F*23'
+    const delta = new Parser().parse(line)
+    delta.updates[0].timestamp.should.equal('2015-08-02T04:28:17.000Z')
+  })
 })

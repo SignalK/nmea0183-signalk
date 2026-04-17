@@ -125,4 +125,25 @@ describe('RMB', () => {
     paths.should.not.include('navigation.courseRhumbline.nextPoint.ID')
     paths.should.not.include('navigation.courseRhumbline.previousPoint.ID')
   })
+
+  it('passes through positive VMG', () => {
+    const delta = new Parser().parse(
+      '$ECRMB,A,0.000,L,001,002,4653.550,N,07115.984,W,2.505,334.205,3.5,V*02'
+    )
+    const vmg = delta.updates[0].values.find(
+      (v) => v.path === 'navigation.courseRhumbline.nextPoint.velocityMadeGood'
+    ).value
+    // 3.5 knots -> ~1.801 m/s
+    vmg.should.be.closeTo(1.8006, 0.01)
+  })
+
+  it('clamps negative VMG to 0', () => {
+    const delta = new Parser().parse(
+      '$ECRMB,A,0.000,L,001,002,4653.550,N,07115.984,W,2.505,334.205,-1.5,V*2D'
+    )
+    const vmg = delta.updates[0].values.find(
+      (v) => v.path === 'navigation.courseRhumbline.nextPoint.velocityMadeGood'
+    ).value
+    vmg.should.equal(0)
+  })
 })
