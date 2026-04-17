@@ -19,7 +19,6 @@
 
 const debug = require('debug')('signalk-parser-nmea0183/DSC')
 const utils = require('@signalk/nmea0183-utilities')
-var delta = {}
 
 function isEmpty(mixed) {
   return (
@@ -188,21 +187,20 @@ module.exports = function (input) {
       }
     })
   }
-  if (values.length > 0) {
-    //multiplexer.self();
-
-    delta = {
-      updates: [
-        {
-          source: tags.source, //this.source(input.instrument),
-          timestamp: tags.timestamp,
-          values: values
-        }
-      ],
-      context: 'vessels.urn:mrn:imo:mmsi:' + mmsi
-    }
+  if (values.length === 0) {
+    return null
   }
-  return delta
+
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: values
+      }
+    ],
+    context: 'vessels.urn:mrn:imo:mmsi:' + mmsi
+  }
 }
 
 /*

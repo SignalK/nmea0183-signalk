@@ -52,4 +52,16 @@ describe('DSC', () => {
     )
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338158137')
   })
+
+  it('Consecutive parses return independent deltas (no shared state)', () => {
+    // Guards against a previous module-scope `delta` variable that leaked
+    // across invocations. Each call must return a fresh object with its own
+    // context — not a reference to the hook's prior result.
+    const parser = new Parser()
+    const d1 = parser.parse(nmeaLinePos)
+    const d2 = parser.parse(nmeaLineDistress)
+    d1.should.not.equal(d2)
+    d1.context.should.equal('vessels.urn:mrn:imo:mmsi:338158137')
+    d2.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')
+  })
 })
