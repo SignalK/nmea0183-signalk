@@ -180,11 +180,11 @@ module.exports = function (input) {
     })
   }
   if (!handled) {
-    console.log('DSC Message Not Handled: ' + line)
+    debug('DSC Message Not Handled: ' + sentence)
     values.push({
       path: 'notifications.dsc_parser',
       value: {
-        message: 'DSC Message Not Handled: ' + line
+        message: 'DSC Message Not Handled: ' + sentence
       }
     })
   }
