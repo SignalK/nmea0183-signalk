@@ -43,6 +43,13 @@ describe('APB', (done) => {
           x.path === 'navigation.courseRhumbline.bearingToDestinationMagnetic'
       )
       .value.should.be.closeTo(0.19198621776321237, 0.000001)
+    // Spec path for present-position-to-destination bearing (emitted alongside
+    // the legacy `bearingToDestinationMagnetic` for backwards compatibility).
+    delta.updates[0].values
+      .find(
+        (x) => x.path === 'navigation.courseRhumbline.nextPoint.bearingMagnetic'
+      )
+      .value.should.be.closeTo(0.19198621776321237, 0.000001)
     delta.updates[0].values
       .find((x) => x.path === 'navigation.courseRhumbline.nextPoint.ID')
       .value.should.equal('DEST')
@@ -59,6 +66,22 @@ describe('APB', (done) => {
         (x) => x.path === 'notifications.perpendicularPassed'
       ).value
     ).to.be.null
+  })
+
+  it('True-bearing variant emits nextPoint.bearingTrue (spec path) alongside legacy bearingToDestinationTrue', () => {
+    const delta = new Parser().parse(
+      '$GPAPB,A,A,0.10,R,N,V,V,011,T,DEST,011,T,011,T*25'
+    )
+    delta.updates[0].values
+      .find(
+        (x) => x.path === 'navigation.courseRhumbline.bearingToDestinationTrue'
+      )
+      .value.should.be.closeTo(0.19198621776321237, 0.000001)
+    delta.updates[0].values
+      .find(
+        (x) => x.path === 'navigation.courseRhumbline.nextPoint.bearingTrue'
+      )
+      .value.should.be.closeTo(0.19198621776321237, 0.000001)
   })
 
   it("Doesn't choke on an empty sentence", () => {
