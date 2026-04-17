@@ -54,6 +54,9 @@ jspm_packages
 # Local dev artifacts
 .claude/
 
+# Build output
+dist
+
 # Stryker mutation testing
 reports
 .stryker-tmp

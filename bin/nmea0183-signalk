@@ -1,29 +1,3 @@
 #!/usr/bin/env node
-
-const Parser = require('../lib/index.js')
-const parser = new Parser({
-  validateChecksum: false
-})
-
-process.stdin.resume()
-process.stdin.setEncoding('utf8')
-
-process.stdin.pipe(require('split')()).on('data', (data) => {
-  if (typeof data !== 'string') {
-    return
-  }
-
-  try {
-    const delta = parser.parse(data.trim())
-    if (delta !== null) {
-      console.log(JSON.stringify(delta))
-    }
-  } catch (e) {
-    console.error('Encountered an error:', e.message)
-  }
-})
-
-process.stdin.on('error', (err) => {
-  console.error('Encountered an input error:', err.message)
-  process.exit(1)
-})
+// Tiny shim around the compiled CLI so `npm install -g` still works.
+require('../dist/bin/nmea0183-signalk.js')

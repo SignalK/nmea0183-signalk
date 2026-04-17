@@ -2,14 +2,29 @@
   "name": "@signalk/nmea0183-signalk",
   "version": "3.18.0",
   "description": "A node.js/javascript parser for NMEA0183 sentences. Sentences are parsed to Signal K format.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "nmea0183-signalk": "bin/nmea0183-signalk"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "typecheck": "tsc --noEmit",
+    "test": "mocha",
+    "coverage": "c8 --reporter=text --reporter=lcov npm test",
     "prettier:check": "prettier --check .",
     "prettier": "prettier --write .",
     "format": "npm run prettier",
-    "test": "mocha",
-    "coverage": "c8 --reporter=text --reporter=lcov npm test",
     "mutation": "stryker run",
+    "prepublishOnly": "npm run build",
     "deploy": "npm test && npm run release && npm publish --access public --scope @signalk .",
     "create-release": "github-create-release --owner signalk --repository nmea0183-signalk",
     "release": "git tag -d v$npm_package_version && git tag v$npm_package_version && git push --tags && git push && npm run create-release"
@@ -26,7 +41,7 @@
   "author": "Fabian Tollenaar <fabian@signalk.org> (http://signalk.org)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@signalk/nmea0183-utilities": "^0.12.0",
+    "@signalk/nmea0183-utilities": "^1.0.0",
     "@signalk/signalk-schema": "^1.7.1",
     "ggencoder": "^1.0.8",
     "split": "^1.0.1"
@@ -35,11 +50,18 @@
     "@signalk/github-create-release": "^1.2.0",
     "@stryker-mutator/core": "^9.6.1",
     "@stryker-mutator/mocha-runner": "^9.6.1",
+    "@types/chai": "^5.2.3",
+    "@types/debug": "^4.1.13",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.19.17",
     "c8": "^11.0.0",
     "chai": "^6.2.2",
     "debug": "^4.0.1",
     "mocha": "^11.7.5",
-    "prettier": "^3.8.2"
+    "prettier": "^3.8.2",
+    "rimraf": "^6.1.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   },
   "repository": {
     "type": "git",
@@ -56,18 +78,28 @@
     ]
   },
   "c8": {
+    "extension": [
+      ".ts"
+    ],
     "include": [
-      "index.js",
-      "lib/**",
-      "hooks/**",
-      "codecs/**"
+      "src/**/*.ts"
     ],
     "exclude": [
       "test/**",
-      "bench/**",
-      "bin/**",
+      "src/bench/**",
+      "src/bin/**",
+      "src/custom-sentence-plugin/**",
+      "src/lib/CompatParser.ts",
+      "src/types/**",
+      "src/hooks/seatalk/seatalk-session-types.ts",
       "coverage/**",
-      "**/*.test.js"
+      "dist/**",
+      "**/*.d.ts"
+    ],
+    "all": true,
+    "reporter": [
+      "text",
+      "lcov"
     ]
   }
 }

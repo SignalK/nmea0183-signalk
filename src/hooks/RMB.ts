@@ -1,0 +1,124 @@
+/**
+ * Copyright 2016 Signal K <info@signalk.org> and contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an 'AS IS' BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import * as utils from '@signalk/nmea0183-utilities'
+import type { Pole } from '@signalk/nmea0183-utilities'
+import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+
+/*
+RMB Sentence
+$GPRMB,A,0.66,L,003,004,4917.24,N,12309.57,W,001.3,052.5,000.5,V*20
+values:
+
+-      RMB          Recommended minimum navigation information
+[0]    A            Data status A = OK, V = Void (warning)
+[1][2] 0.66,L       Cross-track error (nautical miles, 9.99 max),
+                    steer Left to correct (or R = right)
+[3]    003          Origin waypoint ID
+[4]    004          Destination waypoint ID
+[5][6] 4917.24,N    Destination waypoint latitude 49 deg. 17.24 min. N
+[7][8] 12309.57,W   Destination waypoint longitude 123 deg. 09.57 min. W
+[9]    001.3        Range to destination, nautical miles (999.9 max)
+[10]   052.5        True bearing to destination
+[11]   000.5        Velocity towards destination, knots
+[12]   V            Arrival alarm  A = arrived, V = not arrived
+-      *20          checksum
+
+*/
+
+const RMB: HookFn = function (
+  input: ParserInput,
+  _session: ParserSession
+): Delta | null {
+  const { parts, tags } = input
+
+  let position = null
+
+  if (parts[5]!.trim() !== '' && parts[7]!.trim() !== '') {
+    position = {
+      longitude: utils.coordinate(parts[7]!, parts[8]! as Pole),
+      latitude: utils.coordinate(parts[5]!, parts[6]! as Pole)
+    }
+  }
+
+  const bearing = utils.float(parts[10]!)
+  const rawVmg = utils.float(parts[11]!)
+  const vmg = rawVmg > 0 ? rawVmg : 0.0
+  const distance = utils.float(parts[9]!)
+  const rawCrossTrackError = utils.float(parts[1]!)
+  const crossTrackError =
+    parts[2]! == 'L' ? rawCrossTrackError : -rawCrossTrackError
+
+  const originWaypointID = (parts[3]! || '').trim()
+  const destinationWaypointID = (parts[4]! || '').trim()
+
+  const values: Array<{ path: string; value: unknown }> = [
+    {
+      path: 'navigation.courseRhumbline.nextPoint.position',
+      value: position
+    },
+
+    {
+      path: 'navigation.courseRhumbline.nextPoint.bearingTrue',
+      value: utils.transform(bearing, 'deg', 'rad')
+    },
+
+    {
+      path: 'navigation.courseRhumbline.nextPoint.velocityMadeGood',
+      value: utils.transform(vmg, 'knots', 'ms')
+    },
+
+    {
+      path: 'navigation.courseRhumbline.nextPoint.distance',
+      value: utils.transform(distance, 'nm', 'km') * 1000
+    },
+
+    {
+      path: 'navigation.courseRhumbline.crossTrackError',
+      value: utils.transform(crossTrackError, 'nm', 'km') * 1000
+    }
+  ]
+
+  if (destinationWaypointID) {
+    values.push({
+      path: 'navigation.courseRhumbline.nextPoint.ID',
+      value: destinationWaypointID
+    })
+  }
+
+  if (originWaypointID) {
+    values.push({
+      path: 'navigation.courseRhumbline.previousPoint.ID',
+      value: originWaypointID
+    })
+  }
+
+  const delta = {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values
+      }
+    ]
+  }
+
+  return delta
+}
+
+export default RMB
+module.exports = RMB
+module.exports.default = RMB

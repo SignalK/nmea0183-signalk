@@ -1,0 +1,83 @@
+/**
+ * Copyright 2021 Signal K and Teppo Kurki <teppo.kurki@iki.fi>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import Parser from '../src/lib'
+import * as chai from 'chai'
+import { expect } from 'chai'
+chai.Should()
+
+describe('Custom Sentence Parser', () => {
+  it('logs when an entry is invalid and does not register it', () => {
+    const errors: string[] = []
+    const origError = console.error
+    console.error = ((msg: string) => errors.push(msg)) as typeof console.error
+    try {
+      const options = {
+        onPropertyValues: (_name: string, cb: (v: any) => void) => {
+          cb([
+            { value: { sentence: 42, parser: () => null } },
+            { value: { sentence: 'OK', parser: 'not-a-function' } }
+          ])
+        }
+      }
+      const parser = new Parser(options)
+      errors.length.should.equal(2)
+      errors[0]!.should.match(/Invalid sentence parser entry/)
+      // The invalid entries should not land in hooks
+      expect(parser.hooks[42]).to.be.undefined
+      expect(parser.hooks['OK']).to.be.undefined
+    } finally {
+      console.error = origError
+    }
+  })
+
+  it('works', () => {
+    const TEST_SENTENCE_PARTS = ['1', '2', '3', 'foobar', 'D']
+    const TEST_CUSTOM_SENTENCE = `$IIXXX,${TEST_SENTENCE_PARTS.join(',')}*17`
+    const DELTA = {
+      updates: [
+        {
+          values: [{ path: 'a.b.c', value: 3.14 }]
+        }
+      ]
+    }
+    let onPropValuesCallCount = 0
+    const options = {
+      onPropertyValues: (_propertyName: string, cb: (v: any) => void) => {
+        onPropValuesCallCount++
+        cb(undefined)
+        cb([
+          {
+            value: {
+              sentence: 'XXX',
+              parser: ({ id, sentence, parts }: any, session: any) => {
+                id.should.equal('XXX')
+                sentence.should.equal(TEST_CUSTOM_SENTENCE)
+                parts.should.have.members(TEST_SENTENCE_PARTS)
+                expect(typeof session).to.equal('object')
+                return DELTA
+              }
+            }
+          }
+        ])
+      }
+    }
+    const parser = new Parser(options)
+    onPropValuesCallCount.should.equal(1)
+    const delta = parser.parse(TEST_CUSTOM_SENTENCE) as any
+    delta.should.deep.equal(DELTA)
+  })
+})
