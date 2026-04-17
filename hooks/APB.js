@@ -124,6 +124,14 @@ module.exports = function (input) {
             path: `navigation.courseRhumbline.bearingToDestination${bearingPositionToDestType}`,
             value: bearingPositionToDest
           },
+          // Spec path for present-position-to-destination bearing, emitted
+          // alongside the legacy `bearingToDestination*` above so existing
+          // consumers keep working. Schema reference:
+          // groups/navigation.json -> course.nextPoint.bearing{True,Magnetic}.
+          {
+            path: `navigation.courseRhumbline.nextPoint.bearing${bearingPositionToDestType}`,
+            value: bearingPositionToDest
+          },
           {
             path: 'navigation.courseRhumbline.nextPoint.ID',
             value: destinationWaypointID
