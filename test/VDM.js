@@ -94,6 +94,63 @@ describe('VDM', function () {
         return pv.path === 'navigation.speedOverGround'
       })
     )
+    // rot=-128 (no turn information) must not emit a rateOfTurn
+    should.not.exist(
+      delta.updates[0].values.find((pv) => {
+        return pv.path === 'navigation.rateOfTurn'
+      })
+    )
+  })
+
+  it('AIS rate-of-turn decoding (types 1/2/3)', () => {
+    const cases = [
+      // sentence,                                                   expectedRad (null = not emitted)
+      // Generated via ggencoder.AisEncode with known rot raw values:
+      // rot=0  -> not turning (emit 0)
+      ['!AIVDM,1,1,,A,13aEOK000j0Fpn0NDrh3Q2mp0000,0*5B', 0],
+      // rot=50  -> ~111.6 deg/min right = ~0.03247 rad/s
+      ['!AIVDM,1,1,,A,13aEOK0<Pj0Fpn0NDrh3Q2mp0000,0*37', '>0'],
+      // rot=-50 -> ~-111.6 deg/min = ~-0.03247 rad/s
+      ['!AIVDM,1,1,,A,13aEOK0kPj0Fpn0NDrh3Q2mp0000,0*60', '<0'],
+      // rot=127 -> saturated "turning right, no rate available" -> not emitted
+      ['!AIVDM,1,1,,A,13aEOK0Ohj0Fpn0NDrh3Q2mp0000,0*7C', null],
+      // rot=-127 -> saturated "turning left, no rate available" -> not emitted
+      ['!AIVDM,1,1,,A,13aEOK0P@j0Fpn0NDrh3Q2mp0000,0*4B', null],
+      // rot=-128 -> no turn information -> not emitted
+      ['!AIVDM,1,1,,A,13aEOK0P0j0Fpn0NDrh3Q2mp0000,0*3B', null]
+    ]
+    for (const [sentence, expected] of cases) {
+      const delta = new Parser().parse(sentence + '\n')
+      const rot = delta.updates[0].values.find(
+        (pv) => pv.path === 'navigation.rateOfTurn'
+      )
+      if (expected === null) {
+        should.not.exist(
+          rot,
+          `rateOfTurn should not be emitted for ${sentence}`
+        )
+      } else if (expected === 0) {
+        rot.value.should.equal(0)
+      } else if (expected === '>0') {
+        rot.value.should.be.greaterThan(0)
+      } else if (expected === '<0') {
+        rot.value.should.be.lessThan(0)
+      }
+    }
+    // Symmetry: rot=+50 and rot=-50 should have equal magnitude, opposite sign
+    const pos = new Parser()
+      .parse('!AIVDM,1,1,,A,13aEOK0<Pj0Fpn0NDrh3Q2mp0000,0*37\n')
+      .updates[0].values.find((pv) => pv.path === 'navigation.rateOfTurn').value
+    const neg = new Parser()
+      .parse('!AIVDM,1,1,,A,13aEOK0kPj0Fpn0NDrh3Q2mp0000,0*60\n')
+      .updates[0].values.find((pv) => pv.path === 'navigation.rateOfTurn').value
+    pos.should.be.closeTo(-neg, 1e-12)
+    // Sanity-check the magnitude: rot=50 -> (50/4.733)^2 deg/min -> rad/s.
+    // Tolerance is loose enough to absorb the small deg->rad constant delta
+    // between utils.transform and Math.PI/180.
+    const expectedDegPerMin = Math.pow(50 / 4.733, 2)
+    const expectedRadPerSec = (expectedDegPerMin * Math.PI) / 180 / 60
+    pos.should.be.closeTo(expectedRadPerSec, 1e-10)
   })
 
   it('AtoN converts ok', () => {
