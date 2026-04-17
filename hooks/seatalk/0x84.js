@@ -82,17 +82,7 @@ module.exports = function (input) {
     rudderPos = rudderPos - 256
   }
 
-  var modeVar = Z & 0x2
-  switch (modeVar) {
-    case 0:
-      mode = 'standby'
-      break
-    case 2:
-      mode = 'auto'
-      break
-    default:
-      break
-  }
+  mode = (Z & 0x2) === 0 ? 'standby' : 'auto'
   if ((Z & 0x4) == 4) {
     mode = 'wind'
   }

@@ -32,10 +32,10 @@ Field Number:
 */
 
 function isEmpty(mixed) {
-  return (
-    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
-    (typeof mixed === 'string' && mixed.trim() === '')
-  )
+  if (typeof mixed === 'number') {
+    return false
+  }
+  return typeof mixed !== 'string' || mixed.trim() === ''
 }
 
 module.exports = function (input) {

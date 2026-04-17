@@ -119,6 +119,16 @@ describe('GSV', () => {
     })
   })
 
+  it('Skips an out-of-order sentence and resets state', () => {
+    // Sentence number 3 arrives while we expect 2: parser should drop and
+    // return null, clearing session.gsvData.
+    const parser = new Parser()
+    let r = parser.parse(testData[0])
+    expect(r).to.be.null
+    r = parser.parse(testData[2]) // sentence 3 instead of 2
+    expect(r).to.be.null
+  })
+
   it('GPGSVH converts to GPS, slave antenna', () => {
     const data = [
       '$GPGSVH,3,1,10,29,62,223,40,12,33,123,42,25,63,147,41,28,48,263,43,1*21',

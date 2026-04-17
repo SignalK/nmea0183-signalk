@@ -67,4 +67,18 @@ describe('VTG', () => {
     )
     delta.updates[0].values[2].value.should.be.closeTo(0.0528, 0.00005)
   })
+
+  it('Uses knots branch when only knots speed is present', () => {
+    const delta = new Parser().parse('$GPVTG,0.0,T,359.3,M,15.0,N,,K,A*35')
+    const speed = delta.updates[0].values.find(
+      (v) => v.path === 'navigation.speedOverGround'
+    ).value
+    // 15 knots -> 7.7167 m/s
+    speed.should.be.closeTo(7.7167, 0.01)
+  })
+
+  it('Returns null when all speed/course values are empty', () => {
+    const delta = new Parser().parse('$GPVTG,,,,,,,,,*7E')
+    ;(delta === null).should.equal(true)
+  })
 })

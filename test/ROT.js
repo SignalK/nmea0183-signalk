@@ -36,4 +36,9 @@ describe('ROT', () => {
       0.0005
     )
   })
+
+  it('Returns null when status is V (invalid)', () => {
+    const delta = new Parser().parse('$GPROT,10.0,V*17')
+    ;(delta === null).should.equal(true)
+  })
 })

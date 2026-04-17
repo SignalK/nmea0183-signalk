@@ -98,5 +98,5 @@ module.exports = function BWCHook(input) {
     })
   }
 
-  return values.length > 0 ? result : undefined
+  return result
 }

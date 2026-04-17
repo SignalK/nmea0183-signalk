@@ -84,8 +84,61 @@ describe('APB', (done) => {
       .value.should.be.closeTo(0.19198621776321237, 0.000001)
   })
 
+  // Each of parts[0..4] being individually empty must short-circuit to null,
+  // locking the guard against accidental loosening.
+  ;[
+    ['parts[0] empty', '$GPAPB,,A,0.10,R,N,V,V,011,M,DEST,011,M,011,M*7D'],
+    ['parts[1] empty', '$GPAPB,A,,0.10,R,N,V,V,011,M,DEST,011,M,011,M*7D'],
+    ['parts[2] empty', '$GPAPB,A,A,,R,N,V,V,011,M,DEST,011,M,011,M*23'],
+    ['parts[3] empty', '$GPAPB,A,A,0.10,,N,V,V,011,M,DEST,011,M,011,M*6E'],
+    ['parts[4] empty', '$GPAPB,A,A,0.10,R,,V,V,011,M,DEST,011,M,011,M*72']
+  ].forEach(([label, sentence]) => {
+    it(`Returns null when ${label}`, () => {
+      should.equal(new Parser().parse(sentence), null)
+    })
+  })
+
   it("Doesn't choke on an empty sentence", () => {
     const delta = new Parser().parse('$GPAPB,,,,,,,,,,,,,,*44')
     should.equal(delta, null)
+  })
+
+  it('Void LORAN-C blink/SNR warning (parts[0]=V) throws', () => {
+    ;(() =>
+      new Parser().parse(
+        '$GPAPB,V,A,0.10,R,N,V,V,011,M,DEST,011,M,011,M*2B'
+      )).should.throw(/LORAN-C blink/)
+  })
+
+  it('Void LORAN-C cycle warning (parts[1]=V) throws', () => {
+    ;(() =>
+      new Parser().parse(
+        '$GPAPB,A,V,0.10,R,N,V,V,011,M,DEST,011,M,011,M*2B'
+      )).should.throw(/LORAN-C cycle/)
+  })
+
+  it('L direction flips the XTE sign (positive)', () => {
+    const delta = new Parser().parse(
+      '$GPAPB,A,A,0.10,L,N,A,A,011,M,DEST,011,M,011,M*22'
+    )
+    delta.updates[0].values
+      .find((v) => v.path === 'navigation.courseRhumbline.crossTrackError')
+      .value.should.be.greaterThan(0)
+  })
+
+  it('Km units and arrival-circle / perpendicular-passed alarms emit notifications', () => {
+    const delta = new Parser().parse(
+      '$GPAPB,A,A,0.10,R,K,A,A,011,M,DEST,011,M,011,M*39'
+    )
+    const arrival = delta.updates[0].values.find(
+      (v) => v.path === 'notifications.arrivalCircleEntered'
+    ).value
+    arrival.state.should.equal('alarm')
+    arrival.message.should.match(/WP arrival/)
+    const perp = delta.updates[0].values.find(
+      (v) => v.path === 'notifications.perpendicularPassed'
+    ).value
+    perp.state.should.equal('alarm')
+    perp.message.should.match(/Perpendicular/)
   })
 })

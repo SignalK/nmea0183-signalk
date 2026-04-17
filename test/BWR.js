@@ -71,4 +71,56 @@ describe('BWR', () => {
       }
     ])
   })
+
+  it('Returns nulls when any required field is empty (guard at top)', () => {
+    // parts[0] empty: guard returns early, all values null
+    const delta = new Parser().parse(
+      '$IIBWR,,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*2E'
+    )
+    const map = Object.fromEntries(
+      delta.updates[0].values.map((v) => [v.path, v.value])
+    )
+    should.equal(map['navigation.courseRhumbline.bearingTrackTrue'], null)
+    should.equal(map['navigation.courseRhumbline.bearingTrackMagnetic'], null)
+    should.equal(map['navigation.courseRhumbline.nextPoint.distance'], null)
+    should.equal(map['navigation.courseRhumbline.nextPoint.position'], null)
+  })
+
+  it('Emits exact numeric values for canonical input', () => {
+    const delta = new Parser().parse(
+      '$GPBWR,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*38'
+    )
+    const map = Object.fromEntries(
+      delta.updates[0].values.map((v) => [v.path, v.value])
+    )
+    map['navigation.courseRhumbline.bearingTrackTrue'].should.equal(
+      0.9058258819918839
+    )
+    map['navigation.courseRhumbline.bearingTrackMagnetic'].should.equal(
+      0.5515240437561374
+    )
+    map['navigation.courseRhumbline.nextPoint.distance'].should.equal(
+      2407.6000020320143
+    )
+    map['navigation.courseRhumbline.nextPoint.position'].should.deep.equal({
+      latitude: 49.287333333333336,
+      longitude: -123.1595
+    })
+  })
+
+  it('Uses km and reversed M/T ordering', () => {
+    const delta = new Parser().parse(
+      '$IIBWR,200321,4917.24,N,12309.57,W,119.5,M,129.5,T,22.10,K,1*25'
+    )
+    const values = delta.updates[0].values
+    values
+      .find((v) => v.path === 'navigation.courseRhumbline.nextPoint.distance')
+      .value.should.be.closeTo(22100, 0.5)
+    values
+      .find((v) => v.path === 'navigation.courseRhumbline.bearingTrackMagnetic')
+      .value.should.be.closeTo(2.0856684566094437, 0.000001)
+    values
+      .find((v) => v.path === 'navigation.courseRhumbline.bearingTrackTrue')
+      .value.should.be.closeTo(2.2602013818487277, 0.000001)
+  })
 })

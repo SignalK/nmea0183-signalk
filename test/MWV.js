@@ -37,4 +37,21 @@ describe('MWV', () => {
     const delta = new Parser().parse('$IIMWV,,,,*4C')
     should.equal(delta, null)
   })
+
+  it('Converts wind speed in km/h (K)', () => {
+    const delta = new Parser().parse('$IIMWV,074,T,05.85,K,A*2B')
+    const speed = delta.updates[0].values.find(
+      (v) => v.path === 'environment.wind.speedTrue'
+    ).value
+    // 5.85 kph -> ~1.625 m/s
+    speed.should.be.closeTo(1.625, 0.01)
+  })
+
+  it('Defaults to m/s when unit is M', () => {
+    const delta = new Parser().parse('$IIMWV,074,T,05.85,M,A*2D')
+    const speed = delta.updates[0].values.find(
+      (v) => v.path === 'environment.wind.speedTrue'
+    ).value
+    speed.should.equal(5.85)
+  })
 })

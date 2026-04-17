@@ -166,6 +166,22 @@ describe('GGA', () => {
     should.equal(delta, null)
   })
 
+  it('Returns null once 5 or more fields are empty (guard boundary)', () => {
+    // Guard is `empty > 4`; 6 empty fields must short-circuit to null.
+    const delta = new Parser().parse(
+      '$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,,,,,,*49'
+    )
+    should.equal(delta, null)
+  })
+
+  it('Accepts time without decimal fraction', () => {
+    const delta = new Parser().parse(
+      '$IIGGA,172814,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*46'
+    )
+    const ts = delta.updates[0].timestamp
+    ts.slice(11, 19).should.equal('17:28:14')
+  })
+
   it('emits a UTC ISO timestamp matching today and the sentence time', () => {
     // before/after window tolerates a test run straddling midnight UTC
     const before = new Date().toISOString().slice(0, 10)

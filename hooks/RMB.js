@@ -42,36 +42,22 @@ values:
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
 
-  let latitude = -1
-  let longitude = -1
-  let bearing = 0.0
-  let vmg = 0.0
-  let distance = 0.0
-  let crossTrackError = 0.0
   let position = null
 
   if (parts[5].trim() !== '' && parts[7].trim() !== '') {
-    latitude = utils.coordinate(parts[5], parts[6])
-    longitude = utils.coordinate(parts[7], parts[8])
     position = {
-      longitude,
-      latitude
+      longitude: utils.coordinate(parts[7], parts[8]),
+      latitude: utils.coordinate(parts[5], parts[6])
     }
   }
 
-  bearing = utils.float(parts[10])
-  bearing = !isNaN(bearing) ? bearing : 0.0
-
-  vmg = utils.float(parts[11])
-  vmg = !isNaN(vmg) && vmg > 0 ? vmg : 0.0
-
-  distance = utils.float(parts[9])
-  distance = !isNaN(distance) ? distance : 0.0
-
-  crossTrackError = utils.float(parts[1])
-  crossTrackError = !isNaN(crossTrackError) ? crossTrackError : 0.0
-
-  crossTrackError = parts[2] == 'L' ? crossTrackError : -crossTrackError
+  const bearing = utils.float(parts[10])
+  const rawVmg = utils.float(parts[11])
+  const vmg = rawVmg > 0 ? rawVmg : 0.0
+  const distance = utils.float(parts[9])
+  const rawCrossTrackError = utils.float(parts[1])
+  const crossTrackError =
+    parts[2] == 'L' ? rawCrossTrackError : -rawCrossTrackError
 
   const originWaypointID = (parts[3] || '').trim()
   const destinationWaypointID = (parts[4] || '').trim()

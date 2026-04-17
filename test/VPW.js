@@ -16,10 +16,11 @@
 
 const Parser = require('../lib')
 const chai = require('chai')
+const should = chai.Should()
 const nmeaLine = '$IIVPW,4.5,N,6.7,M*52'
-const nmeaLineKnots = '$IIVPW,4.5,N,,*30' // FIXME: add a test for knots?
+const nmeaLineKnots = '$IIVPW,5.0,N,,M*79'
+const nmeaLineEmpty = '$IIVPW,,N,,M*52'
 
-chai.Should()
 chai.use(require('./helpers/chai-has-item'))
 
 describe('VPW', () => {
@@ -30,5 +31,19 @@ describe('VPW', () => {
       'performance.velocityMadeGood'
     )
     delta.updates[0].values.should.containItemWithProperty('value', 6.7)
+  })
+
+  it('Uses knots when m/s missing', () => {
+    const delta = new Parser().parse(nmeaLineKnots)
+    const value = delta.updates[0].values.find(
+      (v) => v.path === 'performance.velocityMadeGood'
+    ).value
+    // 5 knots -> 2.5722 m/s
+    value.should.be.closeTo(2.5722, 0.01)
+  })
+
+  it('Returns null when both knots and m/s are missing', () => {
+    const delta = new Parser().parse(nmeaLineEmpty)
+    should.equal(delta, null)
   })
 })

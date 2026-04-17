@@ -32,6 +32,15 @@ describe('RPM', () => {
     delta.updates[0].values[0].value.should.be.closeTo(2418.2 / 60, 0.0005)
   })
 
+  it("Source 'S' maps to propulsion.shaft_<id>", () => {
+    const delta = new Parser().parse('$IIRPM,S,2,1800.0,0.0,A*7A')
+    delta.updates[0].values.should.containItemWithProperty(
+      'path',
+      'propulsion.shaft_2.revolutions'
+    )
+    delta.updates[0].values[0].value.should.be.closeTo(30, 0.0005)
+  })
+
   /* FIXME!
   it('Doesn\'t choke on empty sentences', () => {
     const delta = new Parser().parse('$IIRPM,,,,,*63')

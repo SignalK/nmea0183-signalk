@@ -21,10 +21,7 @@ const debug = require('debug')('signalk-parser-nmea0183/DSC')
 const utils = require('@signalk/nmea0183-utilities')
 
 function isEmpty(mixed) {
-  return (
-    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
-    (typeof mixed === 'string' && mixed.trim() === '')
-  )
+  return typeof mixed !== 'string' || mixed.trim() === ''
 }
 
 function parsePosition(line) {

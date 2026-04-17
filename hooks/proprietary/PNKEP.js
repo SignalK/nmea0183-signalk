@@ -62,13 +62,6 @@ Field Number:
 4: Checksum
 */
 
-function isEmpty(mixed) {
-  return (
-    (typeof mixed !== 'string' && typeof mixed !== 'number') ||
-    (typeof mixed === 'string' && mixed.trim() === '')
-  )
-}
-
 module.exports = function (input) {
   const { id, sentence, parts, tags } = input
   let values = []

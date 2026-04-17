@@ -53,6 +53,13 @@ describe('HDG', () => {
     )
   })
 
+  it('Applies easterly deviation as a positive correction', () => {
+    const delta = new Parser().parse('$INHDG,180,5,E,10,W*7F')
+    delta.updates[0].values
+      .find((pv) => pv.path === 'navigation.magneticDeviation')
+      .value.should.be.closeTo((5 / 180) * Math.PI, 0.00001)
+  })
+
   it('Sentence with all fields converts and applies corrections', () => {
     const delta = new Parser().parse('$INHDG,180,5,W,10,W*6D')
 
