@@ -54,10 +54,16 @@ const msgTypeToTransmitterClass = {
   21: 'ATON'
 }
 
+// AIS Base Stations (type 4) aren't vessels — they are fixed shore-based
+// stations that broadcast position + UTC time. Route them to `atons.` so
+// clients don't display them as vessels. There isn't a dedicated context in
+// the Signal K spec for base stations, and atons is consistent with how other
+// non-vessel AIS targets are handled.
 const msgTypeToPrefix = {
   1: 'vessels.',
   2: 'vessels.',
   3: 'vessels.',
+  4: 'atons.',
   5: 'vessels.',
   9: 'aircraft.',
   18: 'vessels.',
