@@ -194,6 +194,22 @@ describe('VDM', function () {
     delta.updates[0].values[2].value.should.equal(3.049090203930291)
   })
 
+  it('Base station (type 4) is placed under atons context, not vessels', () => {
+    const delta = new Parser().parse(
+      '!AIVDM,1,1,,A,403OviQuMGCqWrRO9>E6fE700@GO,0*4D\n'
+    )
+    delta.context.should.equal('atons.urn:mrn:imo:mmsi:003669702')
+    delta.updates[0].values
+      .find((pathValue) => pathValue.path === 'sensors.ais.class')
+      .value.should.equal('BASE')
+    delta.updates[0].values
+      .find((pathValue) => pathValue.path === 'navigation.position')
+      .value.longitude.should.equal(-76.35236166666667)
+    delta.updates[0].values
+      .find((pathValue) => pathValue.path === 'navigation.position')
+      .value.latitude.should.equal(36.883766666666666)
+  })
+
   it('class B position report with non-AI talker', () => {
     const delta = new Parser().parse(
       '!BSVDM,1,1,,A,B6CdCm0t3`tba35f@V9faHi7kP06,0*41\n'
