@@ -216,6 +216,27 @@ module.exports = function (input, session) {
     })
   }
 
+  // AIS rate-of-turn (ITU-R M.1371-5, msg types 1/2/3):
+  //     0 : not turning
+  //     1..126 / -1..-126 : turning right/left, ROT_deg_per_min = sign(rot) * (|rot|/4.733)^2
+  //     127 / -127 : turning right/left at >5 deg/30s, no rate available
+  //     -128 (0x80) : no turn information
+  // ggencoder exposes the raw signed byte in `data.rot`; skip it when the value
+  // doesn't carry a usable rate.
+  if (
+    typeof data.rot !== 'undefined' &&
+    data.rot !== -128 &&
+    data.rot !== 127 &&
+    data.rot !== -127
+  ) {
+    const rotDegPerMin =
+      Math.sign(data.rot) * Math.pow(Math.abs(data.rot) / 4.733, 2)
+    values.push({
+      path: 'navigation.rateOfTurn',
+      value: utils.transform(rotDegPerMin, 'deg', 'rad') / 60
+    })
+  }
+
   if (data.length) {
     values.push({
       path: 'design.length',
