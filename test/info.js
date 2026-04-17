@@ -50,4 +50,8 @@ describe('Package info', () => {
     const parser = new Parser('not-an-object')
     parser.options.validateChecksum.should.equal(true)
   })
+
+  it('Throws a TypeError when the options argument is null', () => {
+    ;(() => new Parser(null)).should.throw(TypeError, /must not be null/)
+  })
 })
