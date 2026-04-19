@@ -70,7 +70,7 @@ module.exports = function (input) {
   variation =
     parts[9].trim().length > 0 && !isNaN(parts[9]) && 'EW'.includes(parts[10])
       ? utils.transform(
-          utils.magneticVariaton(parts[9], parts[10]),
+          utils.magneticVariation(parts[9], parts[10]),
           'deg',
           'rad'
         )
