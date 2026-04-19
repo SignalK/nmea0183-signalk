@@ -40,6 +40,12 @@ jobs:
       - name: Check formatting
         run: npm run prettier:check
 
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
       - name: Run tests
         if: matrix.node-version != '24.x'
         run: npm test
