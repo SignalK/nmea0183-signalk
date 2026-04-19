@@ -16,18 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-          body: ${{ steps.github_release.outputs.changelog }}
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'rc') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -51,8 +46,12 @@ jobs:
       - name: Publish to npm
         run: |
           tag="${GITHUB_REF#refs/tags/}"
-          if [[ "$tag" == *beta* ]]; then
+          if [[ "$tag" == *alpha* ]]; then
+            npm publish --provenance --access public --tag alpha
+          elif [[ "$tag" == *beta* ]]; then
             npm publish --provenance --access public --tag beta
+          elif [[ "$tag" == *rc* ]]; then
+            npm publish --provenance --access public --tag rc
           else
             npm publish --provenance --access public
           fi
