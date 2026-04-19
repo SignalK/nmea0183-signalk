@@ -53,3 +53,7 @@ jspm_packages
 
 # Local dev artifacts
 .claude/
+
+# Stryker mutation testing
+reports
+.stryker-tmp
