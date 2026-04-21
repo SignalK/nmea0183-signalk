@@ -35,50 +35,49 @@ const DPT: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  var depth = parts[0]!.trim() == '' ? null : utils.float(parts[0]!)
+  const depth = utils.floatOrNull(parts[0]!)
+  const offset = utils.floatOrNull(parts[1]!)
 
-  const delta = {
-    updates: [
-      {
-        source: tags.source,
-        timestamp: tags.timestamp,
-        values: [
-          {
-            path: 'environment.depth.belowTransducer',
-            value: depth
-          }
-        ]
-      }
-    ]
-  }
+  const values: Array<{ path: string; value: unknown }> = [
+    { path: 'environment.depth.belowTransducer', value: depth }
+  ]
 
-  var offset = utils.float(parts[1]!)
-
-  if (offset > 0) {
-    delta.updates[0]!.values.push({
+  // NMEA defines the offset sign: positive = transducer-to-waterline
+  // distance, negative = transducer-to-keel distance. A missing or
+  // zero offset carries no additional information.
+  if (offset !== null && offset > 0) {
+    values.push({
       path: 'environment.depth.surfaceToTransducer',
       value: offset
     })
     if (depth !== null) {
-      delta.updates[0]!.values.push({
+      values.push({
         path: 'environment.depth.belowSurface',
         value: depth + offset
       })
     }
-  } else if (offset < 0) {
-    delta.updates[0]!.values.push({
+  } else if (offset !== null && offset < 0) {
+    values.push({
       path: 'environment.depth.transducerToKeel',
-      value: offset * -1
+      value: -offset
     })
     if (depth !== null) {
-      delta.updates[0]!.values.push({
+      values.push({
         path: 'environment.depth.belowKeel',
         value: depth + offset
       })
     }
   }
 
-  return delta
+  return {
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values
+      }
+    ]
+  }
 }
 
 export default DPT
