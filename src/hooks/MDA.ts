@@ -38,93 +38,109 @@ import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
  *  12.    Checksum
  */
 
+// inHg -> Pa conversion factor: 1 inHg = 3386.3886666667 Pa.
+const INHG_TO_PA = 3386.3886666667
+
 const MDA: HookFn = function (
   input: ParserInput,
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
+  const values: Array<{ path: string; value: unknown }> = []
 
-  const values = []
-
-  // make SI units override any non-SI units
-  if (parts[0]! !== '') {
+  const inHg = utils.floatOrNull(parts[0]!)
+  if (inHg !== null) {
     values.push({
       path: 'environment.outside.pressure',
-      value: 3386.3886666667 * utils.float(parts[0]!) // converting inHg -> Pa (SI units)
+      value: inHg * INHG_TO_PA
     })
   }
-  if (parts[2]! !== '') {
+  // SI (bars) overrides non-SI (inches of mercury) when both are present.
+  const bars = utils.floatOrNull(parts[2]!)
+  if (bars !== null) {
     values.push({
       path: 'environment.outside.pressure',
-      value: utils.float(parts[2]!) * 100000.0 // converting from bars to Pa (SI units)
+      value: bars * 100000.0
     })
   }
-  if (parts[4]! !== '') {
-    values.push({
-      path: 'environment.outside.temperature',
-      value: utils.transform(utils.float(parts[4]!), 'c', 'k') // transform units Celsius to Kelvin (stick to SI units)
-    })
+
+  const airTemp = utils.transformOrNull(parts[4]!, 'c', 'k')
+  if (airTemp !== null) {
+    values.push({ path: 'environment.outside.temperature', value: airTemp })
   }
-  if (parts[6]! !== '') {
-    values.push({
-      path: 'environment.water.temperature',
-      value: utils.transform(utils.float(parts[6]!), 'c', 'k') // transform units Celsius to Kelvin (stick to SI units)
-    })
+
+  const waterTemp = utils.transformOrNull(parts[6]!, 'c', 'k')
+  if (waterTemp !== null) {
+    values.push({ path: 'environment.water.temperature', value: waterTemp })
   }
-  if (parts[8]! !== '') {
+
+  const humidity = utils.floatOrNull(parts[8]!)
+  if (humidity !== null) {
     values.push({
       path: 'environment.outside.humidity',
-      value: utils.float(parts[8]!) / 100.0 // converting from precentage to fraction
-    })
-  }
-  if (parts[9]! !== '') {
-    values.push({
-      path: 'environment.outside.humidityAbsolute',
-      value: utils.float(parts[9]!) / 100.0 // NMEA docs suggest this is a fraction/percentage, so probably they mean mass water per mass atmosphere formulation
-    })
-  }
-  if (parts[10]! !== '') {
-    values.push({
-      path: 'environment.outside.dewPointTemperature',
-      value: utils.transform(utils.float(parts[10]!), 'c', 'k')
-    })
-  }
-  if (parts[12]! !== '') {
-    values.push({
-      path: 'environment.wind.directionTrue',
-      value: utils.transform(utils.float(parts[12]!), 'deg', 'rad')
-    })
-  }
-  if (parts[14]! !== '') {
-    values.push({
-      path: 'environment.wind.directionMagnetic',
-      value: utils.transform(utils.float(parts[14]!), 'deg', 'rad')
-    })
-  }
-  if (parts[16]! !== '') {
-    values.push({
-      path: 'environment.wind.speedOverGround',
-      value: utils.transform(utils.float(parts[16]!), 'knots', 'ms')
-    })
-  }
-  if (parts[18]! !== '') {
-    values.push({
-      path: 'environment.wind.speedOverGround',
-      value: utils.float(parts[18]!)
+      value: humidity / 100.0
     })
   }
 
-  const delta = {
+  const humidityAbs = utils.floatOrNull(parts[9]!)
+  if (humidityAbs !== null) {
+    values.push({
+      path: 'environment.outside.humidityAbsolute',
+      value: humidityAbs / 100.0
+    })
+  }
+
+  const dewPoint = utils.transformOrNull(parts[10]!, 'c', 'k')
+  if (dewPoint !== null) {
+    values.push({
+      path: 'environment.outside.dewPointTemperature',
+      value: dewPoint
+    })
+  }
+
+  const windDirTrue = utils.transformOrNull(parts[12]!, 'deg', 'rad')
+  if (windDirTrue !== null) {
+    values.push({
+      path: 'environment.wind.directionTrue',
+      value: windDirTrue
+    })
+  }
+
+  const windDirMag = utils.transformOrNull(parts[14]!, 'deg', 'rad')
+  if (windDirMag !== null) {
+    values.push({
+      path: 'environment.wind.directionMagnetic',
+      value: windDirMag
+    })
+  }
+
+  const windKnots = utils.transformOrNull(parts[16]!, 'knots', 'ms')
+  if (windKnots !== null) {
+    values.push({
+      path: 'environment.wind.speedOverGround',
+      value: windKnots
+    })
+  }
+
+  // m/s overrides knots when both are present (same override pattern as bars vs inHg).
+  const windMs = utils.floatOrNull(parts[18]!)
+  if (windMs !== null) {
+    values.push({ path: 'environment.wind.speedOverGround', value: windMs })
+  }
+
+  if (values.length === 0) {
+    return null
+  }
+
+  return {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: values
+        values
       }
     ]
   }
-
-  return delta
 }
 
 export default MDA
