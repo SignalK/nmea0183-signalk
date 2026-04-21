@@ -40,22 +40,27 @@ const BOD: HookFn = function (
 
   debug(`[BODHook] decoding sentence ${id} => ${sentence}`)
 
+  // Unit letters + destination waypoint ID are required; without them
+  // the bearing pair can't be assigned to the correct axis and the
+  // sentence carries no actionable routing information. Bearing
+  // magnitudes are null-preserving per IEC 61162-1 §7.2.3.4.
   if (
-    upper(parts[0]!) === '' ||
     upper(parts[1]!) === '' ||
-    upper(parts[2]!) === '' ||
     upper(parts[3]!) === '' ||
     upper(parts[4]!) === ''
   ) {
     return null
   }
 
-  const bearingOriginToDestination: Record<string, number> = {}
-
+  const bearingOriginToDestination: Record<string, number | null> = {
+    True: null,
+    Magnetic: null
+  }
   bearingOriginToDestination[upper(parts[1]!) === 'T' ? 'True' : 'Magnetic'] =
-    utils.transform(parts[0]!, 'deg', 'rad')
+    utils.transformOrNull(parts[0]!, 'deg', 'rad')
   bearingOriginToDestination[upper(parts[3]!) === 'T' ? 'True' : 'Magnetic'] =
-    utils.transform(parts[2]!, 'deg', 'rad')
+    utils.transformOrNull(parts[2]!, 'deg', 'rad')
+
   const destinationWaypointID = parts[4]!.trim()
   const originWaypointID = parts[5]!.trim()
 
@@ -67,11 +72,11 @@ const BOD: HookFn = function (
         values: [
           {
             path: 'navigation.courseRhumbline.bearingTrackTrue',
-            value: bearingOriginToDestination['True'] ?? null
+            value: bearingOriginToDestination['True']
           },
           {
             path: 'navigation.courseRhumbline.bearingTrackMagnetic',
-            value: bearingOriginToDestination['Magnetic'] ?? null
+            value: bearingOriginToDestination['Magnetic']
           },
           {
             path: 'navigation.courseRhumbline.nextPoint.ID',
