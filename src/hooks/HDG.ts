@@ -15,7 +15,13 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 /*
 *******  0 1   2 3   4
 *******  | |   | |   |
@@ -44,7 +50,7 @@ const HDG: HookFn = function (
   const deviationDeg = utils.magneticVariationOrNull(parts[1]!, parts[2]!)
   const variationDeg = utils.magneticVariationOrNull(parts[3]!, parts[4]!)
 
-  const values: Array<{ path: string; value: unknown }> = []
+  const values: DeltaValue[] = []
 
   if (compassDeg !== null) {
     const effectiveDeviation = deviationDeg ?? 0

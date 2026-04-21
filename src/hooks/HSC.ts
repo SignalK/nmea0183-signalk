@@ -67,11 +67,11 @@ const HSC: HookFn = function (
         values: [
           {
             path: 'steering.autopilot.target.headingTrue',
-            value: headingToSteer['True']
+            value: headingToSteer['True'] ?? null
           },
           {
             path: 'steering.autopilot.target.headingMagnetic',
-            value: headingToSteer['Magnetic']
+            value: headingToSteer['Magnetic'] ?? null
           }
         ]
       }
