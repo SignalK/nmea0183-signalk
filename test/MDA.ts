@@ -185,11 +185,14 @@ describe('MDA', () => {
     )!.value.should.be.closeTo(5.0, 0.0001)
   })
 
-  it('check for no hickup on empty message', () => {
+  it('returns null on an entirely empty MDA', () => {
+    // Previously emitted a delta with an empty values array; returning
+    // null is consistent with every other hook's "no usable data"
+    // behaviour and keeps downstream consumers from having to skip
+    // empty-delta events.
     const delta = new Parser().parse(
       '$WIMDA,,I,,B,,C,,C,,,,C,,T,,M,,N,,M*04'
     ) as any
-
-    delta.updates[0]!.values.should.be.empty
+    ;(delta === null).should.equal(true)
   })
 })
