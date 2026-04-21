@@ -32,13 +32,25 @@ Field Number:
 6 - Checksum
 */
 
+// Per IEC 61162-1 §7.2.3.4, every optional numeric field is null-preserving
+// so that a receiver reporting e.g. only magnetic set doesn't silently
+// fabricate a true-set of 0°.
+
 const VDR: HookFn = function (
   input: ParserInput,
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
 
-  const delta = {
+  const setTrue = utils.transformOrNull(parts[0]!, 'deg', 'rad')
+  const setMagnetic = utils.transformOrNull(parts[2]!, 'deg', 'rad')
+  const drift = utils.transformOrNull(parts[4]!, 'knots', 'ms')
+
+  if (setTrue === null && setMagnetic === null && drift === null) {
+    return null
+  }
+
+  return {
     updates: [
       {
         source: tags.source,
@@ -47,21 +59,15 @@ const VDR: HookFn = function (
           {
             path: 'environment.current',
             value: {
-              setTrue: utils.transform(utils.float(parts[0]!), 'deg', 'rad'),
-              setMagnetic: utils.transform(
-                utils.float(parts[2]!),
-                'deg',
-                'rad'
-              ),
-              drift: utils.transform(utils.float(parts[4]!), 'knots', 'ms')
+              setTrue,
+              setMagnetic,
+              drift
             }
           }
         ]
       }
     ]
   }
-
-  return delta
 }
 
 export default VDR
