@@ -69,4 +69,34 @@ describe('VWR', () => {
     const delta = new Parser().parse('$IIVWR,,,,,,,,*53') as any
     should.equal(delta, null)
   })
+
+  // IEC 61162-1 §7.2.3.4: a null field is a per-field "not available"
+  // marker. A sensor reporting only speed (no direction) or only angle
+  // (no magnitude) must still surface the present half; the missing
+  // half is emitted as `null`, not `0`.
+  it('Emits null angle when the L/R direction letter is missing but speed is present', () => {
+    const delta = new Parser().parse('$IIVWR,,,1.0,N,,,,*32') as any
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'environment.wind.angleApparent'
+      ).value,
+      null
+    )
+    delta.updates[0]!.values.find(
+      (v: any) => v.path === 'environment.wind.speedApparent'
+    ).value.should.be.closeTo(0.5144, 1e-3)
+  })
+
+  it('Emits null speed when the speed field is missing but angle is present', () => {
+    const delta = new Parser().parse('$IIVWR,75,R,,,,,,*03') as any
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'environment.wind.speedApparent'
+      ).value,
+      null
+    )
+    delta.updates[0]!.values.find(
+      (v: any) => v.path === 'environment.wind.angleApparent'
+    ).value.should.be.closeTo(1.3089, 1e-3)
+  })
 })
