@@ -36,30 +36,39 @@ import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
  9. Checksum
  */
 
+// Per IEC 61162-1 §7.2.3.4, every optional numeric field is routed
+// through `*OrNull` so an empty NMEA field becomes `null` rather than a
+// silent `0`. Previously `speedOverGround` defaulted to `0.0` when both
+// speed fields were empty but at least one course was present — a fix
+// the parser would report as stationary instead of unknown.
+
 const VTG: HookFn = function (
   input: ParserInput,
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
 
-  if (
-    parts[2]! === '' &&
-    parts[0]! === '' &&
-    parts[6]! === '' &&
-    parts[4]! === ''
-  ) {
-    return null
+  const courseTrue = utils.transformOrNull(parts[0]!, 'deg', 'rad')
+  const courseMagnetic = utils.transformOrNull(parts[2]!, 'deg', 'rad')
+
+  // Prefer kph when its unit letter is 'K' and the field parses. Fall
+  // back to knots the same way. Legitimate zero (receiver is stationary)
+  // returns `0`; null means the field was empty.
+  const kph = utils.floatOrNull(parts[6]!)
+  const knots = utils.floatOrNull(parts[4]!)
+  let speedOverGround: number | null = null
+  if (kph !== null && String(parts[7]!).toUpperCase() === 'K') {
+    speedOverGround = utils.transform(kph, 'kph', 'ms')
+  } else if (knots !== null && String(parts[5]!).toUpperCase() === 'N') {
+    speedOverGround = utils.transform(knots, 'knots', 'ms')
   }
 
-  let speed = 0.0
-
-  if (utils.float(parts[6]!) > 0 && String(parts[7]!).toUpperCase() === 'K') {
-    speed = utils.transform(utils.float(parts[6]!), 'kph', 'ms')
-  } else if (
-    utils.float(parts[4]!) > 0 &&
-    String(parts[5]!).toUpperCase() === 'N'
+  if (
+    courseTrue === null &&
+    courseMagnetic === null &&
+    speedOverGround === null
   ) {
-    speed = utils.transform(utils.float(parts[4]!), 'knots', 'ms')
+    return null
   }
 
   return {
@@ -70,21 +79,15 @@ const VTG: HookFn = function (
         values: [
           {
             path: 'navigation.courseOverGroundMagnetic',
-            value:
-              parts[2]!.length === 0
-                ? null
-                : utils.transform(utils.float(parts[2]!), 'deg', 'rad')
+            value: courseMagnetic
           },
           {
             path: 'navigation.courseOverGroundTrue',
-            value:
-              parts[0]!.length === 0
-                ? null
-                : utils.transform(utils.float(parts[0]!), 'deg', 'rad')
+            value: courseTrue
           },
           {
             path: 'navigation.speedOverGround',
-            value: speed
+            value: speedOverGround
           }
         ]
       }
