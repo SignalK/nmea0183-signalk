@@ -37,25 +37,17 @@ const MTW: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  const delta = {
+  const temperature = utils.transformOrNull(parts[0]!, 'c', 'k')
+
+  return {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: [
-          {
-            path: 'environment.water.temperature',
-            value:
-              parts.length > 0 && parts[0]!.trim().length > 0
-                ? utils.transform(utils.float(parts[0]!), 'c', 'k')
-                : null
-          }
-        ]
+        values: [{ path: 'environment.water.temperature', value: temperature }]
       }
     ]
   }
-
-  return delta
 }
 
 export default MTW
