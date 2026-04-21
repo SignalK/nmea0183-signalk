@@ -81,11 +81,11 @@ const BWR: HookFn = function (
         values: [
           {
             path: 'navigation.courseRhumbline.bearingTrackTrue',
-            value: bearingToWaypoint['True']
+            value: bearingToWaypoint['True'] ?? null
           },
           {
             path: 'navigation.courseRhumbline.bearingTrackMagnetic',
-            value: bearingToWaypoint['Magnetic']
+            value: bearingToWaypoint['Magnetic'] ?? null
           },
           {
             path: 'navigation.courseRhumbline.nextPoint.distance',

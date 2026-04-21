@@ -15,7 +15,13 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 /*
  * $WIMWD,<0>,<1>,<2>,<3>,<4>,<5>,<6>,<7>*hh
  *
@@ -57,7 +63,7 @@ const MWD: HookFn = function (
     return null
   }
 
-  const values: Array<{ path: string; value: unknown }> = []
+  const values: DeltaValue[] = []
   if (directionTrue !== null) {
     values.push({
       path: 'environment.wind.directionTrue',

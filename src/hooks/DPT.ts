@@ -15,7 +15,13 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 /*
 === DPT - Depth of water ===
 ------------------------------------------------------------------------------
@@ -38,7 +44,7 @@ const DPT: HookFn = function (
   const depth = utils.floatOrNull(parts[0]!)
   const offset = utils.floatOrNull(parts[1]!)
 
-  const values: Array<{ path: string; value: unknown }> = [
+  const values: DeltaValue[] = [
     { path: 'environment.depth.belowTransducer', value: depth }
   ]
 

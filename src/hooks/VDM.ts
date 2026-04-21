@@ -17,7 +17,13 @@
 import * as utils from '@signalk/nmea0183-utilities'
 import * as schema from '@signalk/signalk-schema'
 import { AisDecode } from 'ggencoder'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 
 type NumericInput = number | string
 const knotsToMs = (v: NumericInput): number =>
@@ -185,7 +191,7 @@ const VDM: HookFn = function (
   // AIS message type; cast to a looser bag so downstream bit-math reads as
   // naturally as it did in JS. Runtime behaviour is identical.
   const data = new AisDecode(sentence, session) as unknown as AisDecodeData
-  const values: Array<{ path: string; value: unknown }> = []
+  const values: DeltaValue[] = []
 
   if (data.valid === false) {
     return null
@@ -389,7 +395,7 @@ const VDM: HookFn = function (
   if (typeof data.smi !== 'undefined') {
     values.push({
       path: 'navigation.specialManeuver',
-      value: specialManeuverMapping[data.smi]
+      value: specialManeuverMapping[data.smi] ?? null
     })
   }
 
@@ -475,7 +481,7 @@ const VDM: HookFn = function (
       values.push(
         {
           path: `environment.` + path,
-          value: f[data[propName]]
+          value: f[data[propName]] ?? null
         },
         {
           path: `environment.` + path + `Value`,

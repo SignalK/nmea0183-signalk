@@ -15,7 +15,13 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 
 /*
  * MDA - Meteorological Composite
@@ -46,7 +52,7 @@ const MDA: HookFn = function (
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
-  const values: Array<{ path: string; value: unknown }> = []
+  const values: DeltaValue[] = []
 
   const inHg = utils.floatOrNull(parts[0]!)
   if (inHg !== null) {
