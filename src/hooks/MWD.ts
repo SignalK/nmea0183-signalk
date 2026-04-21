@@ -36,60 +36,51 @@ const MWD: HookFn = function (
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
-  const pathValues: Array<{ path: string; value: unknown }> = []
 
-  // get direction data:
-  // return both, true and magnetic direction, if present in the NMEA sentence
-  var haveDirection = false
-  if (parts[0]! != '' && parts[1]! == 'T') {
-    haveDirection = true
-    pathValues.push({
+  const directionTrue =
+    parts[1]! === 'T' ? utils.transformOrNull(parts[0]!, 'deg', 'rad') : null
+  const directionMagnetic =
+    parts[3]! === 'M' ? utils.transformOrNull(parts[2]!, 'deg', 'rad') : null
+
+  if (directionTrue === null && directionMagnetic === null) {
+    return null
+  }
+
+  // Prefer m/s over knots when both are present — the native unit
+  // avoids an extra conversion round-trip.
+  const msSpeed = parts[7]! === 'M' ? utils.floatOrNull(parts[6]!) : null
+  const knotsSpeed =
+    parts[5]! === 'N' ? utils.transformOrNull(parts[4]!, 'knots', 'ms') : null
+  const speed = msSpeed ?? knotsSpeed
+
+  if (speed === null) {
+    return null
+  }
+
+  const values: Array<{ path: string; value: unknown }> = []
+  if (directionTrue !== null) {
+    values.push({
       path: 'environment.wind.directionTrue',
-      value: utils.transform(utils.float(parts[0]!), 'deg', 'rad')
+      value: directionTrue
     })
   }
-  if (parts[2]! != '' && parts[3]! == 'M') {
-    haveDirection = true
-    pathValues.push({
+  if (directionMagnetic !== null) {
+    values.push({
       path: 'environment.wind.directionMagnetic',
-      value: utils.transform(utils.float(parts[2]!), 'deg', 'rad')
+      value: directionMagnetic
     })
   }
-  if (!haveDirection) {
-    return null
-  }
+  values.push({ path: 'environment.wind.speedTrue', value: speed })
 
-  // get speed data:
-  // speed given in kn is used in case no speed in m/s is present in the NMEA sentence
-  var haveSpeed = false
-  var speed
-  if (parts[4]! != '' && parts[5]! == 'N') {
-    haveSpeed = true
-    speed = utils.transform(utils.float(parts[4]!), 'knots', 'ms')
-  }
-  if (parts[6]! != '' && parts[7]! == 'M') {
-    haveSpeed = true
-    speed = utils.float(parts[6]!)
-  }
-  if (!haveSpeed) {
-    return null
-  }
-  pathValues.push({
-    path: 'environment.wind.speedTrue',
-    value: speed
-  })
-
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
+        values
       }
     ]
   }
-
-  return delta
 }
 
 export default MWD
