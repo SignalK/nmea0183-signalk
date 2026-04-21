@@ -62,51 +62,48 @@ const BWC: HookFn = function (
     result.updates[0]!.timestamp = utils.timestamp(parts[0]!)
   }
 
-  if (
-    parts[1]! !== '' &&
-    parts[2]! !== '' &&
-    parts[3]! !== '' &&
-    parts[4]! !== ''
-  ) {
-    const latitude = coord(parts[1]!, parts[2]!)
-    const longitude = coord(parts[3]!, parts[4]!)
-    values.push({
-      path: 'navigation.courseGreatCircle.nextPoint.position',
-      value: {
-        longitude,
-        latitude
-      }
-    })
-  } else {
-    values.push({
-      path: 'navigation.courseGreatCircle.nextPoint.position',
-      value: null
-    })
-  }
+  // All four of parts[1..4] (lat/NS, lon/EW) are required to emit a
+  // position — `coord('', pole)` returns 0, which would round-trip to
+  // `{ latitude: 0, longitude: 0 }` if we only null-checked `coord`'s
+  // return.
+  const havePosition =
+    parts[1]! !== '' && parts[2]! !== '' && parts[3]! !== '' && parts[4]! !== ''
+  values.push({
+    path: 'navigation.courseGreatCircle.nextPoint.position',
+    value: havePosition
+      ? {
+          latitude: coord(parts[1]!, parts[2]!),
+          longitude: coord(parts[3]!, parts[4]!)
+        }
+      : null
+  })
 
-  if (parts[9]! !== '' && parts[10]! !== '') {
-    const distance = utils.transform(
-      parts[9]!,
-      upper(parts[10]!) === 'N' ? 'nm' : 'km',
-      'm'
-    )
+  const distanceUnit = upper(parts[10]!) === 'N' ? 'nm' : 'km'
+  const distance = utils.transformOrNull(parts[9]!, distanceUnit, 'm')
+  if (distance !== null) {
     values.push({
       path: 'navigation.courseGreatCircle.nextPoint.distance',
       value: distance
     })
   }
 
-  if (parts[6]! === 'T' && parts[5]! !== '') {
-    values.push({
-      path: 'navigation.courseGreatCircle.bearingTrackTrue',
-      value: utils.transform(parts[5]!, 'deg', 'rad')
-    })
+  if (parts[6]! === 'T') {
+    const bearing = utils.transformOrNull(parts[5]!, 'deg', 'rad')
+    if (bearing !== null) {
+      values.push({
+        path: 'navigation.courseGreatCircle.bearingTrackTrue',
+        value: bearing
+      })
+    }
   }
-  if (parts[8]! === 'M' && parts[7]! !== '') {
-    values.push({
-      path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
-      value: utils.transform(parts[7]!, 'deg', 'rad')
-    })
+  if (parts[8]! === 'M') {
+    const bearing = utils.transformOrNull(parts[7]!, 'deg', 'rad')
+    if (bearing !== null) {
+      values.push({
+        path: 'navigation.courseGreatCircle.bearingTrackMagnetic',
+        value: bearing
+      })
+    }
   }
 
   return result
