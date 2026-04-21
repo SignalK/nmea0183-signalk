@@ -46,7 +46,7 @@ const DBK: HookFn = function (
         values: [
           {
             path: 'environment.depth.belowKeel',
-            value: parts[2]!.length > 0 ? utils.float(parts[2]!) : null
+            value: utils.floatOrNull(parts[2]!)
           }
         ]
       }
