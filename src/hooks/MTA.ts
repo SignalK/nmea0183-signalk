@@ -37,28 +37,23 @@ const MTA: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  if (parts[1]! != 'C') {
+  if (parts[1]! !== 'C') {
     return null
   }
-  const delta = {
+
+  const temperature = utils.transformOrNull(parts[0]!, 'c', 'k')
+
+  return {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
         values: [
-          {
-            path: 'environment.outside.temperature',
-            value:
-              parts.length > 0 && parts[0]!.trim().length > 0
-                ? utils.transform(utils.float(parts[0]!), 'c', 'k')
-                : null
-          }
+          { path: 'environment.outside.temperature', value: temperature }
         ]
       }
     ]
   }
-
-  return delta
 }
 
 export default MTA
