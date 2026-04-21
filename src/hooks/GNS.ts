@@ -31,40 +31,16 @@ Field Number:
 2. N or S (North or South)
 3. Longitude, dd is minutes, mm.mm is minutes
 4. E or W (East or West)
-5. Mode indicator (non-null) - Variable character field with one character for each supported constellation:
-    * First character is for GPS
-    * Second character is for GLONASS
-    * Third character is Galileo
-    * Fourth character is for BeiDou
-    * Fifth character is for QZSS
-    * Subsequent characters will be added for new constellations
-   Each character will be one of the following
-     - N = No fix. Satellite system not used in position fix, or fix not valid
-     - A = Autonomous. Satellite system used in non-differential mode in position fix
-     - D = Differential (including all OmniSTAR services). Satellite system used in differential mode in position fix
-     - P = Precise. Satellite system used in precision mode. Precision mode is defined as: no deliberate degradation (such as Selective Availability) and higher resolution code (P-code) is used to compute position fix
-     - R = Real-Time Kinematic. Satellite system used in RTK mode with fixed integers
-     - F = Float RTK. Satellite system used in real-time kinematic mode with floating integers
-     - E = Estimated (dead reckoning) mode
-     - M = Manual Input mode
-     - S = Simulator mode
+5. Mode indicator (non-null)
 6. Total number of satellites in use, 00-99
-7. Horizontal Dilution of Precision (HDOP), calculated using all the satellites (GPS, GLONASS, and any future satellites) and used in computing the solution reported in each GNS sentence
+7. Horizontal Dilution of Precision (HDOP)
 8. Antenna altitude, meters, re:mean-sea-level (geoid)
-9. Goeidal separation meters - The difference between the earth ellipsoid surface and mean-sea-level (geoid) surface defined by the reference datum used in the position solution
-10. Age of differential data - Null if talker ID is GN, additional GNS messages follow with Age of differential data
-11. Differential reference station ID, 0000-4095 - Null if Talker ID is GN, Additional GNS messages follow with Reference station ID
-12. Navigational status (added when the IEC61162-1:2010/NMEA 0183 V4.10 option is selected in the NMEA I/O configuration):
-     - S = Safe
-     - C = Caution
-     - U = Unsafe
-     - V = Not valid for navigation
+9. Goeidal separation meters
+10. Age of differential data
+11. Differential reference station ID, 0000-4095
+12. Navigational status
 13. Checksum
 */
-
-function isEmpty(mixed: unknown): boolean {
-  return typeof mixed !== 'string' || mixed.trim() === ''
-}
 
 const MODES: Record<string, string> = {
   A: 'Autonomous',
@@ -90,103 +66,88 @@ function indicator(chars: string[]): Record<string, string | undefined> {
   }, {})
 }
 
+const STATUS: Record<string, string> = {
+  S: 'Safe',
+  C: 'Caution',
+  U: 'Unsafe',
+  V: 'Not Valid'
+}
+
+// IEC 61162-1 §7.2.3.4: every optional field surfaces as `null` when
+// missing. Short-circuit only when neither position nor mode indicator
+// can be parsed (same logic as GGA).
+
 const GNS: HookFn = function (
   input: ParserInput,
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
 
-  const empty = parts.reduce((e, val) => {
-    if (isEmpty(val)) {
-      ++e
-    }
-    return e
-  }, 0)
-
-  if (empty > 4) {
-    return null
-  }
-
   const time =
-    parts[0]!.indexOf('.') === -1 ? parts[0]! : parts[0]!.split('.')[0]
-  const timestamp = utils.timestamp(time)
-
-  const STATUS: Record<string, string> = {
-    S: 'Safe',
-    C: 'Caution',
-    U: 'Unsafe',
-    V: 'Not Valid'
-  }
+    parts[0] && parts[0].length > 0
+      ? parts[0].indexOf('.') === -1
+        ? parts[0]
+        : parts[0].split('.')[0]!
+      : ''
+  const timestamp = time ? utils.timestamp(time) : tags.timestamp
 
   const latitude = coord(parts[1]!, parts[2]!)
   const longitude = coord(parts[3]!, parts[4]!)
-  let position = null
-
-  if (
+  const position =
     latitude !== null &&
     longitude !== null &&
     utils.isValidPosition(latitude, longitude)
-  ) {
-    position = {
-      latitude: latitude,
-      longitude: longitude
-    }
+      ? { latitude, longitude }
+      : null
+
+  const modeField = parts[5] ?? ''
+  const methodQuality =
+    modeField.length > 0 ? indicator(modeField.split('')) : null
+
+  if (position === null && methodQuality === null) {
+    return null
   }
 
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
         timestamp: timestamp,
         values: [
-          {
-            path: 'navigation.position',
-            value: position
-          },
-          {
-            path: 'navigation.gnss.methodQuality',
-            value: indicator(parts[5]!.split(''))
-          },
-
+          { path: 'navigation.position', value: position },
+          { path: 'navigation.gnss.methodQuality', value: methodQuality },
           {
             path: 'navigation.gnss.satellites',
-            value: utils.int(parts[6]!)
+            value: utils.intOrNull(parts[6]!)
           },
-
           {
             path: 'navigation.gnss.antennaAltitude',
-            value: utils.float(parts[8]!)
+            value: utils.floatOrNull(parts[8]!)
           },
-
           {
             path: 'navigation.gnss.horizontalDilution',
-            value: utils.float(parts[7]!)
+            value: utils.floatOrNull(parts[7]!)
           },
-
           {
             path: 'navigation.gnss.geoidalSeparation',
-            value: utils.float(parts[9]!)
+            value: utils.floatOrNull(parts[9]!)
           },
-
           {
             path: 'navigation.gnss.differentialAge',
-            value: utils.float(parts[10]!)
+            value: utils.floatOrNull(parts[10]!)
           },
-
           {
             path: 'navigation.gnss.differentialReference',
-            value: Number(parts[11]!)
+            value: utils.intOrNull(parts[11]!)
           },
           {
             path: 'navigation.gnss.status',
-            value: STATUS[parts[12]!]
+            value: parts[12] !== undefined ? (STATUS[parts[12]!] ?? null) : null
           }
         ]
       }
     ]
   }
-
-  return delta
 }
 
 export default GNS
