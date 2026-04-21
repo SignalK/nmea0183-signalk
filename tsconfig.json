@@ -2,11 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "commonjs",
-    "moduleResolution": "node",
-    // TS 6 turned the legacy `node` (a.k.a. node10) moduleResolution into a
-    // hard deprecation. Silence that so the package can stay on `node` for
-    // now; migrating to `node16` / `bundler` is a separate audit.
-    "ignoreDeprecations": "6.0",
+    "moduleResolution": "bundler",
     "lib": ["ES2022"],
 
     "strict": true,
@@ -16,16 +12,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noUncheckedIndexedAccess": true,
-    // Each file must transpile independently (tsx / esbuild / bundler
-    // assumptions). Surfaces edge cases before they break a downstream.
     "isolatedModules": true,
 
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    // TS 6 tightened the default @types scan: mocha's describe / it globals
-    // no longer leak in unless the test runner is listed here explicitly.
     "types": ["node", "mocha"],
 
     "declaration": true,
