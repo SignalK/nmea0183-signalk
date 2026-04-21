@@ -27,8 +27,6 @@ import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
 # 0 - Rate Of Turn, degrees per minute, "-" means bow turns to port
 # 1 - Status, A means data is valid
 # 2 - Checksum
-#
-#
 */
 
 const ROT: HookFn = function (
@@ -41,22 +39,20 @@ const ROT: HookFn = function (
     return null
   }
 
-  const delta = {
+  // deg/min -> rad/s (transform deg->rad, divide by 60 s/min). Missing
+  // value short-circuits to null instead of emitting 0 rad/s.
+  const radPerMin = utils.transformOrNull(parts[0]!, 'deg', 'rad')
+  const rateOfTurn = radPerMin === null ? null : radPerMin / 60
+
+  return {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: [
-          {
-            path: 'navigation.rateOfTurn',
-            value: utils.transform(utils.float(parts[0]!), 'deg', 'rad') / 60
-          }
-        ]
+        values: [{ path: 'navigation.rateOfTurn', value: rateOfTurn }]
       }
     ]
   }
-
-  return delta
 }
 
 export default ROT

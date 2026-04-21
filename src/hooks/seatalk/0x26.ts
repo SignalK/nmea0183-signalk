@@ -15,7 +15,13 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../../types'
 
 /*
 26  04  XX  XX  YY  YY DE  Speed through water:
@@ -42,7 +48,7 @@ const S26: HookFn = function (
   const value1 = XXXX / 100.0
   const value2 = YYYY / 100.0
 
-  const pathValues: Array<{ path: string; value: unknown }> = []
+  const pathValues: DeltaValue[] = []
 
   // Check if value1 is a valid speedThroughWater
   if ((D & 4) == 4) {

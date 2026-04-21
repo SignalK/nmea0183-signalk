@@ -15,7 +15,13 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../../types'
 
 /*
 85  X6  XX  VU  ZW  ZZ  YF  00  yf  Navigation to waypoint information
@@ -65,7 +71,7 @@ const S85: HookFn = function (
     return null
   }
 
-  const pathValues: Array<{ path: string; value: unknown }> = []
+  const pathValues: DeltaValue[] = []
 
   // Cross Track Error: XXX / 100 nm
   // XXX is formed from X (high nibble of byte 1) and XX (byte 2)

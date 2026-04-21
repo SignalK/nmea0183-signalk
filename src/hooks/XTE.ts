@@ -43,7 +43,6 @@ const XTE: HookFn = function (
   debug(`[XTEHook] decoding sentence ${id} => ${sentence}`)
 
   if (parts[0]!.trim().toUpperCase() === 'V') {
-    // Don't parse this sentence as it's void.
     throw new Error(
       "Not parsing sentence for it's void (LORAN-C blink/SNR warning)"
     )
@@ -55,19 +54,23 @@ const XTE: HookFn = function (
     )
   }
 
-  if (parts[2]!.trim() === '' && parts[3]!.trim() === '') {
+  // Magnitude + direction together form a signed scalar. Either one
+  // missing makes the XTE meaningless — previously the hook would
+  // silently emit 0 (from utils.transform on an empty string) or an
+  // unsigned positive/negative guess; `null` is the IEC-correct answer.
+  const directionLetter = parts[3]!.trim().toUpperCase()
+  const magnitudeMeters = utils.transformOrNull(
+    parts[2]!,
+    parts[4]!.trim().toUpperCase() === 'N' ? 'nm' : 'km',
+    'm'
+  )
+  const sign = directionLetter === 'L' ? 1 : directionLetter === 'R' ? -1 : null
+  const value =
+    magnitudeMeters === null || sign === null ? null : sign * magnitudeMeters
+
+  if (value === null) {
     return null
   }
-
-  const direction = parts[3]!.trim().toUpperCase() === 'L' ? 1 : -1
-  const value =
-    direction *
-    utils.transform(
-      parts[2]!,
-      parts[4]!.trim().toUpperCase() === 'N' ? 'nm' : 'km',
-      'm'
-    )
-  const path = 'navigation.courseRhumbline.crossTrackError'
 
   return {
     updates: [
@@ -76,7 +79,7 @@ const XTE: HookFn = function (
         timestamp: tags.timestamp,
         values: [
           {
-            path,
+            path: 'navigation.courseRhumbline.crossTrackError',
             value
           }
         ]

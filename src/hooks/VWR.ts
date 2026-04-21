@@ -32,9 +32,12 @@ $--VWR,x.x,a,x.x,N,x.x,M,x.x,K*hh<CR><LF>
  8 - Checksum
  */
 
-function isEmpty(mixed: unknown): boolean {
-  return typeof mixed !== 'string' || mixed.trim() === ''
-}
+// IEC 61162-1 §7.2.3.4: a null field means "sensor working, no data".
+// A sensor reporting only speed (no direction) or only angle (no
+// magnitude) used to be dropped by the pre-existing `empty > 4`
+// count-gate even though the present fields are usable. The hook now
+// emits per-field `null` for the missing half and only short-circuits
+// when both halves are missing.
 
 const VWR: HookFn = function (
   input: ParserInput,
@@ -42,19 +45,20 @@ const VWR: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  const empty = parts.reduce((count, part) => {
-    count += isEmpty(part) ? 1 : 0
-    return count
-  }, 0)
-  if (empty > 4) {
-    return null
-  }
+  // Angle needs both the magnitude and the L/R direction letter; either
+  // missing is a null measurement. `transformOrNull` preserves null
+  // through the deg→rad conversion, so we only sign-flip when both
+  // halves are present.
+  const magnitudeRad = utils.transformOrNull(parts[0]!, 'deg', 'rad')
+  const directionLetter = String(parts[1] ?? '').toUpperCase()
+  const sign = directionLetter === 'R' ? 1 : directionLetter === 'L' ? -1 : null
+  const angleApparent =
+    magnitudeRad === null || sign === null ? null : magnitudeRad * sign
 
-  var rightPositive = 0
-  if (String(parts[1]!).toUpperCase() === 'R') {
-    rightPositive = 1
-  } else if (String(parts[1]!).toUpperCase() === 'L') {
-    rightPositive = -1
+  const speedApparent = utils.transformOrNull(parts[2]!, 'knots', 'ms')
+
+  if (angleApparent === null && speedApparent === null) {
+    return null
   }
 
   return {
@@ -65,15 +69,11 @@ const VWR: HookFn = function (
         values: [
           {
             path: 'environment.wind.angleApparent',
-            value: utils.transform(
-              utils.float(parts[0]!) * rightPositive,
-              'deg',
-              'rad'
-            )
+            value: angleApparent
           },
           {
             path: 'environment.wind.speedApparent',
-            value: utils.transform(utils.float(parts[2]!), 'knots', 'ms')
+            value: speedApparent
           }
         ]
       }

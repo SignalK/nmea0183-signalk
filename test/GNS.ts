@@ -84,8 +84,8 @@ describe('GNS', () => {
     delta.updates[0]!.values[3]!.value.should.equal(8.5)
     delta.updates[0]!.values[4]!.value.should.equal(0.8)
     delta.updates[0]!.values[5]!.value.should.equal(-22.3)
-    delta.updates[0]!.values[6]!.value.should.equal(0)
-    delta.updates[0]!.values[7]!.value.should.equal(0)
+    should.equal(delta.updates[0]!.values[6]!.value, null)
+    should.equal(delta.updates[0]!.values[7]!.value, null)
     delta.updates[0]!.values[8]!.value.should.equal('Safe')
     // toFull(delta).should.be.validSignalK
   })
@@ -144,8 +144,8 @@ describe('GNS', () => {
     delta.updates[0]!.values[3]!.value.should.equal(8.5)
     delta.updates[0]!.values[4]!.value.should.equal(0.8)
     delta.updates[0]!.values[5]!.value.should.equal(-22.3)
-    delta.updates[0]!.values[6]!.value.should.equal(0)
-    delta.updates[0]!.values[7]!.value.should.equal(0)
+    should.equal(delta.updates[0]!.values[6]!.value, null)
+    should.equal(delta.updates[0]!.values[7]!.value, null)
     delta.updates[0]!.values[8]!.value.should.equal('Safe')
   })
 
@@ -154,8 +154,10 @@ describe('GNS', () => {
     should.equal(delta, null)
   })
 
-  it('Accepts a sentence with exactly 4 empty fields (boundary)', () => {
-    // Guard is `empty > 4`, so empty=4 must still produce a delta.
+  it('Emits per-field null when optional fields are empty, not zero', () => {
+    // IEC 61162-1 §7.2.3.4: null NMEA field = "sensor working, value not
+    // available". Altitude / geoid / differential-age / -reference are
+    // optional; an empty value must surface as null rather than 0.
     const delta = new Parser().parse(
       '$GPGNS,111648.00,0235.0379,S,04422.1450,W,AN,12,0.8,8.5,,,,S*23'
     ) as any
@@ -164,13 +166,30 @@ describe('GNS', () => {
       'path',
       'navigation.position'
     )
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'navigation.gnss.geoidalSeparation'
+      ).value,
+      null
+    )
   })
 
-  it('Returns null once 5 or more fields are empty', () => {
+  it('Returns null when neither position nor mode indicator parses', () => {
+    // Position is parseable but the mode-indicator field is empty, and
+    // position+mode together are the minimum usable signal. Previously
+    // gated by an arbitrary empty-count; now gated by the actual
+    // usability of the output.
     const delta = new Parser().parse(
       '$GPGNS,111648.00,0235.0379,S,04422.1450,W,,,,,,,,S*2A'
     ) as any
-    should.equal(delta, null)
+    delta.should.be.an('object')
+    // Position present, mode field empty -> methodQuality is null.
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'navigation.gnss.methodQuality'
+      ).value,
+      null
+    )
   })
 
   it('Accepts time without decimal fraction', () => {

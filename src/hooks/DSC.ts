@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 import Debug from 'debug'
 const debug = Debug('signalk-parser-nmea0183/DSC')
-function isEmpty(mixed: unknown): boolean {
-  return typeof mixed !== 'string' || mixed.trim() === ''
-}
-
 function parsePosition(line: string): { longitude: number; latitude: number } {
   /*
    * Position Format:
@@ -64,16 +66,22 @@ const DSC: HookFn = function (
   _session: ParserSession
 ): Delta | null {
   const { sentence, parts, tags } = input
-  var values: Array<{ path: string; value: unknown }> = []
+  var values: DeltaValue[] = []
 
-  const empty = parts.reduce((e, val) => {
-    if (isEmpty(val)) {
-      ++e
-    }
-    return e
-  }, 0)
-
-  if (empty > 3) {
+  // DSC drives every branch off category (parts[2]) and nature/
+  // telecommand (parts[3]). Without both, there's no decision to make
+  // and the sentence is noise. The previous `empty > 3` count-gate
+  // dropped valid distress messages where several trailing fields
+  // (time, address, service command) were legitimately empty — see
+  // SignalK/nmea0183-signalk#192.
+  if (
+    typeof parts[1] !== 'string' ||
+    parts[1].trim() === '' ||
+    typeof parts[2] !== 'string' ||
+    parts[2].trim() === '' ||
+    typeof parts[3] !== 'string' ||
+    parts[3].trim() === ''
+  ) {
     return null
   }
 
