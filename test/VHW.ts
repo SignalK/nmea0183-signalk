@@ -22,50 +22,39 @@ chai.Should()
 chai.use(chaiHasItem as any)
 
 describe('VHW', () => {
-  it('speed data only', () => {
-    const delta = new Parser().parse('$IIVHW,,T,,M,06.12,N,11.33,K*50') as any
+  const findValue = (delta: any, path: string) =>
+    delta.updates[0]!.values.find((v: any) => v.path === path).value
 
-    delta.updates[0]!.values.should.containItemWithProperty(
-      'path',
-      'navigation.speedThroughWater'
-    )
-    delta.updates[0]!.values[0]!.value.should.be.closeTo(
+  it('speed data only — missing headings emit null, not absent', () => {
+    const delta = new Parser().parse('$IIVHW,,T,,M,06.12,N,11.33,K*50') as any
+    findValue(delta, 'navigation.speedThroughWater').should.be.closeTo(
       3.148400797594869,
       0.005
     )
+    chai.expect(findValue(delta, 'navigation.headingTrue')).to.be.null
+    chai.expect(findValue(delta, 'navigation.headingMagnetic')).to.be.null
   })
 
   it('speed & direction data', () => {
     const delta = new Parser().parse(
       '$SDVHW,182.5,T,181.8,M,0.0,N,0.0,K*4C'
     ) as any
-
-    delta.updates[0]!.values.should.containItemWithProperty(
-      'path',
-      'navigation.speedThroughWater'
+    findValue(delta, 'navigation.speedThroughWater').should.be.closeTo(
+      0,
+      0.00005
     )
-    delta.updates[0]!.values[2]!.value.should.be.closeTo(0, 0.00005)
-    delta.updates[0]!.values.should.containItemWithProperty(
-      'path',
-      'navigation.headingMagnetic'
-    )
-    delta.updates[0]!.values[1]!.value.should.be.closeTo(
+    findValue(delta, 'navigation.headingMagnetic').should.be.closeTo(
       3.1730085801256913,
       0.00005
     )
-    delta.updates[0]!.values.should.containItemWithProperty(
-      'path',
-      'navigation.headingTrue'
-    )
-    delta.updates[0]!.values[0]!.value.should.be.closeTo(
+    findValue(delta, 'navigation.headingTrue').should.be.closeTo(
       3.1852258848896517,
       0.00005
     )
   })
 
-  /* FIXME!
-  it('Doesn\'t choke on empty sentences', () => {
-    const delta = new Parser().parse('$IIRPM,,,,,*63') as any
-    should.equal(delta, null)
-  }) */
+  it("Doesn't choke on empty sentences (all fields empty returns null)", () => {
+    const delta = new Parser().parse('$IIVHW,,T,,M,,N,,K*55') as any
+    ;(delta === null).should.equal(true)
+  })
 })
