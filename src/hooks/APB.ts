@@ -60,7 +60,6 @@ const APB: HookFn = function (
   }
 
   if (parts[0]!.trim().toUpperCase() === 'V') {
-    // Don't parse this sentence as it's void.
     throw new Error(
       "Not parsing sentence for it's void (LORAN-C blink/SNR warning)"
     )
@@ -72,7 +71,8 @@ const APB: HookFn = function (
     )
   }
 
-  // XTE
+  // XTE: magnitude + L/R direction letter. Both are guarded as
+  // required above, so xte is always a real number here.
   const direction = parts[3]!.trim().toUpperCase() === 'L' ? 1 : -1
   const xte =
     direction *
@@ -82,25 +82,23 @@ const APB: HookFn = function (
       'm'
     )
 
-  // WP arrival status
   const arrivalCircleEntered = parts[5]!.trim().toUpperCase() === 'A'
   const perpendicularPassed = parts[6]!.trim().toUpperCase() === 'A'
 
-  // Bearing, origin to destination
-  const bearingOriginToDest = utils.transform(parts[7]!, 'deg', 'rad')
+  // Bearings + heading-to-steer are each magnitude + unit letter
+  // triples. Magnitudes are null-preserving (IEC 61162-1 §7.2.3.4);
+  // the unit letter picks which axis the value lives on.
+  const bearingOriginToDest = utils.transformOrNull(parts[7]!, 'deg', 'rad')
   const bearingOriginToDestType =
     parts[8]!.trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
 
-  // Destination Waypoint ID
   const destinationWaypointID = parts[9]!.trim()
 
-  // Bearing, position to destination
-  const bearingPositionToDest = utils.transform(parts[10]!, 'deg', 'rad')
+  const bearingPositionToDest = utils.transformOrNull(parts[10]!, 'deg', 'rad')
   const bearingPositionToDestType =
     parts[11]!.trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
 
-  // Heading to steer
-  const headingToSteer = utils.transform(parts[12]!, 'deg', 'rad')
+  const headingToSteer = utils.transformOrNull(parts[12]!, 'deg', 'rad')
   const headingToSteerType =
     parts[13]!.trim().toUpperCase() === 'M' ? 'Magnetic' : 'True'
 
