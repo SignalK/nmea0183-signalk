@@ -85,15 +85,51 @@ describe('VWR', () => {
     delta.updates[0]!.values.should.containItemWithProperty('value', 5)
   })
 
-  it('Omits speedApparent when all speed fields are empty', () => {
+  it('Emits null speedApparent when all speed fields are empty', () => {
     const delta = new Parser().parse('$IIVWR,154.0,R,,N,,M,,K*67') as any
     const paths = delta.updates[0]!.values.map((v: any) => v.path)
     paths.should.include('environment.wind.angleApparent')
-    paths.should.not.include('environment.wind.speedApparent')
+    paths.should.include('environment.wind.speedApparent')
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'environment.wind.speedApparent'
+      ).value,
+      null
+    )
   })
 
   it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$IIVWR,,,,,,,,*53') as any
     should.equal(delta, null)
+  })
+
+  // IEC 61162-1 §7.2.3.4: a null field is a per-field "not available"
+  // marker. A sensor reporting only speed (no direction) or only angle
+  // (no magnitude) must still surface the present half; the missing
+  // half is emitted as `null`, not `0`.
+  it('Emits null angle when the L/R direction letter is missing but speed is present', () => {
+    const delta = new Parser().parse('$IIVWR,,,1.0,N,,,,*32') as any
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'environment.wind.angleApparent'
+      ).value,
+      null
+    )
+    delta.updates[0]!.values.find(
+      (v: any) => v.path === 'environment.wind.speedApparent'
+    ).value.should.be.closeTo(0.5144, 1e-3)
+  })
+
+  it('Emits null speed when the speed field is missing but angle is present', () => {
+    const delta = new Parser().parse('$IIVWR,75,R,,,,,,*03') as any
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'environment.wind.speedApparent'
+      ).value,
+      null
+    )
+    delta.updates[0]!.values.find(
+      (v: any) => v.path === 'environment.wind.angleApparent'
+    ).value.should.be.closeTo(1.3089, 1e-3)
   })
 })
