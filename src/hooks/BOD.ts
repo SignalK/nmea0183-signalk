@@ -72,11 +72,11 @@ const BOD: HookFn = function (
         values: [
           {
             path: 'navigation.courseRhumbline.bearingTrackTrue',
-            value: bearingOriginToDestination['True']
+            value: bearingOriginToDestination['True'] ?? null
           },
           {
             path: 'navigation.courseRhumbline.bearingTrackMagnetic',
-            value: bearingOriginToDestination['Magnetic']
+            value: bearingOriginToDestination['Magnetic'] ?? null
           },
           {
             path: 'navigation.courseRhumbline.nextPoint.ID',

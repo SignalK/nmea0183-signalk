@@ -15,7 +15,13 @@
  * limitations under the License.
  */
 
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 import Debug from 'debug'
 const debug = Debug('signalk-parser-nmea0183/DSC')
 function parsePosition(line: string): { longitude: number; latitude: number } {
@@ -60,7 +66,7 @@ const DSC: HookFn = function (
   _session: ParserSession
 ): Delta | null {
   const { sentence, parts, tags } = input
-  var values: Array<{ path: string; value: unknown }> = []
+  var values: DeltaValue[] = []
 
   // DSC drives every branch off category (parts[2]) and nature/
   // telecommand (parts[3]). Without both, there's no decision to make

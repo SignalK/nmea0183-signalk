@@ -16,7 +16,13 @@
 
 import * as utils from '@signalk/nmea0183-utilities'
 import { coord } from '../lib/nmea-casts'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 
 /*
 RMB Sentence
@@ -73,7 +79,7 @@ const RMB: HookFn = function (
   const originWaypointID = (parts[3]! || '').trim()
   const destinationWaypointID = (parts[4]! || '').trim()
 
-  const values: Array<{ path: string; value: unknown }> = [
+  const values: DeltaValue[] = [
     { path: 'navigation.courseRhumbline.nextPoint.position', value: position },
     {
       path: 'navigation.courseRhumbline.nextPoint.bearingTrue',
