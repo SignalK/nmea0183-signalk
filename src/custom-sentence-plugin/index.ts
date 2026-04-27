@@ -7,31 +7,12 @@
  *     echo '$IIXXX,1,2,3,foobar,D*17' | nc -u -w 0 127.0.0.1 7777
  */
 
-import type { HookFn, ParserInput, ParserSession } from '../types'
+import type { Plugin, ServerAPI } from '@signalk/server-api'
+import type { ParserInput, ParserSession } from '../types'
 
-interface SignalKApp {
-  emitPropertyValue: (
-    name: string,
-    value: { sentence: string; parser: HookFn }
-  ) => void
-}
-
-interface PluginSchema {
-  [key: string]: unknown
-}
-
-interface SignalKPlugin {
-  id: string
-  name: string
-  description: string
-  start: () => void
-  stop: () => void
-  schema: PluginSchema
-}
-
-function makePlugin(app: SignalKApp): SignalKPlugin {
+function makePlugin(app: ServerAPI): Plugin {
   const id = 'signalk-nmea0183-custom-sentence-plugin'
-  const plugin: SignalKPlugin = {
+  const plugin: Plugin = {
     id,
     name: id,
     description: id,
