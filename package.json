@@ -49,7 +49,7 @@
   "author": "Fabian Tollenaar <fabian@signalk.org> (http://signalk.org)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@signalk/nmea0183-utilities": "^1.0.0",
+    "@signalk/nmea0183-utilities": "^1.1.0",
     "@signalk/signalk-schema": "^1.7.1",
     "ggencoder": "^1.0.8",
     "split": "^1.0.1"

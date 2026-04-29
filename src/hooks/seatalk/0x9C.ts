@@ -15,7 +15,13 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../../types'
 
 /*
 9C  U1  VW  RR    Compass heading and Rudder position (see also command 84)
@@ -55,7 +61,7 @@ const S9C: HookFn = function (
     rudderPos = rudderPos - 256
   }
 
-  const pathValues: Array<{ path: string; value: unknown }> = []
+  const pathValues: DeltaValue[] = []
   if (compassHeading) {
     pathValues.push({
       path: 'navigation.headingMagnetic',

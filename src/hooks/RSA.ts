@@ -40,7 +40,7 @@ const RSA: HookFn = function (
     return null
   }
 
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
@@ -48,14 +48,12 @@ const RSA: HookFn = function (
         values: [
           {
             path: 'steering.rudderAngle',
-            value: utils.transform(utils.float(parts[0]!), 'deg', 'rad')
+            value: utils.transformOrNull(parts[0]!, 'deg', 'rad')
           }
         ]
       }
     ]
   }
-
-  return delta
 }
 
 export default RSA

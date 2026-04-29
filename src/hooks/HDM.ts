@@ -35,26 +35,20 @@ const HDM: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  if (typeof parts[0]! !== 'string' || parts[0]!.trim() === '') {
+  const heading = utils.transformOrNull(parts[0]!, 'deg', 'rad')
+  if (heading === null) {
     return null
   }
 
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: [
-          {
-            path: 'navigation.headingMagnetic',
-            value: utils.transform(utils.float(parts[0]!), 'deg', 'rad')
-          }
-        ]
+        values: [{ path: 'navigation.headingMagnetic', value: heading }]
       }
     ]
   }
-
-  return delta
 }
 
 export default HDM

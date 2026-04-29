@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 import Debug from 'debug'
 const debug = Debug('signalk-parser-nmea0183/DSC')
-function isEmpty(mixed: unknown): boolean {
-  return typeof mixed !== 'string' || mixed.trim() === ''
-}
-
 function parsePosition(line: string): { longitude: number; latitude: number } {
   /*
    * Position Format:
@@ -64,16 +66,21 @@ const DSC: HookFn = function (
   _session: ParserSession
 ): Delta | null {
   const { sentence, parts, tags } = input
-  var values: Array<{ path: string; value: unknown }> = []
+  var values: DeltaValue[] = []
 
-  const empty = parts.reduce((e, val) => {
-    if (isEmpty(val)) {
-      ++e
-    }
-    return e
-  }, 0)
-
-  if (empty > 3) {
+  // Only the format specifier (parts[0]) and the sender MMSI (parts[1])
+  // are universally required. The DSC Category (parts[2]) is left null
+  // by the standard whenever the Format Specifier is Distress (FS=12) —
+  // see SignalK/nmea0183-signalk#217. Gating on parts[2] here would
+  // silently drop every Distress Alert that follows the spec, which
+  // is strictly worse than the pre-#192 behaviour of falling through
+  // to the "unhandled" notification.
+  if (
+    typeof parts[0] !== 'string' ||
+    parts[0].trim() === '' ||
+    typeof parts[1] !== 'string' ||
+    parts[1].trim() === ''
+  ) {
     return null
   }
 
