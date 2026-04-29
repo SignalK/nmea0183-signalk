@@ -148,4 +148,20 @@ describe('DSC', () => {
       'notifications.dsc_parser'
     )
   })
+
+  // Regression for #217: a Distress Alert (FS=12) leaves the DSC
+  // Category field empty per the standard. The hook must not drop the
+  // sentence on that ground; it should at least surface the
+  // "unhandled" notification (the deeper FS-driven dispatch is
+  // tracked separately).
+  it('Distress Alert with empty Category (per spec) surfaces a notification', () => {
+    const delta = new Parser({ validateChecksum: false }).parse(
+      '$CDDSC,12,5031105200,,05,00,2380814428,1800,,,R,E*00'
+    ) as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'notifications.dsc_parser'
+    )
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:503110520')
+  })
 })

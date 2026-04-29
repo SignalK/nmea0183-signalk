@@ -68,19 +68,18 @@ const DSC: HookFn = function (
   const { sentence, parts, tags } = input
   var values: DeltaValue[] = []
 
-  // DSC drives every branch off category (parts[2]) and nature/
-  // telecommand (parts[3]). Without both, there's no decision to make
-  // and the sentence is noise. The previous `empty > 3` count-gate
-  // dropped valid distress messages where several trailing fields
-  // (time, address, service command) were legitimately empty — see
-  // SignalK/nmea0183-signalk#192.
+  // Only the format specifier (parts[0]) and the sender MMSI (parts[1])
+  // are universally required. The DSC Category (parts[2]) is left null
+  // by the standard whenever the Format Specifier is Distress (FS=12) —
+  // see SignalK/nmea0183-signalk#217. Gating on parts[2] here would
+  // silently drop every Distress Alert that follows the spec, which
+  // is strictly worse than the pre-#192 behaviour of falling through
+  // to the "unhandled" notification.
   if (
+    typeof parts[0] !== 'string' ||
+    parts[0].trim() === '' ||
     typeof parts[1] !== 'string' ||
-    parts[1].trim() === '' ||
-    typeof parts[2] !== 'string' ||
-    parts[2].trim() === '' ||
-    typeof parts[3] !== 'string' ||
-    parts[3].trim() === ''
+    parts[1].trim() === ''
   ) {
     return null
   }
