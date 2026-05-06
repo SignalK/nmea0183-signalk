@@ -17,7 +17,8 @@
   },
   "sideEffects": false,
   "engines": {
-    "node": ">=22"
+    "//": "Floor at 20.10 to support Venus CerboGX firmware (currently Node 20.18.2). Bump back to >=22 once Cerbo ships a newer Node.",
+    "node": ">=20.10"
   },
   "files": [
     "dist",
@@ -49,7 +50,7 @@
   "author": "Fabian Tollenaar <fabian@signalk.org> (http://signalk.org)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@signalk/nmea0183-utilities": "^1.0.0",
+    "@signalk/nmea0183-utilities": "^1.1.1",
     "@signalk/signalk-schema": "^1.7.1",
     "ggencoder": "^1.0.8",
     "split": "^1.0.1"
