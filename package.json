@@ -22,9 +22,18 @@
   },
   "files": [
     "dist",
+    "logo.svg",
+    "docs/screenshots",
     "README.md",
     "LICENSE"
   ],
+  "signalk": {
+    "displayName": "NMEA0183 to SK",
+    "appIcon": "./logo.svg",
+    "screenshots": [
+      "./docs/screenshots/1_placeholder.png"
+    ]
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "clean": "rimraf dist",

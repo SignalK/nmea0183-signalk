@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="NMEA0183 to SK">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b6ea8"/>
+      <stop offset="1" stop-color="#0b3a5e"/>
+    </linearGradient>
+    <clipPath id="card">
+      <rect x="0" y="0" width="128" height="128" rx="22"/>
+    </clipPath>
+  </defs>
+
+  <rect x="0" y="0" width="128" height="128" fill="#fff"/>
+
+  <g clip-path="url(#card)">
+    <rect width="128" height="128" fill="url(#sea)"/>
+
+    <g stroke="#bee3f4" stroke-opacity="0.25" stroke-width="1" fill="none">
+      <path d="M0 24 H128 M0 48 H128 M0 72 H128 M0 96 H128"/>
+      <path d="M24 0 V128 M48 0 V128 M72 0 V128 M96 0 V128"/>
+    </g>
+
+    <g font-family="ui-monospace, Menlo, Consolas, monospace" font-weight="700">
+      <text x="14" y="50" font-size="13" fill="#bee3f4">0183</text>
+      <text x="14" y="68" font-size="9" fill="#bee3f4" fill-opacity="0.55">$GPRMC</text>
+    </g>
+
+    <g stroke="#e63946" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <line x1="55" y1="60" x2="78" y2="60"/>
+      <polyline points="72,53 80,60 72,67"/>
+    </g>
+
+    <g font-family="system-ui, sans-serif" font-weight="800">
+      <text x="86" y="56" font-size="18" fill="#e2e8f0">SK</text>
+      <text x="86" y="72" font-size="7" fill="#e2e8f0" fill-opacity="0.6">delta</text>
+    </g>
+
+    <g transform="translate(108 108)">
+      <circle r="10" fill="#0b3a5e" fill-opacity="0.7" stroke="#bee3f4" stroke-width="0.8"/>
+      <polygon points="0,-8 2,0 0,0" fill="#e63946"/>
+      <polygon points="0,-8 -2,0 0,0" fill="#b5232f"/>
+      <polygon points="0,8 2,0 0,0" fill="#e2e8f0"/>
+      <polygon points="0,8 -2,0 0,0" fill="#cbd5e1"/>
+      <circle r="1" fill="#e2e8f0"/>
+    </g>
+  </g>
+</svg>
