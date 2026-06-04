@@ -9,8 +9,6 @@
     </clipPath>
   </defs>
 
-  <rect x="0" y="0" width="128" height="128" fill="#fff"/>
-
   <g clip-path="url(#card)">
     <rect width="128" height="128" fill="url(#sea)"/>
 
