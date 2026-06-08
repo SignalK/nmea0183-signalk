@@ -15,7 +15,7 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import { coord, magVar } from '../lib/nmea-casts'
+import { coord } from '../lib/nmea-casts'
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
 
 /*
@@ -35,99 +35,60 @@ values:
  -      *6A          The checksum data, always begins with *
 */
 
+// Every optional numeric field goes through the `*OrNull` helpers so an
+// empty NMEA field (IEC 61162-1 §7.2.3.4) maps to a Signal K `null`
+// instead of a silent `0`. Reported in SignalK/nmea0183-signalk#192 —
+// an empty magnetic-variation field was being emitted as 0°, causing a
+// 13° course error for a reporter in a high-variation area.
+
 const RMC: HookFn = function (
   input: ParserInput,
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
 
-  let latitude = null
-  let longitude = null
-  let speed = null
-  let track = null
-  let variation = null
-
   const timestamp = utils.timestamp(parts[0]!, parts[8]!)
   // seconds since epoch; Date.parse avoids an extra Date allocation
   const age = Math.floor(Date.parse(timestamp) / 1000)
 
-  // NMEA numeric fields are transported as strings. `coord` already
-  // validates the pole letter (returns null for unexpected chars), so we
-  // only need the non-empty/numeric guards here.
-  latitude =
-    parts[2]!.trim().length > 0 && !isNaN(Number(parts[2]!))
-      ? coord(parts[2]!, parts[3]!)
-      : null
-  longitude =
-    parts[4]!.trim().length > 0 && !isNaN(Number(parts[4]!))
-      ? coord(parts[4]!, parts[5]!)
-      : null
+  const latitude = coord(parts[2]!, parts[3]!)
+  const longitude = coord(parts[4]!, parts[5]!)
 
-  speed =
-    parts[6]!.trim().length > 0 &&
-    !isNaN(Number(parts[6]!)) &&
-    Number(parts[6]!) >= 0
-      ? utils.transform(parts[6]!, 'knots', 'ms')
-      : null
+  // Negative SOG is not a legitimate measurement (speed is a magnitude);
+  // treat as not-available rather than flipping sign.
+  const sog = utils.floatOrNull(parts[6]!)
+  const speed =
+    sog === null || sog < 0 ? null : utils.transform(sog, 'knots', 'ms')
 
-  track =
-    parts[7]!.trim().length > 0 && !isNaN(Number(parts[7]!))
-      ? utils.transform(parts[7]!, 'deg', 'rad')
+  const track = utils.transformOrNull(parts[7]!, 'deg', 'rad')
+
+  const variationDeg = utils.magneticVariationOrNull(parts[9]!, parts[10]!)
+  const variation =
+    variationDeg === null ? null : utils.transform(variationDeg, 'deg', 'rad')
+
+  const position =
+    latitude !== null &&
+    longitude !== null &&
+    utils.isValidPosition(latitude, longitude)
+      ? { latitude, longitude }
       : null
 
-  {
-    const degs =
-      parts[9]!.trim().length > 0 && !isNaN(Number(parts[9]!))
-        ? magVar(parts[9]!, parts[10]!)
-        : null
-    variation = degs === null ? null : utils.transform(degs, 'deg', 'rad')
-  }
-
-  let position = null
-
-  if (utils.isValidPosition(latitude, longitude)) {
-    position = {
-      latitude: latitude,
-      longitude: longitude
-    }
-  }
-
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
         timestamp: timestamp,
         values: [
-          {
-            path: 'navigation.position',
-            value: position
-          },
-          {
-            path: 'navigation.courseOverGroundTrue',
-            value: track
-          },
-          {
-            path: 'navigation.speedOverGround',
-            value: speed
-          },
-          {
-            path: 'navigation.magneticVariation',
-            value: variation
-          },
-          {
-            path: 'navigation.magneticVariationAgeOfService',
-            value: age
-          },
-          {
-            path: 'navigation.datetime',
-            value: timestamp
-          }
+          { path: 'navigation.position', value: position },
+          { path: 'navigation.courseOverGroundTrue', value: track },
+          { path: 'navigation.speedOverGround', value: speed },
+          { path: 'navigation.magneticVariation', value: variation },
+          { path: 'navigation.magneticVariationAgeOfService', value: age },
+          { path: 'navigation.datetime', value: timestamp }
         ]
       }
     ]
   }
-
-  return delta
 }
 
 export default RMC

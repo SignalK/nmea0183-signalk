@@ -17,12 +17,16 @@
 import * as utils from '@signalk/nmea0183-utilities'
 import type { UnitFormat } from '@signalk/nmea0183-utilities'
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
-function convertToWindAngle(angle: number | string): number {
-  const numAngle = utils.float(angle) % 360
-  if (numAngle > 180 && numAngle <= 360) {
-    return numAngle - 360
-  }
-  return numAngle
+
+// MWV is only emitted when the status field (parts[4]) is 'A' (valid).
+// Within a valid sentence, angle and speed are each routed through the
+// `*OrNull` helpers so an empty optional field becomes `null` rather
+// than a silent 0 (the old code would report e.g. 0° apparent wind
+// angle when the angle field was empty).
+
+function convertToWindAngle(angle: number): number {
+  const numAngle = angle % 360
+  return numAngle > 180 && numAngle <= 360 ? numAngle - 360 : numAngle
 }
 
 const MWV: HookFn = function (
@@ -36,40 +40,35 @@ const MWV: HookFn = function (
   }
 
   const mwvCode = parts[3]!.toUpperCase()
-  let wsu: UnitFormat
-  if (mwvCode === 'K') {
-    wsu = 'kph'
-  } else if (mwvCode === 'N') {
-    wsu = 'knots'
-  } else {
-    wsu = 'ms'
+  const wsu: UnitFormat =
+    mwvCode === 'K' ? 'kph' : mwvCode === 'N' ? 'knots' : 'ms'
+
+  const rawAngleDeg = utils.floatOrNull(parts[0]!)
+  const angle =
+    rawAngleDeg === null
+      ? null
+      : utils.transform(convertToWindAngle(rawAngleDeg), 'deg', 'rad')
+  const speed = utils.transformOrNull(parts[2]!, wsu, 'ms')
+
+  const valueType = parts[1]!.toUpperCase() === 'R' ? 'Apparent' : 'True'
+  const angleType = parts[1]!.toUpperCase() === 'R' ? 'Apparent' : 'TrueWater'
+
+  if (angle === null && speed === null) {
+    return null
   }
 
-  const angle = convertToWindAngle(parts[0]!)
-  const speed = utils.transform(parts[2]!, wsu, 'ms')
-  const valueType = parts[1]!.toUpperCase() == 'R' ? 'Apparent' : 'True'
-  const angleType = parts[1]!.toUpperCase() == 'R' ? 'Apparent' : 'TrueWater'
-
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
         values: [
-          {
-            path: 'environment.wind.speed' + valueType,
-            value: speed
-          },
-          {
-            path: 'environment.wind.angle' + angleType,
-            value: utils.transform(angle, 'deg', 'rad')
-          }
+          { path: 'environment.wind.speed' + valueType, value: speed },
+          { path: 'environment.wind.angle' + angleType, value: angle }
         ]
       }
     ]
   }
-
-  return delta
 }
 
 export default MWV

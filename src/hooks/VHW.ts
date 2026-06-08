@@ -37,43 +37,43 @@ Field Number:
 8. Checksum
 */
 
+// IEC 61162-1 §7.2.3.4: emit `null` per field for missing optional
+// measurements. Previously the hook skipped missing paths entirely,
+// which made the delta shape depend on which fields the sensor
+// happened to populate; `null` is more informative (sensor working,
+// value unavailable) and keeps the delta shape stable.
+
 const VHW: HookFn = function (
   input: ParserInput,
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
-  const pathValues: Array<{ path: string; value: unknown }> = []
 
-  if (parts[0]! != '') {
-    pathValues.push({
-      path: 'navigation.headingTrue',
-      value: utils.transform(utils.float(parts[0]!), 'deg', 'rad')
-    })
-  }
-  if (parts[2]! != '') {
-    pathValues.push({
-      path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(parts[2]!), 'deg', 'rad')
-    })
-  }
-  if (parts[4]! != '') {
-    pathValues.push({
-      path: 'navigation.speedThroughWater',
-      value: utils.transform(utils.float(parts[4]!), 'knots', 'ms')
-    })
+  const headingTrue = utils.transformOrNull(parts[0]!, 'deg', 'rad')
+  const headingMagnetic = utils.transformOrNull(parts[2]!, 'deg', 'rad')
+  const speedThroughWater = utils.transformOrNull(parts[4]!, 'knots', 'ms')
+
+  if (
+    headingTrue === null &&
+    headingMagnetic === null &&
+    speedThroughWater === null
+  ) {
+    return null
   }
 
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
+        values: [
+          { path: 'navigation.headingTrue', value: headingTrue },
+          { path: 'navigation.headingMagnetic', value: headingMagnetic },
+          { path: 'navigation.speedThroughWater', value: speedThroughWater }
+        ]
       }
     ]
   }
-
-  return delta
 }
 
 export default VHW

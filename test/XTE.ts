@@ -49,23 +49,20 @@ describe('XTE', () => {
     )
   })
 
-  it('Emits XTE even when magnitude is empty (direction alone is enough)', () => {
-    // parts[2] (magnitude) empty, parts[3] (direction) present — guard requires
-    // BOTH empty to short-circuit, so we should still get a delta.
-    const delta = new Parser().parse('$GPXTE,A,A,,L,N*70') as any
-    delta.should.be.an('object')
-    delta.updates[0]!.values[0]!.path.should.equal(
-      'navigation.courseRhumbline.crossTrackError'
-    )
+  it('Returns null when magnitude is present but direction is empty', () => {
+    // XTE without a direction letter is an unsigned distance — used to
+    // silently emit a negated value (fallback `!== 'L' ? 1 : -1`) that
+    // was indistinguishable from a real R-steer XTE. `null` is the
+    // IEC-correct answer.
+    const delta = new Parser().parse('$GPXTE,A,A,0.67,,N*23') as any
+    should.equal(delta, null)
   })
 
-  it('Emits XTE even when direction is empty (magnitude alone is enough)', () => {
-    // parts[3] (direction) empty, parts[2] (magnitude) present.
-    const delta = new Parser().parse('$GPXTE,A,A,0.67,,N*23') as any
-    delta.should.be.an('object')
-    delta.updates[0]!.values[0]!.path.should.equal(
-      'navigation.courseRhumbline.crossTrackError'
-    )
+  it('Returns null when direction is present but magnitude is empty', () => {
+    // XTE with no magnitude used to silently emit a 0 (from float(''))
+    // indistinguishable from a zero-error on-track fix.
+    const delta = new Parser().parse('$GPXTE,A,A,,L,N*70') as any
+    should.equal(delta, null)
   })
 
   it('Handles R direction (steer right) and km units', () => {

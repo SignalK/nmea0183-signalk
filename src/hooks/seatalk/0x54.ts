@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import type { Delta, HookFn, ParserInput, ParserSession } from '../../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../../types'
 import type { SessionDate, SessionTime } from './seatalk-session-types'
 
 /*
@@ -48,7 +54,7 @@ const S54: HookFn = function (
     milliSecond: milliSecond
   } satisfies SessionTime
 
-  const pathValues: Array<{ path: string; value: unknown }> = []
+  const pathValues: DeltaValue[] = []
 
   const dateEntry = session['date'] as SessionDate | undefined
   const timeEntry = session['time'] as SessionTime | undefined

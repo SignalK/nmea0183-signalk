@@ -34,9 +34,15 @@ Field Number:
 6. FAA mode indicator (NMEA 2.3 and later)
 */
 
-function isEmpty(mixed: unknown): boolean {
-  return typeof mixed !== 'string' || mixed.trim() === ''
-}
+// IEC 61162-1 §7.2.3.4: null fields are a per-field marker, not a
+// sentence-level reject signal. A GLL sentence with status=A but an
+// empty time field (seen in the wild from some GPS receivers that
+// lose the clock fix but keep position) used to be dropped entirely
+// — even though the position itself is valid. Now only `status=V`
+// (explicit data-invalid) or an unparseable position drops the
+// sentence; otherwise we emit `navigation.position` (possibly null)
+// and fall back to the tag timestamp when the NMEA time field is
+// missing.
 
 const GLL: HookFn = function (
   input: ParserInput,
@@ -44,39 +50,41 @@ const GLL: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  let valid = parts.reduce((v, part) => {
-    v = !isEmpty(part)
-    return v
-  }, true)
-
-  if (typeof parts[5]! === 'string' && parts[5]!.toLowerCase() === 'v') {
-    valid = false
-  }
-
-  if (!valid) {
+  if (typeof parts[5] === 'string' && parts[5].toLowerCase() === 'v') {
     return null
   }
 
+  const rawTime = parts[4]
   const time =
-    parts[4]!.indexOf('.') === -1 ? parts[4]! : parts[4]!.split('.')[0]
-  const timestamp = utils.timestamp(time)
+    rawTime && rawTime.length > 0
+      ? rawTime.indexOf('.') === -1
+        ? rawTime
+        : rawTime.split('.')[0]!
+      : ''
+  const timestamp = time ? utils.timestamp(time) : tags.timestamp
 
   const latitude = coord(parts[0]!, parts[1]!)
   const longitude = coord(parts[2]!, parts[3]!)
-  let position = null
 
-  if (
+  // An entirely empty GLL (no position letters, no pole letters) is
+  // noise, not a "sensor working, no data" marker. `coord` returns
+  // `null` only when the pole field is missing or invalid — which is
+  // the shape of a fully-empty frame. A position that parses numerically
+  // but falls out of range (malformed bytes in the field) stays a delta
+  // with `value: null`, preserving the existing "invalid lat/lng"
+  // behaviour.
+  if (latitude === null && longitude === null) {
+    return null
+  }
+
+  const position =
     latitude !== null &&
     longitude !== null &&
     utils.isValidPosition(latitude, longitude)
-  ) {
-    position = {
-      latitude: latitude,
-      longitude: longitude
-    }
-  }
+      ? { latitude, longitude }
+      : null
 
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
@@ -90,8 +98,6 @@ const GLL: HookFn = function (
       }
     ]
   }
-
-  return delta
 }
 
 export default GLL
