@@ -65,6 +65,33 @@ describe('VWR', () => {
     )
   })
 
+  it('Falls back to m/s when the knots field is empty', () => {
+    const delta = new Parser().parse('$IIVWR,154.0,R,,,7.0,M,,*4B') as any
+
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'environment.wind.speedApparent'
+    )
+    delta.updates[0]!.values.should.containItemWithProperty('value', 7.0)
+  })
+
+  it('Falls back to km/h when knots and m/s are empty', () => {
+    const delta = new Parser().parse('$IIVWR,154.0,R,,,,,18.0,K*73') as any
+
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'environment.wind.speedApparent'
+    )
+    delta.updates[0]!.values.should.containItemWithProperty('value', 5)
+  })
+
+  it('Omits speedApparent when all speed fields are empty', () => {
+    const delta = new Parser().parse('$IIVWR,154.0,R,,N,,M,,K*67') as any
+    const paths = delta.updates[0]!.values.map((v: any) => v.path)
+    paths.should.include('environment.wind.angleApparent')
+    paths.should.not.include('environment.wind.speedApparent')
+  })
+
   it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse('$IIVWR,,,,,,,,*53') as any
     should.equal(delta, null)

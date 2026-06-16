@@ -57,25 +57,42 @@ const VWR: HookFn = function (
     rightPositive = -1
   }
 
+  // The speed is reported in up to three units; some talkers leave the knots
+  // field (parts[2]) empty and only populate m/s (parts[4]) or km/h (parts[6]).
+  // Fall back to those instead of reporting 0.
+  let speedApparent: number | undefined
+  if (!isEmpty(parts[2])) {
+    speedApparent = utils.transform(utils.float(parts[2]!), 'knots', 'ms')
+  } else if (!isEmpty(parts[4])) {
+    speedApparent = utils.float(parts[4]!)
+  } else if (!isEmpty(parts[6])) {
+    speedApparent = utils.float(parts[6]!) / 3.6
+  }
+
+  const values = [
+    {
+      path: 'environment.wind.angleApparent',
+      value: utils.transform(
+        utils.float(parts[0]!) * rightPositive,
+        'deg',
+        'rad'
+      )
+    }
+  ]
+
+  if (typeof speedApparent === 'number' && !isNaN(speedApparent)) {
+    values.push({
+      path: 'environment.wind.speedApparent',
+      value: speedApparent
+    })
+  }
+
   return {
     updates: [
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: [
-          {
-            path: 'environment.wind.angleApparent',
-            value: utils.transform(
-              utils.float(parts[0]!) * rightPositive,
-              'deg',
-              'rad'
-            )
-          },
-          {
-            path: 'environment.wind.speedApparent',
-            value: utils.transform(utils.float(parts[2]!), 'knots', 'ms')
-          }
-        ]
+        values
       }
     ]
   }
