@@ -16,27 +16,28 @@
 
 import * as utils from '@signalk/nmea0183-utilities'
 import { coord } from '../lib/nmea-casts'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 
 /*
 RMB Sentence
 $GPRMB,A,0.66,L,003,004,4917.24,N,12309.57,W,001.3,052.5,000.5,V*20
-values:
 
--      RMB          Recommended minimum navigation information
-[0]    A            Data status A = OK, V = Void (warning)
-[1][2] 0.66,L       Cross-track error (nautical miles, 9.99 max),
-                    steer Left to correct (or R = right)
-[3]    003          Origin waypoint ID
-[4]    004          Destination waypoint ID
-[5][6] 4917.24,N    Destination waypoint latitude 49 deg. 17.24 min. N
-[7][8] 12309.57,W   Destination waypoint longitude 123 deg. 09.57 min. W
-[9]    001.3        Range to destination, nautical miles (999.9 max)
-[10]   052.5        True bearing to destination
-[11]   000.5        Velocity towards destination, knots
-[12]   V            Arrival alarm  A = arrived, V = not arrived
--      *20          checksum
-
+[0]    Data status A = OK, V = Void
+[1][2] Cross-track error magnitude, steer direction L / R
+[3]    Origin waypoint ID
+[4]    Destination waypoint ID
+[5][6] Destination waypoint latitude / pole
+[7][8] Destination waypoint longitude / pole
+[9]    Range to destination, nautical miles
+[10]   True bearing to destination
+[11]   Velocity towards destination, knots
+[12]   Arrival alarm A = arrived, V = not arrived
 */
 
 const RMB: HookFn = function (
@@ -45,50 +46,56 @@ const RMB: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  let position = null
+  const position =
+    parts[5]!.trim() !== '' && parts[7]!.trim() !== ''
+      ? {
+          longitude: coord(parts[7]!, parts[8]!),
+          latitude: coord(parts[5]!, parts[6]!)
+        }
+      : null
 
-  if (parts[5]!.trim() !== '' && parts[7]!.trim() !== '') {
-    position = {
-      longitude: coord(parts[7]!, parts[8]!),
-      latitude: coord(parts[5]!, parts[6]!)
-    }
-  }
+  const bearing = utils.transformOrNull(parts[10]!, 'deg', 'rad')
+  // VMG negative values indicate moving away from the destination. The
+  // previous code clamped them to 0 — we keep that behaviour because
+  // the Signal K path is "velocity made good" and a negative figure
+  // would be unusual for downstream autopilot logic, but a truly
+  // missing field now surfaces as null.
+  const rawVmg = utils.floatOrNull(parts[11]!)
+  const vmg =
+    rawVmg === null
+      ? null
+      : utils.transform(rawVmg > 0 ? rawVmg : 0, 'knots', 'ms')
+  const distanceNm = utils.floatOrNull(parts[9]!)
+  const distance =
+    distanceNm === null ? null : utils.transform(distanceNm, 'nm', 'm')
 
-  const bearing = utils.float(parts[10]!)
-  const rawVmg = utils.float(parts[11]!)
-  const vmg = rawVmg > 0 ? rawVmg : 0.0
-  const distance = utils.float(parts[9]!)
-  const rawCrossTrackError = utils.float(parts[1]!)
+  const rawXte = utils.floatOrNull(parts[1]!)
+  const directionLetter = parts[2]!
   const crossTrackError =
-    parts[2]! == 'L' ? rawCrossTrackError : -rawCrossTrackError
+    rawXte === null
+      ? null
+      : utils.transform(directionLetter === 'L' ? rawXte : -rawXte, 'nm', 'm')
 
   const originWaypointID = (parts[3]! || '').trim()
   const destinationWaypointID = (parts[4]! || '').trim()
 
-  const values: Array<{ path: string; value: unknown }> = [
-    {
-      path: 'navigation.courseRhumbline.nextPoint.position',
-      value: position
-    },
-
+  const values: DeltaValue[] = [
+    { path: 'navigation.courseRhumbline.nextPoint.position', value: position },
     {
       path: 'navigation.courseRhumbline.nextPoint.bearingTrue',
-      value: utils.transform(bearing, 'deg', 'rad')
+      value: bearing
     },
-
     {
       path: 'navigation.courseRhumbline.nextPoint.velocityMadeGood',
-      value: utils.transform(vmg, 'knots', 'ms')
+      value: vmg
     },
-
     {
       path: 'navigation.courseRhumbline.nextPoint.distance',
-      value: utils.transform(distance, 'nm', 'km') * 1000
+      value: distance
     },
-
     {
       path: 'navigation.courseRhumbline.crossTrackError',
-      value: utils.transform(crossTrackError, 'nm', 'km') * 1000
+      value: crossTrackError
     }
   ]
 
@@ -98,7 +105,6 @@ const RMB: HookFn = function (
       value: destinationWaypointID
     })
   }
-
   if (originWaypointID) {
     values.push({
       path: 'navigation.courseRhumbline.previousPoint.ID',
@@ -106,7 +112,7 @@ const RMB: HookFn = function (
     })
   }
 
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
@@ -115,8 +121,6 @@ const RMB: HookFn = function (
       }
     ]
   }
-
-  return delta
 }
 
 export default RMB

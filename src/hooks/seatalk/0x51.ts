@@ -15,7 +15,13 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../../types'
 
 /*
 51  Z2  XX  YY  YY  LON position: XX degrees, (YYYY & 0x7FFF)/100 minutes
@@ -43,7 +49,7 @@ const S51: HookFn = function (
   const minutes = (YYYY & 0x7fff) / 100.0
   session['longitude'] = s * (XX + minutes / 60.0)
 
-  const pathValues: Array<{ path: string; value: unknown }> = []
+  const pathValues: DeltaValue[] = []
 
   if (
     session.hasOwnProperty('latitude') &&

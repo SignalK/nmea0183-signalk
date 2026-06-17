@@ -32,7 +32,10 @@ const RPM: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  const delta = {
+  const rpm = utils.floatOrNull(parts[2]!)
+  const revolutions = rpm === null ? null : rpm / 60
+
+  return {
     updates: [
       {
         source: tags.source,
@@ -42,14 +45,12 @@ const RPM: HookFn = function (
             path: `propulsion.${
               parts[0]!.toUpperCase() === 'S' ? 'shaft' : 'engine'
             }_${parts[1]!}.revolutions`,
-            value: utils.float(parts[2]!) / 60
+            value: revolutions
           }
         ]
       }
     ]
   }
-
-  return delta
 }
 
 export default RPM
