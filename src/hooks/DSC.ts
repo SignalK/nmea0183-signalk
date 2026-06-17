@@ -66,6 +66,12 @@ const DSC: HookFn = function (
   const { sentence, parts, tags } = input
   var values: Array<{ path: string; value: unknown }> = []
 
+  // A distress alert uses format specifier 112 and, per ITU-R M.493, carries
+  // no DSC category field — it is implied. Recognize distress from the format
+  // so these alerts are neither dropped by the sparse-field guard nor
+  // mis-classified as unhandled (#217).
+  const isDistressFormat = parts[0] === '12'
+
   const empty = parts.reduce((e, val) => {
     if (isEmpty(val)) {
       ++e
@@ -73,7 +79,9 @@ const DSC: HookFn = function (
     return e
   }, 0)
 
-  if (empty > 3) {
+  // A received distress alert must never be silently discarded, even when most
+  // of its fields are blank.
+  if (empty > 3 && !isDistressFormat) {
     return null
   }
 
@@ -87,7 +95,11 @@ const DSC: HookFn = function (
   var distress = false
   var distress_nature = ''
 
-  switch (parts[2]!) {
+  // Fall back to the format specifier when the category field is empty, so an
+  // implied-category distress alert is handled by the distress branch below.
+  const category = isEmpty(parts[2]) && isDistressFormat ? '12' : parts[2]!
+
+  switch (category) {
     case '00': // routine category
       switch (parts[3]!) {
         case '21': // ship position
@@ -158,7 +170,7 @@ const DSC: HookFn = function (
     }
   })*/
 
-  if (get_position) {
+  if (get_position && /^\d{10}$/.test(parts[5] ?? '')) {
     var position = parsePosition(parts[5]!)
     values.push({
       path: 'navigation.position',

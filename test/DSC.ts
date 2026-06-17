@@ -84,6 +84,40 @@ describe('DSC', () => {
     })
   })
 
+  it('Distress alert with empty category field is recognized as distress', () => {
+    // Per ITU-R M.493, a distress alert (format specifier 112) carries no
+    // DSC category field — it is implied. Such sentences were mis-classified
+    // as "not handled" instead of raising a distress notification (#217).
+    const delta = new Parser().parse(
+      '$CDDSC,12,5031105200,,05,00,2380814428,1800,,,R,E*6C'
+    ) as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'notifications.sinking'
+    )
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'navigation.position'
+    )
+    delta.updates[0]!.values.should.not.containItemWithProperty(
+      'path',
+      'notifications.dsc_parser'
+    )
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:503110520')
+  })
+
+  it('Sparse distress alert is not dropped by the empty-field guard', () => {
+    // A distress alert may arrive with most fields blank (no position/time).
+    // It must still raise its nature notification rather than being discarded
+    // as a near-empty sentence — a received MAYDAY cannot be silently dropped.
+    const delta = new Parser().parse('$CDDSC,12,3380400790,,07,,,,,,*55') as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'notifications.undesignated'
+    )
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')
+  })
+
   it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse(emptyNmeaLine) as any
     should.equal(delta, null)
