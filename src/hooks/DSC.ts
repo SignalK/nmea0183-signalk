@@ -22,6 +22,7 @@ import type {
   ParserInput,
   ParserSession
 } from '../types'
+import { rememberDscPosition } from './dscSession'
 import Debug from 'debug'
 const debug = Debug('signalk-parser-nmea0183/DSC')
 function parsePosition(line: string): { longitude: number; latitude: number } {
@@ -95,7 +96,7 @@ function natureOfDistress(code: string | undefined): string {
 
 const DSC: HookFn = function (
   input: ParserInput,
-  _session: ParserSession
+  session: ParserSession
 ): Delta | null {
   const { sentence, parts, tags } = input
   var values: DeltaValue[] = []
@@ -188,6 +189,13 @@ const DSC: HookFn = function (
         latitude: position.latitude,
         longitude: position.longitude
       }
+    })
+    // Remember this whole-minute fix so a following $--DSE sentence can refine
+    // it to ten-thousandths of a minute.
+    rememberDscPosition(session, mmsi, {
+      context: 'vessels.urn:mrn:imo:mmsi:' + mmsi,
+      latitude: position.latitude,
+      longitude: position.longitude
     })
   }
   if (distress) {
