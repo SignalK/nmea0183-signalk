@@ -85,6 +85,14 @@ const DSC: HookFn = function (
     return null
   }
 
+  // A DSC call with no sender MMSI cannot be attributed to a vessel, so there
+  // is no context to publish under. Drop it rather than emitting a delta with
+  // an empty `vessels.urn:mrn:imo:mmsi:` context — this also guards the MMSI
+  // substring below against a missing field (a bare `$CDDSC,12` would throw).
+  if (isEmpty(parts[1])) {
+    return null
+  }
+
   // for some reason, it seems the sender identification is mmsi+'0', so we
   // strip the trailing zero to get a 9 digit mmsi
   var mmsi = parts[1]!.substring(0, 9)
