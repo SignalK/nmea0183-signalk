@@ -17,8 +17,7 @@
   },
   "sideEffects": false,
   "engines": {
-    "//": "Floor at 20.10 to support Venus CerboGX firmware (currently Node 20.18.2). Bump back to >=22 once Cerbo ships a newer Node.",
-    "node": ">=20.10"
+    "node": ">=24"
   },
   "files": [
     "dist",
