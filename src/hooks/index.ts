@@ -16,6 +16,7 @@ import DBK from './DBK'
 import DBS from './DBS'
 import DPT from './DPT'
 import DSC from './DSC'
+import DSE from './DSE'
 import GNS from './GNS'
 import GGA from './GGA'
 import GLL from './GLL'
@@ -60,6 +61,7 @@ const hooks: Record<string, HookFn> = {
   DBS,
   DPT,
   DSC,
+  DSE,
   GNS,
   GGA,
   GLL,
