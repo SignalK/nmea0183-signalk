@@ -23,6 +23,10 @@ const nmeaLineUrgency = '$CDDSC,20,3381581370,10,00,00,1423108312,1902,,,B,E*7D'
 // the casualty's.
 const nmeaLineRelay =
   '$CDDSC,16,0031600010,12,112,00,1423108312,2019,3162009110,12,,*47'
+// A relay may legitimately omit the casualty's MMSI (vessel unknown). It
+// must fall back to the relaying station's context — never be dropped.
+const nmeaLineRelayNoCasualty =
+  '$CDDSC,16,0031600010,12,112,00,1423108312,2019,,12,,*48'
 
 // Each distress nature code maps to a specific notification path. Every code
 // must be exercised so that the mapping table in DSC.js cannot silently drift.
@@ -118,6 +122,20 @@ describe('DSC', () => {
       (v: any) => v.path === 'notifications.epirb'
     )
     notification.value.message.should.contain('003160001')
+  })
+
+  it('Distress relay without a casualty MMSI falls back to the relaying station', () => {
+    const delta = new Parser().parse(nmeaLineRelayNoCasualty) as any
+
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:003160001')
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'notifications.epirb'
+    )
+    const notification = delta.updates[0]!.values.find(
+      (v: any) => v.path === 'notifications.epirb'
+    )
+    notification.value.message.should.contain('unknown vessel')
   })
 
   it("Doesn't choke on empty sentences", () => {
