@@ -84,6 +84,92 @@ describe('DSC', () => {
     })
   })
 
+  it('Distress alert with empty category field is recognized as distress', () => {
+    // Per ITU-R M.493, a distress alert (format specifier 112) carries no
+    // DSC category field — it is implied. Such sentences were mis-classified
+    // as "not handled" instead of raising a distress notification (#217).
+    const delta = new Parser().parse(
+      '$CDDSC,12,5031105200,,05,00,2380814428,1800,,,R,E*6C'
+    ) as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'notifications.sinking'
+    )
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'navigation.position'
+    )
+    delta.updates[0]!.values.should.not.containItemWithProperty(
+      'path',
+      'notifications.dsc_parser'
+    )
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:503110520')
+  })
+
+  it('Sparse distress alert is not dropped by the empty-field guard', () => {
+    // A distress alert may arrive with most fields blank (no position/time).
+    // It must still raise its nature notification rather than being discarded
+    // as a near-empty sentence — a received MAYDAY cannot be silently dropped.
+    const delta = new Parser().parse('$CDDSC,12,3380400790,,07,,,,,,*55') as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'notifications.undesignated'
+    )
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')
+  })
+
+  it('Distress alert with no sender MMSI is dropped, not emitted with an empty context', () => {
+    // Exempting distress from the empty-field guard made the unguarded MMSI
+    // substring reachable for blank frames. A distress alert with no sender
+    // MMSI cannot be attributed to a vessel, so it must be dropped rather than
+    // emitting a delta with an empty `vessels.urn:mrn:imo:mmsi:` context.
+    const delta = new Parser().parse('$CDDSC,12,,,07,,,,,,*57') as any
+    should.equal(delta, null)
+  })
+
+  it('Bare distress format with no further fields is dropped without throwing', () => {
+    // `$CDDSC,12` carries the distress format specifier and nothing else. The
+    // distress exemption lets it past the empty-field guard, so the missing
+    // sender MMSI must be caught explicitly rather than throwing a TypeError
+    // on the MMSI substring.
+    const delta = new Parser().parse('$CDDSC,12*7C') as any
+    should.equal(delta, null)
+  })
+
+  it('Non-distress sparse sentence with a valid MMSI is still dropped', () => {
+    // The empty-field guard is exempted for distress alerts only. A sparse
+    // non-distress sentence (here format 102) must still be discarded — the
+    // exemption must not widen to every format that happens to carry an MMSI.
+    const delta = new Parser().parse('$CDDSC,20,3380400790,,,,,,,,,*7F') as any
+    should.equal(delta, null)
+  })
+
+  // The position field is parsed only when it is exactly 10 digits, guarding
+  // against NaN coordinates from a garbled field. A distress alert with such a
+  // field must still raise its nature notification but emit no position, so a
+  // later loosening of the regex (dropping an anchor, shortening the count)
+  // can't silently reintroduce NaN coordinates.
+  const badPositionFields: Record<string, string> = {
+    'too short': '$CDDSC,12,3380400790,12,06,00,12345,2019,,,S,E*56',
+    'too long': '$CDDSC,12,3380400790,12,06,00,14231083129,2019,,,S,E*53',
+    'non-digit prefix':
+      '$CDDSC,12,3380400790,12,06,00,X1423108312,2019,,,S,E*32'
+  }
+  Object.entries(badPositionFields).forEach(([label, sentence]) => {
+    it(`Distress alert with a ${label} position emits no navigation.position`, () => {
+      const delta = new Parser().parse(sentence) as any
+      delta.updates[0]!.values.should.containItemWithProperty(
+        'path',
+        'notifications.adrift'
+      )
+      delta.updates[0]!.values.should.not.containItemWithProperty(
+        'path',
+        'navigation.position'
+      )
+      delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')
+    })
+  })
+
   it("Doesn't choke on empty sentences", () => {
     const delta = new Parser().parse(emptyNmeaLine) as any
     should.equal(delta, null)
@@ -138,6 +224,24 @@ describe('DSC', () => {
     delta.updates[0]!.values.should.containItemWithProperty(
       'path',
       'notifications.dsc_parser'
+    )
+  })
+
+  it('Empty category on a non-distress format is not treated as distress', () => {
+    // The implied-category='112' fallback applies only when the format
+    // specifier is distress (112). A non-distress sentence with a blank
+    // category field must fall through to the unhandled branch, not be
+    // re-routed into the distress branch.
+    const delta = new Parser().parse(
+      '$CDDSC,20,3381581370,,21,26,1423108312,1902,,,B,E*7B'
+    ) as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'notifications.dsc_parser'
+    )
+    delta.updates[0]!.values.should.not.containItemWithProperty(
+      'path',
+      'navigation.position'
     )
   })
 
