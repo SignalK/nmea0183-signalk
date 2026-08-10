@@ -16,6 +16,10 @@
 
 import * as utils from '@signalk/nmea0183-utilities'
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+
+// NIST ft->m (exact). `utils.transform('ft','m')` uses RATIOS.METER_IN_FEET
+// (3.2808, truncated), which drifts ~0.003 %. Depths get reported to
+// cm precision so the exact ratio matters.
 const FEET_TO_METERS = 0.3048
 
 /*
@@ -35,26 +39,22 @@ Field Number:
 6. Checksum
 */
 
+// Prefer meters when present; fall back to feet via transformOrNull so
+// an empty sentence surfaces `null` (IEC 61162-1 §7.2.3.4) instead of
+// silent 0.
+
 const DBT: HookFn = function (
   input: ParserInput,
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
 
-  const rawMeters = parts[2]
-  let meterValue: number | null
-  if (hasNoValue(rawMeters)) {
-    const feetValue = parts[0]
-    if (hasNoValue(feetValue)) {
-      meterValue = null
-    } else {
-      meterValue = utils.float(feetValue) * FEET_TO_METERS
-    }
-  } else {
-    meterValue = utils.float(rawMeters)
-  }
+  const meters = utils.floatOrNull(parts[2]!)
+  const feet = utils.floatOrNull(parts[0]!)
+  const meterValue =
+    meters !== null ? meters : feet !== null ? feet * FEET_TO_METERS : null
 
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
@@ -68,11 +68,6 @@ const DBT: HookFn = function (
       }
     ]
   }
-
-  return delta
 }
-
-const hasNoValue = (value: unknown): boolean =>
-  typeof value !== 'string' || value.trim() === ''
 
 export default DBT

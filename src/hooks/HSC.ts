@@ -38,20 +38,26 @@ const HSC: HookFn = function (
 
   debug(`[HSCHook] decoding sentence ${id} => ${sentence}`)
 
-  if (
-    upper(parts[1]!) === '' ||
-    upper(parts[3]!) === '' ||
-    upper(parts[0]!) === '' ||
-    upper(parts[2]!) === ''
-  ) {
+  // Unit letters T / M identify which branch each numeric field
+  // belongs to; either letter missing means the sentence is malformed.
+  const firstUnit = upper(parts[1] ?? '')
+  const secondUnit = upper(parts[3] ?? '')
+  if (firstUnit === '' || secondUnit === '') {
     return null
   }
 
-  const headingToSteer: Record<string, number> = {}
-  headingToSteer[upper(parts[1]!) === 'T' ? 'True' : 'Magnetic'] =
-    utils.transform(parts[0]!, 'deg', 'rad')
-  headingToSteer[upper(parts[3]!) === 'T' ? 'True' : 'Magnetic'] =
-    utils.transform(parts[2]!, 'deg', 'rad')
+  const headingToSteer: Record<string, number | null> = {
+    True: null,
+    Magnetic: null
+  }
+  headingToSteer[firstUnit === 'T' ? 'True' : 'Magnetic'] =
+    utils.transformOrNull(parts[0]!, 'deg', 'rad')
+  headingToSteer[secondUnit === 'T' ? 'True' : 'Magnetic'] =
+    utils.transformOrNull(parts[2]!, 'deg', 'rad')
+
+  if (headingToSteer['True'] === null && headingToSteer['Magnetic'] === null) {
+    return null
+  }
 
   return {
     updates: [

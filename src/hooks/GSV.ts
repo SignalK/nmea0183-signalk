@@ -83,9 +83,15 @@ const TALKER_TO_GNSS: Record<string, string> = {
 
 interface Satellite {
   id: number
-  elevation: number
-  azimuth: number
-  SNR: number
+  // Per IEC 61162-1 §7.2.3.4, elevation / azimuth / SNR are independently
+  // optional — some receivers omit them for just-tracked satellites.
+  // `null` carries that "sensor working, no data" signal instead of
+  // silently reporting 0° elevation (the previous `parts[...] ?? '0'`
+  // fallback was indistinguishable from a satellite genuinely at the
+  // horizon).
+  elevation: number | null
+  azimuth: number | null
+  SNR: number | null
 }
 
 interface GsvAccumulator {
@@ -131,17 +137,17 @@ const GSV: HookFn = function (
       const satPRN = Number(_satPRN)
       gsvData.satellites.push({
         id: satPRN >= 64 ? satPRN - 64 : satPRN,
-        elevation: utils.transform(
-          parts[thisSatDataStart + OFFSET_ELEVATION] ?? '0',
+        elevation: utils.transformOrNull(
+          parts[thisSatDataStart + OFFSET_ELEVATION]!,
           'deg',
           'rad'
         ),
-        azimuth: utils.transform(
-          parts[thisSatDataStart + OFFSET_AZIMUTH] ?? '0',
+        azimuth: utils.transformOrNull(
+          parts[thisSatDataStart + OFFSET_AZIMUTH]!,
           'deg',
           'rad'
         ),
-        SNR: Number(parts[thisSatDataStart + OFFSET_SNR])
+        SNR: utils.floatOrNull(parts[thisSatDataStart + OFFSET_SNR]!)
       })
     }
   }

@@ -15,7 +15,13 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../types'
 /*
 *******  0 1   2 3   4
 *******  | |   | |   |
@@ -28,74 +34,69 @@ Field Number:
 4 Magnetic Variation direction, E = Easterly, W = Westerly
 */
 
-function isEmpty(mixed: unknown): boolean {
-  if (typeof mixed === 'number') {
-    return false
-  }
-  return typeof mixed !== 'string' || mixed.trim() === ''
-}
+// Deviation and variation are both signed scalars — magnitude field +
+// direction letter (E = positive, W = negative). The `*OrNull` helpers
+// short-circuit missing fields to null so an empty deviation / variation
+// doesn't silently become 0° of correction (which would publish a wrong
+// `headingMagnetic` when the receiver only has a raw compass reading).
 
 const HDG: HookFn = function (
   input: ParserInput,
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
-  const values = []
 
-  const headingCompass = parts[0]!
-  const deviation = parts[1]!
-  const deviationDir = parts[2]! === 'E' ? 1 : -1
-  const variation = parts[3]!
-  const variationDir = parts[4]! === 'E' ? 1 : -1
-  if (!isEmpty(headingCompass)) {
-    const effectiveDeviation = !isEmpty(deviation)
-      ? Number(deviation) * deviationDir
-      : 0
+  const compassDeg = utils.floatOrNull(parts[0]!)
+  const deviationDeg = utils.magneticVariationOrNull(parts[1]!, parts[2]!)
+  const variationDeg = utils.magneticVariationOrNull(parts[3]!, parts[4]!)
+
+  const values: DeltaValue[] = []
+
+  if (compassDeg !== null) {
+    const effectiveDeviation = deviationDeg ?? 0
     values.push({
       path: 'navigation.headingMagnetic',
-      value: utils.transform(
-        utils.float(headingCompass) + effectiveDeviation,
-        'deg',
-        'rad'
-      )
+      value: utils.transform(compassDeg + effectiveDeviation, 'deg', 'rad')
     })
-    if (!isEmpty(deviation)) {
+    // Emit the raw compass heading only when deviation is known — if
+    // deviation is missing, `headingMagnetic` already equals the raw
+    // value and a separate `headingCompass` path adds no information.
+    if (deviationDeg !== null) {
       values.push({
         path: 'navigation.headingCompass',
-        value: utils.transform(utils.float(headingCompass), 'deg', 'rad')
+        value: utils.transform(compassDeg, 'deg', 'rad')
       })
     }
-    if (!isEmpty(variation)) {
-      const effectiveVariation = Number(variation) * variationDir
+    if (variationDeg !== null) {
       values.push({
         path: 'navigation.headingTrue',
         value: utils.transform(
-          utils.float(headingCompass) + effectiveDeviation + effectiveVariation,
+          compassDeg + effectiveDeviation + variationDeg,
           'deg',
           'rad'
         )
       })
     }
   }
-  if (!(isEmpty(variation) || isEmpty(variationDir))) {
+
+  if (variationDeg !== null) {
     values.push({
       path: 'navigation.magneticVariation',
-      value:
-        utils.transform(utils.float(variation), 'deg', 'rad') * variationDir
+      value: utils.transform(variationDeg, 'deg', 'rad')
     })
   }
-  if (!(isEmpty(deviation) || isEmpty(deviationDir))) {
+  if (deviationDeg !== null) {
     values.push({
       path: 'navigation.magneticDeviation',
-      value:
-        utils.transform(utils.float(deviation), 'deg', 'rad') * deviationDir
+      value: utils.transform(deviationDeg, 'deg', 'rad')
     })
   }
-  if (!values.length) {
+
+  if (values.length === 0) {
     return null
   }
 
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
@@ -104,8 +105,6 @@ const HDG: HookFn = function (
       }
     ]
   }
-
-  return delta
 }
 
 export default HDG

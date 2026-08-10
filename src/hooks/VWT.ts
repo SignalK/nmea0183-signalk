@@ -72,24 +72,20 @@ const VWT: HookFn = function (
       return null
   }
 
-  // get speed data:
-  // speed value given in m/s is given precedence if present in the NMEA sentence
-  var haveSpeed = false
-  var speed
+  // get speed data: m/s is preferred, kph and knots fall back in order.
+  // `speed` starts null so we can distinguish "not seen" from 0 m/s.
+  let speed: number | null = null
   if (parts[2]! != '' && parts[3]! == 'N') {
-    haveSpeed = true
     speed = utils.transform(utils.float(parts[2]!), 'knots', 'ms')
   }
   if (parts[6]! != '' && parts[7]! == 'K') {
-    haveSpeed = true
     speed = utils.transform(utils.float(parts[6]!), 'kph', 'ms')
   }
   if (parts[4]! != '' && parts[5]! == 'M') {
-    // overwrite speed from knots or km/h if present
-    haveSpeed = true
+    // m/s overrides knots or km/h when present (native unit, no conversion).
     speed = utils.float(parts[4]!)
   }
-  if (!haveSpeed) {
+  if (speed === null) {
     return null
   }
 

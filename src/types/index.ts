@@ -18,9 +18,24 @@ export interface ParserInput {
   talker: string
 }
 
+/**
+ * Signal K delta value. `null` is the IEC 61162-1 §7.2.3.4 "sensor working,
+ * value not available" marker; `undefined` is deliberately disallowed at
+ * the type level — a hook that can't compute a value must emit `null`
+ * explicitly so the compiler catches drift back to "implicit 0 for missing"
+ * or "drop the field entirely" and leave the absent-vs-unavailable
+ * distinction in the IEC-correct shape.
+ *
+ * `{}` here is the TypeScript "any non-nullish value" type (not the empty
+ * object): it accepts every primitive, object literal, and array, which is
+ * what hooks legitimately emit. `| null` re-admits null.
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type DeltaValueType = {} | null
+
 export interface DeltaValue {
   path: string
-  value: unknown
+  value: DeltaValueType
   meta?: unknown
 }
 

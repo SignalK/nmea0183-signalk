@@ -166,10 +166,43 @@ describe('GGA', () => {
     should.equal(delta, null)
   })
 
-  it('Returns null once 5 or more fields are empty (guard boundary)', () => {
-    // Guard is `empty > 4`; 6 empty fields must short-circuit to null.
+  it('Emits per-field nulls for missing optional fields, not zeros', () => {
+    // IEC 61162-1 §7.2.3.4: a null field means "sensor working, value
+    // not available". Altitude / geoidal separation / differential age /
+    // differential reference can legitimately be empty while position
+    // and quality are usable — the sentence must still be emitted, with
+    // `null` (not `0`) on the missing paths.
     const delta = new Parser().parse(
       '$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,,,,,,*49'
+    ) as any
+    should.exist(delta)
+    delta.updates[0]!.values.find(
+      (v: any) => v.path === 'navigation.position'
+    ).value.should.deep.equal({
+      longitude: -122.03782631066667,
+      latitude: 37.39109795066667
+    })
+    delta.updates[0]!.values.find(
+      (v: any) => v.path === 'navigation.gnss.methodQuality'
+    ).value.should.equal('DGNSS fix')
+    ;[
+      'navigation.gnss.antennaAltitude',
+      'navigation.gnss.geoidalSeparation',
+      'navigation.gnss.differentialAge',
+      'navigation.gnss.differentialReference'
+    ].forEach((path) => {
+      should.equal(
+        delta.updates[0]!.values.find((v: any) => v.path === path).value,
+        null
+      )
+    })
+  })
+
+  it('Returns null only when neither position nor quality can be parsed', () => {
+    // With no position letters and no quality indicator the sentence
+    // carries no usable output, so the hook short-circuits to null.
+    const delta = new Parser({ validateChecksum: false }).parse(
+      '$GPGGA,172814.0,,,,,,6,1.2,18.893,M,-25.669,M,2.0,0031*00'
     ) as any
     should.equal(delta, null)
   })

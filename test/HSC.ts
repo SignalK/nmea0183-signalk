@@ -45,15 +45,44 @@ describe('HSC', () => {
       0.6825982706108397
     )
   })
+  // Unit letters (parts[1], parts[3]) are required — they identify
+  // which axis each magnitude belongs to. Missing one drops the
+  // sentence.
   ;[
-    ['parts[0] empty', '$FTHSC,,T,39.11,M*77'],
-    ['parts[1] empty', '$FTHSC,40.12,,39.11,M*0A'],
-    ['parts[2] empty', '$FTHSC,40.12,T,,M*7A'],
-    ['parts[3] empty', '$FTHSC,40.12,T,39.11,*13']
+    ['parts[1] empty (unit letter)', '$FTHSC,40.12,,39.11,M*0A'],
+    ['parts[3] empty (unit letter)', '$FTHSC,40.12,T,39.11,*13']
   ].forEach(([label, sentence]: any) => {
     it(`Returns null when ${label}`, () => {
       should.equal(new Parser().parse(sentence), null)
     })
+  })
+
+  // Magnitude fields (parts[0], parts[2]) are independently optional —
+  // one missing emits that axis as null, not a dropped sentence.
+  it('Emits null True when parts[0] magnitude is empty', () => {
+    const delta = new Parser().parse('$FTHSC,,T,39.11,M*77') as any
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'steering.autopilot.target.headingTrue'
+      ).value,
+      null
+    )
+    delta.updates[0]!.values.find(
+      (v: any) => v.path === 'steering.autopilot.target.headingMagnetic'
+    ).value.should.be.closeTo(0.6825982706108397, 1e-6)
+  })
+
+  it('Emits null Magnetic when parts[2] magnitude is empty', () => {
+    const delta = new Parser().parse('$FTHSC,40.12,T,,M*7A') as any
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'steering.autopilot.target.headingMagnetic'
+      ).value,
+      null
+    )
+    delta.updates[0]!.values.find(
+      (v: any) => v.path === 'steering.autopilot.target.headingTrue'
+    ).value.should.be.closeTo(0.7002260960600073, 1e-6)
   })
 
   it("Doesn't choke on an empty sentence", () => {

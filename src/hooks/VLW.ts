@@ -38,19 +38,14 @@ const VLW: HookFn = function (
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
-  const pathValues: Array<{ path: string; value: unknown }> = []
 
-  if (parts[0]! != '') {
-    pathValues.push({
-      path: 'navigation.log',
-      value: utils.transform(utils.float(parts[0]!), 'nm', 'm')
-    })
-  }
-  if (parts[2]! != '') {
-    pathValues.push({
-      path: 'navigation.trip.log',
-      value: utils.transform(utils.float(parts[2]!), 'nm', 'm')
-    })
+  // Per IEC 61162-1 §7.2.3.4, missing optional fields surface as `null`
+  // so consumers can tell "receiver doesn't know" apart from "0 nm".
+  const cumulative = utils.transformOrNull(parts[0]!, 'nm', 'm')
+  const trip = utils.transformOrNull(parts[2]!, 'nm', 'm')
+
+  if (cumulative === null && trip === null) {
+    return null
   }
 
   return {
@@ -58,7 +53,10 @@ const VLW: HookFn = function (
       {
         source: tags.source,
         timestamp: tags.timestamp,
-        values: pathValues
+        values: [
+          { path: 'navigation.log', value: cumulative },
+          { path: 'navigation.trip.log', value: trip }
+        ]
       }
     ]
   }

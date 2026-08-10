@@ -23,14 +23,6 @@ const debug = Debug('signalk-parser-nmea0183/BWR')
  * $GPBWR,225444,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*38
  *
  * Bearing and distance to waypoint - rhumb line
- *
- * 0)     225444        UTC time of fix 22:54:44
- * 1,2)   4917.24,N     Latitude of waypoint
- * 3,4)   12309.57,W    Longitude of waypoint
- * 5,6)   051.9,T       Bearing to waypoint, degrees true
- * 7,8)   031.6,M       Bearing to waypoint, degrees magnetic
- * 9,10)  001.3,N       Distance to waypoint, Nautical miles
- * 11)    004           Waypoint ID
  **/
 
 const BWR: HookFn = function (
@@ -42,36 +34,43 @@ const BWR: HookFn = function (
 
   debug(`[BWRHook] decoding sentence ${id} => ${sentence}`)
 
-  let timestamp
-  let position
-  let distance
-  const bearingToWaypoint: Record<string, number> = {}
+  const havePosition =
+    upper(parts[0]!) !== '' &&
+    upper(parts[1]!) !== '' &&
+    upper(parts[2]!) !== '' &&
+    upper(parts[3]!) !== '' &&
+    upper(parts[4]!) !== ''
 
-  if (
-    upper(parts[0]!) === '' ||
-    upper(parts[1]!) === '' ||
-    upper(parts[2]!) === '' ||
-    upper(parts[3]!) === '' ||
-    upper(parts[4]!) === ''
-  ) {
-    timestamp = tags.timestamp
-    position = null
-    distance = null
-  } else {
-    timestamp = utils.timestamp(parts[0]!)
-    position = {
-      latitude: coord(parts[1]!, parts[2]!),
-      longitude: coord(parts[3]!, parts[4]!)
-    }
-    distance = utils.transform(
-      parts[9]!,
-      upper(parts[10]!) === 'N' ? 'nm' : 'km',
-      'm'
+  const timestamp = havePosition ? utils.timestamp(parts[0]!) : tags.timestamp
+  const position = havePosition
+    ? {
+        latitude: coord(parts[1]!, parts[2]!),
+        longitude: coord(parts[3]!, parts[4]!)
+      }
+    : null
+
+  const distanceUnit = upper(parts[10]!) === 'N' ? 'nm' : 'km'
+  const distance = havePosition
+    ? utils.transformOrNull(parts[9]!, distanceUnit, 'm')
+    : null
+
+  const bearingToWaypoint: Record<string, number | null> = {
+    True: null,
+    Magnetic: null
+  }
+  if (havePosition) {
+    const firstAxis = upper(parts[6]!) === 'T' ? 'True' : 'Magnetic'
+    const secondAxis = upper(parts[8]!) === 'T' ? 'True' : 'Magnetic'
+    bearingToWaypoint[firstAxis] = utils.transformOrNull(
+      parts[5]!,
+      'deg',
+      'rad'
     )
-    bearingToWaypoint[upper(parts[6]!) === 'T' ? 'True' : 'Magnetic'] =
-      utils.transform(parts[5]!, 'deg', 'rad')
-    bearingToWaypoint[upper(parts[8]!) === 'T' ? 'True' : 'Magnetic'] =
-      utils.transform(parts[7]!, 'deg', 'rad')
+    bearingToWaypoint[secondAxis] = utils.transformOrNull(
+      parts[7]!,
+      'deg',
+      'rad'
+    )
   }
 
   return {

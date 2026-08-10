@@ -76,18 +76,40 @@ describe('BOD', () => {
     )
   })
 
-  // Each of parts[0..4] being individually empty must short-circuit to null.
-  // This locks the guard at the top of the hook against accidental loosening.
+  // Unit letters (parts[1], parts[3]) and destination waypoint ID
+  // (parts[4]) are required — without them the bearing axis and the
+  // routing target are undefined, so the sentence drops.
   ;[
-    ['parts[0] empty', '$GPBOD,,T,023.,M,DEST,START*1E'],
-    ['parts[1] empty', '$GPBOD,045.,,023.,M,DEST,START*55'],
-    ['parts[2] empty', '$GPBOD,045.,T,,M,DEST,START*1E'],
-    ['parts[3] empty', '$GPBOD,045.,T,023.,,DEST,START*4C'],
-    ['parts[4] empty', '$GPBOD,045.,T,023.,M,,START*07']
+    ['parts[1] empty (unit letter)', '$GPBOD,045.,,023.,M,DEST,START*55'],
+    ['parts[3] empty (unit letter)', '$GPBOD,045.,T,023.,,DEST,START*4C'],
+    ['parts[4] empty (destination)', '$GPBOD,045.,T,023.,M,,START*07']
   ].forEach(([label, sentence]: any) => {
     it(`Returns null when ${label}`, () => {
       should.equal(new Parser().parse(sentence), null)
     })
+  })
+
+  // Magnitude fields (parts[0], parts[2]) are independently optional —
+  // missing one emits a null value on the matching axis rather than
+  // dropping the whole sentence (IEC 61162-1 §7.2.3.4).
+  it('Emits null True when parts[0] magnitude is empty', () => {
+    const delta = new Parser().parse('$GPBOD,,T,023.,M,DEST,START*1E') as any
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'navigation.courseRhumbline.bearingTrackTrue'
+      ).value,
+      null
+    )
+  })
+
+  it('Emits null Magnetic when parts[2] magnitude is empty', () => {
+    const delta = new Parser().parse('$GPBOD,045.,T,,M,DEST,START*1E') as any
+    should.equal(
+      delta.updates[0]!.values.find(
+        (v: any) => v.path === 'navigation.courseRhumbline.bearingTrackMagnetic'
+      ).value,
+      null
+    )
   })
 
   it('Exact deep.equal of full parse to lock paths, values and types', () => {

@@ -56,9 +56,12 @@ Field Number:
 14. Checksum
 */
 
-function isEmpty(mixed: unknown): boolean {
-  return typeof mixed !== 'string' || mixed.trim() === ''
-}
+// IEC 61162-1 §7.2.3.4: a null field (",,") signals "sensor working,
+// value not available", so every *optional* field is emitted per-field
+// with `null` when absent. Sentence-level short-circuiting only kicks
+// in when there is literally no usable output at all (no position and
+// no quality indicator) — otherwise a receiver reporting e.g. only
+// position and no altitude would have been dropped entirely.
 
 const GGA: HookFn = function (
   input: ParserInput,
@@ -66,20 +69,13 @@ const GGA: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  const empty = parts.reduce((e, val) => {
-    if (isEmpty(val)) {
-      ++e
-    }
-    return e
-  }, 0)
-
-  if (empty > 4) {
-    return null
-  }
-
   const time =
-    parts[0]!.indexOf('.') === -1 ? parts[0]! : parts[0]!.split('.')[0]
-  const timestamp = utils.timestamp(time)
+    parts[0] && parts[0].length > 0
+      ? parts[0].indexOf('.') === -1
+        ? parts[0]
+        : parts[0].split('.')[0]!
+      : ''
+  const timestamp = time ? utils.timestamp(time) : tags.timestamp
 
   const quality = [
     'no GPS',
@@ -96,20 +92,28 @@ const GGA: HookFn = function (
 
   const latitude = coord(parts[1]!, parts[2]!)
   const longitude = coord(parts[3]!, parts[4]!)
-  let position = null
-
-  if (
+  const position =
     latitude !== null &&
     longitude !== null &&
     utils.isValidPosition(latitude, longitude)
-  ) {
-    position = {
-      latitude: latitude,
-      longitude: longitude
-    }
+      ? { latitude, longitude }
+      : null
+
+  const qualityIdx = utils.intOrNull(parts[5]!)
+  const methodQuality =
+    qualityIdx !== null && qualityIdx >= 0 && qualityIdx < quality.length
+      ? quality[qualityIdx]!
+      : null
+
+  // If neither position nor any quality signal is available the sentence
+  // carries no useful data. Returning null matches the historical
+  // "doesn't choke on empty sentence" test and keeps the output stream
+  // free of all-null deltas.
+  if (position === null && methodQuality === null) {
+    return null
   }
 
-  const delta = {
+  return {
     updates: [
       {
         source: tags.source,
@@ -121,44 +125,36 @@ const GGA: HookFn = function (
           },
           {
             path: 'navigation.gnss.methodQuality',
-            value: quality[utils.int(parts[5]!)]
+            value: methodQuality
           },
-
           {
             path: 'navigation.gnss.satellites',
-            value: utils.int(parts[6]!)
+            value: utils.intOrNull(parts[6]!)
           },
-
           {
             path: 'navigation.gnss.antennaAltitude',
-            value: utils.float(parts[8]!)
+            value: utils.floatOrNull(parts[8]!)
           },
-
           {
             path: 'navigation.gnss.horizontalDilution',
-            value: utils.float(parts[7]!)
+            value: utils.floatOrNull(parts[7]!)
           },
-
           {
             path: 'navigation.gnss.geoidalSeparation',
-            value: utils.float(parts[10]!)
+            value: utils.floatOrNull(parts[10]!)
           },
-
           {
             path: 'navigation.gnss.differentialAge',
-            value: utils.float(parts[12]!)
+            value: utils.floatOrNull(parts[12]!)
           },
-
           {
             path: 'navigation.gnss.differentialReference',
-            value: Number(parts[13]!)
+            value: utils.intOrNull(parts[13]!)
           }
         ]
       }
     ]
   }
-
-  return delta
 }
 
 export default GGA
