@@ -13,7 +13,6 @@
     "reports",
     ".stryker-tmp",
     "test",
-    "src/bench",
-    "src/custom-sentence-plugin"
+    "src/bench"
   ]
 }

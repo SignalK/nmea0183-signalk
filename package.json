@@ -99,7 +99,6 @@
       "test/**",
       "src/bench/**",
       "src/bin/**",
-      "src/custom-sentence-plugin/**",
       "src/lib/CompatParser.ts",
       "src/types/**",
       "src/hooks/seatalk/seatalk-session-types.ts",
