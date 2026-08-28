@@ -58,9 +58,20 @@
 You can add custom sentence parsers via the [Signal K Server plugin mechanism](https://github.com/SignalK/signalk-server/blob/5abe63f1322f7538c9bbb2ec17b22ca52da2bc8a/docs/src/develop/plugins/server_plugin.md). A plugin can register custom parsers by emitting `nmea0183sentenceParser` PropertyValues with a value that has the properties
 
 - sentence: the three letter id of the sentence
-- parser: a function with the signature `({ id, sentence, parts, tags }, session) => delta`
+- parser: a function with the signature `({ id, sentence, parts, tags, talker }, session) => delta`
 
-See [custom-sentence-plugin](./custom-sentence-plugin) for an example.
+See [custom-sentence-plugin/index.js](./custom-sentence-plugin/index.js) for a complete, runnable example plugin.
+
+TypeScript plugins can import the parser and delta types from this package:
+
+```typescript
+import type {
+  CustomSentenceParserEntry,
+  ParserInput,
+  ParserSession,
+  Delta
+} from '@signalk/nmea0183-signalk'
+```
 
 ## Usage
 
