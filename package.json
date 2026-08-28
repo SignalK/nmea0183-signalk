@@ -66,7 +66,7 @@
   "devDependencies": {
     "@signalk/server-api": "^2.24.0",
     "@stryker-mutator/core": "^10.0.0",
-    "@stryker-mutator/mocha-runner": "^9.6.1",
+    "@stryker-mutator/mocha-runner": "^10.0.0",
     "@types/chai": "^5.2.3",
     "@types/debug": "^4.1.13",
     "@types/mocha": "^10.0.10",
