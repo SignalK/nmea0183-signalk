@@ -61,6 +61,38 @@ function parsePosition(line: string): { longitude: number; latitude: number } {
   return { longitude: lon_dec, latitude: lat_dec }
 }
 
+function natureOfDistress(code: string | undefined): string {
+  switch (code) {
+    case '00': // = Fire, explosion
+      return 'fire'
+    case '01': // = Flooding
+      return 'flooding'
+    case '02': // = Collision
+      return 'collision'
+    case '03': // = Grounding
+      return 'grounding'
+    case '04': // = Listing, in danger of capsize
+      return 'listing'
+    case '05': // = Sinking
+      return 'sinking'
+    case '06': // = Disabled and adrift
+      return 'adrift'
+    case '07': // = Undesignated distres
+      return 'undesignated'
+    case '08': // = Abandoning ship
+      return 'abandon'
+    case '09': // = Piracy/armed robbery attack
+      return 'piracy'
+    case '10': // = Man overboard
+      return 'mob'
+    case '12': // = EPRIB emission
+      return 'epirb'
+    default:
+      // unassigned symbol; take no action
+      return 'unassigned'
+  }
+}
+
 const DSC: HookFn = function (
   input: ParserInput,
   _session: ParserSession
@@ -93,6 +125,7 @@ const DSC: HookFn = function (
   var get_position = false
   var distress = false
   var distress_nature = ''
+  var relayedBy: string | undefined
 
   switch (parts[2]!) {
     case '00': // routine category
@@ -113,48 +146,20 @@ const DSC: HookFn = function (
       handled = true
       get_position = true
       distress = true
-      switch (
-        parts[3]! // Nature of Distress
-      ) {
-        case '00': // = Fire, explosion
-          distress_nature = 'fire'
-          break
-        case '01': // = Flooding
-          distress_nature = 'flooding'
-          break
-        case '02': // = Collision
-          distress_nature = 'collision'
-          break
-        case '03': // = Grounding
-          distress_nature = 'grounding'
-          break
-        case '04': // = Listing, in danger of capsize
-          distress_nature = 'listing'
-          break
-        case '05': // = Sinking
-          distress_nature = 'sinking'
-          break
-        case '06': // = Disabled and adrift
-          distress_nature = 'adrift'
-          break
-        case '07': // = Undesignated distres
-          distress_nature = 'undesignated'
-          break
-        case '08': // = Abandoning ship
-          distress_nature = 'abandon'
-          break
-        case '09': // = Piracy/armed robbery attack
-          distress_nature = 'piracy'
-          break
-        case '10': // = Man overboard
-          distress_nature = 'mob'
-          break
-        case '12': // = EPRIB emission
-          distress_nature = 'epirb'
-          break
-        default:
-          // unassigned symbol; take no action
-          distress_nature = 'unassigned'
+      if (parts[0] !== '12') {
+        // A distress *relay* (all-ships 116, individual 120 or area 102
+        // format carrying the distress category): field 3 holds the relay
+        // telecommand, not a nature code — the nature is in field 8 and the
+        // casualty's MMSI in field 7. The position in field 5 is the
+        // casualty's, so the delta is attributed to the casualty, not to
+        // the relaying station.
+        distress_nature = natureOfDistress(parts[8])
+        relayedBy = mmsi
+        if (!isEmpty(parts[7])) {
+          mmsi = parts[7]!.substring(0, 9)
+        }
+      } else {
+        distress_nature = natureOfDistress(parts[3])
       }
   }
 
@@ -176,10 +181,26 @@ const DSC: HookFn = function (
     })
   }
   if (distress) {
+    var message =
+      'DSC Distress Recieved! Nature of distress: ' + distress_nature
+    if (relayedBy !== undefined) {
+      var casualty = relayedBy === mmsi ? 'an unknown vessel' : 'vessel ' + mmsi
+      message =
+        'DSC distress relay received for ' +
+        casualty +
+        ' (relayed by ' +
+        relayedBy +
+        '). Nature of distress: ' +
+        distress_nature
+      var ack = typeof parts[9] === 'string' ? parts[9]!.trim() : ''
+      if (ack !== '') {
+        message += '. Acknowledgement: ' + ack
+      }
+    }
     values.push({
       path: 'notifications.' + distress_nature,
       value: {
-        message: 'DSC Distress Recieved! Nature of distress: ' + distress_nature
+        message: message
       }
     })
   }
