@@ -94,7 +94,13 @@ const DSC: HookFn = function (
   var distress = false
   var distress_nature = ''
 
-  switch (parts[2]!) {
+  // A distress alert (format specifier 112) carries no DSC category — per
+  // ITU-R M.493 it is implied. Fall back to the format specifier so an
+  // implied-category alert reaches the distress branch below instead of the
+  // "not handled" notification (#217).
+  const category = parts[2]?.trim() ? parts[2] : parts[0] === '12' ? '12' : ''
+
+  switch (category) {
     case '00': // routine category
       switch (parts[3]!) {
         case '21': // ship position
@@ -165,7 +171,10 @@ const DSC: HookFn = function (
     }
   })*/
 
-  if (get_position) {
+  // Only parse a full 10-digit position field; a missing or garbled one used
+  // to yield NaN latitude/longitude. Reachable now that a sparse distress
+  // alert survives the entry guard.
+  if (get_position && /^\d{10}$/.test(parts[5] ?? '')) {
     var position = parsePosition(parts[5]!)
     values.push({
       path: 'navigation.position',

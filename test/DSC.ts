@@ -150,18 +150,81 @@ describe('DSC', () => {
   })
 
   // Regression for #217: a Distress Alert (FS=12) leaves the DSC
-  // Category field empty per the standard. The hook must not drop the
-  // sentence on that ground; it should at least surface the
-  // "unhandled" notification (the deeper FS-driven dispatch is
-  // tracked separately).
-  it('Distress Alert with empty Category (per spec) surfaces a notification', () => {
+  // Category field empty per the standard, so the category is implied and
+  // the alert must be handled as distress rather than falling through to
+  // the "unhandled" notification.
+  it('Distress Alert with empty Category (per spec) is recognized as distress', () => {
     const delta = new Parser({ validateChecksum: false }).parse(
       '$CDDSC,12,5031105200,,05,00,2380814428,1800,,,R,E*00'
     ) as any
     delta.updates[0]!.values.should.containItemWithProperty(
       'path',
+      'notifications.sinking'
+    )
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'navigation.position'
+    )
+    delta.updates[0]!.values.should.not.containItemWithProperty(
+      'path',
       'notifications.dsc_parser'
     )
     delta.context.should.equal('vessels.urn:mrn:imo:mmsi:503110520')
+  })
+
+  it('Empty Category on a non-distress format is not treated as distress', () => {
+    // The implied-category fallback applies only when the format specifier is
+    // distress (112). A non-distress sentence with a blank category must fall
+    // through to the unhandled branch, not be re-routed into distress.
+    const delta = new Parser().parse(
+      '$CDDSC,20,3381581370,,21,26,1423108312,1902,,,B,E*7B'
+    ) as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'notifications.dsc_parser'
+    )
+    delta.updates[0]!.values.should.not.containItemWithProperty(
+      'path',
+      'navigation.position'
+    )
+  })
+
+  it('Distress Alert with no position still raises its nature notification', () => {
+    // A distress alert may arrive with most fields blank. It must surface the
+    // nature notification and emit no position rather than a NaN coordinate.
+    const delta = new Parser().parse('$CDDSC,12,3380400790,,07,,,,,,*55') as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'notifications.undesignated'
+    )
+    delta.updates[0]!.values.should.not.containItemWithProperty(
+      'path',
+      'navigation.position'
+    )
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')
+  })
+
+  // The position field is parsed only when it is exactly 10 digits, guarding
+  // against NaN coordinates from a garbled field. A later loosening of the
+  // regex (dropping an anchor, shortening the count) must fail here.
+  const badPositionFields: Record<string, string> = {
+    'too short': '$CDDSC,12,3380400790,12,06,00,12345,2019,,,S,E*56',
+    'too long': '$CDDSC,12,3380400790,12,06,00,14231083129,2019,,,S,E*53',
+    'non-digit prefix':
+      '$CDDSC,12,3380400790,12,06,00,X1423108312,2019,,,S,E*32'
+  }
+  Object.entries(badPositionFields).forEach(([label, sentence]) => {
+    it(`Distress Alert with a ${label} position emits no navigation.position`, () => {
+      const delta = new Parser().parse(sentence) as any
+      delta.updates[0]!.values.should.containItemWithProperty(
+        'path',
+        'notifications.adrift'
+      )
+      delta.updates[0]!.values.should.not.containItemWithProperty(
+        'path',
+        'navigation.position'
+      )
+      delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')
+    })
   })
 })
