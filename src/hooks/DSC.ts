@@ -161,8 +161,9 @@ const DSC: HookFn = function (
         // the relaying station.
         distress_nature = natureOfDistress(parts[8])
         relayedBy = mmsi
-        if (!isEmpty(parts[7])) {
-          mmsi = parts[7]!.substring(0, 9)
+        const casualtyMmsi = parts[7]?.trim()
+        if (casualtyMmsi) {
+          mmsi = casualtyMmsi.substring(0, 9)
         }
       } else {
         distress_nature = natureOfDistress(parts[3])
