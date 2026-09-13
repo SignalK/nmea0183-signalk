@@ -27,9 +27,17 @@ const nmeaLineRelay =
 // must fall back to the relaying station's context — never be dropped.
 const nmeaLineRelayNoCasualty =
   '$CDDSC,16,0031600010,12,112,00,1423108312,2019,,12,,*48'
+// A relay whose casualty field is garbled. A non-numeric MMSI can't name a
+// vessel, so it is treated like an absent one.
+const nmeaLineRelayBadCasualty =
+  '$CDDSC,16,0031600010,12,112,00,1423108312,2019,ABC,12,,*08'
+// A coast station (002661000) acknowledging the EPIRB distress of vessel
+// 316200911. Field 3 holds telecommand 110 (acknowledgement), not 112.
+const nmeaLineDistressAck =
+  '$CDDSC,16,0026610000,12,10,00,1423108312,2019,3162009110,12,,*72'
 
 // Each distress nature code maps to a specific notification path. Every code
-// must be exercised so that the mapping table in DSC.js cannot silently drift.
+// must be exercised so that the mapping table in DSC.ts cannot silently drift.
 const distressCases = [
   { code: '00', path: 'notifications.fire' },
   { code: '01', path: 'notifications.flooding' },
@@ -92,7 +100,7 @@ describe('DSC', () => {
       delta.updates[0]!.values.should.containItemWithProperty('path', path)
       delta.updates[0]!.values.find(
         (v: any) => v.path === path
-      )!.value.message.should.match(/DSC Distress Recieved/)
+      )!.value.message.should.match(/DSC Distress Received/)
     })
   })
 
@@ -280,5 +288,49 @@ describe('DSC', () => {
       )
       delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')
     })
+  })
+
+  it('Distress acknowledgement is reported as an acknowledgement, not a relay', () => {
+    // Use case: a coast station acknowledges a vessel's distress alert. The
+    // delta belongs to the casualty, and the message names the acknowledging
+    // station instead of calling the call a relay.
+    const delta = new Parser().parse(nmeaLineDistressAck) as any
+
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:316200911')
+    const notification = delta.updates[0]!.values.find(
+      (v: any) => v.path === 'notifications.epirb'
+    )
+    notification.value.message.should.contain('acknowledgement')
+    notification.value.message.should.contain('002661000')
+    notification.value.message.should.not.contain('relay')
+  })
+
+  it('Distress relay with a non-numeric casualty MMSI falls back to the relaying station', () => {
+    const delta = new Parser().parse(nmeaLineRelayBadCasualty) as any
+
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:003160001')
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'path',
+      'notifications.epirb'
+    )
+  })
+
+  // The sender field is the 9-digit MMSI, normally followed by a trailing
+  // zero. Anything else cannot name a vessel and must not produce a delta
+  // with a malformed context.
+  const badSenderFields: Record<string, string> = {
+    'non-numeric': '$CDDSC,12,ABC,,07,,,,,,*17',
+    '8-digit': '$CDDSC,12,33804007,,07,,,,,,*5C',
+    '11-digit': '$CDDSC,12,33804007900,,07,,,,,,*65'
+  }
+  Object.entries(badSenderFields).forEach(([label, sentence]) => {
+    it(`Sentence with a ${label} sender MMSI is dropped`, () => {
+      should.equal(new Parser().parse(sentence), null)
+    })
+  })
+
+  it('Sentence with a 9-digit sender MMSI (no trailing zero) is accepted', () => {
+    const delta = new Parser().parse('$CDDSC,12,338040079,,07,,,,,,*65') as any
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:338040079')
   })
 })

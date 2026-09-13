@@ -78,7 +78,7 @@ function natureOfDistress(code: string | undefined): string {
       return 'sinking'
     case '06': // = Disabled and adrift
       return 'adrift'
-    case '07': // = Undesignated distres
+    case '07': // = Undesignated distress
       return 'undesignated'
     case '08': // = Abandoning ship
       return 'abandon'
@@ -86,12 +86,19 @@ function natureOfDistress(code: string | undefined): string {
       return 'piracy'
     case '10': // = Man overboard
       return 'mob'
-    case '12': // = EPRIB emission
+    case '12': // = EPIRB emission
       return 'epirb'
     default:
       // unassigned symbol; take no action
       return 'unassigned'
   }
+}
+
+// A DSC address field holds the 9-digit MMSI, normally followed by a
+// trailing zero: "3380400790" is MMSI 338040079. Anything else cannot name a
+// vessel and would produce a malformed context.
+function isMmsiField(field: string | undefined): field is string {
+  return /^\d{9,10}$/.test(field ?? '')
 }
 
 const DSC: HookFn = function (
@@ -111,8 +118,7 @@ const DSC: HookFn = function (
   if (
     typeof parts[0] !== 'string' ||
     parts[0].trim() === '' ||
-    typeof parts[1] !== 'string' ||
-    parts[1].trim() === ''
+    !isMmsiField(parts[1])
   ) {
     return null
   }
@@ -126,7 +132,9 @@ const DSC: HookFn = function (
   var get_position = false
   var distress = false
   var distress_nature = ''
-  var relayedBy: string | undefined
+  // Set when another station reports this distress (relay or acknowledgement)
+  var reportedBy: string | undefined
+  var isAcknowledgement = false
 
   // A distress alert (format specifier 112) carries no DSC category — per
   // ITU-R M.493 it is implied. Fall back to the format specifier so an
@@ -154,17 +162,19 @@ const DSC: HookFn = function (
       get_position = true
       distress = true
       if (parts[0] !== '12') {
-        // A distress *relay* (all-ships 116, individual 120 or area 102
-        // format carrying the distress category): field 3 holds the relay
-        // telecommand, not a nature code — the nature is in field 8 and the
-        // casualty's MMSI in field 7. The position in field 5 is the
-        // casualty's, so the delta is attributed to the casualty, not to
-        // the relaying station.
+        // Another station reporting a vessel's distress, as an all-ships
+        // (116), individual (120) or area (102) call: a relay or an
+        // acknowledgement. Field 3 holds that telecommand, not a nature code;
+        // the nature is in field 8 and the casualty's MMSI in field 7. The
+        // position in field 5 is the casualty's, so the delta is attributed
+        // to the casualty, not to the reporting station.
+        // Field 3: "10" or "110" = acknowledgement, "12" or "112" = relay.
         distress_nature = natureOfDistress(parts[8])
-        relayedBy = mmsi
-        const casualtyMmsi = parts[7]?.trim()
-        if (casualtyMmsi) {
-          mmsi = casualtyMmsi.substring(0, 9)
+        reportedBy = mmsi
+        isAcknowledgement = (parts[3] ?? '').endsWith('10')
+        const casualtyField = parts[7]
+        if (isMmsiField(casualtyField)) {
+          mmsi = casualtyField.substring(0, 9)
         }
       } else {
         distress_nature = natureOfDistress(parts[3])
@@ -178,13 +188,13 @@ const DSC: HookFn = function (
     }
   })*/
 
-  // A following $--DSE carries the sending station's address. For a relay
-  // that is the relaying station, not the casualty the delta belongs to.
-  const senderMmsi = relayedBy ?? mmsi
+  // A following $--DSE carries the sending station's address. For a relay or
+  // acknowledgement that is the reporting station, not the casualty the delta
+  // belongs to.
+  const senderMmsi = reportedBy ?? mmsi
 
-  // Only parse a full 10-digit position field; a missing or garbled one used
-  // to yield NaN latitude/longitude. Reachable now that a sparse distress
-  // alert survives the entry guard.
+  // Only parse a full 10-digit position field; a missing or garbled one would
+  // yield NaN latitude/longitude, and a sparse distress alert may omit it.
   if (get_position && /^\d{10}$/.test(parts[5] ?? '')) {
     var position = parsePosition(parts[5]!)
     values.push({
@@ -208,16 +218,22 @@ const DSC: HookFn = function (
   }
   if (distress) {
     var message =
-      'DSC Distress Recieved! Nature of distress: ' + distress_nature
-    if (relayedBy !== undefined) {
-      var casualty = relayedBy === mmsi ? 'an unknown vessel' : 'vessel ' + mmsi
-      message =
-        'DSC distress relay received for ' +
-        casualty +
-        ' (relayed by ' +
-        relayedBy +
-        '). Nature of distress: ' +
-        distress_nature
+      'DSC Distress Received! Nature of distress: ' + distress_nature
+    if (reportedBy !== undefined) {
+      var casualty =
+        reportedBy === mmsi ? 'an unknown vessel' : 'vessel ' + mmsi
+      message = isAcknowledgement
+        ? 'DSC distress acknowledgement received for ' +
+          casualty +
+          ' (acknowledged by ' +
+          reportedBy +
+          ')'
+        : 'DSC distress relay received for ' +
+          casualty +
+          ' (relayed by ' +
+          reportedBy +
+          ')'
+      message += '. Nature of distress: ' + distress_nature
       var ack = typeof parts[9] === 'string' ? parts[9]!.trim() : ''
       if (ack !== '') {
         message += '. Acknowledgement: ' + ack
@@ -258,13 +274,12 @@ const DSC: HookFn = function (
 /*
  * DSC Codec - Some DSC Capable VHF Radios output DSC Sentences
  *
- * This codec currently contains basic support for distress messages and
- * position messages.
+ * Handles position reports, distress alerts, and distress relays and
+ * acknowledgements sent by other stations about a vessel in distress. Other
+ * calls surface as a "DSC Message Not Handled" notification.
  *
- * NOTE: The position in the DSC sentence is only accurate to the minute,
- * however, there is an extended sentence that provides further detail. The
- * DSE Sentence (which can follow the DSC sentence) contains further position
- * detail.
+ * NOTE: The position in the DSC sentence is only accurate to the minute. The
+ * DSE sentence that can follow it refines the position; see DSE.ts.
  *
  *
  * Documentation for DSC Sentences:
@@ -275,6 +290,10 @@ const DSC: HookFn = function (
  * $CDDSC,12,3380400790,12,06,00,1423108312,2019,,,S,E*6A
  * $CDDSE,1,1,A,3380400790,00,45894494*1B
  *
+ * Distress Relay Example (coast station 003160001 relaying the EPIRB alert
+ * of vessel 316200911):
+ * $CDDSC,16,0031600010,12,112,00,1423108312,2019,3162009110,12,,*47
+ *
  * Distress Cancelation (unsupported):
  * $CDDSC,12,3381581370,12,06,00,1423108312,0236,3381581370,,S,*20
  *
@@ -283,9 +302,9 @@ const DSC: HookFn = function (
  *
  *
  *
- *        0  1          2  3  4  5          6      9 10
- *        |  |          |  |  |  |          |      | |
- * $--DSC,XX,XXXXXXXXXX,XX,XX,XX,XXXXXXXXXX,XXXX,,,A,C*hh<CR><LF>
+ *        0  1          2  3  4  5          6    7          8  9 10
+ *        |  |          |  |  |  |          |    |          |  | |
+ * $--DSC,XX,XXXXXXXXXX,XX,XX,XX,XXXXXXXXXX,XXXX,XXXXXXXXXX,XX,A,C*hh<CR><LF>
  *
  * Field Number:
  *   0.    Format Specifier (without first digit)
@@ -296,20 +315,23 @@ const DSC: HookFn = function (
  *            120 = selective call to particular individual station
  *            123 = selective call to a particular individual using automatic service
  *
- *   1.    Sender MMSI
- *   2.    Category Element (without first digit)
+ *   1.    Sender MMSI, followed by a trailing zero (3380400790 = 338040079)
+ *   2.    Category Element (without first digit); empty for a distress
+ *         alert, where it is implied
  *            100 = Routine
  *            108 = Safety
  *            110 = Urgency
  *            112 = Distress
  *
- *   3.    variable based on Category
+ *   3.    Distress alert: nature of distress. Otherwise the first
+ *         telecommand, e.g. 21 = ship position, 10 = distress
+ *         acknowledgement, 12 = distress relay
  *   4.    variable based on category
- *   5.    Sender Position
+ *   5.    Position (the casualty's, for a relay or acknowledgement)
  *   6.    time in UTC
- *   7.    address of vessel in distress (if different than sending vessel?)
- *   8.    Unknown
- *   9.    Unknown (It may be a representation of a service command)
+ *   7.    MMSI of the vessel in distress (relay or acknowledgement)
+ *   8.    Nature of distress (relay or acknowledgement)
+ *   9.    Acknowledgement: R = requested, B = acknowledgement, S = neither
  *   10.   Expansion message follows
  *            E = true
  *           ' '= false
