@@ -16,6 +16,7 @@
 
 import * as utils from '@signalk/nmea0183-utilities'
 import { coord } from '../lib/nmea-casts'
+import timestampFromTimeOfDay from '../lib/timestampFromTimeOfDay'
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
 
 /*
@@ -47,7 +48,12 @@ const RMC: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  const timestamp = utils.timestamp(parts[0]!, parts[8]!)
+  // Without its date field RMC is dated like the time-only sentences; with
+  // neither time nor date it takes the tag block time or the host clock.
+  const date = parts[8]
+  const timestamp = date
+    ? utils.timestamp(parts[0]!, date)
+    : (timestampFromTimeOfDay(parts[0]!, tags.timestamp) ?? utils.timestamp())
   // seconds since epoch; Date.parse avoids an extra Date allocation
   const age = Math.floor(Date.parse(timestamp) / 1000)
 

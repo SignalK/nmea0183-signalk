@@ -17,6 +17,7 @@
 import Parser from '../src/lib'
 import * as chai from 'chai'
 import chaiHasItem from './helpers/chai-has-item'
+import withClock from './helpers/with-clock'
 const should = chai.Should()
 
 chai.Should()
@@ -163,5 +164,34 @@ describe('RMC', () => {
     delta.updates[0]!.values.find(
       (value: any) => value.path === 'navigation.datetime'
     )!.value.should.equal('2025-09-11T21:07:35.000Z')
+  })
+
+  it('dates navigation.datetime like the timestamp when the date field is empty', () => {
+    // Receivers can send RMC before they know the date. A 23:59:59 fix
+    // received just after UTC midnight belongs to the previous day.
+    const delta = withClock('2026-09-12T00:00:00.691Z', () =>
+      new Parser().parse(
+        '$GNRMC,235959.000,A,3819.16721,N,02133.08984,E,0.0,0.0,,,,A*7F'
+      )
+    ) as any
+    delta.updates[0]!.values.find(
+      (value: any) => value.path === 'navigation.datetime'
+    )!.value.should.equal('2026-09-11T23:59:59.000Z')
+  })
+
+  it('uses the tag block time when both time and date are empty', () => {
+    // Replayed log with a void RMC: c:1748822400 -> 2025-06-02T00:00:00Z
+    const delta = new Parser().parse(
+      '\\s:logger,c:1748822400*2E\\$GPRMC,,V,,,,,,,,,,N*53'
+    ) as any
+    delta.updates[0]!.timestamp.should.equal('2025-06-02T00:00:00.000Z')
+  })
+
+  it('uses the host clock when time, date and tag block time are all missing', () => {
+    // Live void RMC without any time information.
+    const delta = withClock('2026-09-12T10:00:00.000Z', () =>
+      new Parser().parse('$GPRMC,,V,,,,,,,,,,N*53')
+    ) as any
+    delta.updates[0]!.timestamp.should.equal('2026-09-12T10:00:00.000Z')
   })
 })

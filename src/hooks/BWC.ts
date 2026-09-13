@@ -16,6 +16,7 @@
 
 import * as utils from '@signalk/nmea0183-utilities'
 import { coord } from '../lib/nmea-casts'
+import timestampFromTimeOfDay from '../lib/timestampFromTimeOfDay'
 import type {
   Delta,
   DeltaValue,
@@ -58,8 +59,9 @@ const BWC: HookFn = function (
     ]
   }
 
-  if (parts[0]! !== '') {
-    result.updates[0]!.timestamp = utils.timestamp(parts[0]!)
+  const timestamp = timestampFromTimeOfDay(parts[0]!, tags.timestamp)
+  if (timestamp !== undefined) {
+    result.updates[0]!.timestamp = timestamp
   }
 
   // All four of parts[1..4] (lat/NS, lon/EW) are required to emit a

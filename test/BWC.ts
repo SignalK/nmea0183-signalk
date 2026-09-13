@@ -100,6 +100,15 @@ describe('BWC', () => {
     )
   })
 
+  it('falls back to the tag block time when parts[0] is empty', () => {
+    // Replayed log with a BWC that has no UTC time: the tag block time
+    // (c:1748822400 -> 2025-06-02T00:00:00Z) is the best timestamp available.
+    const delta = new Parser().parse(
+      '\\s:logger,c:1748822400*2E\\$GPBWC,,4917.24,N,12309.57,W,051.9,T,031.6,M,001.3,N,004*28'
+    ) as any
+    delta.updates[0]!.timestamp.should.equal('2025-06-02T00:00:00.000Z')
+  })
+
   // Each individual coordinate field going empty must collapse position to
   // null; locks the AND-chain at the top.
   ;[

@@ -16,6 +16,7 @@
 
 import * as utils from '@signalk/nmea0183-utilities'
 import { coord } from '../lib/nmea-casts'
+import timestampFromTimeOfDay from '../lib/timestampFromTimeOfDay'
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
 import Debug from 'debug'
 const debug = Debug('signalk-parser-nmea0183/BWR')
@@ -41,7 +42,9 @@ const BWR: HookFn = function (
     upper(parts[3]!) !== '' &&
     upper(parts[4]!) !== ''
 
-  const timestamp = havePosition ? utils.timestamp(parts[0]!) : tags.timestamp
+  const timestamp = havePosition
+    ? timestampFromTimeOfDay(parts[0]!, tags.timestamp)
+    : tags.timestamp
   const position = havePosition
     ? {
         latitude: coord(parts[1]!, parts[2]!),

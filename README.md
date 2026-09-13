@@ -146,6 +146,8 @@ Output:
 }
 ```
 
+Sentences that carry a UTC time but no date (GGA, GLL, GNS, BWC, BWR, and RMC with an empty date field) keep their own time of day and take the date from the `c:` time, choosing the day that puts the result within 12 hours of it. This keeps replayed logs on their recorded dates and handles fixes that arrive just after midnight. Without a `c:` time, the host clock is used instead.
+
 **Note:** *at this time, the checksum of the tag block (`c:1438489697*13`) is not validated.\*
 
 ## License
