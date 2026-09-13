@@ -17,6 +17,7 @@
 import Parser from '../src/lib'
 import * as chai from 'chai'
 import * as signalkSchema from '@signalk/signalk-schema'
+import withClock from './helpers/with-clock'
 const should = chai.Should()
 chai.use(signalkSchema.chaiModule as any)
 
@@ -67,19 +68,10 @@ describe('GLL', () => {
     should.equal(delta, null)
   })
 
-  it('emits a UTC ISO timestamp matching today and the sentence time', () => {
-    // before/after window tolerates a test run straddling midnight UTC
-    const before = new Date().toISOString().slice(0, 10)
-    const delta = new Parser().parse(
-      '$GPGLL,5958.613,N,02325.928,E,121022,A,D*40'
+  it('emits a UTC ISO timestamp on the host date for the sentence time', () => {
+    const delta = withClock('2026-09-12T12:10:23.000Z', () =>
+      new Parser().parse('$GPGLL,5958.613,N,02325.928,E,121022,A,D*40')
     ) as any
-    const after = new Date().toISOString().slice(0, 10)
-
-    const ts = delta.updates[0]!.timestamp
-    ts.should.be.a('string')
-    ts.should.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.000Z$/)
-    // "121022" -> 12:10:22
-    ts.slice(11, 19).should.equal('12:10:22')
-    ts.slice(0, 10).should.be.oneOf([before, after])
+    delta.updates[0]!.timestamp.should.equal('2026-09-12T12:10:22.000Z')
   })
 })

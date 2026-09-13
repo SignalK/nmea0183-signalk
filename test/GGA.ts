@@ -18,6 +18,7 @@ import Parser from '../src/lib'
 import * as chai from 'chai'
 import * as signalkSchema from '@signalk/signalk-schema'
 import chaiHasItem from './helpers/chai-has-item'
+import withClock from './helpers/with-clock'
 const should = chai.Should()
 
 chai.use(chaiHasItem as any)
@@ -215,19 +216,13 @@ describe('GGA', () => {
     ts.slice(11, 19).should.equal('17:28:14')
   })
 
-  it('emits a UTC ISO timestamp matching today and the sentence time', () => {
-    // before/after window tolerates a test run straddling midnight UTC
-    const before = new Date().toISOString().slice(0, 10)
-    const delta = new Parser().parse(
-      '$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F'
+  it('emits a UTC ISO timestamp on the host date for the sentence time', () => {
+    const delta = withClock('2026-09-12T17:28:15.000Z', () =>
+      new Parser().parse(
+        '$GPGGA,172814.5,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4A'
+      )
     ) as any
-    const after = new Date().toISOString().slice(0, 10)
-
-    const ts = delta.updates[0]!.timestamp
-    ts.should.be.a('string')
-    ts.should.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.000Z$/)
-    // "172814" -> 17:28:14
-    ts.slice(11, 19).should.equal('17:28:14')
-    ts.slice(0, 10).should.be.oneOf([before, after])
+    // "172814.5" -> 17:28:14, fractional seconds dropped
+    delta.updates[0]!.timestamp.should.equal('2026-09-12T17:28:14.000Z')
   })
 })

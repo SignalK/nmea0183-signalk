@@ -16,6 +16,7 @@
 
 import * as utils from '@signalk/nmea0183-utilities'
 import { coord } from '../lib/nmea-casts'
+import timestampFromTimeOfDay from '../lib/timestampFromTimeOfDay'
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
 /*
 === GNS - Fix Data ===
@@ -89,7 +90,7 @@ const GNS: HookFn = function (
         ? parts[0]
         : parts[0].split('.')[0]!
       : ''
-  const timestamp = time ? utils.timestamp(time) : tags.timestamp
+  const timestamp = timestampFromTimeOfDay(time, tags.timestamp)
 
   const latitude = coord(parts[1]!, parts[2]!)
   const longitude = coord(parts[3]!, parts[4]!)
