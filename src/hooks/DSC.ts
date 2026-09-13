@@ -22,6 +22,7 @@ import type {
   ParserInput,
   ParserSession
 } from '../types'
+import { forgetDscPosition, rememberDscPosition } from './dscSession'
 import Debug from 'debug'
 const debug = Debug('signalk-parser-nmea0183/DSC')
 function parsePosition(line: string): { longitude: number; latitude: number } {
@@ -95,7 +96,7 @@ function natureOfDistress(code: string | undefined): string {
 
 const DSC: HookFn = function (
   input: ParserInput,
-  _session: ParserSession
+  session: ParserSession
 ): Delta | null {
   const { sentence, parts, tags } = input
   var values: DeltaValue[] = []
@@ -177,6 +178,10 @@ const DSC: HookFn = function (
     }
   })*/
 
+  // A following $--DSE carries the sending station's address. For a relay
+  // that is the relaying station, not the casualty the delta belongs to.
+  const senderMmsi = relayedBy ?? mmsi
+
   // Only parse a full 10-digit position field; a missing or garbled one used
   // to yield NaN latitude/longitude. Reachable now that a sparse distress
   // alert survives the entry guard.
@@ -189,6 +194,17 @@ const DSC: HookFn = function (
         longitude: position.longitude
       }
     })
+    // Remember this whole-minute fix so a following $--DSE sentence can refine
+    // it to ten-thousandths of a minute.
+    rememberDscPosition(session, senderMmsi, {
+      context: 'vessels.urn:mrn:imo:mmsi:' + mmsi,
+      latitude: position.latitude,
+      longitude: position.longitude
+    })
+  } else {
+    // This sentence carries no position for a DSE to refine, so an earlier
+    // fix from the same station must not be refined in its place.
+    forgetDscPosition(session, senderMmsi)
   }
   if (distress) {
     var message =
