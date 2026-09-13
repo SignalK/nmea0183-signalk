@@ -14,6 +14,9 @@ export interface DscPosition {
 
 const SESSION_KEY = 'dscPositions'
 
+// Keyed by the MMSI of the station that sent the DSC, because that is the
+// address its DSE carries. For a distress relay that is the relaying station,
+// while `context` names the casualty the position belongs to.
 function positions(session: ParserSession): Record<string, DscPosition> {
   let store = session[SESSION_KEY] as Record<string, DscPosition> | undefined
   if (!store) {
@@ -29,6 +32,10 @@ export function rememberDscPosition(
   position: DscPosition
 ): void {
   positions(session)[mmsi] = position
+}
+
+export function forgetDscPosition(session: ParserSession, mmsi: string): void {
+  delete positions(session)[mmsi]
 }
 
 export function recallDscPosition(
