@@ -182,6 +182,289 @@ function toDestinationEtaIso(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AisDecodeData = { valid: boolean } & Record<string, any>
 
+// AIS area notices: IMO SN.1/Circ.289 area notice (8/1.22) and USCG
+// Geographic Notice (8/367.22). A notice is not a vessel, so it is published
+// under its own `areas.` context keyed on the source MMSI and message
+// linkage ID, with its geometry as a GeoJSON FeatureCollection in which all
+// relative positions are resolved to longitude/latitude.
+type LonLat = [number, number]
+
+interface NoticeFeature {
+  type: 'Feature'
+  geometry: { type: string; coordinates: LonLat | LonLat[] | LonLat[][] }
+  properties: Record<string, unknown>
+}
+
+const EARTH_RADIUS = 6371008.8
+const ARC_STEP = 5 // degrees between vertices when approximating arcs
+const toRad = (deg: number): number => (deg * Math.PI) / 180
+const toDeg = (rad: number): number => (rad * 180) / Math.PI
+
+// Distances and bearings between notice points are rhumb lines
+// (USCG Geographic Notice usage note 14)
+function rhumbDestination(
+  start: LonLat,
+  bearing: number,
+  distance: number
+): LonLat {
+  const delta = distance / EARTH_RADIUS
+  const theta = toRad(bearing)
+  const phi1 = toRad(start[1])
+  const deltaPhi = delta * Math.cos(theta)
+  let phi2 = phi1 + deltaPhi
+  if (Math.abs(phi2) > Math.PI / 2) {
+    phi2 = phi2 > 0 ? Math.PI - phi2 : -Math.PI - phi2
+  }
+  const deltaPsi = Math.log(
+    Math.tan(phi2 / 2 + Math.PI / 4) / Math.tan(phi1 / 2 + Math.PI / 4)
+  )
+  const q = Math.abs(deltaPsi) > 10e-12 ? deltaPhi / deltaPsi : Math.cos(phi1)
+  const lambda2 = toRad(start[0]) + (delta * Math.sin(theta)) / q
+  return [((toDeg(lambda2) + 540) % 360) - 180, toDeg(phi2)]
+}
+
+// Points on an arc from `from` clockwise to `to` (degrees true)
+function arc(center: LonLat, radius: number, from: number, to: number) {
+  const sweep = (((to - from) % 360) + 360) % 360 || 360
+  const steps = Math.max(1, Math.ceil(sweep / ARC_STEP))
+  const points: LonLat[] = []
+  for (let i = 0; i <= steps; i++) {
+    points.push(rhumbDestination(center, from + (sweep * i) / steps, radius))
+  }
+  return points
+}
+
+const pointFeature = (
+  shape: string,
+  position: LonLat,
+  properties: Record<string, unknown> = {}
+): NoticeFeature => ({
+  type: 'Feature',
+  geometry: { type: 'Point', coordinates: position },
+  properties: { shape, ...properties }
+})
+
+const shapeFeature = (
+  shape: string,
+  type: 'LineString' | 'Polygon',
+  points: LonLat[],
+  properties: Record<string, unknown> = {}
+): NoticeFeature => ({
+  type: 'Feature',
+  geometry: { type, coordinates: type === 'Polygon' ? [points] : points },
+  properties: { shape, ...properties }
+})
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function areaNoticeGeometry(subareas: any[]) {
+  const features: NoticeFeature[] = []
+  const openRings: LonLat[][] = []
+  let anchor: LonLat | undefined // start point for a polyline or polygon
+  let anchorFeature: NoticeFeature | undefined
+  let open: { shape: string; points: LonLat[] } | undefined
+
+  for (const area of subareas) {
+    const position: LonLat | undefined =
+      typeof area.lon === 'number' && typeof area.lat === 'number'
+        ? [area.lon, area.lat]
+        : undefined
+    const continues = open !== undefined && open.shape === area.shape
+    if (!continues) {
+      open = undefined
+    }
+
+    switch (area.shape) {
+      case 'circle':
+        if (!position) break
+        if (area.radius > 0) {
+          const ring = arc(position, area.radius, 0, 360)
+          ring[ring.length - 1] = ring[0]!
+          features.push(
+            shapeFeature('circle', 'Polygon', ring, {
+              center: position,
+              radius: area.radius
+            })
+          )
+          anchorFeature = undefined
+        } else {
+          anchorFeature = pointFeature('point', position)
+          features.push(anchorFeature)
+        }
+        anchor = position
+        break
+      case 'rectangle': {
+        if (!position) break
+        const southEast = rhumbDestination(
+          position,
+          90 + area.orientation,
+          area.east
+        )
+        const northWest = rhumbDestination(
+          position,
+          area.orientation,
+          area.north
+        )
+        const properties = {
+          east: area.east,
+          north: area.north,
+          orientation: area.orientation
+        }
+        if (area.east === 0 && area.north === 0) {
+          anchorFeature = pointFeature('point', position)
+          features.push(anchorFeature)
+        } else {
+          anchorFeature = undefined
+          if (area.east === 0 || area.north === 0) {
+            features.push(
+              shapeFeature(
+                'rectangle',
+                'LineString',
+                [position, area.east === 0 ? northWest : southEast],
+                properties
+              )
+            )
+          } else {
+            const northEast = rhumbDestination(
+              southEast,
+              area.orientation,
+              area.north
+            )
+            features.push(
+              shapeFeature(
+                'rectangle',
+                'Polygon',
+                [position, southEast, northEast, northWest, position],
+                properties
+              )
+            )
+          }
+        }
+        anchor = position
+        break
+      }
+      case 'sector':
+        if (!position) break
+        anchorFeature = undefined
+        if (area.radius > 0) {
+          features.push(
+            shapeFeature(
+              'sector',
+              'Polygon',
+              [
+                position,
+                ...arc(position, area.radius, area.left, area.right),
+                position
+              ],
+              { radius: area.radius, left: area.left, right: area.right }
+            )
+          )
+        } else {
+          features.push(pointFeature('sector', position))
+        }
+        anchor = position
+        break
+      case 'polyline':
+      case 'polygon': {
+        // consecutive sub-areas of the same shape continue the same line
+        if (!open) {
+          if (!anchor) break
+          if (anchorFeature) {
+            features.splice(features.indexOf(anchorFeature), 1)
+            anchorFeature = undefined
+          }
+          open = { shape: area.shape, points: [anchor] }
+          if (area.shape === 'polygon') {
+            openRings.push(open.points)
+            features.push(shapeFeature('polygon', 'Polygon', open.points))
+          } else {
+            features.push(shapeFeature('polyline', 'LineString', open.points))
+          }
+        }
+        for (const point of area.points) {
+          anchor = rhumbDestination(anchor!, point.bearing, point.distance)
+          open.points.push(anchor)
+        }
+        break
+      }
+    }
+  }
+  // a polygon closes from its last point back to point 0
+  openRings.forEach((ring) => ring.push(ring[0]!))
+
+  return { type: 'FeatureCollection', features }
+}
+
+// The notice carries month/day/hour/minute only. USCG Geographic Notice usage
+// note 2: the start year is next year when it is December now and the notice
+// starts in January, otherwise the current year.
+function noticeStartIso(data: AisDecodeData): string | undefined {
+  const { month, day, hour, minute } = data
+  if ([month, day, hour, minute].some((v) => typeof v !== 'number')) {
+    return undefined
+  }
+  const now = new Date()
+  const year =
+    now.getUTCMonth() === 11 && month === 1
+      ? now.getUTCFullYear() + 1
+      : now.getUTCFullYear()
+  return new Date(Date.UTC(year, month - 1, day, hour, minute)).toISOString()
+}
+
+function areaNoticeDelta(
+  data: AisDecodeData,
+  tags: ParserInput['tags']
+): Delta {
+  const notice: Record<string, unknown> = {
+    linkId: data.linkid,
+    type: data.noticetype
+  }
+  const description =
+    typeof data.GetNoticeDescription === 'function'
+      ? data.GetNoticeDescription()
+      : undefined
+  if (description) {
+    notice.description = description
+  }
+  const start = noticeStartIso(data)
+  if (start) {
+    notice.start = start
+    if (typeof data.duration === 'number' && data.duration > 0) {
+      notice.end = new Date(
+        Date.parse(start) + data.duration * 60000
+      ).toISOString()
+    }
+  }
+  if (data.duration === 0 || data.noticetype === 126) {
+    notice.cancelled = true
+  }
+  if (typeof data.version === 'number') {
+    notice.version = data.version
+  }
+  if (typeof data.action === 'number') {
+    notice.action = data.action === 1 ? 'directive' : 'advisement'
+  }
+  if (data.txt) {
+    notice.text = data.txt
+  }
+  notice.geometry = areaNoticeGeometry(data.subareas)
+
+  return {
+    context: `areas.urn:mrn:imo:mmsi:${data.mmsikey}`,
+    updates: [
+      {
+        source: tags.source,
+        timestamp: tags.timestamp,
+        values: [
+          { path: '', value: { mmsi: data.mmsi } },
+          { path: 'sensors.ais.designatedAreaCode', value: data.dac },
+          { path: 'sensors.ais.functionalId', value: data.fid },
+          { path: 'notice', value: notice }
+        ]
+      }
+    ]
+  }
+}
+
 const VDM: HookFn = function (
   input: ParserInput,
   session: ParserSession
@@ -195,6 +478,10 @@ const VDM: HookFn = function (
 
   if (data.valid === false) {
     return null
+  }
+
+  if (data.aistype === 8 && data.fid === 22 && Array.isArray(data.subareas)) {
+    return areaNoticeDelta(data, tags)
   }
 
   if (data.mmsi) {
