@@ -38,6 +38,7 @@
 - [ROT - Rate of Turn](https://gpsd.gitlab.io/gpsd/NMEA.html#_rot_rate_of_turn)
 - [RPM - Revolutions](https://gpsd.gitlab.io/gpsd/NMEA.html#_rpm_revolutions)
 - [RSA - Rudder Sensor Angle](https://gpsd.gitlab.io/gpsd/NMEA.html#_rsa_rudder_sensor_angle)
+- [THS - True Heading and Status](https://gpsd.gitlab.io/gpsd/NMEA.html#_ths_true_heading_and_status)
 - [VDM - AIS Other Vessel Data](https://gpsd.gitlab.io/gpsd/AIVDM.html)
 - [VDO - AIS Own Vessel Data](https://gpsd.gitlab.io/gpsd/AIVDM.html)
 - [VDR - Set and Drift](https://gpsd.gitlab.io/gpsd/NMEA.html#_vdr_set_and_drift)

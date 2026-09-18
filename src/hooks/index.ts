@@ -52,6 +52,7 @@ import BOD from './BOD'
 import BWC from './BWC'
 import BWR from './BWR'
 import HSC from './HSC'
+import THS from './THS'
 
 const hooks: Record<string, HookFn> = {
   ALK,
@@ -96,7 +97,8 @@ const hooks: Record<string, HookFn> = {
   BOD,
   BWC,
   BWR,
-  HSC
+  HSC,
+  THS
 }
 
 export default hooks
