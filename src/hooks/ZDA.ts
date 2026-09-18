@@ -42,6 +42,47 @@ function isEmpty(mixed: unknown): boolean {
   return typeof mixed !== 'string' || mixed.trim() === ''
 }
 
+/**
+ * ZDA is the one sentence that states the century outright, so its year is
+ * read as sent. The sentence used to be handed to `utils.timestamp`, which
+ * takes a 2-digit year and re-expands it with the IEC 61162-1 pivot (YY < 80
+ * means 20YY); truncating a 4-digit year to feed that helper moved everything
+ * before 1980 forward a century, stamping a 1979 sentence as 2079.
+ *
+ * A talker that sends only 2 digits still gets the pivot, since that is the
+ * only reading available for it.
+ */
+function toYear(field: string): number | null {
+  if (/^\d{4}$/.test(field)) {
+    return utils.int(field)
+  }
+  if (/^\d{2}$/.test(field)) {
+    const yy = utils.int(field)
+    return yy < 80 ? 2000 + yy : 1900 + yy
+  }
+  return null
+}
+
+/** Time of day read the way `utils.timestamp` reads it, fraction included. */
+function toIsoTimestamp(
+  time: string,
+  year: number,
+  month: number,
+  day: number
+): string {
+  const hours = utils.int(time.slice(0, 2))
+  const minutes = utils.int(time.slice(2, 4))
+  const seconds = utils.int(time.slice(4, 6))
+  // '.7' -> 700, '.71' -> 710, '.7123' -> 712
+  const fraction = /\.(\d+)/.exec(time)
+  const milliseconds = fraction
+    ? parseInt((fraction[1]! + '000').slice(0, 3), 10)
+    : 0
+  return new Date(
+    Date.UTC(year, month - 1, day, hours, minutes, seconds, milliseconds)
+  ).toISOString()
+}
+
 const ZDA: HookFn = function (
   input: ParserInput,
   _session: ParserSession
@@ -60,9 +101,17 @@ const ZDA: HookFn = function (
   }
 
   const time = parts[0]! || ''
-  const date = parts[1]! + parts[2]! + (parts[3]! || '').slice(-2)
+  const day = parts[1]! || ''
+  const month = parts[2]! || ''
+  const year = toYear(parts[3]! || '')
 
-  if (time.length >= 6 && date.length === 6 && empty < 3) {
+  if (
+    time.length >= 6 &&
+    /^\d{2}$/.test(day) &&
+    /^\d{2}$/.test(month) &&
+    year !== null &&
+    empty < 3
+  ) {
     return {
       updates: [
         {
@@ -71,7 +120,12 @@ const ZDA: HookFn = function (
           values: [
             {
               path: 'navigation.datetime',
-              value: utils.timestamp(time, date)
+              value: toIsoTimestamp(
+                time,
+                year,
+                utils.int(month),
+                utils.int(day)
+              )
             }
           ]
         }

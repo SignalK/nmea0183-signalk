@@ -53,6 +53,28 @@ describe('ZDA', () => {
     delta.should.deep.equal({})
   })
 
+  it('Keeps a year before the 1980 pivot in its own century', () => {
+    // The 4-digit year is used as sent. Truncating it to '79' and re-expanding
+    // it with the IEC 61162-1 pivot moved this sentence to 2079.
+    const delta = new Parser().parse(
+      '$GPZDA,160012.71,11,03,1979,-1,00*7D'
+    ) as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'value',
+      '1979-03-11T16:00:12.710Z'
+    )
+  })
+
+  it('Applies the pivot to a talker that sends a 2-digit year', () => {
+    const delta = new Parser().parse(
+      '$GPZDA,160012.71,11,03,79,-1,00*75'
+    ) as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'value',
+      '2079-03-11T16:00:12.710Z'
+    )
+  })
+
   it('Doesn\t choke when the number of seconds is 0', () => {
     const delta = new Parser().parse('$IIZDA,085400,22,07,2021,,*50') as any
     delta.updates[0]!.values.should.containItemWithProperty(

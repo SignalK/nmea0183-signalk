@@ -73,6 +73,29 @@ const OFFSET_ELEVATION = 1
 const OFFSET_AZIMUTH = 2
 const OFFSET_SNR = 3
 
+// NMEA 0183 numbers GLONASS satellites 65-96, which is the slot number plus
+// 64. Every other constellation has its own range - QZSS runs 193-202, SBAS
+// 33-64, BeiDou can be numbered above 400 - so the offset has to be removed
+// only where it was applied. Stripping 64 from every identifier that happened
+// to reach 64 renumbered QZSS and SBAS satellites onto GPS identifiers.
+const GLONASS_PRN_OFFSET = 64
+const GLONASS_PRN_FIRST = 65
+const GLONASS_PRN_LAST = 96
+
+/** Talkers whose sentences can carry a GLONASS satellite. */
+const GLONASS_TALKERS = new Set(['GL', 'GN'])
+
+function satelliteId(prn: number, talker: string): number {
+  if (
+    GLONASS_TALKERS.has(talker) &&
+    prn >= GLONASS_PRN_FIRST &&
+    prn <= GLONASS_PRN_LAST
+  ) {
+    return prn - GLONASS_PRN_OFFSET
+  }
+  return prn
+}
+
 const TALKER_TO_GNSS: Record<string, string> = {
   GP: 'GPS',
   GL: 'GLONASS',
@@ -136,7 +159,7 @@ const GSV: HookFn = function (
     if (_satPRN !== undefined && !isNaN(Number(_satPRN))) {
       const satPRN = Number(_satPRN)
       gsvData.satellites.push({
-        id: satPRN >= 64 ? satPRN - 64 : satPRN,
+        id: satelliteId(satPRN, talker),
         elevation: utils.transformOrNull(
           parts[thisSatDataStart + OFFSET_ELEVATION]!,
           'deg',

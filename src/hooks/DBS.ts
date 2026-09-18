@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as utils from '@signalk/nmea0183-utilities'
+import depthInMeters from '../lib/depthInMeters'
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
 /*
 === DBS - Depth below surface ===
@@ -46,7 +46,7 @@ const DBS: HookFn = function (
         values: [
           {
             path: 'environment.depth.belowSurface',
-            value: utils.floatOrNull(parts[2]!)
+            value: depthInMeters(parts)
           }
         ]
       }

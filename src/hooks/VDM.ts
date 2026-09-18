@@ -32,6 +32,11 @@ const degToRad = (v: NumericInput): number => utils.transform(v, 'deg', 'rad')
 const cToK = (v: NumericInput): number =>
   parseFloat(utils.transform(v, 'c', 'k').toFixed(2))
 const percentToRatio = (v: number): number => v / 100
+// ITU-R M.1371 IFM 31 carries salinity in 0.1 per mille steps and the AIS
+// decoder applies that scaling, so seawater reaches this table as about 35
+// per mille. Signal K types environment.water.salinity as a ratio, making it
+// 0.035; dividing by 100 as if it were a percentage overstated it tenfold.
+const perMilleToRatio = (v: number): number => v / 1000
 
 const stateMapping: Record<number, string> = {
   0: 'motoring',
@@ -443,7 +448,7 @@ const VDM: HookFn = function (
     ['swellperiod', 'water.swell.period', (v: number) => v],
     ['swelldir', 'water.swell.directionTrue', degToRad],
     ['watertemp', 'water.temperature', cToK],
-    ['salinity', 'water.salinity', percentToRatio],
+    ['salinity', 'water.salinity', perMilleToRatio],
     ['surfcurrspd', 'water.current.drift', knotsToMs],
     ['surfcurrdir', 'water.current.set', degToRad]
   ].forEach(

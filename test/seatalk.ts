@@ -20,10 +20,21 @@ import chaiHasItem from './helpers/chai-has-item'
 
 import Parser from '../src/lib'
 
+/** The value of the first delta entry on `path`. */
+function valueAt(delta: any, path: string): any {
+  const entry = delta.updates[0]!.values.find((v: any) => v.path === path)
+  should.exist(entry, `no delta value on ${path}`)
+  return entry!.value
+}
+
 const depthData = '00,02,41,22,22'
 const apparentWindAngleData = '10,01,01,10'
 const apparentWindSpeedData = '11,01,01,02'
-const speedThroughWaterData = '20,01,22,11'
+// 0x20 carries XXXX/10 knots as a 16-bit value, low byte first.
+// 30.0 kn = 300 = 0x012C -> low byte 0x2C, high byte 0x01.
+const speedThroughWaterData = '20,01,2C,01'
+// Low byte 0x80 checks that the high bit of the low byte is not sign
+// extended: 0x80 + 256 = 384 -> 38.4 kn.
 const speedThroughWaterDataGthex80 = '20,01,80,01'
 const tripMileageData = '21,02,32,34,02'
 const logData = '22,02,33,56,00'
@@ -169,7 +180,7 @@ describe('seatalk', () => {
         'navigation.speedThroughWater'
       )
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
-        2.6236673313290573,
+        15.433337243112103,
         0.0005
       )
     })
@@ -183,7 +194,10 @@ describe('seatalk', () => {
         'path',
         'navigation.speedThroughWater'
       )
-      delta.updates[0]!.values[0]!.value.should.be.closeTo(6.636335, 0.0005)
+      delta.updates[0]!.values[0]!.value.should.be.closeTo(
+        19.75467167118349,
+        0.0005
+      )
     })
 
     it(`${prefix} 0x21 Trip converted`, () => {
@@ -341,8 +355,10 @@ describe('seatalk', () => {
         'path',
         'navigation.headingMagnetic'
       )
+      // U = 0xB: (0xB & 3) * 90 = 270, (0x10 & 0x3F) * 2 = 32, and one bit
+      // set in the two high bits of U adds 1 -> 303 degrees.
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
-        5.305800926062761,
+        5.288347634750305,
         0.0005
       )
     })
@@ -350,61 +366,37 @@ describe('seatalk', () => {
     it(`${prefix} 0x84 ap mode: standby converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${standbyData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
-        'steering.autopilot.state'
-      )
-      delta.updates[0]!.values[1]!.value.should.equal('standby')
+      valueAt(delta, 'steering.autopilot.state').should.equal('standby')
     })
 
     it(`${prefix} 0x84 ap mode: auto converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${autoData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
+      valueAt(
+        delta,
         'steering.autopilot.target.headingMagnetic'
-      )
-      delta.updates[0]!.values[1]!.value.should.be.closeTo(
-        2.626720524251466,
-        0.0005
-      )
+      ).should.be.closeTo(2.626720524851224, 0.0005)
 
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
-        'steering.autopilot.state'
-      )
-      delta.updates[0]!.values[2]!.value.should.equal('auto')
+      valueAt(delta, 'steering.autopilot.state').should.equal('auto')
     })
 
     it(`${prefix} 0x84 ap mode: wind converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${windData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
-        'steering.autopilot.state'
-      )
-      delta.updates[0]!.values[0]!.value.should.equal('wind')
+      valueAt(delta, 'steering.autopilot.state').should.equal('wind')
     })
 
     it(`${prefix} 0x84 ap mode: route converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${routeData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
-        'steering.autopilot.state'
-      )
-      delta.updates[0]!.values[0]!.value.should.equal('route')
+      valueAt(delta, 'steering.autopilot.state').should.equal('route')
     })
 
     it(`${prefix} 0x84 rudder angle converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${rudderData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
-        'steering.rudderAngle'
-      )
-      delta.updates[0]!.values[0]!.value.should.be.closeTo(
-        -0.03490658503988659,
+      valueAt(delta, 'steering.rudderAngle').should.be.closeTo(
+        -0.0349065850478568,
         0.0005
       )
     })
@@ -508,8 +500,10 @@ describe('seatalk', () => {
         'path',
         'navigation.headingMagnetic'
       )
+      // U = 5: (5 & 3) * 90 = 90, (0x1E & 0x3F) * 2 = 60, and one bit set in
+      // the two high bits of U adds 1 -> 151 degrees.
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
-        2.6529004630313806,
+        2.635447171113188,
         0.0005
       )
     })
@@ -747,6 +741,62 @@ describe('seatalk', () => {
       delta.updates[0]!.values.find(
         (v: any) => v.path === 'steering.rudderAngle'
       )!.value.should.be.lessThan(0)
+    })
+
+    // The heading carry is the number of bits set in the two higher bits of
+    // U, so it is 2 only when both are set. Keying it on bit 0 of U instead,
+    // as Knauf's shorthand does, reports the last two rows as 1 and 92.
+    ;[
+      { name: 'U=0x0, no bits set', datagram: '9C,01,00,00', degrees: 0 },
+      { name: 'U=0x4, one bit set', datagram: '9C,41,00,00', degrees: 1 },
+      { name: 'U=0xC, both bits set', datagram: '9C,C1,00,00', degrees: 2 },
+      {
+        name: 'U=0x5, one bit set and bit 0 set',
+        datagram: '9C,51,00,00',
+        degrees: 91
+      }
+    ].forEach(({ name, datagram, degrees }) => {
+      it(`${prefix} 0x9C heading carry: ${name}`, () => {
+        const fullSentence = utils.appendChecksum(`${prefix}${datagram}`)
+        const delta = new Parser().parse(fullSentence) as any
+        valueAt(delta, 'navigation.headingMagnetic').should.be.closeTo(
+          utils.transform(degrees, 'deg', 'rad'),
+          0.0005
+        )
+      })
+    })
+
+    it(`${prefix} 0x9C reports a rudder amidships`, () => {
+      // A zero is a reading, not a missing value: dropping it left the last
+      // non-zero angle standing on the display.
+      const fullSentence = utils.appendChecksum(`${prefix}9C,01,00,00`)
+      const delta = new Parser().parse(fullSentence) as any
+      valueAt(delta, 'steering.rudderAngle').should.equal(0)
+    })
+
+    it(`${prefix} 0x84 reports zeroed heading, target and rudder`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}84,06,00,00,02,00,00,00,08`
+      )
+      const delta = new Parser().parse(fullSentence) as any
+      valueAt(delta, 'navigation.headingMagnetic').should.equal(0)
+      valueAt(delta, 'steering.autopilot.target.headingMagnetic').should.equal(
+        0
+      )
+      valueAt(delta, 'steering.rudderAngle').should.equal(0)
+      valueAt(delta, 'steering.autopilot.state').should.equal('auto')
+    })
+
+    it(`${prefix} 0x85 cross track error uses the low nibble last`, () => {
+      // Knauf's worked example: 2.61 nm -> 261 -> 0x105 -> X6 XX = 5_ 10.
+      const fullSentence = utils.appendChecksum(
+        `${prefix}85,56,10,00,00,00,11,00,00`
+      )
+      const delta = new Parser().parse(fullSentence) as any
+      valueAt(
+        delta,
+        'navigation.courseRhumbline.crossTrackError'
+      ).should.be.closeTo(utils.transform(2.61, 'nm', 'm'), 0.0005)
     })
   })
 })
