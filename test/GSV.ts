@@ -117,6 +117,18 @@ describe('GSV', () => {
     })
   })
 
+  it('leaves a QZSS identifier alone', () => {
+    // QZSS runs 193-202. Only GLONASS carries the +64 offset, so subtracting
+    // it here would renumber this satellite onto a GPS identifier.
+    const r = new Parser().parse('$GQGSV,1,1,01,193,45,123,40,0*6B') as any
+    r.updates[0]!.values[0]!.value.satellites[0].id.should.equal(193)
+  })
+
+  it('strips the GLONASS offset on a combined GN talker', () => {
+    const r = new Parser().parse('$GNGSV,1,1,01,78,55,122,40,1*41') as any
+    r.updates[0]!.values[0]!.value.satellites[0].id.should.equal(78 - 64)
+  })
+
   it('Skips an out-of-order sentence and resets state', () => {
     // Sentence number 3 arrives while we expect 2: parser should drop and
     // return null, clearing session.gsvData.

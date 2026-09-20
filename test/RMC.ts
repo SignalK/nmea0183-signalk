@@ -179,6 +179,24 @@ describe('RMC', () => {
     )!.value.should.equal('2026-09-11T23:59:59.000Z')
   })
 
+  it('withholds the fix of a void sentence but keeps its datetime', () => {
+    // Status V is a navigation receiver warning. The fields still carry
+    // whatever the receiver last held, so they are reported as unavailable
+    // rather than as a live fix.
+    const delta = new Parser().parse(
+      '$GPRMC,123519,V,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*7D'
+    ) as any
+    const value = (path: string) =>
+      delta.updates[0]!.values.find((v: any) => v.path === path)!.value
+
+    should.equal(value('navigation.position'), null)
+    should.equal(value('navigation.courseOverGroundTrue'), null)
+    should.equal(value('navigation.speedOverGround'), null)
+    should.equal(value('navigation.magneticVariation'), null)
+    // A receiver that has lost its fix normally still keeps good time.
+    value('navigation.datetime').should.equal('1994-03-23T12:35:19.000Z')
+  })
+
   it('uses the tag block time when both time and date are empty', () => {
     // Replayed log with a void RMC: c:1748822400 -> 2025-06-02T00:00:00Z
     const delta = new Parser().parse(
