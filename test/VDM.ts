@@ -410,6 +410,18 @@ describe('VDM', function () {
     )
   })
 
+  it('meteo salinity converts per mille to a ratio', () => {
+    // Same station as above with the IFM 31 salinity field set to 35.0 per
+    // mille. Signal K types environment.water.salinity as a ratio, so that is
+    // 0.035 and not 0.35.
+    const delta = new Parser().parse(
+      '!AIVDM,1,1,,A,8@2R5Ph0GhOCT1a2VvkrgwvlFR06EuOwgqrqwnSwe7wvlOwwsAwwnSGmuNwt,0*7A'
+    ) as any
+    delta.updates[0]!.values.find(
+      (pathValue: any) => pathValue.path === 'environment.water.salinity'
+    )!.value.should.be.closeTo(0.035, 0.0001)
+  })
+
   it('meteo dual sentence converts ok', () => {
     const meteoSentences = [
       '!AIVDM,2,1,4,A,8@2R5Ph0GhENJAb8wnScjAJ:AB06EuOwgwl?wnSwe7wvlOwwsAwwnSGm,0*15',
