@@ -22,6 +22,7 @@ import type {
   ParserInput,
   ParserSession
 } from '../../types'
+import { compassHeadingDegrees } from './compass-heading'
 
 /*
 9C  U1  VW  RR    Compass heading and Rudder position (see also command 84)
@@ -50,30 +51,24 @@ const S9C: HookFn = function (
   if (Number.isNaN(U) || Number.isNaN(VW) || Number.isNaN(RR)) {
     return null
   }
-  // Same quirky `U & (0xc == 0xc)` expression as in 0x84.ts; see the
-  // comment there. Preserved verbatim to keep the existing test suite green.
-  const compassHeading =
-    (U & 0x3) * 90 +
-    (VW & 0x3f) * 2 +
-    (U & 0xc ? (U & Number(0xc == 0xc) ? 2 : 1) : 0)
+  const compassHeading = compassHeadingDegrees(U, VW)
   let rudderPos = RR
   if (rudderPos > 127) {
     rudderPos = rudderPos - 256
   }
 
-  const pathValues: DeltaValue[] = []
-  if (compassHeading) {
-    pathValues.push({
+  // Emitted unconditionally: a zero heading or a rudder amidships is a
+  // reading, not a missing value. See the matching note in 0x84.ts.
+  const pathValues: DeltaValue[] = [
+    {
       path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(compassHeading), 'deg', 'rad')
-    })
-  }
-  if (rudderPos) {
-    pathValues.push({
+      value: utils.transform(compassHeading, 'deg', 'rad')
+    },
+    {
       path: 'steering.rudderAngle',
-      value: utils.transform(utils.float(rudderPos), 'deg', 'rad')
-    })
-  }
+      value: utils.transform(rudderPos, 'deg', 'rad')
+    }
+  ]
 
   return {
     updates: [

@@ -28,8 +28,13 @@ const S20: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  var speedThroughWater =
-    (parseInt(parts[2]!, 16) + parseInt(parts[3]!, 16)) / 10.0
+  // XXXX is a 16-bit count of 0.1 knot steps, low byte first, as in 0x26
+  // (speed through water in 0.01 knot steps) and 0x52 (speed over ground).
+  // Adding the two bytes instead of combining them agreed with the spec only
+  // below 25.6 knots, where the high byte is always zero, and under-reported
+  // every reading above that.
+  var XXXX = parseInt(parts[2]!, 16) + 256 * parseInt(parts[3]!, 16)
+  var speedThroughWater = XXXX / 10.0
   var pathValues = []
 
   pathValues.push({
