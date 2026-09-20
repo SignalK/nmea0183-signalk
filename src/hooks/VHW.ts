@@ -51,7 +51,12 @@ const VHW: HookFn = function (
 
   const headingTrue = utils.transformOrNull(parts[0]!, 'deg', 'rad')
   const headingMagnetic = utils.transformOrNull(parts[2]!, 'deg', 'rad')
-  const speedThroughWater = utils.transformOrNull(parts[4]!, 'knots', 'ms')
+  // The speed is carried twice, in knots and in km/h, and a talker is free to
+  // populate only one of them. Reading the knots field alone dropped the
+  // speed from a unit configured for km/h.
+  const knots = utils.transformOrNull(parts[4]!, 'knots', 'ms')
+  const speedThroughWater =
+    knots !== null ? knots : utils.transformOrNull(parts[6]!, 'kph', 'ms')
 
   if (
     headingTrue === null &&
