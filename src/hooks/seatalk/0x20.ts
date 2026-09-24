@@ -27,9 +27,8 @@ const S20: HookFn = function (
   _session: ParserSession
 ): Delta | null {
   const { parts, tags } = input
-
-  var speedThroughWater =
-    (parseInt(parts[2]!, 16) + parseInt(parts[3]!, 16)) / 10.0
+  var XXXX = parseInt(parts[2]!, 16) + 256 * parseInt(parts[3]!, 16)
+  var speedThroughWater = XXXX / 10.0
   var pathValues = []
 
   pathValues.push({

@@ -15,7 +15,14 @@
  */
 
 import * as utils from '@signalk/nmea0183-utilities'
-import type { Delta, HookFn, ParserInput, ParserSession } from '../../types'
+import type {
+  Delta,
+  DeltaValue,
+  HookFn,
+  ParserInput,
+  ParserSession
+} from '../../types'
+import { compassHeadingDegrees } from './compass-heading'
 
 /*
 84  U6  VW  XY 0Z 0M RR SS TT  Compass heading  Autopilot course and
@@ -73,16 +80,7 @@ const S84: HookFn = function (
     return null
   }
 
-  // NOTE: the sub-expression `U & (0xc == 0xc)` evaluates the boolean `true`
-  // and coerces it to 1, so the inner ternary effectively reads
-  //   (U & 1) ? 2 : 1
-  // This matches the long-standing JS behaviour and all existing tests; keep
-  // it verbatim under TS with an explicit Number() coercion to silence the
-  // "right-hand side of arithmetic must be a number" check.
-  const compassHeading =
-    (U & 0x3) * 90 +
-    (VW & 0x3f) * 2 +
-    (U & 0xc ? (U & Number(0xc == 0xc) ? 2 : 1) : 0)
+  const compassHeading = compassHeadingDegrees(U, VW)
   var apCourse = ((V & 0xc) >> 2) * 90 + XY / 2
   /*Positive to right*/
   var rudderPos = RR
@@ -97,31 +95,24 @@ const S84: HookFn = function (
   if ((Z & 0x8) == 8) {
     mode = 'route'
   }
-  var pathValues = []
-  if (compassHeading) {
-    pathValues.push({
+  const pathValues: DeltaValue[] = [
+    {
       path: 'navigation.headingMagnetic',
-      value: utils.transform(utils.float(compassHeading), 'deg', 'rad')
-    })
-  }
-  if (apCourse) {
-    pathValues.push({
+      value: utils.transform(compassHeading, 'deg', 'rad')
+    },
+    {
       path: 'steering.autopilot.target.headingMagnetic',
-      value: utils.transform(utils.float(apCourse), 'deg', 'rad')
-    })
-  }
-  if (rudderPos) {
-    pathValues.push({
+      value: utils.transform(apCourse, 'deg', 'rad')
+    },
+    {
       path: 'steering.rudderAngle',
-      value: utils.transform(utils.float(rudderPos), 'deg', 'rad')
-    })
-  }
-  if (mode) {
-    pathValues.push({
+      value: utils.transform(rudderPos, 'deg', 'rad')
+    },
+    {
       path: 'steering.autopilot.state',
       value: mode
-    })
-  }
+    }
+  ]
 
   return {
     updates: [

@@ -20,10 +20,16 @@ import chaiHasItem from './helpers/chai-has-item'
 
 import Parser from '../src/lib'
 
+function valueAt(delta: any, path: string): any {
+  const entry = delta.updates[0]!.values.find((v: any) => v.path === path)
+  should.exist(entry, `no delta value on ${path}`)
+  return entry!.value
+}
+
 const depthData = '00,02,41,22,22'
 const apparentWindAngleData = '10,01,01,10'
 const apparentWindSpeedData = '11,01,01,02'
-const speedThroughWaterData = '20,01,22,11'
+const speedThroughWaterData = '20,01,2C,01'
 const speedThroughWaterDataGthex80 = '20,01,80,01'
 const tripMileageData = '21,02,32,34,02'
 const logData = '22,02,33,56,00'
@@ -57,11 +63,13 @@ const heading_nineCData = '9C,51,1E,00'
 const empty_nineCData = '9C,,,'
 const empty_eightFourData = '84,,,,,,,,'
 // 0x85 Navigation to waypoint: XTE=1.00nm steer left, bearing=45° magnetic, distance=5.50nm
-const navToWaypointData = '85,06,64,A0,65,22,17,00,00'
+// XXX is low-nibble-last: XX=0x06, X=0x4 -> 0x064 = 100 -> 1.00nm
+const navToWaypointData = '85,46,06,A0,65,22,17,00,00'
 // 0x85 Navigation to waypoint with true bearing: XTE=0.50nm steer right, bearing=180° true, distance=12.0nm
 // F=0x07 means XTE present (bit 0), bearing present (bit 1), range present (bit 2)
 // U=0xA means (A & 0x3)*90 = 2*90 = 180° base, and (A & 0x8) = 0x8 so True bearing
-const navToWaypointTrueData = '85,06,32,0A,80,07,47,00,00'
+// Y=0x4 sets steer-right (negative XTE) and clears bit 0, so range is ZZZ/10
+const navToWaypointTrueData = '85,26,03,0A,80,07,47,00,00'
 // 0x82 Waypoint name: "WPT1" (6-bit encoded, little-endian)
 const waypointNameData = '82,05,27,D8,48,B7,06,F9'
 // 0x82 Waypoint name: "AB" (6-bit encoded, padded with zeros)
@@ -72,48 +80,33 @@ const waypointNameShortSentenceData = '82,05,27,D8,48,B7'
 const waypointNameBadHexData = '82,05,ZZ,D8,48,B7,06,F9'
 // 0x82 all-zero decoded name -> null (all chars = 0x30 stripped)
 const waypointNameAllZeroData = '82,05,00,FF,00,FF,00,FF'
-
 // 0x85 short sentence (fewer than 9 parts) -> null
-const navToWaypointShortData = '85,06,64,A0,65,22,17,00'
+const navToWaypointShortData = '85,46,06,A0,65,22,17,00'
 // 0x85 non-hex payload -> null
-const navToWaypointBadHexData = '85,06,64,A0,65,ZZ,17,00,00'
+const navToWaypointBadHexData = '85,46,06,A0,65,ZZ,17,00,00'
 // 0x85 with all flags = 0 -> pathValues empty -> null
-const navToWaypointNoFlagsData = '85,06,64,A0,65,22,10,00,00'
-
+const navToWaypointNoFlagsData = '85,46,06,A0,65,22,10,00,00'
 // 0x84 short sentence (fewer than 9 parts) -> null
 const eightFourShortData = '84,06,00,00,04,00,00,00'
 // 0x84 non-hex payload -> null (bad hex in VW position)
 const eightFourBadHexData = '84,06,ZZ,00,04,00,00,00,00'
-
 // 0x10 Apparent Wind Angle > 180 (wraps to negative)
-// XX=0x01, YY=0x20: (256+32)/2 = 144  (still <= 180)
-// Use XX=0x02, YY=0x00: (512+0)/2 = 256 -> -104 deg
+// XX=0x02, YY=0x00: (512+0)/2 = 256 -> -104 deg
 const apparentWindAngleOver180Data = '10,01,02,00'
 // AWA exactly 180 deg (boundary): 256*1 + 104 = 360 -> 360/2 = 180, stays 180
 const apparentWindAngle180Data = '10,01,01,68'
-
 // 0x26 Speed through water with D&4=4 (valid value1)
-// We need parts[6] with D bits set: e.g. parts[6]='41' -> D=4, E=1
+// parts[6]='41' -> D=4, E=1
 const averageSpeedWithValidSTWData = '26,04,12,11,10,11,41'
-
 // 0x50 Latitude in southern hemisphere (YYYY high bit set)
 // parts[1]='A2' (Z=A), parts[2]='21' (XX=0x21=33 degrees), parts[3]='01', parts[4]='80' -> YYYY = 0x01 + 0x80*256 = 0x8001
 const southernLatitudeData = '50,A2,21,01,80'
-
-// 0x54 time, run AFTER date was set so the emission block fires
-// Using a session-shared Parser, date first (0x56), then time (0x54)
-
 // 0x57 sat info with S=1 (triggers DD=0x94 assignment)
 const satInfoS1Data = '57,10,AB'
-
 // 0x9C rudder position > 127 (negative after two's complement adjustment)
 const nineCNegativeRudderData = '9C,51,1E,FE'
-// 0x9C compass heading branches:
-// U=0: outer (U & 0xc) is zero -> adds 0
 const nineCUzeroData = '9C,01,1E,10'
-// U=4: outer true (U & 0xc != 0), inner (U & 1) is zero -> adds 1
 const nineCUfourData = '9C,41,1E,10'
-
 const should = chai.Should()
 chai.use(chaiHasItem as any)
 
@@ -169,7 +162,7 @@ describe('seatalk', () => {
         'navigation.speedThroughWater'
       )
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
-        2.6236673313290573,
+        15.433337243112103,
         0.0005
       )
     })
@@ -183,7 +176,10 @@ describe('seatalk', () => {
         'path',
         'navigation.speedThroughWater'
       )
-      delta.updates[0]!.values[0]!.value.should.be.closeTo(6.636335, 0.0005)
+      delta.updates[0]!.values[0]!.value.should.be.closeTo(
+        19.75467167118349,
+        0.0005
+      )
     })
 
     it(`${prefix} 0x21 Trip converted`, () => {
@@ -305,8 +301,6 @@ describe('seatalk', () => {
     it(`${prefix} 0x54 time disabled`, () => {
       const fullSentence =
         timeTag + utils.appendChecksum(`${prefix}${timeData}`)
-      // Intentionally unused — the test exercises side-effects on the
-      // shared parser session (time is staged until a matching date arrives).
       void parser.parse(fullSentence)
     })
 
@@ -342,7 +336,7 @@ describe('seatalk', () => {
         'navigation.headingMagnetic'
       )
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
-        5.305800926062761,
+        5.288347634750305,
         0.0005
       )
     })
@@ -350,61 +344,37 @@ describe('seatalk', () => {
     it(`${prefix} 0x84 ap mode: standby converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${standbyData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
-        'steering.autopilot.state'
-      )
-      delta.updates[0]!.values[1]!.value.should.equal('standby')
+      valueAt(delta, 'steering.autopilot.state').should.equal('standby')
     })
 
     it(`${prefix} 0x84 ap mode: auto converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${autoData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
+      valueAt(
+        delta,
         'steering.autopilot.target.headingMagnetic'
-      )
-      delta.updates[0]!.values[1]!.value.should.be.closeTo(
-        2.626720524251466,
-        0.0005
-      )
+      ).should.be.closeTo(2.626720524851224, 0.0005)
 
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
-        'steering.autopilot.state'
-      )
-      delta.updates[0]!.values[2]!.value.should.equal('auto')
+      valueAt(delta, 'steering.autopilot.state').should.equal('auto')
     })
 
     it(`${prefix} 0x84 ap mode: wind converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${windData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
-        'steering.autopilot.state'
-      )
-      delta.updates[0]!.values[0]!.value.should.equal('wind')
+      valueAt(delta, 'steering.autopilot.state').should.equal('wind')
     })
 
     it(`${prefix} 0x84 ap mode: route converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${routeData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
-        'steering.autopilot.state'
-      )
-      delta.updates[0]!.values[0]!.value.should.equal('route')
+      valueAt(delta, 'steering.autopilot.state').should.equal('route')
     })
 
     it(`${prefix} 0x84 rudder angle converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${rudderData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
-        'steering.rudderAngle'
-      )
-      delta.updates[0]!.values[0]!.value.should.be.closeTo(
-        -0.03490658503988659,
+      valueAt(delta, 'steering.rudderAngle').should.be.closeTo(
+        -0.0349065850478568,
         0.0005
       )
     })
@@ -418,7 +388,6 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
-      // 67° West -> -67° -> -1.16937 rad
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         -1.1693705988362009,
         0.0005
@@ -446,7 +415,6 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
-      // -1° -> -0.01745 rad
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         -0.017453292519943295,
         0.0005
@@ -462,7 +430,6 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
-      // +1° -> +0.01745 rad; exercises the XX > 127 branch
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         0.017453292519943295,
         0.0005
@@ -478,7 +445,6 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
-      // 127° West -> -127° -> -2.21657 rad
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         -2.2165681500327987,
         0.0005
@@ -494,7 +460,6 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
-      // XX=0x80 -> signed=-128 -> +128° -> 2.23402 rad
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         2.234021442552742,
         0.0005
@@ -509,7 +474,7 @@ describe('seatalk', () => {
         'navigation.headingMagnetic'
       )
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
-        2.6529004630313806,
+        2.635447171113188,
         0.0005
       )
     })
@@ -531,18 +496,18 @@ describe('seatalk', () => {
     it(`${prefix} 0x85 navigation to waypoint converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${navToWaypointData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
+      valueAt(
+        delta,
         'navigation.courseRhumbline.crossTrackError'
-      )
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
+      ).should.be.closeTo(utils.transform(1.0, 'nm', 'm'), 0.0005)
+      valueAt(
+        delta,
         'navigation.courseRhumbline.bearingToDestinationMagnetic'
-      )
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
+      ).should.be.closeTo(utils.transform(45, 'deg', 'rad'), 0.0005)
+      valueAt(
+        delta,
         'navigation.courseRhumbline.nextPoint.distance'
-      )
+      ).should.be.closeTo(utils.transform(5.5, 'nm', 'm'), 0.0005)
     })
 
     it(`${prefix} 0x85 navigation to waypoint with true bearing converted`, () => {
@@ -550,10 +515,20 @@ describe('seatalk', () => {
         `${prefix}${navToWaypointTrueData}`
       )
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
+      valueAt(
+        delta,
         'navigation.courseRhumbline.bearingToDestinationTrue'
-      )
+      ).should.be.closeTo(utils.transform(180, 'deg', 'rad'), 0.0005)
+      // Y & 0x4 set: steer right, which Signal K reports as a negative XTE
+      valueAt(
+        delta,
+        'navigation.courseRhumbline.crossTrackError'
+      ).should.be.closeTo(utils.transform(-0.5, 'nm', 'm'), 0.0005)
+      // Y & 0x1 clear: range is ZZZ / 10, not ZZZ / 100
+      valueAt(
+        delta,
+        'navigation.courseRhumbline.nextPoint.distance'
+      ).should.be.closeTo(utils.transform(12.0, 'nm', 'm'), 0.0005)
     })
 
     it(`${prefix} 0x82 waypoint name converted`, () => {
@@ -655,7 +630,6 @@ describe('seatalk', () => {
     })
 
     it(`${prefix} 0x10 AWA exactly 180 stays positive (boundary)`, () => {
-      // AWA = 180 should NOT wrap (check uses > 180, not >= 180)
       const fullSentence = utils.appendChecksum(
         `${prefix}${apparentWindAngle180Data}`
       )
@@ -747,6 +721,56 @@ describe('seatalk', () => {
       delta.updates[0]!.values.find(
         (v: any) => v.path === 'steering.rudderAngle'
       )!.value.should.be.lessThan(0)
+    })
+
+    ;[
+      { name: 'U=0x0, no bits set', datagram: '9C,01,00,00', degrees: 0 },
+      { name: 'U=0x4, one bit set', datagram: '9C,41,00,00', degrees: 1 },
+      { name: 'U=0xC, both bits set', datagram: '9C,C1,00,00', degrees: 2 },
+      {
+        name: 'U=0x5, one bit set and bit 0 set',
+        datagram: '9C,51,00,00',
+        degrees: 91
+      }
+    ].forEach(({ name, datagram, degrees }) => {
+      it(`${prefix} 0x9C heading carry: ${name}`, () => {
+        const fullSentence = utils.appendChecksum(`${prefix}${datagram}`)
+        const delta = new Parser().parse(fullSentence) as any
+        valueAt(delta, 'navigation.headingMagnetic').should.be.closeTo(
+          utils.transform(degrees, 'deg', 'rad'),
+          0.0005
+        )
+      })
+    })
+
+    it(`${prefix} 0x9C reports a rudder amidships`, () => {
+      const fullSentence = utils.appendChecksum(`${prefix}9C,01,00,00`)
+      const delta = new Parser().parse(fullSentence) as any
+      valueAt(delta, 'steering.rudderAngle').should.equal(0)
+    })
+
+    it(`${prefix} 0x84 reports zeroed heading, target and rudder`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}84,06,00,00,02,00,00,00,08`
+      )
+      const delta = new Parser().parse(fullSentence) as any
+      valueAt(delta, 'navigation.headingMagnetic').should.equal(0)
+      valueAt(delta, 'steering.autopilot.target.headingMagnetic').should.equal(
+        0
+      )
+      valueAt(delta, 'steering.rudderAngle').should.equal(0)
+      valueAt(delta, 'steering.autopilot.state').should.equal('auto')
+    })
+
+    it(`${prefix} 0x85 cross track error uses the low nibble last`, () => {
+      const fullSentence = utils.appendChecksum(
+        `${prefix}85,56,10,00,00,00,11,00,00`
+      )
+      const delta = new Parser().parse(fullSentence) as any
+      valueAt(
+        delta,
+        'navigation.courseRhumbline.crossTrackError'
+      ).should.be.closeTo(utils.transform(2.61, 'nm', 'm'), 0.0005)
     })
   })
 })

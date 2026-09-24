@@ -74,10 +74,12 @@ const S85: HookFn = function (
   const pathValues: DeltaValue[] = []
 
   // Cross Track Error: XXX / 100 nm
-  // XXX is formed from X (high nibble of byte 1) and XX (byte 2)
+  // XXX is formed low-nibble-last from XX (byte 2) and X (high nibble of
+  // byte 1): XXX = (XX << 4) | X. Knauf's worked example of 2.61 nm is
+  // encoded as X6 XX = 5_ 10, giving 0x105 = 261.
   const xtePresent = (F & 0x1) === 0x1
   if (xtePresent) {
-    const XXX = (X << 8) | XX
+    const XXX = (XX << 4) | X
     const xteNm = XXX / 100
     // Direction to steer: Y & 4 = 4 → steer right (negative XTE), Y & 4 = 0 → steer left (positive XTE)
     const steerRight = (Y & 0x4) === 0x4
