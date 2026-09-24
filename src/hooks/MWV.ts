@@ -18,11 +18,12 @@ import * as utils from '@signalk/nmea0183-utilities'
 import type { UnitFormat } from '@signalk/nmea0183-utilities'
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
 
-// MWV is only emitted when the status field (parts[4]) is 'A' (valid).
-// Within a valid sentence, angle and speed are each routed through the
-// `*OrNull` helpers so an empty optional field becomes `null` rather
-// than a silent 0 (the old code would report e.g. 0° apparent wind
-// angle when the angle field was empty).
+const WIND_SPEED_UNITS: Record<string, UnitFormat> = {
+  K: 'kph',
+  M: 'ms',
+  N: 'knots',
+  S: 'mph'
+}
 
 function convertToWindAngle(angle: number): number {
   const numAngle = angle % 360
@@ -39,9 +40,7 @@ const MWV: HookFn = function (
     return null
   }
 
-  const mwvCode = parts[3]!.toUpperCase()
-  const wsu: UnitFormat =
-    mwvCode === 'K' ? 'kph' : mwvCode === 'N' ? 'knots' : 'ms'
+  const wsu: UnitFormat = WIND_SPEED_UNITS[parts[3]!.toUpperCase()] ?? 'ms'
 
   const rawAngleDeg = utils.floatOrNull(parts[0]!)
   const angle =

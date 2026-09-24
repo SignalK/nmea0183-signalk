@@ -33,6 +33,15 @@ describe('DBK', () => {
     delta.updates[0]!.values.should.containItemWithProperty('value', 10.83)
   })
 
+  it('Converts with only fathoms in the sentence', () => {
+    const delta = new Parser().parse('$IIDBK,,f,,M,005.00,F*3B') as any
+    delta.updates[0]!.values.length.should.equal(1)
+    delta.updates[0]!.values[0]!.path.should.equal(
+      'environment.depth.belowKeel'
+    )
+    delta.updates[0]!.values[0]!.value.should.be.closeTo(9.144, 0.00001)
+  })
+
   it('Converts empty value to null', () => {
     const delta = new Parser().parse('$IIDBK,,,,,,*4D') as any
     delta.updates[0]!.values.length.should.equal(1)

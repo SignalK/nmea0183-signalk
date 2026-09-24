@@ -53,4 +53,12 @@ describe('MWV', () => {
     ).value
     speed.should.equal(5.85)
   })
+
+  it('Converts wind speed in statute miles per hour (S)', () => {
+    const delta = new Parser().parse('$IIMWV,074,T,05.85,S,A*33') as any
+    const speed = delta.updates[0]!.values.find(
+      (v: any) => v.path === 'environment.wind.speedTrue'
+    ).value
+    speed.should.be.closeTo(2.615, 0.01)
+  })
 })

@@ -33,6 +33,15 @@ describe('DBS', () => {
     delta.updates[0]!.values.should.containItemWithProperty('value', 10.83)
   })
 
+  it('Converts with only feet in the sentence', () => {
+    const delta = new Parser().parse('$SDDBS,032.80,f,,M,,F*38') as any
+    delta.updates[0]!.values.length.should.equal(1)
+    delta.updates[0]!.values[0]!.path.should.equal(
+      'environment.depth.belowSurface'
+    )
+    delta.updates[0]!.values[0]!.value.should.be.closeTo(9.99744, 0.00001)
+  })
+
   it('Converts empty value to null', () => {
     const delta = new Parser().parse('$IIDBS,,,,,,*55') as any
     delta.updates[0]!.values.length.should.equal(1)

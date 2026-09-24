@@ -53,6 +53,14 @@ describe('VHW', () => {
     )
   })
 
+  it('falls back to the km/h field when knots is empty', () => {
+    const delta = new Parser().parse('$IIVHW,,T,,M,,N,11.37,K*7F') as any
+    findValue(delta, 'navigation.speedThroughWater').should.be.closeTo(
+      11.37 / 3.6,
+      0.00005
+    )
+  })
+
   it("Doesn't choke on empty sentences (all fields empty returns null)", () => {
     const delta = new Parser().parse('$IIVHW,,T,,M,,N,,K*55') as any
     ;(delta === null).should.equal(true)

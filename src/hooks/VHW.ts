@@ -37,12 +37,6 @@ Field Number:
 8. Checksum
 */
 
-// IEC 61162-1 §7.2.3.4: emit `null` per field for missing optional
-// measurements. Previously the hook skipped missing paths entirely,
-// which made the delta shape depend on which fields the sensor
-// happened to populate; `null` is more informative (sensor working,
-// value unavailable) and keeps the delta shape stable.
-
 const VHW: HookFn = function (
   input: ParserInput,
   _session: ParserSession
@@ -51,7 +45,9 @@ const VHW: HookFn = function (
 
   const headingTrue = utils.transformOrNull(parts[0]!, 'deg', 'rad')
   const headingMagnetic = utils.transformOrNull(parts[2]!, 'deg', 'rad')
-  const speedThroughWater = utils.transformOrNull(parts[4]!, 'knots', 'ms')
+  const knots = utils.transformOrNull(parts[4]!, 'knots', 'ms')
+  const speedThroughWater =
+    knots !== null ? knots : utils.transformOrNull(parts[6]!, 'kph', 'ms')
 
   if (
     headingTrue === null &&

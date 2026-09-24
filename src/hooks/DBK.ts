@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as utils from '@signalk/nmea0183-utilities'
+import depthInMeters from '../lib/depthInMeters'
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
 /*
 === DBK - Depth below keel ===
@@ -46,7 +46,7 @@ const DBK: HookFn = function (
         values: [
           {
             path: 'environment.depth.belowKeel',
-            value: utils.floatOrNull(parts[2]!)
+            value: depthInMeters(parts)
           }
         ]
       }
