@@ -32,6 +32,7 @@ const degToRad = (v: NumericInput): number => utils.transform(v, 'deg', 'rad')
 const cToK = (v: NumericInput): number =>
   parseFloat(utils.transform(v, 'c', 'k').toFixed(2))
 const percentToRatio = (v: number): number => v / 100
+const perMilleToRatio = (v: number): number => v / 1000
 
 const stateMapping: Record<number, string> = {
   0: 'motoring',
@@ -443,7 +444,7 @@ const VDM: HookFn = function (
     ['swellperiod', 'water.swell.period', (v: number) => v],
     ['swelldir', 'water.swell.directionTrue', degToRad],
     ['watertemp', 'water.temperature', cToK],
-    ['salinity', 'water.salinity', percentToRatio],
+    ['salinity', 'water.salinity', perMilleToRatio],
     ['surfcurrspd', 'water.current.drift', knotsToMs],
     ['surfcurrdir', 'water.current.set', degToRad]
   ].forEach(
