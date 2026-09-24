@@ -79,16 +79,25 @@ const RMC: HookFn = function (
       ? { latitude, longitude }
       : null
 
+  const isVoid =
+    String(parts[1] ?? '')
+      .trim()
+      .toUpperCase() === 'V'
+  const whenValid = <T>(value: T): T | null => (isVoid ? null : value)
+
   return {
     updates: [
       {
         source: tags.source,
         timestamp: timestamp,
         values: [
-          { path: 'navigation.position', value: position },
-          { path: 'navigation.courseOverGroundTrue', value: track },
-          { path: 'navigation.speedOverGround', value: speed },
-          { path: 'navigation.magneticVariation', value: variation },
+          { path: 'navigation.position', value: whenValid(position) },
+          { path: 'navigation.courseOverGroundTrue', value: whenValid(track) },
+          { path: 'navigation.speedOverGround', value: whenValid(speed) },
+          {
+            path: 'navigation.magneticVariation',
+            value: whenValid(variation)
+          },
           { path: 'navigation.magneticVariationAgeOfService', value: age },
           { path: 'navigation.datetime', value: timestamp }
         ]

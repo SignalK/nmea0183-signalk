@@ -73,6 +73,23 @@ const OFFSET_ELEVATION = 1
 const OFFSET_AZIMUTH = 2
 const OFFSET_SNR = 3
 
+const GLONASS_PRN_OFFSET = 64
+const GLONASS_PRN_FIRST = 65
+const GLONASS_PRN_LAST = 96
+
+const GLONASS_TALKERS = new Set(['GL', 'GN'])
+
+function satelliteId(prn: number, talker: string): number {
+  if (
+    GLONASS_TALKERS.has(talker) &&
+    prn >= GLONASS_PRN_FIRST &&
+    prn <= GLONASS_PRN_LAST
+  ) {
+    return prn - GLONASS_PRN_OFFSET
+  }
+  return prn
+}
+
 const TALKER_TO_GNSS: Record<string, string> = {
   GP: 'GPS',
   GL: 'GLONASS',
@@ -83,12 +100,6 @@ const TALKER_TO_GNSS: Record<string, string> = {
 
 interface Satellite {
   id: number
-  // Per IEC 61162-1 §7.2.3.4, elevation / azimuth / SNR are independently
-  // optional — some receivers omit them for just-tracked satellites.
-  // `null` carries that "sensor working, no data" signal instead of
-  // silently reporting 0° elevation (the previous `parts[...] ?? '0'`
-  // fallback was indistinguishable from a satellite genuinely at the
-  // horizon).
   elevation: number | null
   azimuth: number | null
   SNR: number | null
@@ -136,7 +147,7 @@ const GSV: HookFn = function (
     if (_satPRN !== undefined && !isNaN(Number(_satPRN))) {
       const satPRN = Number(_satPRN)
       gsvData.satellites.push({
-        id: satPRN >= 64 ? satPRN - 64 : satPRN,
+        id: satelliteId(satPRN, talker),
         elevation: utils.transformOrNull(
           parts[thisSatDataStart + OFFSET_ELEVATION]!,
           'deg',
@@ -159,9 +170,7 @@ const GSV: HookFn = function (
     gsvData.satellites = gsvData.satellites.slice(0, gsvData.count)
     let source = tags.source
     if (id === 'GSVH') {
-      // Unicore UM98x slave antenna
       gsvData.antennaType = 'SLAVE'
-      //no source from tag, append H to create separate source from regular talker
       if (source === ':') {
         source = `${talker}-H`
       }
