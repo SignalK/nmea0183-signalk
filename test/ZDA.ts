@@ -53,6 +53,33 @@ describe('ZDA', () => {
     delta.should.deep.equal({})
   })
 
+  it('Keeps a year before the 1980 pivot in its own century', () => {
+    const delta = new Parser().parse(
+      '$GPZDA,160012.71,11,03,1979,-1,00*7D'
+    ) as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'value',
+      '1979-03-11T16:00:12.710Z'
+    )
+  })
+
+  it('Rejects a year Date.UTC would remap into the 1900s', () => {
+    const delta = new Parser().parse(
+      '$GPZDA,160012.71,11,03,0000,-1,00*7B'
+    ) as any
+    delta.should.deep.equal({})
+  })
+
+  it('Applies the pivot to a talker that sends a 2-digit year', () => {
+    const delta = new Parser().parse(
+      '$GPZDA,160012.71,11,03,79,-1,00*75'
+    ) as any
+    delta.updates[0]!.values.should.containItemWithProperty(
+      'value',
+      '2079-03-11T16:00:12.710Z'
+    )
+  })
+
   it('Doesn\t choke when the number of seconds is 0', () => {
     const delta = new Parser().parse('$IIZDA,085400,22,07,2021,,*50') as any
     delta.updates[0]!.values.should.containItemWithProperty(
