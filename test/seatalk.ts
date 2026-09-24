@@ -41,9 +41,9 @@ const longitudeData = '51,21,21,01'
 const sogData = '52,01,02,00'
 const cogData = '53,10,22'
 const timeTag = '\\s:test,c:1438489697*29\\'
-const timeData = '54,21,22,11'
+const timeData = '54,21,22,11' //using tag to force timestamp
 const dateTag = '\\s:test,c:1438489697*29\\'
-const dateData = '56,31,23,18'
+const dateData = '56,31,23,18' //using tag to force timestamp
 const satInfoData = '57,70,94'
 const headingData = '84,B6,10,00,00,00,00,00,00'
 const standbyData = '84,E6,15,00,00,00,00,00,08'
@@ -51,32 +51,59 @@ const autoData = '84,56,5E,79,02,00,00,00,08'
 const windData = '84,06,00,00,04,00,00,00,00'
 const routeData = '84,06,00,00,08,00,00,00,00'
 const rudderData = '84,06,00,00,08,00,FE,00,00'
-const compassVariationData = '99,00,43'
-const compassVariationZeroData = '99,00,00'
-const compassVariationWest1Data = '99,00,01'
-const compassVariationEast1Data = '99,00,FF'
-const compassVariationMaxWestData = '99,00,7F'
-const compassVariationMaxEastData = '99,00,80'
+// 0x99 compass variation: XX is 8-bit two's complement, positive = West, negative = East.
+// Signal K uses East-positive convention, so the decoded byte is negated.
+const compassVariationData = '99,00,43' // XX=0x43 (67) -> 67° West -> -67°
+const compassVariationZeroData = '99,00,00' // XX=0x00 -> 0°
+const compassVariationWest1Data = '99,00,01' // XX=0x01 -> 1° West -> -1°
+const compassVariationEast1Data = '99,00,FF' // XX=0xFF (-1) -> 1° East -> +1°
+const compassVariationMaxWestData = '99,00,7F' // XX=0x7F (127) -> 127° West -> -127°
+const compassVariationMaxEastData = '99,00,80' // XX=0x80 (-128) -> 128° East -> +128°
 const heading_nineCData = '9C,51,1E,00'
 const empty_nineCData = '9C,,,'
 const empty_eightFourData = '84,,,,,,,,'
-const navToWaypointData = '85,06,64,A0,65,22,17,00,00'
-const navToWaypointTrueData = '85,06,32,0A,80,07,47,00,00'
+// 0x85 Navigation to waypoint: XTE=1.00nm steer left, bearing=45° magnetic, distance=5.50nm
+// XXX is low-nibble-last: XX=0x06, X=0x4 -> 0x064 = 100 -> 1.00nm
+const navToWaypointData = '85,46,06,A0,65,22,17,00,00'
+// 0x85 Navigation to waypoint with true bearing: XTE=0.50nm steer right, bearing=180° true, distance=12.0nm
+// F=0x07 means XTE present (bit 0), bearing present (bit 1), range present (bit 2)
+// U=0xA means (A & 0x3)*90 = 2*90 = 180° base, and (A & 0x8) = 0x8 so True bearing
+// Y=0x4 sets steer-right (negative XTE) and clears bit 0, so range is ZZZ/10
+const navToWaypointTrueData = '85,26,03,0A,80,07,47,00,00'
+// 0x82 Waypoint name: "WPT1" (6-bit encoded, little-endian)
 const waypointNameData = '82,05,27,D8,48,B7,06,F9'
+// 0x82 Waypoint name: "AB" (6-bit encoded, padded with zeros)
 const waypointNameShortData = '82,05,91,6E,04,FB,00,FF'
+// 0x82 short sentence (fewer than 8 parts) -> null
 const waypointNameShortSentenceData = '82,05,27,D8,48,B7'
+// 0x82 non-hex payload -> null
 const waypointNameBadHexData = '82,05,ZZ,D8,48,B7,06,F9'
+// 0x82 all-zero decoded name -> null (all chars = 0x30 stripped)
 const waypointNameAllZeroData = '82,05,00,FF,00,FF,00,FF'
-const navToWaypointShortData = '85,06,64,A0,65,22,17,00'
-const navToWaypointBadHexData = '85,06,64,A0,65,ZZ,17,00,00'
-const navToWaypointNoFlagsData = '85,06,64,A0,65,22,10,00,00'
+// 0x85 short sentence (fewer than 9 parts) -> null
+const navToWaypointShortData = '85,46,06,A0,65,22,17,00'
+// 0x85 non-hex payload -> null
+const navToWaypointBadHexData = '85,46,06,A0,65,ZZ,17,00,00'
+// 0x85 with all flags = 0 -> pathValues empty -> null
+const navToWaypointNoFlagsData = '85,46,06,A0,65,22,10,00,00'
+// 0x84 short sentence (fewer than 9 parts) -> null
 const eightFourShortData = '84,06,00,00,04,00,00,00'
+// 0x84 non-hex payload -> null (bad hex in VW position)
 const eightFourBadHexData = '84,06,ZZ,00,04,00,00,00,00'
+// 0x10 Apparent Wind Angle > 180 (wraps to negative)
+// XX=0x02, YY=0x00: (512+0)/2 = 256 -> -104 deg
 const apparentWindAngleOver180Data = '10,01,02,00'
+// AWA exactly 180 deg (boundary): 256*1 + 104 = 360 -> 360/2 = 180, stays 180
 const apparentWindAngle180Data = '10,01,01,68'
+// 0x26 Speed through water with D&4=4 (valid value1)
+// parts[6]='41' -> D=4, E=1
 const averageSpeedWithValidSTWData = '26,04,12,11,10,11,41'
+// 0x50 Latitude in southern hemisphere (YYYY high bit set)
+// parts[1]='A2' (Z=A), parts[2]='21' (XX=0x21=33 degrees), parts[3]='01', parts[4]='80' -> YYYY = 0x01 + 0x80*256 = 0x8001
 const southernLatitudeData = '50,A2,21,01,80'
+// 0x57 sat info with S=1 (triggers DD=0x94 assignment)
 const satInfoS1Data = '57,10,AB'
+// 0x9C rudder position > 127 (negative after two's complement adjustment)
 const nineCNegativeRudderData = '9C,51,1E,FE'
 const nineCUzeroData = '9C,01,1E,10'
 const nineCUfourData = '9C,41,1E,10'
@@ -469,18 +496,18 @@ describe('seatalk', () => {
     it(`${prefix} 0x85 navigation to waypoint converted`, () => {
       const fullSentence = utils.appendChecksum(`${prefix}${navToWaypointData}`)
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
+      valueAt(
+        delta,
         'navigation.courseRhumbline.crossTrackError'
-      )
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
+      ).should.be.closeTo(utils.transform(1.0, 'nm', 'm'), 0.0005)
+      valueAt(
+        delta,
         'navigation.courseRhumbline.bearingToDestinationMagnetic'
-      )
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
+      ).should.be.closeTo(utils.transform(45, 'deg', 'rad'), 0.0005)
+      valueAt(
+        delta,
         'navigation.courseRhumbline.nextPoint.distance'
-      )
+      ).should.be.closeTo(utils.transform(5.5, 'nm', 'm'), 0.0005)
     })
 
     it(`${prefix} 0x85 navigation to waypoint with true bearing converted`, () => {
@@ -488,10 +515,20 @@ describe('seatalk', () => {
         `${prefix}${navToWaypointTrueData}`
       )
       const delta = new Parser().parse(fullSentence) as any
-      delta.updates[0]!.values.should.containItemWithProperty(
-        'path',
+      valueAt(
+        delta,
         'navigation.courseRhumbline.bearingToDestinationTrue'
-      )
+      ).should.be.closeTo(utils.transform(180, 'deg', 'rad'), 0.0005)
+      // Y & 0x4 set: steer right, which Signal K reports as a negative XTE
+      valueAt(
+        delta,
+        'navigation.courseRhumbline.crossTrackError'
+      ).should.be.closeTo(utils.transform(-0.5, 'nm', 'm'), 0.0005)
+      // Y & 0x1 clear: range is ZZZ / 10, not ZZZ / 100
+      valueAt(
+        delta,
+        'navigation.courseRhumbline.nextPoint.distance'
+      ).should.be.closeTo(utils.transform(12.0, 'nm', 'm'), 0.0005)
     })
 
     it(`${prefix} 0x82 waypoint name converted`, () => {

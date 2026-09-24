@@ -62,6 +62,8 @@ const S85: HookFn = function (
   const ZZ = parseInt(parts[5]!, 16)
   const Y = parseInt(parts[6]!.charAt(0), 16)
   const F = parseInt(parts[6]!.charAt(1), 16)
+  // parts[7]! is always 00. parts[8]! (`yf`) is the bitwise complement of the
+  // flags byte; parsed here only as a sanity check, not currently used.
   void parseInt(parts[8]!, 16)
 
   const inputs = [X, XX, V, U, Z_high, W, ZZ, Y, F]
@@ -72,6 +74,9 @@ const S85: HookFn = function (
   const pathValues: DeltaValue[] = []
 
   // Cross Track Error: XXX / 100 nm
+  // XXX is formed low-nibble-last from XX (byte 2) and X (high nibble of
+  // byte 1): XXX = (XX << 4) | X. Knauf's worked example of 2.61 nm is
+  // encoded as X6 XX = 5_ 10, giving 0x105 = 261.
   const xtePresent = (F & 0x1) === 0x1
   if (xtePresent) {
     const XXX = (XX << 4) | X
@@ -85,6 +90,8 @@ const S85: HookFn = function (
     })
   }
 
+  // Bearing to destination: (U & 0x3) * 90 + WV / 2 degrees
+  // WV is formed from W (low nibble of byte 4) and V (high nibble of byte 3)
   const bearingPresent = (F & 0x2) === 0x2
   if (bearingPresent) {
     const WV = (W << 4) | V
@@ -105,6 +112,9 @@ const S85: HookFn = function (
     }
   }
 
+  // Distance to destination
+  // ZZZ is formed from ZZ (byte 5) and Z_high (high nibble of byte 4)
+  // Byte order is low-nibble-last: ZZZ = (ZZ << 4) | Z_high
   const rangePresent = (F & 0x4) === 0x4
   if (rangePresent) {
     const ZZZ = (ZZ << 4) | Z_high
