@@ -57,8 +57,6 @@ const S9C: HookFn = function (
     rudderPos = rudderPos - 256
   }
 
-  // Emitted unconditionally: a zero heading or a rudder amidships is a
-  // reading, not a missing value. See the matching note in 0x84.ts.
   const pathValues: DeltaValue[] = [
     {
       path: 'navigation.headingMagnetic',

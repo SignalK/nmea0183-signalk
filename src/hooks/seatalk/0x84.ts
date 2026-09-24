@@ -95,10 +95,6 @@ const S84: HookFn = function (
   if ((Z & 0x8) == 8) {
     mode = 'route'
   }
-  // Every field of this datagram is always present, so each one is emitted
-  // unconditionally. Testing the numbers for truthiness dropped the value
-  // whenever it was exactly zero, which silently withheld a rudder amidships
-  // and a heading of due north and left stale values standing on displays.
   const pathValues: DeltaValue[] = [
     {
       path: 'navigation.headingMagnetic',

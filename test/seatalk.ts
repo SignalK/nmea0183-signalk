@@ -20,7 +20,6 @@ import chaiHasItem from './helpers/chai-has-item'
 
 import Parser from '../src/lib'
 
-/** The value of the first delta entry on `path`. */
 function valueAt(delta: any, path: string): any {
   const entry = delta.updates[0]!.values.find((v: any) => v.path === path)
   should.exist(entry, `no delta value on ${path}`)
@@ -30,11 +29,7 @@ function valueAt(delta: any, path: string): any {
 const depthData = '00,02,41,22,22'
 const apparentWindAngleData = '10,01,01,10'
 const apparentWindSpeedData = '11,01,01,02'
-// 0x20 carries XXXX/10 knots as a 16-bit value, low byte first.
-// 30.0 kn = 300 = 0x012C -> low byte 0x2C, high byte 0x01.
 const speedThroughWaterData = '20,01,2C,01'
-// Low byte 0x80 checks that the high bit of the low byte is not sign
-// extended: 0x80 + 256 = 384 -> 38.4 kn.
 const speedThroughWaterDataGthex80 = '20,01,80,01'
 const tripMileageData = '21,02,32,34,02'
 const logData = '22,02,33,56,00'
@@ -46,9 +41,9 @@ const longitudeData = '51,21,21,01'
 const sogData = '52,01,02,00'
 const cogData = '53,10,22'
 const timeTag = '\\s:test,c:1438489697*29\\'
-const timeData = '54,21,22,11' //using tag to force timestamp
+const timeData = '54,21,22,11'
 const dateTag = '\\s:test,c:1438489697*29\\'
-const dateData = '56,31,23,18' //using tag to force timestamp
+const dateData = '56,31,23,18'
 const satInfoData = '57,70,94'
 const headingData = '84,B6,10,00,00,00,00,00,00'
 const standbyData = '84,E6,15,00,00,00,00,00,08'
@@ -56,75 +51,35 @@ const autoData = '84,56,5E,79,02,00,00,00,08'
 const windData = '84,06,00,00,04,00,00,00,00'
 const routeData = '84,06,00,00,08,00,00,00,00'
 const rudderData = '84,06,00,00,08,00,FE,00,00'
-// 0x99 compass variation: XX is 8-bit two's complement, positive = West, negative = East.
-// Signal K uses East-positive convention, so the decoded byte is negated.
-const compassVariationData = '99,00,43' // XX=0x43 (67) -> 67° West -> -67°
-const compassVariationZeroData = '99,00,00' // XX=0x00 -> 0°
-const compassVariationWest1Data = '99,00,01' // XX=0x01 -> 1° West -> -1°
-const compassVariationEast1Data = '99,00,FF' // XX=0xFF (-1) -> 1° East -> +1°
-const compassVariationMaxWestData = '99,00,7F' // XX=0x7F (127) -> 127° West -> -127°
-const compassVariationMaxEastData = '99,00,80' // XX=0x80 (-128) -> 128° East -> +128°
+const compassVariationData = '99,00,43'
+const compassVariationZeroData = '99,00,00'
+const compassVariationWest1Data = '99,00,01'
+const compassVariationEast1Data = '99,00,FF'
+const compassVariationMaxWestData = '99,00,7F'
+const compassVariationMaxEastData = '99,00,80'
 const heading_nineCData = '9C,51,1E,00'
 const empty_nineCData = '9C,,,'
 const empty_eightFourData = '84,,,,,,,,'
-// 0x85 Navigation to waypoint: XTE=1.00nm steer left, bearing=45° magnetic, distance=5.50nm
 const navToWaypointData = '85,06,64,A0,65,22,17,00,00'
-// 0x85 Navigation to waypoint with true bearing: XTE=0.50nm steer right, bearing=180° true, distance=12.0nm
-// F=0x07 means XTE present (bit 0), bearing present (bit 1), range present (bit 2)
-// U=0xA means (A & 0x3)*90 = 2*90 = 180° base, and (A & 0x8) = 0x8 so True bearing
 const navToWaypointTrueData = '85,06,32,0A,80,07,47,00,00'
-// 0x82 Waypoint name: "WPT1" (6-bit encoded, little-endian)
 const waypointNameData = '82,05,27,D8,48,B7,06,F9'
-// 0x82 Waypoint name: "AB" (6-bit encoded, padded with zeros)
 const waypointNameShortData = '82,05,91,6E,04,FB,00,FF'
-// 0x82 short sentence (fewer than 8 parts) -> null
 const waypointNameShortSentenceData = '82,05,27,D8,48,B7'
-// 0x82 non-hex payload -> null
 const waypointNameBadHexData = '82,05,ZZ,D8,48,B7,06,F9'
-// 0x82 all-zero decoded name -> null (all chars = 0x30 stripped)
 const waypointNameAllZeroData = '82,05,00,FF,00,FF,00,FF'
-
-// 0x85 short sentence (fewer than 9 parts) -> null
 const navToWaypointShortData = '85,06,64,A0,65,22,17,00'
-// 0x85 non-hex payload -> null
 const navToWaypointBadHexData = '85,06,64,A0,65,ZZ,17,00,00'
-// 0x85 with all flags = 0 -> pathValues empty -> null
 const navToWaypointNoFlagsData = '85,06,64,A0,65,22,10,00,00'
-
-// 0x84 short sentence (fewer than 9 parts) -> null
 const eightFourShortData = '84,06,00,00,04,00,00,00'
-// 0x84 non-hex payload -> null (bad hex in VW position)
 const eightFourBadHexData = '84,06,ZZ,00,04,00,00,00,00'
-
-// 0x10 Apparent Wind Angle > 180 (wraps to negative)
-// XX=0x01, YY=0x20: (256+32)/2 = 144  (still <= 180)
-// Use XX=0x02, YY=0x00: (512+0)/2 = 256 -> -104 deg
 const apparentWindAngleOver180Data = '10,01,02,00'
-// AWA exactly 180 deg (boundary): 256*1 + 104 = 360 -> 360/2 = 180, stays 180
 const apparentWindAngle180Data = '10,01,01,68'
-
-// 0x26 Speed through water with D&4=4 (valid value1)
-// We need parts[6] with D bits set: e.g. parts[6]='41' -> D=4, E=1
 const averageSpeedWithValidSTWData = '26,04,12,11,10,11,41'
-
-// 0x50 Latitude in southern hemisphere (YYYY high bit set)
-// parts[1]='A2' (Z=A), parts[2]='21' (XX=0x21=33 degrees), parts[3]='01', parts[4]='80' -> YYYY = 0x01 + 0x80*256 = 0x8001
 const southernLatitudeData = '50,A2,21,01,80'
-
-// 0x54 time, run AFTER date was set so the emission block fires
-// Using a session-shared Parser, date first (0x56), then time (0x54)
-
-// 0x57 sat info with S=1 (triggers DD=0x94 assignment)
 const satInfoS1Data = '57,10,AB'
-
-// 0x9C rudder position > 127 (negative after two's complement adjustment)
 const nineCNegativeRudderData = '9C,51,1E,FE'
-// 0x9C compass heading branches:
-// U=0: outer (U & 0xc) is zero -> adds 0
 const nineCUzeroData = '9C,01,1E,10'
-// U=4: outer true (U & 0xc != 0), inner (U & 1) is zero -> adds 1
 const nineCUfourData = '9C,41,1E,10'
-
 const should = chai.Should()
 chai.use(chaiHasItem as any)
 
@@ -319,8 +274,6 @@ describe('seatalk', () => {
     it(`${prefix} 0x54 time disabled`, () => {
       const fullSentence =
         timeTag + utils.appendChecksum(`${prefix}${timeData}`)
-      // Intentionally unused — the test exercises side-effects on the
-      // shared parser session (time is staged until a matching date arrives).
       void parser.parse(fullSentence)
     })
 
@@ -355,8 +308,6 @@ describe('seatalk', () => {
         'path',
         'navigation.headingMagnetic'
       )
-      // U = 0xB: (0xB & 3) * 90 = 270, (0x10 & 0x3F) * 2 = 32, and one bit
-      // set in the two high bits of U adds 1 -> 303 degrees.
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         5.288347634750305,
         0.0005
@@ -410,7 +361,6 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
-      // 67° West -> -67° -> -1.16937 rad
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         -1.1693705988362009,
         0.0005
@@ -438,7 +388,6 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
-      // -1° -> -0.01745 rad
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         -0.017453292519943295,
         0.0005
@@ -454,7 +403,6 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
-      // +1° -> +0.01745 rad; exercises the XX > 127 branch
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         0.017453292519943295,
         0.0005
@@ -470,7 +418,6 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
-      // 127° West -> -127° -> -2.21657 rad
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         -2.2165681500327987,
         0.0005
@@ -486,7 +433,6 @@ describe('seatalk', () => {
         'path',
         'navigation.magneticVariation'
       )
-      // XX=0x80 -> signed=-128 -> +128° -> 2.23402 rad
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         2.234021442552742,
         0.0005
@@ -500,8 +446,6 @@ describe('seatalk', () => {
         'path',
         'navigation.headingMagnetic'
       )
-      // U = 5: (5 & 3) * 90 = 90, (0x1E & 0x3F) * 2 = 60, and one bit set in
-      // the two high bits of U adds 1 -> 151 degrees.
       delta.updates[0]!.values[0]!.value.should.be.closeTo(
         2.635447171113188,
         0.0005
@@ -649,7 +593,6 @@ describe('seatalk', () => {
     })
 
     it(`${prefix} 0x10 AWA exactly 180 stays positive (boundary)`, () => {
-      // AWA = 180 should NOT wrap (check uses > 180, not >= 180)
       const fullSentence = utils.appendChecksum(
         `${prefix}${apparentWindAngle180Data}`
       )
@@ -743,9 +686,6 @@ describe('seatalk', () => {
       )!.value.should.be.lessThan(0)
     })
 
-    // The heading carry is the number of bits set in the two higher bits of
-    // U, so it is 2 only when both are set. Keying it on bit 0 of U instead,
-    // as Knauf's shorthand does, reports the last two rows as 1 and 92.
     ;[
       { name: 'U=0x0, no bits set', datagram: '9C,01,00,00', degrees: 0 },
       { name: 'U=0x4, one bit set', datagram: '9C,41,00,00', degrees: 1 },
@@ -767,8 +707,6 @@ describe('seatalk', () => {
     })
 
     it(`${prefix} 0x9C reports a rudder amidships`, () => {
-      // A zero is a reading, not a missing value: dropping it left the last
-      // non-zero angle standing on the display.
       const fullSentence = utils.appendChecksum(`${prefix}9C,01,00,00`)
       const delta = new Parser().parse(fullSentence) as any
       valueAt(delta, 'steering.rudderAngle').should.equal(0)
@@ -788,7 +726,6 @@ describe('seatalk', () => {
     })
 
     it(`${prefix} 0x85 cross track error uses the low nibble last`, () => {
-      // Knauf's worked example: 2.61 nm -> 261 -> 0x105 -> X6 XX = 5_ 10.
       const fullSentence = utils.appendChecksum(
         `${prefix}85,56,10,00,00,00,11,00,00`
       )
