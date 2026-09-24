@@ -18,16 +18,6 @@ import * as utils from '@signalk/nmea0183-utilities'
 import type { UnitFormat } from '@signalk/nmea0183-utilities'
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
 
-// MWV is only emitted when the status field (parts[4]) is 'A' (valid).
-// Within a valid sentence, angle and speed are each routed through the
-// `*OrNull` helpers so an empty optional field becomes `null` rather
-// than a silent 0 (the old code would report e.g. 0° apparent wind
-// angle when the angle field was empty).
-
-// Wind speed unit letter. 'S' is statute miles per hour; leaving it out of
-// the table sent mph readings through unconverted as metres per second.
-// An absent or unrecognised letter keeps the historical metres per second
-// reading rather than dropping the measurement.
 const WIND_SPEED_UNITS: Record<string, UnitFormat> = {
   K: 'kph',
   M: 'ms',

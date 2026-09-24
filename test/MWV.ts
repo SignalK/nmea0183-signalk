@@ -59,7 +59,6 @@ describe('MWV', () => {
     const speed = delta.updates[0]!.values.find(
       (v: any) => v.path === 'environment.wind.speedTrue'
     ).value
-    // 5.85 mph -> ~2.615 m/s, not 5.85 m/s
     speed.should.be.closeTo(2.615, 0.01)
   })
 })

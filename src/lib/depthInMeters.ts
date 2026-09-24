@@ -9,10 +9,6 @@
 
 import * as utils from '@signalk/nmea0183-utilities'
 
-// Exact NIST factors. `utils.transform` carries truncated ratios
-// (METER_IN_FEET 3.2808, METER_IN_FATHOM 0.5468), which drift about 0.003 %
-// and 0.02 %. Depths are published to centimetre precision, so the exact
-// factors are used instead.
 const FEET_TO_METERS = 0.3048
 const FATHOMS_TO_METERS = 1.8288
 

@@ -45,7 +45,6 @@ describe('DBT', () => {
   })
 
   it('Converts with only fathoms in the sentence', () => {
-    // 5 fathoms -> 9.144 m
     const delta = new Parser().parse('$IIDBT,,f,,M,005.00,F*24') as any
     delta.updates[0]!.values.length.should.equal(1)
     delta.updates[0]!.values[0]!.path.should.equal(
