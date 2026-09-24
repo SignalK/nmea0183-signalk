@@ -82,7 +82,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/SignalK/nmea0183-signalk"
+    "url": "git+https://github.com/SignalK/nmea0183-signalk.git"
   },
   "bugs": {
     "url": "https://github.com/SignalK/nmea0183-signalk/issues"
