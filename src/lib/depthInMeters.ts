@@ -9,6 +9,11 @@
 
 import * as utils from '@signalk/nmea0183-utilities'
 
+// Exact by definition, a fathom being six feet. Deliberately not
+// `utils.transform('ft', 'm')`, which divides by RATIOS.METER_IN_FEET, a
+// truncated 3.2808, and so reads 0.0012% high. The exact factors cost
+// nothing and keep a converted sounding consistent with one a talker
+// reports in metres directly.
 const FEET_TO_METERS = 0.3048
 const FATHOMS_TO_METERS = 1.8288
 
