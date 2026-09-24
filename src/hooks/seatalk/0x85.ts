@@ -105,7 +105,6 @@ const S85: HookFn = function (
     }
   }
 
-
   const rangePresent = (F & 0x4) === 0x4
   if (rangePresent) {
     const ZZZ = (ZZ << 4) | Z_high
