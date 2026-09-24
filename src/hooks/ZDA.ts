@@ -42,16 +42,6 @@ function isEmpty(mixed: unknown): boolean {
   return typeof mixed !== 'string' || mixed.trim() === ''
 }
 
-/**
- * ZDA is the one sentence that states the century outright, so its year is
- * read as sent. The sentence used to be handed to `utils.timestamp`, which
- * takes a 2-digit year and re-expands it with the IEC 61162-1 pivot (YY < 80
- * means 20YY); truncating a 4-digit year to feed that helper moved everything
- * before 1980 forward a century, stamping a 1979 sentence as 2079.
- *
- * A talker that sends only 2 digits still gets the pivot, since that is the
- * only reading available for it.
- */
 function toYear(field: string): number | null {
   if (/^\d{4}$/.test(field)) {
     return utils.int(field)

@@ -54,8 +54,6 @@ describe('ZDA', () => {
   })
 
   it('Keeps a year before the 1980 pivot in its own century', () => {
-    // The 4-digit year is used as sent. Truncating it to '79' and re-expanding
-    // it with the IEC 61162-1 pivot moved this sentence to 2079.
     const delta = new Parser().parse(
       '$GPZDA,160012.71,11,03,1979,-1,00*7D'
     ) as any
