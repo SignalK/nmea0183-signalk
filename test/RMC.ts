@@ -180,9 +180,6 @@ describe('RMC', () => {
   })
 
   it('withholds the fix of a void sentence but keeps its datetime', () => {
-    // Status V is a navigation receiver warning. The fields still carry
-    // whatever the receiver last held, so they are reported as unavailable
-    // rather than as a live fix.
     const delta = new Parser().parse(
       '$GPRMC,123519,V,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*7D'
     ) as any
@@ -193,7 +190,6 @@ describe('RMC', () => {
     should.equal(value('navigation.courseOverGroundTrue'), null)
     should.equal(value('navigation.speedOverGround'), null)
     should.equal(value('navigation.magneticVariation'), null)
-    // A receiver that has lost its fix normally still keeps good time.
     value('navigation.datetime').should.equal('1994-03-23T12:35:19.000Z')
   })
 

@@ -79,16 +79,6 @@ const RMC: HookFn = function (
       ? { latitude, longitude }
       : null
 
-  // Field 1 is the receiver status: 'A' active, 'V' void (navigation receiver
-  // warning). A void sentence still carries whatever the receiver last held in
-  // its registers, so publishing those fields as a fix reported a stale or
-  // wrong position as a live one. They are emitted as `null` instead of being
-  // dropped, per IEC 61162-1 §7.2.3.4, so a consumer can tell a warning apart
-  // from a sentence that never carried the field. GLL already rejects its own
-  // 'V' status this way.
-  //
-  // The datetime stays: a receiver that has lost its fix normally still keeps
-  // good time, and RMC is a common clock source.
   const isVoid =
     String(parts[1] ?? '')
       .trim()

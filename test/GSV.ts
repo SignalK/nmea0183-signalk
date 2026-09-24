@@ -118,8 +118,6 @@ describe('GSV', () => {
   })
 
   it('leaves a QZSS identifier alone', () => {
-    // QZSS runs 193-202. Only GLONASS carries the +64 offset, so subtracting
-    // it here would renumber this satellite onto a GPS identifier.
     const r = new Parser().parse('$GQGSV,1,1,01,193,45,123,40,0*6B') as any
     r.updates[0]!.values[0]!.value.satellites[0].id.should.equal(193)
   })
@@ -130,12 +128,10 @@ describe('GSV', () => {
   })
 
   it('Skips an out-of-order sentence and resets state', () => {
-    // Sentence number 3 arrives while we expect 2: parser should drop and
-    // return null, clearing session.gsvData.
     const parser = new Parser()
     let r = parser.parse(testData[0]!) as any
     expect(r).to.be.null
-    r = parser.parse(testData[2]!) as any // sentence 3 instead of 2
+    r = parser.parse(testData[2]!) as any
     expect(r).to.be.null
   })
 
