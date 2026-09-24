@@ -44,7 +44,10 @@ function isEmpty(mixed: unknown): boolean {
 
 function toYear(field: string): number | null {
   if (/^\d{4}$/.test(field)) {
-    return utils.int(field)
+    const year = utils.int(field)
+    // Date.UTC maps years 0-99 onto 1900-1999, so an unset field like '0000'
+    // would surface as a confident 1900 reading instead of no reading at all.
+    return year < 100 ? null : year
   }
   if (/^\d{2}$/.test(field)) {
     const yy = utils.int(field)

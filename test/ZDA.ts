@@ -63,6 +63,13 @@ describe('ZDA', () => {
     )
   })
 
+  it('Rejects a year Date.UTC would remap into the 1900s', () => {
+    const delta = new Parser().parse(
+      '$GPZDA,160012.71,11,03,0000,-1,00*7B'
+    ) as any
+    delta.should.deep.equal({})
+  })
+
   it('Applies the pivot to a talker that sends a 2-digit year', () => {
     const delta = new Parser().parse(
       '$GPZDA,160012.71,11,03,79,-1,00*75'
