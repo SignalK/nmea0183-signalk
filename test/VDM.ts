@@ -366,6 +366,165 @@ describe('VDM', function () {
     )!.value.should.equal(10)
   })
 
+  describe('area notices', () => {
+    const parseAll = (sentences: string[]): any => {
+      const parser = new Parser()
+      let delta: any = null
+      sentences.forEach((sentence) => {
+        delta = parser.parse(sentence)
+      })
+      return delta
+    }
+    const valueAt = (delta: any, path: string): any =>
+      delta.updates[0]!.values.find(
+        (pathValue: any) => pathValue.path === path
+      )!.value
+    const shouldBeNear = (actual: number[], expected: number[]) => {
+      actual[0]!.should.be.closeTo(expected[0]!, 1e-6)
+      actual[1]!.should.be.closeTo(expected[1]!, 1e-6)
+    }
+
+    it('IMO area notice (8/1.22) circle converts ok', () => {
+      const delta = parseAll([
+        '!AIVDM,1,1,0,B,803Ovrh0EPM0WB0h2l0MwJUi=6B4G9000aip8<2Bt2Hq2Qhp,0*01'
+      ])
+      delta.context.should.equal('areas.urn:mrn:imo:mmsi:003669739:29')
+      valueAt(delta, 'sensors.ais.designatedAreaCode').should.equal(1)
+      valueAt(delta, 'sensors.ais.functionalId').should.equal(22)
+      should.not.exist(
+        delta.updates[0]!.values.find(
+          (pathValue: any) => pathValue.path === 'navigation.position'
+        )
+      )
+
+      const notice = valueAt(delta, 'notice')
+      notice.linkId.should.equal(29)
+      notice.type.should.equal(1)
+      notice.description.should.equal(
+        'Caution Area: Marine mammals in area - reduce speed'
+      )
+      notice.text.should.equal('NOAA RW SGHTNG')
+      notice.start.should.match(/-03-20T16:06:00\.000Z$/)
+      ;(Date.parse(notice.end) - Date.parse(notice.start)).should.equal(
+        1440 * 60000
+      )
+
+      notice.geometry.type.should.equal('FeatureCollection')
+      notice.geometry.features.length.should.equal(1)
+      const circle = notice.geometry.features[0]
+      circle.properties.shape.should.equal('circle')
+      circle.properties.radius.should.equal(14810)
+      circle.geometry.type.should.equal('Polygon')
+      const ring = circle.geometry.coordinates[0]
+      ring[0].should.deep.equal(ring[ring.length - 1])
+    })
+
+    it('IMO area notice (8/1.22) polygon starts at the preceding point and closes', () => {
+      const delta = parseAll([
+        '!AIVDM,2,1,1,A,803Ovrh0EPJ0Vvch00@=w52I9BK<00000VFHkP0>D>3,0*24',
+        '!AIVDM,2,2,1,A,;J005>?11PBGP4=1PPP,0*3F'
+      ])
+      const notice = valueAt(delta, 'notice')
+      notice.text.should.equal('NOAA RW DMA')
+      notice.geometry.features.length.should.equal(1)
+      const polygon = notice.geometry.features[0]
+      polygon.properties.shape.should.equal('polygon')
+      const ring = polygon.geometry.coordinates[0]
+      ring.length.should.equal(5)
+      shouldBeNear(ring[0], [-70.40821666666666, 40.02495])
+      ring[4].should.deep.equal(ring[0])
+    })
+
+    it('USCG geographic notice (8/367.22) continues polylines as one line', () => {
+      const delta = parseAll([
+        '!ANVDM,2,1,0,B,8h3Ovq1KmP@N<95=`2l01=dN<b7pGeP00000LL8PSV8RQ8cTs5H0LTHh477P,0*36',
+        '!ANVDM,2,2,0,B,Rpus@000,0*46'
+      ])
+      delta.context.should.equal('areas.urn:mrn:imo:mmsi:003669732:30')
+      valueAt(delta, 'sensors.ais.designatedAreaCode').should.equal(367)
+      const notice = valueAt(delta, 'notice')
+      notice.version.should.equal(1)
+      should.not.exist(notice.action)
+      notice.description.should.equal(
+        'Environmental Caution: Hazardous sea ice i.e. icebergs and growlers'
+      )
+      notice.geometry.features.length.should.equal(1)
+      const line = notice.geometry.features[0]
+      line.geometry.type.should.equal('LineString')
+      // point 0 plus 4 + 3 rhumb line legs
+      const expected = [
+        [-175.829165, 59.367222],
+        [-175.617322, 59.322482],
+        [-175.181864, 59.218723],
+        [-174.956775, 59.113005],
+        [-174.841703, 58.970097],
+        [-174.652368, 58.827795],
+        [-174.340706, 58.684777],
+        [-174.063811, 58.515867]
+      ]
+      line.geometry.coordinates.length.should.equal(expected.length)
+      line.geometry.coordinates.forEach((point: number[], i: number) =>
+        shouldBeNear(point, expected[i]!)
+      )
+    })
+
+    it('USCG geographic notice (8/367.22) rectangle and sector convert ok', () => {
+      const rectangle = valueAt(
+        parseAll(['!AIVDM,1,1,0,A,85M:Ih1KmPAVhjAs80e0;cKBN1N:W8Q@:2`0,0*0C']),
+        'notice'
+      ).geometry.features[0]
+      rectangle.properties.should.deep.equal({
+        shape: 'rectangle',
+        east: 400,
+        north: 200,
+        orientation: 42
+      })
+      const corners = rectangle.geometry.coordinates[0]
+      ;[
+        [-71.91, 41.141667],
+        [-71.90645, 41.13926],
+        [-71.904852, 41.140596],
+        [-71.908402, 41.143003],
+        [-71.91, 41.141667]
+      ].forEach((corner, i) => shouldBeNear(corners[i], corner))
+
+      const sector = valueAt(
+        parseAll(['!AIVDM,1,1,0,A,85M:Ih1KmPAW5BAs80e0EcN<11N6th@6BgL8,0*13']),
+        'notice'
+      ).geometry.features[0]
+      sector.properties.should.deep.equal({
+        shape: 'sector',
+        radius: 5000,
+        left: 175,
+        right: 225
+      })
+      const ring = sector.geometry.coordinates[0]
+      shouldBeNear(ring[0], [-71.75166666666667, 41.11666666666667])
+      ring[ring.length - 1].should.deep.equal(ring[0])
+    })
+
+    it('USCG geographic notice (8/367.22) release 2 action converts ok', () => {
+      const notice = valueAt(
+        parseAll(['!AIVDM,1,1,,B,8h3Ovq1KmPQ`08b8007T3ct5uAPmtlAkh000,0*3B']),
+        'notice'
+      )
+      notice.version.should.equal(2)
+      notice.action.should.equal('directive')
+    })
+
+    it('area notice without start time or duration is cancelled', () => {
+      const notice = valueAt(
+        parseAll(['!AIVDM,1,1,,A,803Ow2iKmPFJwP37P000bbHHsrPbJP000000,0*6E']),
+        'notice'
+      )
+      notice.cancelled.should.equal(true)
+      should.not.exist(notice.start)
+      should.not.exist(notice.end)
+      notice.text.should.equal('USCG_TEST')
+      notice.geometry.features.length.should.equal(0)
+    })
+  })
+
   it('virtual aton converts ok', () => {
     const delta = new Parser().parse(
       '!AIVDM,1,1,,A,E02E340W6@1WPab3bPa200000000:uoH?9Ur000003v010,4*5C\n'
