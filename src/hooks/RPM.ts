@@ -23,7 +23,7 @@ import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
 # $--RPM,a,x,x.x,x.x,A*hh<CR><LF> Field Number:
 #  0) Source, S = Shaft, E = Engine 1) Engine or shaft number 2) Speed,
 #  Revolutions per minute 3) Propeller pitch, % of maximum, "-" means
-#  astern 4) Status, A means data is valid 5) Checksum
+#  astern 4) Status, A = valid, V = invalid 5) Checksum
 */
 
 const RPM: HookFn = function (
@@ -32,7 +32,8 @@ const RPM: HookFn = function (
 ): Delta | null {
   const { parts, tags } = input
 
-  const rpm = utils.floatOrNull(parts[2]!)
+  const rpm =
+    parts[4]?.toUpperCase() === 'V' ? null : utils.floatOrNull(parts[2]!)
   const revolutions = rpm === null ? null : rpm / 60
 
   return {
