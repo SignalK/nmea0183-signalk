@@ -119,9 +119,11 @@ const GSV: HookFn = function (
   session: ParserSession
 ): Delta | null {
   const { id, parts, tags, talker } = input
+  const sentenceNumber = Number(parts[SENTENCE_NUMBER]!)
 
   let gsvData = session['gsvData'] as GsvAccumulator | undefined
-  if (!gsvData) {
+  // A new cycle supersedes any incomplete report, including its GNSS metadata.
+  if (!gsvData || sentenceNumber === 1) {
     gsvData = {
       nextSentenceNumber: 1,
       numberOfSentences: Number(parts[NUMBER_OF_SENTENCES]!),
@@ -132,7 +134,7 @@ const GSV: HookFn = function (
     session['gsvData'] = gsvData
   }
 
-  if (Number(parts[SENTENCE_NUMBER]!) !== gsvData.nextSentenceNumber) {
+  if (sentenceNumber !== gsvData.nextSentenceNumber) {
     debug(
       `Expected sentence number to be ${gsvData.nextSentenceNumber} but got ${parts}`
     )
@@ -163,7 +165,7 @@ const GSV: HookFn = function (
     }
   }
 
-  if (Number(parts[SENTENCE_NUMBER]!) === gsvData.numberOfSentences) {
+  if (sentenceNumber === gsvData.numberOfSentences) {
     delete session['gsvData']
     delete gsvData.nextSentenceNumber
     delete gsvData.numberOfSentences
