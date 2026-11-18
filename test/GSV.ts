@@ -127,6 +127,68 @@ describe('GSV', () => {
     r.updates[0]!.values[0]!.value.satellites[0].id.should.equal(78 - 64)
   })
 
+  it('accepts a fresh GPS report after an incomplete GPS cycle', () => {
+    for (const received of [1, 2]) {
+      const parser = new Parser()
+      for (const sentence of testData.slice(0, received)) {
+        expect(parser.parse(sentence)).to.be.null
+      }
+      expect(parser.parse(testData[0]!)).to.be.null
+      expect(parser.parse(testData[1]!)).to.be.null
+      const result = parser.parse(testData[2]!) as any
+      expect(result).to.not.be.null
+      const value = result.updates[0].values[0].value
+      expect(value.gnss).to.equal('GPS')
+      expect(value.count).to.equal(9)
+      expect(value.satellites.map((satellite: any) => satellite.id)).to.eql([
+        7, 8, 10, 16, 18, 20, 21, 26, 27
+      ])
+    }
+  })
+
+  it('accepts a fresh GLONASS report after an incomplete GPS cycle', () => {
+    const parser = new Parser()
+    expect(parser.parse(testData[0]!)).to.be.null
+    expect(parser.parse(testData[3]!)).to.be.null
+    expect(parser.parse(testData[4]!)).to.be.null
+    const result = parser.parse(testData[5]!) as any
+    expect(result).to.not.be.null
+    const value = result.updates[0].values[0].value
+    expect(value.gnss).to.equal('GLONASS')
+    expect(value.count).to.equal(10)
+    expect(value.satellites.map((satellite: any) => satellite.id)).to.eql([
+      1, 7, 8, 13, 14, 15, 16, 17, 23, 24
+    ])
+  })
+
+  it('accepts a fresh single-sentence report after an incomplete cycle', () => {
+    const parser = new Parser()
+    expect(parser.parse(testData[0]!)).to.be.null
+    const result = parser.parse('$GQGSV,1,1,01,193,45,123,40,0*6B') as any
+    expect(result).to.not.be.null
+    const value = result.updates[0].values[0].value
+    expect(value.gnss).to.equal('QZSS')
+    expect(value.count).to.equal(1)
+    expect(value.satellites.map((satellite: any) => satellite.id)).to.eql([193])
+  })
+
+  it('preserves a continuous report whose talker changes without restarting', () => {
+    // Some receivers number one report across multiple constellation talkers.
+    const parser = new Parser()
+    expect(
+      parser.parse(
+        '$GPGSV,2,1,05,01,10,020,30,02,10,020,30,03,10,020,30,04,10,020,30*7B'
+      )
+    ).to.be.null
+    const result = parser.parse('$GLGSV,2,2,05,65,10,020,30*53') as any
+    expect(result).to.not.be.null
+    expect(
+      result.updates[0].values[0].value.satellites.map(
+        (satellite: any) => satellite.id
+      )
+    ).to.eql([1, 2, 3, 4, 1])
+  })
+
   it('Skips an out-of-order sentence and resets state', () => {
     const parser = new Parser()
     let r = parser.parse(testData[0]!) as any
