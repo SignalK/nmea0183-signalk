@@ -70,6 +70,44 @@ const distressSentences: Record<string, string> = {
 }
 
 describe('DSC', () => {
+  it('Decodes the captured safety-category position report from #217', () => {
+    const delta = new Parser().parse(
+      '$CDDSC,20,5031105200,08,21,26,2380814428,1800,,,B,E*77'
+    ) as any
+
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:503110520')
+    delta.updates[0].values.should.have.length(1)
+    const position = delta.updates[0].values[0]
+    position.path.should.equal('navigation.position')
+    position.value.latitude.should.be.closeTo(-38 - 8 / 60, 1e-10)
+    position.value.longitude.should.be.closeTo(144 + 28 / 60, 1e-10)
+  })
+
+  it('Still decodes the captured routine report and following DSE from #217', () => {
+    const parser = new Parser()
+    const delta = parser.parse(
+      '$CDDSC,20,2359123590,00,21,26,0374102328,1042,,,B,E*71'
+    ) as any
+    delta.context.should.equal('vessels.urn:mrn:imo:mmsi:235912359')
+    const position = delta.updates[0].values[0]
+    position.path.should.equal('navigation.position')
+    position.value.latitude.should.be.closeTo(37 + 41 / 60, 1e-10)
+    position.value.longitude.should.be.closeTo(23 + 28 / 60, 1e-10)
+
+    const expanded = parser.parse(
+      '$CDDSE,1,1,A,2359123590,00,99570593*18'
+    ) as any
+    expanded.context.should.equal(delta.context)
+    expanded.updates[0].values[0].value.latitude.should.be.closeTo(
+      37 + 41.9957 / 60,
+      1e-10
+    )
+    expanded.updates[0].values[0].value.longitude.should.be.closeTo(
+      23 + 28.0593 / 60,
+      1e-10
+    )
+  })
+
   it('Position converts ok', () => {
     const delta = new Parser().parse(nmeaLinePos) as any
 
