@@ -56,23 +56,19 @@ const DPT: HookFn = function (
       path: 'environment.depth.surfaceToTransducer',
       value: offset
     })
-    if (depth !== null) {
-      values.push({
-        path: 'environment.depth.belowSurface',
-        value: depth + offset
-      })
-    }
+    values.push({
+      path: 'environment.depth.belowSurface',
+      value: depth === null ? null : depth + offset
+    })
   } else if (offset !== null && offset < 0) {
     values.push({
       path: 'environment.depth.transducerToKeel',
       value: -offset
     })
-    if (depth !== null) {
-      values.push({
-        path: 'environment.depth.belowKeel',
-        value: depth + offset
-      })
-    }
+    values.push({
+      path: 'environment.depth.belowKeel',
+      value: depth === null ? null : depth + offset
+    })
   }
 
   return {

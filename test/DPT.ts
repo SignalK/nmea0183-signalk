@@ -89,7 +89,7 @@ describe('DPT', () => {
 
   it('Converts empty depth to null and still outputs offset', () => {
     const delta = new Parser().parse('$IIDPT,,0.1*6F') as any
-    delta.updates[0]!.values.length.should.equal(2)
+    delta.updates[0]!.values.length.should.equal(3)
     delta.updates[0]!.values[0]!.path.should.equal(
       'environment.depth.belowTransducer'
     )
@@ -98,5 +98,45 @@ describe('DPT', () => {
       'environment.depth.surfaceToTransducer'
     )
     should.equal(delta.updates[0]!.values[1]!.value, 0.1)
+    delta.updates[0]!.values[2]!.path.should.equal(
+      'environment.depth.belowSurface'
+    )
+    should.equal(delta.updates[0]!.values[2]!.value, null)
   })
+
+  for (const { offset, derived, offsetPath } of [
+    { offset: 1, derived: 'belowSurface', offsetPath: 'surfaceToTransducer' },
+    { offset: -1, derived: 'belowKeel', offsetPath: 'transducerToKeel' }
+  ]) {
+    it(`Clears ${derived} on bottom loss and restores it on recovery`, () => {
+      const parser = new Parser()
+      // Apply deltas as a client does: an omitted path retains its old value.
+      const state: Record<string, unknown> = {}
+      const acceptDepth = (depth: string) => {
+        const body = `IIDPT,${depth},${offset}`
+        const checksum = [...body]
+          .reduce((sum, char) => sum ^ char.charCodeAt(0), 0)
+          .toString(16)
+          .toUpperCase()
+          .padStart(2, '0')
+        const delta = parser.parse(`$${body}*${checksum}`) as any
+        for (const { path, value } of delta.updates[0].values) {
+          state[path] = value
+        }
+      }
+
+      acceptDepth('4')
+      should.equal(state[`environment.depth.${derived}`], 4 + offset)
+      acceptDepth('')
+      should.equal(state['environment.depth.belowTransducer'], null)
+      should.equal(state[`environment.depth.${derived}`], null)
+      should.equal(state[`environment.depth.${offsetPath}`], Math.abs(offset))
+      acceptDepth('6')
+      should.equal(state[`environment.depth.${derived}`], 6 + offset)
+      // A measured zero is valid, rather than a missing reading.
+      acceptDepth('0')
+      should.equal(state['environment.depth.belowTransducer'], 0)
+      should.equal(state[`environment.depth.${derived}`], offset)
+    })
+  }
 })
