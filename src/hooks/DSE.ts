@@ -1,5 +1,5 @@
 import type { Delta, HookFn, ParserInput, ParserSession } from '../types'
-import { recallDscPosition } from './dscSession'
+import { isMmsiField, recallDscPosition } from './dscSession'
 import Debug from 'debug'
 const debug = Debug('signalk-parser-nmea0183/DSE')
 
@@ -40,10 +40,13 @@ const DSE: HookFn = function (
     return null
   }
 
-  const mmsi = (parts[3] ?? '').substring(0, 9)
-  if (mmsi.length < 9) {
+  // The address names the station whose DSC this sentence expands, in the
+  // same form as in $--DSC.
+  const address = parts[3]
+  if (!isMmsiField(address)) {
     return null
   }
+  const mmsi = address.substring(0, 9)
 
   const previous = recallDscPosition(session, mmsi)
   if (!previous) {
