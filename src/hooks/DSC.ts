@@ -154,6 +154,11 @@ const DSC: HookFn = function (
       break
 
     case '08': // * 108 = safety
+      // Individual ship-position reports also use the safety category.
+      if (parts[0] === '20' && parts[3] === '21') {
+        handled = true
+        get_position = true
+      }
       break
     case '10': // * 110 = urgency
       break
