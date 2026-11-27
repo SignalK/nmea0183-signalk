@@ -15,6 +15,7 @@
  */
 
 import Parser from '../src/lib'
+import * as utils from '@signalk/nmea0183-utilities'
 import * as chai from 'chai'
 import { expect } from 'chai'
 chai.Should()
@@ -133,6 +134,35 @@ describe('GSV', () => {
     expect(r).to.be.null
     r = parser.parse(testData[2]!) as any
     expect(r).to.be.null
+  })
+
+  // A group has one to nine sentences. One announcing more is not
+  // accumulated: a total that is never reached kept four more satellites
+  // with every sentence, and a reached one gave all of them in one delta.
+  it('ignores a group announcing more than nine sentences', () => {
+    const parser = new Parser()
+    const sentence = (n: number) =>
+      utils.appendChecksum(
+        `$GPGSV,1000,${n},4000,01,10,100,30,02,20,200,31,03,30,300,32,04,40,040,33`
+      )
+    for (let n = 1; n < 1000; n++) {
+      expect(parser.parse(sentence(n))).to.be.null
+    }
+    expect(parser.session['gsvData']).to.be.undefined
+    expect(parser.parse(sentence(1000))).to.be.null
+  })
+
+  it('converts a group of nine sentences', () => {
+    const parser = new Parser()
+    let r: any = null
+    for (let n = 1; n <= 9; n++) {
+      r = parser.parse(
+        utils.appendChecksum(
+          `$GPGSV,9,${n},36,01,10,100,30,02,20,200,31,03,30,300,32,04,40,040,33`
+        )
+      )
+    }
+    r.updates[0]!.values[0]!.value.satellites.length.should.equal(36)
   })
 
   it('GPGSVH converts to GPS, slave antenna', () => {

@@ -66,6 +66,12 @@ const NUMBER_OF_SENTENCES = 0
 const SENTENCE_NUMBER = 1
 const SATS_IN_VIEW = 2
 
+// A group has one to nine sentences ("total number of sentences, 1 to 9"),
+// so at most 36 satellites. Only such a group is accumulated: one whose total
+// is never reached would add four satellites with every sentence for as long
+// as the connection lasts.
+const MAX_SENTENCES = 9
+
 const SAT_DATA_BLOCK_START = 3
 const SAT_DATA_LENGTH = 4
 
@@ -122,9 +128,18 @@ const GSV: HookFn = function (
 
   let gsvData = session['gsvData'] as GsvAccumulator | undefined
   if (!gsvData) {
+    const numberOfSentences = Number(parts[NUMBER_OF_SENTENCES]!)
+    if (
+      !Number.isInteger(numberOfSentences) ||
+      numberOfSentences < 1 ||
+      numberOfSentences > MAX_SENTENCES
+    ) {
+      debug(`Ignoring a group of ${parts[NUMBER_OF_SENTENCES]} sentences`)
+      return null
+    }
     gsvData = {
       nextSentenceNumber: 1,
-      numberOfSentences: Number(parts[NUMBER_OF_SENTENCES]!),
+      numberOfSentences,
       count: Number(parts[SATS_IN_VIEW]!),
       satellites: [],
       gnss: TALKER_TO_GNSS[talker]
