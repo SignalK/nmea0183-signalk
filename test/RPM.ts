@@ -49,3 +49,65 @@ describe('RPM', () => {
   })
   */
 })
+
+function rpmSentence(
+  source: string,
+  number: number,
+  rpm: string,
+  status: string
+) {
+  const body = `IIRPM,${source},${number},${rpm},0.0,${status}`
+  const checksum = Array.from(body).reduce(
+    (value, character) => value ^ character.charCodeAt(0),
+    0
+  )
+  return `$${body}*${checksum.toString(16).toUpperCase().padStart(2, '0')}`
+}
+
+describe('RPM invalid readings (#56)', () => {
+  for (const [source, kind] of [
+    ['E', 'engine'],
+    ['S', 'shaft']
+  ]) {
+    it(`clears and restores ${kind} speed without affecting another ${kind}`, () => {
+      const parser = new Parser()
+      const state: Record<string, unknown> = {}
+      const apply = (number: number, speed: string, status: string) => {
+        const delta = parser.parse(rpmSentence(source!, number, speed, status))!
+        for (const update of delta.updates!) {
+          if ('values' in update) {
+            for (const item of update.values!) state[item.path] = item.value
+          }
+        }
+      }
+      const path = `propulsion.${kind}_1.revolutions`
+      const other = `propulsion.${kind}_2.revolutions`
+      apply(1, '1800', 'A')
+      apply(2, '1200', 'A')
+      chai.expect(state[path]).to.equal(30)
+      for (const speed of ['1800', '0', '-1200', '']) {
+        apply(1, speed, 'V')
+        chai.expect(state[path], `invalid ${speed}`).to.equal(null)
+        chai.expect(state[other]).to.equal(20)
+      }
+      apply(1, '2400', 'A')
+      chai.expect(state[path]).to.equal(40)
+      apply(1, '0', 'A')
+      chai.expect(state[path]).to.equal(0)
+      apply(1, '-600', 'A')
+      chai.expect(state[path]).to.equal(-10)
+      apply(1, '', 'A')
+      chai.expect(state[path]).to.equal(null)
+    })
+  }
+
+  it('preserves legacy readings with an empty status field', () => {
+    const delta = new Parser().parse(rpmSentence('E', 0, '1800', '')) as any
+    chai.expect(delta.updates[0].values[0].value).to.equal(30)
+  })
+
+  it('recognizes a lower-case invalid status', () => {
+    const delta = new Parser().parse(rpmSentence('E', 0, '1800', 'v')) as any
+    chai.expect(delta.updates[0].values[0].value).to.equal(null)
+  })
+})
