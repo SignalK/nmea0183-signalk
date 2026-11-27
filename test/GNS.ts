@@ -155,6 +155,25 @@ describe('GNS', () => {
     should.equal(delta, null)
   })
 
+  // The status letters are looked up in a table; a field naming an
+  // Object.prototype member gave that member, a function or Object.prototype
+  // itself, as the status.
+  it('Reports no status for a field that is not a status letter', () => {
+    for (const sentence of [
+      '$GPGNS,111648.00,0235.0379,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,constructor*66',
+      '$GPGNS,111648.00,0235.0379,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,toString*20',
+      '$GPGNS,111648.00,0235.0379,S,04422.1450,W,ANN,12,0.8,8.5,-22.3,,,__proto__*78'
+    ]) {
+      const delta = new Parser().parse(sentence) as any
+      should.equal(
+        delta.updates[0]!.values.find(
+          (v: any) => v.path === 'navigation.gnss.status'
+        ).value,
+        null
+      )
+    }
+  })
+
   it('Emits per-field null when optional fields are empty, not zero', () => {
     // IEC 61162-1 §7.2.3.4: null NMEA field = "sensor working, value not
     // available". Altitude / geoid / differential-age / -reference are
