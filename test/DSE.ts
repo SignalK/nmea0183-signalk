@@ -54,6 +54,17 @@ describe('DSE', () => {
     should.equal(delta, null)
   })
 
+  // The address is looked up among the remembered DSC positions, so anything
+  // but an MMSI must find nothing there. "__proto__" found Object.prototype
+  // and gave a delta with no context and no position, which a Signal K server
+  // applies to its own vessel.
+  it('ignores a DSE whose address is not an MMSI', () => {
+    const parser = new Parser()
+    parser.parse(dscDistress)
+    should.equal(parser.parse('$CDDSE,1,1,A,__proto__0,00,45894494*5F'), null)
+    should.equal(parser.parse('$CDDSE,1,1,A,__proto__,00,45894494*6F'), null)
+  })
+
   it('ignores multi-sentence DSE groups', () => {
     const parser = new Parser()
     parser.parse(dscDistress)

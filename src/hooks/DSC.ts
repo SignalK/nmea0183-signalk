@@ -22,7 +22,11 @@ import type {
   ParserInput,
   ParserSession
 } from '../types'
-import { forgetDscPosition, rememberDscPosition } from './dscSession'
+import {
+  forgetDscPosition,
+  isMmsiField,
+  rememberDscPosition
+} from './dscSession'
 import Debug from 'debug'
 const debug = Debug('signalk-parser-nmea0183/DSC')
 function parsePosition(line: string): { longitude: number; latitude: number } {
@@ -92,13 +96,6 @@ function natureOfDistress(code: string | undefined): string {
       // unassigned symbol; take no action
       return 'unassigned'
   }
-}
-
-// A DSC address field holds the 9-digit MMSI, normally followed by a
-// trailing zero: "3380400790" is MMSI 338040079. Anything else cannot name a
-// vessel and would produce a malformed context.
-function isMmsiField(field: string | undefined): field is string {
-  return /^\d{9,10}$/.test(field ?? '')
 }
 
 const DSC: HookFn = function (

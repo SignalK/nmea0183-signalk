@@ -12,6 +12,14 @@ export interface DscPosition {
   longitude: number
 }
 
+// A DSC or DSE address field holds the 9-digit MMSI, normally followed by a
+// trailing zero: "3380400790" is MMSI 338040079. Anything else cannot name a
+// vessel: it would produce a malformed context, or find something other than
+// a remembered position.
+export function isMmsiField(field: string | undefined): field is string {
+  return /^\d{9,10}$/.test(field ?? '')
+}
+
 const SESSION_KEY = 'dscPositions'
 
 // Keyed by the MMSI of the station that sent the DSC, because that is the
