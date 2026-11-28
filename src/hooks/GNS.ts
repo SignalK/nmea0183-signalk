@@ -74,6 +74,14 @@ const STATUS: Record<string, string> = {
   V: 'Not Valid'
 }
 
+// Own keys only: a field such as "constructor" must find no status, not an
+// Object.prototype member.
+function statusOf(field: string | undefined): string | null {
+  return field !== undefined && Object.hasOwn(STATUS, field)
+    ? (STATUS[field] ?? null)
+    : null
+}
+
 // IEC 61162-1 §7.2.3.4: every optional field surfaces as `null` when
 // missing. Short-circuit only when neither position nor mode indicator
 // can be parsed (same logic as GGA).
@@ -143,7 +151,7 @@ const GNS: HookFn = function (
           },
           {
             path: 'navigation.gnss.status',
-            value: parts[12] !== undefined ? (STATUS[parts[12]!] ?? null) : null
+            value: statusOf(parts[12])
           }
         ]
       }
